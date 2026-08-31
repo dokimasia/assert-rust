@@ -241,6 +241,7 @@ golden::should_update() -> bool
 golden::scrub_timestamps() -> Scrubber
 golden::scrub_hashes() -> Scrubber
 golden::scrub_run_ids() -> Scrubber
+golden::scrub_json_fields(fields: &[&str]) -> Scrubber
 ```
 
 **Coroutines**, from `dokimi-assert-tokio`, for the six a synchronous

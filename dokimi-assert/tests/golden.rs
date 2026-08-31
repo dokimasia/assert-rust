@@ -161,3 +161,54 @@ fn a_missing_field_says_so() {
     assert!(seat.failed(), "a field that is not there cannot match");
     assert!(seat.message().contains("absent"), "{}", seat.message());
 }
+
+#[test]
+fn scrub_json_fields_replaces_named_string_values() {
+    let dir = Scratch::new();
+    let path = dir.file(
+        "out.json",
+        "{\"token\": \"SCRUBBED\", \"kept\": \"stays\", \"id\": \"SCRUBBED\"}",
+    );
+
+    let seat = Recorder::new();
+    golden::matches_at(
+        &seat,
+        &path,
+        "{\"token\": \"a9f3\", \"kept\": \"stays\", \"id\": \"7b2c\"}",
+        &[golden::scrub_json_fields(&["token", "id"])],
+    );
+    assert!(!seat.failed(), "{}", seat.message());
+}
+
+#[test]
+fn scrub_json_fields_with_no_fields_changes_nothing() {
+    let dir = Scratch::new();
+    let path = dir.file("out.json", "{\"token\": \"a9f3\"}");
+
+    let seat = Recorder::new();
+    golden::matches_at(
+        &seat,
+        &path,
+        "{\"token\": \"a9f3\"}",
+        &[golden::scrub_json_fields(&[])],
+    );
+    assert!(!seat.failed(), "{}", seat.message());
+}
+
+#[test]
+fn scrub_json_fields_leaves_unnamed_fields_to_fail() {
+    let dir = Scratch::new();
+    let path = dir.file("out.json", "{\"kept\": \"original\"}");
+
+    let seat = Recorder::new();
+    golden::matches_at(
+        &seat,
+        &path,
+        "{\"kept\": \"changed\"}",
+        &[golden::scrub_json_fields(&["token"])],
+    );
+    assert!(
+        seat.failed(),
+        "a field the scrubber does not name still has to match"
+    );
+}

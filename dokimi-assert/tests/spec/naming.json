@@ -354,5 +354,186 @@
             "typescript": "equateNans"
         }
     },
+    "surface": {
+        "helpers": {
+            "golden.scrub-hashes": {
+                "go": "golden.ScrubHashes",
+                "java": "Golden.scrubHashes",
+                "kotlin": "Golden.scrubHashes",
+                "python": "golden.scrub_hashes",
+                "rust": "golden.scrub_hashes",
+                "typescript": "golden.scrubHashes"
+            },
+            "golden.scrub-json-fields": {
+                "go": "golden.ScrubJSONFields",
+                "java": "Golden.scrubJsonFields",
+                "kotlin": "Golden.scrubJsonFields",
+                "python": "golden.scrub_json_fields",
+                "rust": "golden.scrub_json_fields",
+                "typescript": "golden.scrubJsonFields"
+            },
+            "golden.scrub-run-ids": {
+                "go": "golden.ScrubRunIDs",
+                "java": "Golden.scrubRunIds",
+                "kotlin": "Golden.scrubRunIds",
+                "python": "golden.scrub_run_ids",
+                "rust": "golden.scrub_run_ids",
+                "typescript": "golden.scrubRunIds"
+            },
+            "golden.scrub-timestamps": {
+                "go": "golden.ScrubTimestamps",
+                "java": "Golden.scrubTimestamps",
+                "kotlin": "Golden.scrubTimestamps",
+                "python": "golden.scrub_timestamps",
+                "rust": "golden.scrub_timestamps",
+                "typescript": "golden.scrubTimestamps"
+            },
+            "golden.should-update": {
+                "go": "golden.ShouldUpdate",
+                "java": "Golden.shouldUpdate",
+                "kotlin": "Golden.shouldUpdate",
+                "python": "golden.should_update",
+                "rust": "golden.should_update",
+                "typescript": "golden.shouldUpdate"
+            }
+        },
+        "members": {
+            "collector-seat.collected": {
+                "java": "collected",
+                "kotlin": "collected",
+                "python": "collected",
+                "rust": "collected",
+                "typescript": "collected"
+            },
+            "collector-seat.flush": {
+                "java": "flush",
+                "kotlin": "flush",
+                "python": "flush",
+                "rust": "flush",
+                "typescript": "flush"
+            },
+            "contract.check": {
+                "go": "End",
+                "java": "check",
+                "kotlin": "check",
+                "python": "check",
+                "rust": "check",
+                "typescript": "check"
+            },
+            "contract.loop": {
+                "go": "Loop",
+                "java": "loop",
+                "kotlin": "loop",
+                "python": "loop",
+                "rust": "run",
+                "typescript": "loop"
+            },
+            "recorder-seat.failed": {
+                "go": "Failed",
+                "java": "failed",
+                "kotlin": "failed",
+                "python": "failed",
+                "rust": "failed",
+                "typescript": "failed"
+            },
+            "recorder-seat.helper-calls": {
+                "go": "HelperCalls",
+                "java": "helperCalls",
+                "kotlin": "helperCalls",
+                "python": "helper_calls",
+                "rust": "helper_calls",
+                "typescript": "helperCalls"
+            },
+            "recorder-seat.message": {
+                "go": "Message",
+                "java": "message",
+                "kotlin": "message",
+                "python": "message",
+                "rust": "message",
+                "typescript": "message"
+            },
+            "recorder-seat.messages": {
+                "go": "Messages",
+                "java": "messages",
+                "kotlin": "messages",
+                "python": "messages",
+                "rust": "messages",
+                "typescript": "messages"
+            },
+            "seat.fail": {
+                "go": "Fatalf",
+                "java": "fail",
+                "kotlin": "fail",
+                "python": "fail",
+                "rust": "fail",
+                "typescript": "fail"
+            },
+            "seat.helper": {
+                "go": "Helper",
+                "java": "helper",
+                "kotlin": "helper",
+                "python": "helper",
+                "rust": "helper",
+                "typescript": "helper"
+            },
+            "seat.record": {
+                "go": "Errorf",
+                "java": "record",
+                "kotlin": "record",
+                "python": "record",
+                "rust": "record",
+                "typescript": "record"
+            }
+        },
+        "types": {
+            "collector-seat": {
+                "go": "testing.T",
+                "java": "Collector",
+                "kotlin": "Collector",
+                "python": "Collector",
+                "rust": "Collector",
+                "typescript": "Collector"
+            },
+            "contract": {
+                "go": "bench.Contract",
+                "java": "Contract",
+                "kotlin": "Contract",
+                "python": "bench.Contract",
+                "rust": "bench.Contract",
+                "typescript": "bench.Contract"
+            },
+            "recorder-seat": {
+                "go": "Recorder",
+                "java": "Recorder",
+                "kotlin": "Recorder",
+                "python": "Recorder",
+                "rust": "Recorder",
+                "typescript": "Recorder"
+            },
+            "scrubber": {
+                "go": "golden.Scrubber",
+                "java": "Golden.Scrubber",
+                "kotlin": "Golden.Scrubber",
+                "python": "golden.Scrubber",
+                "rust": "golden.Scrubber",
+                "typescript": "golden.Scrubber"
+            },
+            "seat": {
+                "go": "TB",
+                "java": "Seat",
+                "kotlin": "Seat",
+                "python": "Seat",
+                "rust": "Seat",
+                "typescript": "Seat"
+            },
+            "standard-seat": {
+                "java": "Standard",
+                "kotlin": "Standard",
+                "python": "Standard",
+                "rust": "Standard",
+                "typescript": "Standard"
+            }
+        }
+    },
     "version": "1.0.0"
 }

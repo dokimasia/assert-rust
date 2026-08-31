@@ -271,3 +271,86 @@ fn every_relaxation_is_offered_or_declined() {
         );
     }
 }
+
+/// Name every surface row the table gives Rust, as a value of its own type.
+///
+/// The same rule as the assertions: nothing here is called, and a rename or a
+/// changed shape fails the build rather than a test.
+#[test]
+fn every_surface_row_exists_under_its_name() {
+    // types
+    let _: Option<&dyn Seat> = None;
+    let _: fn() -> dokimi_assert::seat::Standard = dokimi_assert::seat::Standard::new;
+    let _: fn() -> Recorder = Recorder::new;
+    let _: fn() -> dokimi_assert::seat::Collector = dokimi_assert::seat::Collector::new;
+    let _: fn() -> golden::Scrubber = golden::scrub_hashes;
+    pins_contract_type();
+
+    // members: the seat's three, through a concrete implementation
+    let _: fn(&Recorder) = <Recorder as Seat>::helper;
+    let _: fn(&Recorder, &str) = <Recorder as Seat>::fail;
+    let _: fn(&Recorder, &str) = <Recorder as Seat>::record;
+
+    // members: what a test reads back
+    let _: fn(&Recorder) -> bool = Recorder::failed;
+    let _: fn(&Recorder) -> String = Recorder::message;
+    let _: fn(&Recorder) -> Vec<String> = Recorder::messages;
+    let _: fn(&Recorder) -> usize = Recorder::helper_calls;
+    let _: fn(&dokimi_assert::seat::Collector) -> Vec<String> =
+        dokimi_assert::seat::Collector::collected;
+    let _: fn(&dokimi_assert::seat::Collector) = dokimi_assert::seat::Collector::flush;
+
+    // helpers
+    let _: fn() -> golden::Scrubber = golden::scrub_timestamps;
+    let _: fn() -> golden::Scrubber = golden::scrub_hashes;
+    let _: fn() -> golden::Scrubber = golden::scrub_run_ids;
+    let _: fn(&[&str]) -> golden::Scrubber = golden::scrub_json_fields;
+    let _: fn() -> bool = golden::should_update;
+}
+
+/// The contract rows, pinned with the lifetime their type carries.
+#[expect(
+    clippy::extra_unused_lifetimes,
+    reason = "the lifetime is what lets the annotation inside be written at all"
+)]
+fn pins_contract_type<'s>() {
+    let _: fn(&'s dyn Seat, &'s str) -> bench::Contract<'s> = bench::Contract::new;
+    let _: fn(bench::Contract<'s>, usize, fn()) -> bench::Contract<'s> =
+        bench::Contract::run::<fn()>;
+    let _: fn(bench::Contract<'s>) = bench::Contract::check;
+}
+
+/// Every surface id the table names for Rust is pinned above.
+#[test]
+fn the_surface_table_names_nothing_this_file_leaves_out() {
+    let raw = std::fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/spec/naming.json"),
+    )
+    .expect("the vendored naming table is readable");
+    let table: serde_json::Value = serde_json::from_str(&raw).expect("the naming table is JSON");
+
+    let surface = table["surface"]
+        .as_object()
+        .expect("the table states a surface");
+    let source = include_str!("completeness.rs");
+
+    let mut missing: Vec<String> = Vec::new();
+    for section in ["types", "members", "helpers"] {
+        for (sid, per_language) in surface[section]
+            .as_object()
+            .expect("a section is an object")
+        {
+            let Some(name) = per_language["rust"].as_str() else {
+                panic!("{sid} has no rust name and rust declines no surface ids");
+            };
+            let leaf = name.rsplit('.').next().expect("a name has a last segment");
+            if !source.contains(leaf) {
+                missing.push(format!("{sid} -> {name}"));
+            }
+        }
+    }
+    assert!(
+        missing.is_empty(),
+        "the surface table names rows this file does not pin: {missing:?}"
+    );
+}

@@ -71,6 +71,35 @@ pub fn scrub_run_ids() -> Scrubber {
     )
 }
 
+/// Replace the string values of the named JSON fields.
+///
+/// Matches the field's text rather than parsing, so it works on output that is
+/// nearly JSON as well as output that is. Only string values are replaced,
+/// which is what the other implementations of this standard do.
+///
+/// # Panics
+///
+/// Never in practice: the pattern is built from escaped field names, and an
+/// escaped name always compiles.
+#[must_use]
+pub fn scrub_json_fields(fields: &[&str]) -> Scrubber {
+    if fields.is_empty() {
+        // A class that can hold no character matches nothing, so a
+        // scrubber built from no fields changes nothing.
+        return Scrubber::new(r"[^\s\S]", "SCRUBBED");
+    }
+    let names = fields
+        .iter()
+        .map(|field| regex::escape(field))
+        .collect::<Vec<_>>()
+        .join("|");
+    Scrubber {
+        pattern: regex::Regex::new(&format!(r#"("(?:{names})"\s*:\s*)"[^"]*""#))
+            .expect("escaped field names always compile"),
+        replacement: r#"${1}"SCRUBBED""#,
+    }
+}
+
 /// Whether the run should rewrite the golden files rather than compare against them.
 #[must_use]
 pub fn should_update() -> bool {
