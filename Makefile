@@ -43,14 +43,14 @@ msrv: ## Check the crate still builds on its stated minimum
 check: lint-fmt lint build test doc ## Everything CI runs
 	@echo "rust: every stage passed"
 
-.PHONY: spec-sync
-spec-sync: ## Refresh the vendored definition from ../assert-spec
-	@cp ../assert-spec/spec/assertions.json ../assert-spec/spec/naming.json \
-		dokimi-assert/tests/spec/
-	@cp ../assert-spec/overlays/rust.json dokimi-assert/tests/spec/overlay.json
-	@cp ../assert-spec/corpus/*.json dokimi-assert/tests/spec/corpus/
-	@echo "spec: vendored copy refreshed; run make test"
+.PHONY: spec-sync spec-check
+spec-sync: ## Refresh the vendored definition from assert-spec
+	@./tools/spec-sync.sh dokimi-assert/tests/spec rust
 
 .PHONY: clean
 clean: ## Remove build output
 	@cargo clean
+
+.PHONY: spec-check
+spec-check: ## Check the vendored definition is intact and say if it is behind
+	@./tools/spec-check.sh dokimi-assert/tests/spec

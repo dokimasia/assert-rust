@@ -86,3 +86,35 @@ jobs:
           }
           RS
           cargo run --quiet
+
+  # The vendored definition is what this library is held to, and a copy
+  # nobody checked is a copy that can drift. This fails on a copy that
+  # does not match the manifest beside it, and reports without failing
+  # when the definition has moved on: lagging is allowed, not knowing
+  # is not.
+  # The vendored definition is what this library is held to. A copy that
+  # does not match the manifest beside it fails, always. A copy that
+  # differs from upstream only fails when this change is the one that
+  # touched it: falling behind is allowed and is tracked by an issue,
+  # but committing a copy nobody else has is not.
+  spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Did this change touch the vendored copy?
+        id: touched
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$base" ] || ! git cat-file -e "$base" 2>/dev/null; then
+            echo "strict=" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$base" HEAD -- dokimi-assert/tests/spec | grep -q .; then
+            echo "strict=--strict" >> "$GITHUB_OUTPUT"
+          else
+            echo "strict=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check the vendored definition
+        run: ./tools/spec-check.sh dokimi-assert/tests/spec ${{ steps.touched.outputs.strict }}
