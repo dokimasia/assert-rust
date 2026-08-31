@@ -1,0 +1,73 @@
+name: Spec drift
+
+on:
+  schedule:
+    # Every weekday morning. A definition that moved overnight is on the
+    # list before anyone starts, and a weekend of no commits raises
+    # nothing new.
+    - cron: "0 7 * * 1-5"
+  workflow_dispatch:
+
+concurrency:
+  group: drift
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  # This library vendors the definition, so a change upstream reaches it
+  # only when someone copies it across. Checking here rather than being
+  # told from there needs no token: a repository may open an issue on
+  # itself, and nothing has to hold a key to five other repositories.
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Compare the vendored definition against upstream
+        id: check
+        run: |
+          if ./tools/spec-check.sh dokimi-assert/tests/spec --strict > drift.txt 2>&1; then
+            echo "drifted=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "drifted=yes" >> "$GITHUB_OUTPUT"
+          fi
+          cat drift.txt
+
+      - name: Read what upstream now digests to
+        if: steps.check.outputs.drifted == 'yes'
+        id: spec
+        run: |
+          digest=$(sed -n 's/^ *upstream //p' drift.txt | head -1)
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "short=${digest:7:12}" >> "$GITHUB_OUTPUT"
+
+      - name: Open a refresh issue where one is not already open
+        if: steps.check.outputs.drifted == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "Refresh the vendored definition to ${{ steps.spec.outputs.short }}"
+        run: |
+          if gh issue list --state open --search "$TITLE" --json title \
+               --jq '.[].title' | grep -qF "$TITLE"; then
+            echo "one is already open"
+            exit 0
+          fi
+          gh issue create --title "$TITLE" --body "$(cat <<BODY
+          The definition moved. This library vendors a copy, so its build
+          is still green against the copy it has.
+
+          - upstream digest: \`${{ steps.spec.outputs.digest }}\`
+
+          Refresh and run the suite:
+
+          \`\`\`sh
+          ./tools/spec-sync.sh dokimi-assert/tests/spec rust
+          make check
+          \`\`\`
+
+          Lagging is allowed. Not knowing is what this issue is for.
+          BODY
+          )"
