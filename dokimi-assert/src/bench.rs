@@ -222,15 +222,17 @@ impl<'seat> Contract<'seat> {
             return;
         };
 
-        if let Some(ceiling) = self.max_latency
-            && percentile(&run.latencies) > ceiling
-        {
-            self.crossed("p99", percentile(&run.latencies), ceiling, run.iterations);
+        if let Some(ceiling) = self.max_latency {
+            let p99 = percentile(&run.latencies);
+            if p99 > ceiling {
+                self.crossed("p99", p99, ceiling, run.iterations);
+            }
         }
-        if let Some(ceiling) = self.max_mean
-            && mean(&run.latencies) > ceiling
-        {
-            self.crossed("mean", mean(&run.latencies), ceiling, run.iterations);
+        if let Some(ceiling) = self.max_mean {
+            let mean = mean(&run.latencies);
+            if mean > ceiling {
+                self.crossed("mean", mean, ceiling, run.iterations);
+            }
         }
         self.weighed(
             "allocations",

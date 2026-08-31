@@ -93,15 +93,15 @@ pub fn matches_at(seat: &dyn Seat, path: &Path, got: &str, scrubbers: &[Scrubber
     let cleaned = scrubbed(got, scrubbers);
 
     if should_update() {
-        if let Some(parent) = path.parent()
-            && let Err(unwritable) = std::fs::create_dir_all(parent)
-        {
-            report(
-                seat,
-                Mode::Fatal,
-                &format!("{}: {unwritable}", path.display()),
-            );
-            return;
+        if let Some(parent) = path.parent() {
+            if let Err(unwritable) = std::fs::create_dir_all(parent) {
+                report(
+                    seat,
+                    Mode::Fatal,
+                    &format!("{}: {unwritable}", path.display()),
+                );
+                return;
+            }
         }
         if let Err(unwritable) = std::fs::write(path, &cleaned) {
             report(
