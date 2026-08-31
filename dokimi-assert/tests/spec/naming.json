@@ -338,5 +338,21 @@
             "typescript": "isTrue"
         }
     },
+    "relaxations": {
+        "equate-empty": {
+            "go": "EquateEmpty",
+            "java": "Option.EQUATE_EMPTY",
+            "kotlin": "Option.EQUATE_EMPTY",
+            "python": "equate_empty",
+            "typescript": "equateEmpty"
+        },
+        "equate-nans": {
+            "go": "EquateNaNs",
+            "java": "Option.EQUATE_NANS",
+            "kotlin": "Option.EQUATE_NANS",
+            "python": "equate_nans",
+            "typescript": "equateNans"
+        }
+    },
     "version": "1.0.0"
 }

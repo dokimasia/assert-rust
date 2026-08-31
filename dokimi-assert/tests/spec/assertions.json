@@ -51,6 +51,10 @@
             "message_fields": [
                 "contain"
             ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
             "summary": "Text holds a substring, a sequence holds an element, or a map holds a key.\n"
         },
         "contains-in-order": {
@@ -72,6 +76,10 @@
             "message_fields": [
                 "want",
                 "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
             ],
             "summary": "Structural equality. A null collection does not equal an empty one, no type coercion, NaN is unequal to itself, floats compare exactly, cycles stop, functions compare by identity.\n"
         },
@@ -231,6 +239,10 @@
             "message_fields": [
                 "contain"
             ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
             "summary": "Negation of contains.\n"
         },
         "not-empty": {
@@ -244,6 +256,10 @@
             "arity": 3,
             "message_fields": [
                 "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
             ],
             "summary": "Negation of equal.\n"
         },
@@ -273,6 +289,10 @@
             "message_fields": [
                 "changed"
             ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
             "summary": "Observed state is unchanged across a call.\n"
         },
         "rejects": {
@@ -293,6 +313,14 @@
             "arity": 2,
             "message_fields": [],
             "summary": "The condition holds. The failure carries the caller's message alone.\n"
+        }
+    },
+    "relaxations": {
+        "equate-empty": {
+            "summary": "An absent container equals an empty one of the same type. Without it a null map and an empty map are different values, which is what the standard states by default.\n"
+        },
+        "equate-nans": {
+            "summary": "A NaN equals another NaN of the same type. Without it NaN is unequal to itself, which is what IEEE 754 states and what the standard states by default.\n"
         }
     },
     "version": "1.0.0"

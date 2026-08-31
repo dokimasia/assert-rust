@@ -213,3 +213,61 @@ fn the_table_names_nothing_this_file_leaves_out() {
         "the table names assertions this file does not pin: {missing:?}"
     );
 }
+
+/// Every relaxation the definition states is answered, one way.
+///
+/// Rust offers neither: its types keep an absent container and an empty one
+/// apart, and its own `==` already says NaN is unequal to itself. That is a
+/// claim, so this holds it to the overlay rather than trusting the sentence.
+/// A relaxation the naming table gave Rust a name for would have to exist,
+/// and one it did not would have to be declined; named and declined at once
+/// is a contradiction.
+#[test]
+fn every_relaxation_is_offered_or_declined() {
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/spec");
+    let parse = |name: &str| -> serde_json::Value {
+        serde_json::from_str(
+            &std::fs::read_to_string(dir.join(name)).expect("the vendored spec is readable"),
+        )
+        .expect("the vendored spec is JSON")
+    };
+
+    let stated = parse("assertions.json");
+    let stated = stated["relaxations"]
+        .as_object()
+        .expect("the definition states relaxations");
+    assert!(!stated.is_empty(), "the definition states relaxations");
+
+    let naming = parse("naming.json");
+    let overlay = parse("overlay.json");
+    let declined: Vec<&str> = overlay["relaxations"]
+        .as_array()
+        .map(|entries| {
+            entries
+                .iter()
+                .filter_map(|entry| entry["id"].as_str())
+                .collect()
+        })
+        .unwrap_or_default();
+
+    for id in stated.keys() {
+        let named = naming["relaxations"][id]["rust"].as_str();
+        let is_declined = declined.contains(&id.as_str());
+
+        assert!(
+            !(named.is_some() && is_declined),
+            "{id}: named {named:?} and declined, which is a contradiction"
+        );
+        assert!(
+            named.is_some() || is_declined,
+            "{id}: the table gives no Rust name and the overlay does not decline it"
+        );
+        // A named relaxation would need a compile-time pin in this file, the
+        // way every assertion has one. None is named today, so a name
+        // appearing is this test failing until someone pins it.
+        assert!(
+            named.is_none(),
+            "{id}: the table now names {named:?} for Rust; implement it and pin it here"
+        );
+    }
+}

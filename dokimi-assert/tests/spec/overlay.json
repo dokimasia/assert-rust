@@ -2,6 +2,16 @@
   "extends": "spec://assertions@1.0.0",
   "language": "rust",
   "diverge": [],
+  "relaxations": [
+    {
+      "id": "equate-empty",
+      "why": "An absent container and an empty one are different types in Rust: Option<Vec<T>> is not Vec<T>. There is no case where a caller has one and means the other, so a relaxation would widen nothing."
+    },
+    {
+      "id": "equate-nans",
+      "why": "Rust's == already says NaN is unequal to itself, which is what the standard states by default. A caller wanting the other answer compares f64::to_bits or names the case, and a relaxation reaching inside a generic T: PartialEq is not expressible without a comparison routine this implementation does not have."
+    }
+  ],
   "limits": [
     {
       "id": "bench-max-allocs",
