@@ -194,11 +194,14 @@ what is published carries neither.
 
 ### What the corpus reaches
 
-Seventy cases across seventeen assertions, run against both surfaces:
-a hundred and forty case-runs, with no declared skips. The other
-twenty-four take a callable, a handle or a duration, and no corpus file
-can hold one, so they are covered by tests here and by the completeness
-gate.
+Eighty-seven cases across twenty-five assertions, run against both
+surfaces: a hundred and seventy-four case-runs, with no declared skips.
+Seventeen of those cases name a behaviour rather than stating a value,
+which is how a case reaches an assertion that takes a callable.
+
+The other sixteen want a real duration, a real file or a real runtime,
+and no corpus file can hold one, so they are covered by tests here and by
+the completeness gate.
 
 Those tests drive each assertion twice, with a subject that satisfies it
 and one that does not. Returning early from the one function every
