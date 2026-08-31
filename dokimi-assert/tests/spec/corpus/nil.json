@@ -1,0 +1,54 @@
+{
+  "assertion": "nil",
+  "cases": [
+    {
+      "id": "nil/null-passes",
+      "args": [
+        {
+          "type": "null"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "nil/zero-is-not-null",
+      "args": [
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "nil"
+      ]
+    },
+    {
+      "id": "nil/empty-string-is-not-null",
+      "args": [
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "nil"
+      ]
+    },
+    {
+      "id": "nil/empty-list-is-not-null",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "nil"
+      ]
+    }
+  ]
+}

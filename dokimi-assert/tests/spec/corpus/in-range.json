@@ -1,0 +1,122 @@
+{
+  "assertion": "in-range",
+  "cases": [
+    {
+      "id": "in-range/inside-passes",
+      "args": [
+        {
+          "type": "int",
+          "value": 8080
+        },
+        {
+          "type": "float",
+          "value": 1024
+        },
+        {
+          "type": "float",
+          "value": 65535
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "in-range/low-bound-included",
+      "args": [
+        {
+          "type": "int",
+          "value": 1024
+        },
+        {
+          "type": "float",
+          "value": 1024
+        },
+        {
+          "type": "float",
+          "value": 65535
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "in-range/high-bound-included",
+      "args": [
+        {
+          "type": "int",
+          "value": 65535
+        },
+        {
+          "type": "float",
+          "value": 1024
+        },
+        {
+          "type": "float",
+          "value": 65535
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "in-range/below-fails",
+      "args": [
+        {
+          "type": "int",
+          "value": 80
+        },
+        {
+          "type": "float",
+          "value": 1024
+        },
+        {
+          "type": "float",
+          "value": 65535
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "80"
+      ]
+    },
+    {
+      "id": "in-range/nan-is-in-no-range",
+      "args": [
+        {
+          "type": "float",
+          "value": "NaN"
+        },
+        {
+          "type": "float",
+          "value": 0
+        },
+        {
+          "type": "float",
+          "value": 100
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "NaN"
+      ]
+    },
+    {
+      "id": "in-range/inverted-range-fails",
+      "args": [
+        {
+          "type": "int",
+          "value": 5
+        },
+        {
+          "type": "float",
+          "value": 10
+        },
+        {
+          "type": "float",
+          "value": 1
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "empty range"
+      ]
+    }
+  ]
+}

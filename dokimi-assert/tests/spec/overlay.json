@@ -1,0 +1,22 @@
+{
+  "extends": "spec://assertions@1.0.0",
+  "language": "rust",
+  "diverge": [],
+  "limits": [
+    {
+      "id": "bench-max-allocs",
+      "what": "Counts allocations exactly, once CountingAllocator is installed as the test binary's global allocator. Without it the assertion reports that nothing counted rather than passing.",
+      "why": "Rust can count every allocation, which no other implementation of this standard can. What it cannot do is install a global allocator on a caller's behalf: a program has one, the program chooses it, and a library that took it would take it from the caller."
+    },
+    {
+      "id": "bench-max-bytes",
+      "what": "Counts bytes requested, once CountingAllocator is installed as the test binary's global allocator. Without it the assertion reports that nothing counted rather than passing.",
+      "why": "The same allocator answers both ceilings, so both stand or fall on it being installed. The count is of bytes asked for rather than bytes resident, which is what makes it stable across runs."
+    },
+    {
+      "id": "no-task-leaks",
+      "what": "Sees tasks spawned on the Tokio runtime the test is running under. A thread started with std::thread is not seen.",
+      "why": "Rust's standard library has no way to enumerate threads: nothing in std::thread lists them, so the synchronous crate cannot answer the question at all. Tokio counts its own live tasks, which is why this assertion ships in the tokio crate rather than the core."
+    }
+  ]
+}

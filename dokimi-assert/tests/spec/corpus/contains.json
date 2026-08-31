@@ -1,0 +1,115 @@
+{
+  "assertion": "contains",
+  "cases": [
+    {
+      "id": "contains/text-holds-substring",
+      "args": [
+        {
+          "type": "string",
+          "value": "hello world"
+        },
+        {
+          "type": "string",
+          "value": "lo wo"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/list-holds-element",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/map-holds-key",
+      "args": [
+        {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/absent-element-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "int",
+          "value": 9
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "9"
+      ]
+    },
+    {
+      "id": "contains/absent-substring-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "hello"
+        },
+        {
+          "type": "string",
+          "value": "xyz"
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "xyz"
+      ]
+    },
+    {
+      "id": "contains/absent-key-fails",
+      "args": [
+        {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "b"
+      ]
+    }
+  ]
+}

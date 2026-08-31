@@ -1,0 +1,88 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # stable is what contributors run. 1.85 is the edition 2024
+        # floor the crates declare, and the only way to know the
+        # declaration is true is to build on it.
+        rust: [stable, "1.85"]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the toolchain
+        run: |
+          rustup toolchain install ${{ matrix.rust }} --profile minimal \
+            --component clippy,rustfmt --no-self-update
+          rustup default ${{ matrix.rust }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        if: matrix.rust == 'stable'
+        run: cargo fmt --check
+
+      - name: Clippy
+        if: matrix.rust == 'stable'
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Build and test
+        run: cargo test
+
+      - name: Document, refusing a broken link
+        if: matrix.rust == 'stable'
+        run: cargo doc --no-deps
+
+  # A published crate that does not resolve is still broken, whatever
+  # the build said.
+  consume:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the toolchain
+        run: rustup toolchain install stable --profile minimal --no-self-update
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Package both crates, then depend on the packaged core
+        run: |
+          cargo package -p dokimi-assert --allow-dirty
+          mkdir -p /tmp/consumer/src && cd /tmp/consumer
+          cat > Cargo.toml <<'TOML'
+          [package]
+          name = "consumer"
+          version = "0.0.0"
+          edition = "2024"
+
+          [dependencies]
+          dokimi-assert = { path = "../../home/runner/work/assert-rust/assert-rust/dokimi-assert" }
+          TOML
+          cat > src/main.rs <<'RS'
+          use dokimi_assert::{check, seat::Recorder};
+
+          fn main() {
+              let seat = Recorder::new();
+              check::equal(&seat, &1, &2, "the crate works");
+              assert!(seat.failed(), "the assertion reported nothing");
+              println!("resolved and ran: {}", seat.message());
+          }
+          RS
+          cargo run --quiet

@@ -1,0 +1,39 @@
+{
+  "assertion": "not-empty",
+  "cases": [
+    {
+      "id": "not-empty/populated-list-passes",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-empty/empty-list-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "not-empty/empty-string-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "expect": "fail"
+    }
+  ]
+}

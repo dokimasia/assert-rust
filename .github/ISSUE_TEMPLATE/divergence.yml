@@ -1,0 +1,55 @@
+name: Divergence report
+description: This library answers a case differently from another implementation.
+labels: ["divergence", "spec"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The point of the standard is that the same test means the same
+        thing in every language. Two implementations disagreeing is a
+        bug in one of them, or a gap in the standard. Which one is what
+        this report works out, so please give both sides.
+
+  - type: input
+    id: assertion
+    attributes:
+      label: The assertion
+      description: Its canonical id, as the standard names it.
+      placeholder: honours-cancellation
+    validations:
+      required: true
+
+  - type: dropdown
+    id: other
+    attributes:
+      label: The other implementation
+      options: [assert-go, assert-python, assert-typescript, assert-java, other]
+    validations:
+      required: true
+
+  - type: textarea
+    id: rust-side
+    attributes:
+      label: What this library does
+      description: The call and what it reported.
+      render: rust
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-side
+    attributes:
+      label: What the other one does
+      description: The equivalent call and what it reported.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reading
+    attributes:
+      label: Which one you think is right, and why
+      description: >
+        The standard's own wording is the arbiter. Quote it if it
+        settles the question, and say so if it does not cover the case.
+    validations:
+      required: false

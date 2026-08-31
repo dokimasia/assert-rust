@@ -1,0 +1,51 @@
+{
+  "assertion": "has-prefix",
+  "cases": [
+    {
+      "id": "has-prefix/matching-prefix-passes",
+      "args": [
+        {
+          "type": "string",
+          "value": "store: missing"
+        },
+        {
+          "type": "string",
+          "value": "store: "
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-prefix/empty-prefix-passes",
+      "args": [
+        {
+          "type": "string",
+          "value": "anything"
+        },
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-prefix/wrong-prefix-reports-both",
+      "args": [
+        {
+          "type": "string",
+          "value": "cache: missing"
+        },
+        {
+          "type": "string",
+          "value": "store: "
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "cache: missing",
+        "store: "
+      ]
+    }
+  ]
+}

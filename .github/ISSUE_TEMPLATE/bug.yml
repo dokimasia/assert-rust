@@ -1,0 +1,73 @@
+name: Bug report
+description: An assertion does not do what it says.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: if another implementation of the standard
+        answers the same test differently, use the divergence report
+        instead. It asks for both sides, and the answer may be that
+        this library is right and the other is wrong.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The `dokimi-assert` version, from `cargo tree -p dokimi-assert`.
+      placeholder: 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: rust
+    attributes:
+      label: Rust version
+      description: Output of `rustc --version`.
+      placeholder: rustc 1.98.0 (88d9e12ae 2026-08-18)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: crate
+    attributes:
+      label: Which crate
+      options:
+        - dokimi-assert
+        - dokimi-assert-tokio
+        - both
+    validations:
+      required: true
+
+  - type: input
+    id: assertion
+    attributes:
+      label: Which assertion
+      description: The one that misbehaved, under the name you called it.
+      placeholder: check::honours_cancellation
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: A test that shows it
+      description: >
+        The smallest test that fails. A `Recorder` seat reads what an
+        assertion reported without suffering it, which usually makes the
+        case shorter.
+      render: rust
+      placeholder: |
+        let seat = Recorder::new();
+        check::equal(&seat, &1, &1, "the values match");
+        assert!(seat.failed());
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened
+      description: Paste the failure message if there was one.
+    validations:
+      required: true

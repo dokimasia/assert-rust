@@ -1,0 +1,40 @@
+# Build output
+/target/
+**/*.rs.bk
+*.pdb
+
+# Coverage
+*.profraw
+*.profdata
+/lcov.info
+
+# Editors and IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# Zed: settings.json is the shared config. Nothing else in .zed is.
+.zed/*
+!.zed/settings.json
+
+# Agentic / LLM
+.claude/
+.codex/
+.gemini/
+.topoi/
+superpowers/
+AGENT.md
+CLAUDE.md
+GEMINI.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.local
+secrets.json

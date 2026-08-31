@@ -1,0 +1,64 @@
+{
+  "assertion": "matches",
+  "cases": [
+    {
+      "id": "matches/anchored-pattern-matches",
+      "args": [
+        {
+          "type": "string",
+          "value": "deadbeef"
+        },
+        {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "matches/unanchored-matches-anywhere",
+      "args": [
+        {
+          "type": "string",
+          "value": "id=deadbeef;"
+        },
+        {
+          "type": "string",
+          "value": "[0-9a-f]{8}"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "matches/non-matching-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "zzz"
+        },
+        {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "zzz"
+      ]
+    },
+    {
+      "id": "matches/anchored-rejects-partial",
+      "args": [
+        {
+          "type": "string",
+          "value": "id=deadbeef"
+        },
+        {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      ],
+      "expect": "fail"
+    }
+  ]
+}

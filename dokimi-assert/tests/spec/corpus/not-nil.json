@@ -1,0 +1,27 @@
+{
+  "assertion": "not-nil",
+  "cases": [
+    {
+      "id": "not-nil/a-value-passes",
+      "args": [
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-nil/null-fails",
+      "args": [
+        {
+          "type": "null"
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "nil"
+      ]
+    }
+  ]
+}

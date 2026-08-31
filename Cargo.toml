@@ -1,0 +1,36 @@
+# One repository, two crates. The core is synchronous and depends on
+# nothing; the tokio crate adds the assertions whose subject is a
+# future, which a synchronous signature cannot accept.
+[workspace]
+members = ["dokimi-assert", "dokimi-assert-tokio"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+repository = "https://github.com/dokimasia/assert-rust"
+authors = ["Roy Klopper <roy.klopper@stealthscale.io>"]
+categories = ["development-tools::testing"]
+keywords = ["assertions", "testing", "conformance"]
+
+[workspace.lints.rust]
+missing_docs = "deny"
+unused_qualifications = "deny"
+unsafe_code = "deny"
+missing_debug_implementations = "deny"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
+private_intra_doc_links = "deny"
+invalid_rust_codeblocks = "deny"
+bare_urls = "deny"
+
+[workspace.lints.clippy]
+pedantic = { level = "deny", priority = -1 }
+# The assertions take a seat, a subject and a message, and several take
+# a bound as well. Splitting those into structs would hide the shape
+# the standard states.
+too_many_arguments = "allow"
+missing_errors_doc = "allow"

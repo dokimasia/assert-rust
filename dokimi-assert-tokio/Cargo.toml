@@ -1,0 +1,22 @@
+[package]
+name = "dokimi-assert-tokio"
+description = "Coroutine-aware assertions, for the ones a synchronous signature cannot reach"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+dokimi-assert = { path = "../dokimi-assert", version = "0.1.0" }
+tokio = { version = "1.53.1", features = ["rt", "time", "macros"] }
+tokio-util = "0.7.19"
+
+[dev-dependencies]
+tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros", "time"] }

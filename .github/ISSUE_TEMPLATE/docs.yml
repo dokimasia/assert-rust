@@ -1,0 +1,35 @@
+name: Documentation
+description: A doc comment, the README or an RFC is wrong or missing.
+labels: ["docs"]
+body:
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options:
+        - A doc comment on an assertion
+        - The README
+        - An RFC under docs/rfc
+        - The published documentation on docs.rs
+    validations:
+      required: true
+
+  - type: input
+    id: item
+    attributes:
+      label: Which item
+      description: The path, the assertion, or the heading.
+      placeholder: check::none_handle_safe
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What it says, and what is wrong with it
+      description: >
+        A signature that does not match the code, an example that does
+        not compile, or a contract the comment states and the code does
+        not keep.
+    validations:
+      required: true

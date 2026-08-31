@@ -1,0 +1,36 @@
+{
+  "assertion": "has-suffix",
+  "cases": [
+    {
+      "id": "has-suffix/matching-suffix-passes",
+      "args": [
+        {
+          "type": "string",
+          "value": "types.gen.go"
+        },
+        {
+          "type": "string",
+          "value": ".gen.go"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-suffix/wrong-suffix-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "types.go"
+        },
+        {
+          "type": "string",
+          "value": ".gen.go"
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "types.go"
+      ]
+    }
+  ]
+}

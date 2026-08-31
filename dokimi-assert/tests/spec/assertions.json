@@ -1,0 +1,299 @@
+{
+    "assertions": {
+        "bench-max-allocs": {
+            "arity": 1,
+            "message_fields": [
+                "ceiling"
+            ],
+            "package": "bench",
+            "summary": "The allocations per iteration stay within a ceiling.\n"
+        },
+        "bench-max-bytes": {
+            "arity": 1,
+            "message_fields": [
+                "ceiling"
+            ],
+            "package": "bench",
+            "summary": "The bytes allocated per iteration stay within a ceiling.\n"
+        },
+        "bench-max-latency": {
+            "arity": 1,
+            "message_fields": [
+                "ceiling"
+            ],
+            "package": "bench",
+            "summary": "The p99 latency per iteration stays within a ceiling.\n"
+        },
+        "bench-max-mean": {
+            "arity": 1,
+            "message_fields": [
+                "ceiling"
+            ],
+            "package": "bench",
+            "summary": "The mean latency per iteration stays within a ceiling.\n"
+        },
+        "close-to": {
+            "arity": 4,
+            "message_fields": [
+                "within"
+            ],
+            "summary": "A number is within a tolerance of another, by absolute difference. NaN is outside every tolerance.\n"
+        },
+        "completes-within": {
+            "arity": 4,
+            "message_fields": [
+                "within"
+            ],
+            "summary": "A subject finishes before the stated duration.\n"
+        },
+        "contains": {
+            "arity": 3,
+            "message_fields": [
+                "contain"
+            ],
+            "summary": "Text holds a substring, a sequence holds an element, or a map holds a key.\n"
+        },
+        "contains-in-order": {
+            "arity": 3,
+            "message_fields": [
+                "found"
+            ],
+            "summary": "Text holds every needle, each after the previous one's match ends.\n"
+        },
+        "empty": {
+            "arity": 2,
+            "message_fields": [
+                "empty"
+            ],
+            "summary": "The container holds nothing.\n"
+        },
+        "equal": {
+            "arity": 3,
+            "message_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "Structural equality. A null collection does not equal an empty one, no type coercion, NaN is unequal to itself, floats compare exactly, cycles stop, functions compare by identity.\n"
+        },
+        "err-absent": {
+            "arity": 3,
+            "message_fields": [
+                "error"
+            ],
+            "summary": "No failure value is present.\n"
+        },
+        "err-as": {
+            "arity": 3,
+            "message_fields": [
+                "type"
+            ],
+            "summary": "A failure of the given type is in the chain. Yields it.\n"
+        },
+        "err-is": {
+            "arity": 4,
+            "message_fields": [
+                "want"
+            ],
+            "summary": "A failure matches a sentinel, through the chain of wrapped causes.\n"
+        },
+        "err-is-not": {
+            "arity": 4,
+            "message_fields": [
+                "distinct"
+            ],
+            "summary": "A failure does not match a sentinel.\n"
+        },
+        "err-present": {
+            "arity": 3,
+            "message_fields": [
+                "error"
+            ],
+            "summary": "Some failure value is present.\n"
+        },
+        "eventually": {
+            "arity": 5,
+            "message_fields": [
+                "still"
+            ],
+            "summary": "An assertion body passes within a timeout, retried at an interval. Reports the last failure.\n"
+        },
+        "eventually-true": {
+            "arity": 4,
+            "message_fields": [
+                "still"
+            ],
+            "summary": "A predicate becomes true within a timeout, retried with backoff.\n"
+        },
+        "false": {
+            "arity": 2,
+            "message_fields": [],
+            "summary": "The condition does not hold.\n"
+        },
+        "golden-match": {
+            "arity": 5,
+            "message_fields": [
+                "want",
+                "got"
+            ],
+            "package": "golden",
+            "summary": "Output matches the golden file resolved against the conventional directory.\n"
+        },
+        "golden-match-at": {
+            "arity": 5,
+            "message_fields": [
+                "want",
+                "got"
+            ],
+            "package": "golden",
+            "summary": "Output matches the golden file at a given path.\n"
+        },
+        "golden-match-json-field": {
+            "arity": 6,
+            "message_fields": [
+                "want",
+                "got"
+            ],
+            "package": "golden",
+            "summary": "Output matches one named field of a golden JSON object.\n"
+        },
+        "has-prefix": {
+            "arity": 3,
+            "message_fields": [
+                "start"
+            ],
+            "summary": "Text starts with the given prefix.\n"
+        },
+        "has-suffix": {
+            "arity": 3,
+            "message_fields": [
+                "end"
+            ],
+            "summary": "Text ends with the given suffix.\n"
+        },
+        "honours-cancellation": {
+            "arity": 3,
+            "message_fields": [
+                "cancel"
+            ],
+            "summary": "A subject given a cancelled handle reports a cancellation failure.\n"
+        },
+        "honours-deadline": {
+            "arity": 3,
+            "message_fields": [
+                "deadline"
+            ],
+            "summary": "A subject given an expired deadline reports a deadline failure.\n"
+        },
+        "in-range": {
+            "arity": 4,
+            "message_fields": [
+                "range"
+            ],
+            "summary": "A number falls in a closed interval. NaN is in no range.\n"
+        },
+        "length": {
+            "arity": 3,
+            "message_fields": [
+                "length"
+            ],
+            "summary": "The container holds the stated number of items. Answers for any sized container or text.\n"
+        },
+        "matches": {
+            "arity": 3,
+            "message_fields": [
+                "match"
+            ],
+            "summary": "Text matches a regular expression. A pattern that does not compile is a failure, not an error.\n"
+        },
+        "nil": {
+            "arity": 2,
+            "message_fields": [
+                "nil"
+            ],
+            "summary": "The value is absent. A typed nil counts as nil.\n"
+        },
+        "nil-context-safe": {
+            "arity": 3,
+            "message_fields": [
+                "panic"
+            ],
+            "summary": "A subject given an absent cancellation handle does not crash.\n"
+        },
+        "no-task-leaks": {
+            "arity": 2,
+            "message_fields": [
+                "running"
+            ],
+            "summary": "No concurrent task started in the scope outlives it.\n"
+        },
+        "not-contains": {
+            "arity": 3,
+            "message_fields": [
+                "contain"
+            ],
+            "summary": "Negation of contains.\n"
+        },
+        "not-empty": {
+            "arity": 2,
+            "message_fields": [
+                "empty"
+            ],
+            "summary": "The container holds something.\n"
+        },
+        "not-equal": {
+            "arity": 3,
+            "message_fields": [
+                "got"
+            ],
+            "summary": "Negation of equal.\n"
+        },
+        "not-nil": {
+            "arity": 2,
+            "message_fields": [
+                "nil"
+            ],
+            "summary": "The value is present. A typed nil counts as nil.\n"
+        },
+        "not-throws": {
+            "arity": 3,
+            "message_fields": [
+                "panic"
+            ],
+            "summary": "A callable does not raise.\n"
+        },
+        "pairwise": {
+            "arity": 4,
+            "message_fields": [
+                "order"
+            ],
+            "summary": "Every adjacent pair of a sequence satisfies a predicate. Nought or one item passes.\n"
+        },
+        "pure": {
+            "arity": 4,
+            "message_fields": [
+                "changed"
+            ],
+            "summary": "Observed state is unchanged across a call.\n"
+        },
+        "rejects": {
+            "arity": 3,
+            "message_fields": [
+                "reject"
+            ],
+            "summary": "A check fails against an implementation it is meant to reject. Yields the failure message.\n"
+        },
+        "throws": {
+            "arity": 3,
+            "message_fields": [
+                "panic"
+            ],
+            "summary": "A callable raises. Yields what was raised.\n"
+        },
+        "true": {
+            "arity": 2,
+            "message_fields": [],
+            "summary": "The condition holds. The failure carries the caller's message alone.\n"
+        }
+    },
+    "version": "1.0.0"
+}

@@ -1,0 +1,28 @@
+{
+  "assertion": "true",
+  "cases": [
+    {
+      "id": "true/true-holds",
+      "args": [
+        {
+          "type": "bool",
+          "value": true
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "true/false-fails",
+      "args": [
+        {
+          "type": "bool",
+          "value": false
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "true"
+      ]
+    }
+  ]
+}

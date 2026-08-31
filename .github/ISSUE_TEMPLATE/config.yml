@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Propose a new assertion
+    url: https://github.com/dokimasia/assert-spec/issues/new?template=assertion.yml
+    about: >
+      The set of assertions is defined by the standard, not by this
+      library. An assertion added here alone would make Rust disagree
+      with every other implementation.
+  - name: Change what an assertion means
+    url: https://github.com/dokimasia/assert-spec/issues/new?template=corpus.yml
+    about: >
+      What an assertion must report is stated by the corpus, which
+      every implementation runs. Argue it there and all of them
+      follow.
+  - name: Rename an assertion
+    url: https://github.com/dokimasia/assert-spec/issues/new?template=naming.yml
+    about: The naming table decides what each language calls things.

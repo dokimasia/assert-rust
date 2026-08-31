@@ -1,0 +1,50 @@
+{
+  "assertion": "not-equal",
+  "cases": [
+    {
+      "id": "not-equal/differing-ints",
+      "args": [
+        {
+          "type": "int",
+          "value": 1
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-equal/identical-ints",
+      "args": [
+        {
+          "type": "int",
+          "value": 1
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "got"
+      ]
+    },
+    {
+      "id": "not-equal/null-against-empty-list",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "expect": "pass"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "assertion": "contains-in-order",
+  "cases": [
+    {
+      "id": "contains-in-order/needles-in-order-pass",
+      "args": [
+        {
+          "type": "string",
+          "value": "a-b-c"
+        },
+        {
+          "type": "list",
+          "of": "string",
+          "value": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains-in-order/no-needles-pass",
+      "args": [
+        {
+          "type": "string",
+          "value": "anything"
+        },
+        {
+          "type": "list",
+          "of": "string",
+          "value": []
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains-in-order/out-of-order-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "a-b-c"
+        },
+        {
+          "type": "list",
+          "of": "string",
+          "value": [
+            "c",
+            "b"
+          ]
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "b"
+      ]
+    },
+    {
+      "id": "contains-in-order/absent-needle-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "a-b-c"
+        },
+        {
+          "type": "list",
+          "of": "string",
+          "value": [
+            "a",
+            "z"
+          ]
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "z"
+      ]
+    },
+    {
+      "id": "contains-in-order/repeated-needle-must-match-twice",
+      "args": [
+        {
+          "type": "string",
+          "value": "a-b"
+        },
+        {
+          "type": "list",
+          "of": "string",
+          "value": [
+            "a",
+            "a"
+          ]
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "a"
+      ]
+    }
+  ]
+}

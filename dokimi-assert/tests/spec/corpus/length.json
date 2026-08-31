@@ -1,0 +1,92 @@
+{
+  "assertion": "length",
+  "cases": [
+    {
+      "id": "length/list-answers",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "type": "int",
+          "value": 3
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/map-answers",
+      "args": [
+        {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/string-answers",
+      "args": [
+        {
+          "type": "string",
+          "value": "abcd"
+        },
+        {
+          "type": "int",
+          "value": 4
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/empty-list-is-zero",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        },
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/wrong-length-reports-both",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1
+          ]
+        },
+        {
+          "type": "int",
+          "value": 3
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "3",
+        "1"
+      ]
+    }
+  ]
+}

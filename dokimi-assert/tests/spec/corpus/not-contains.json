@@ -1,0 +1,61 @@
+{
+  "assertion": "not-contains",
+  "cases": [
+    {
+      "id": "not-contains/absent-element-passes",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "int",
+          "value": 9
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-contains/present-element-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "1"
+      ]
+    },
+    {
+      "id": "not-contains/present-substring-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "hello"
+        },
+        {
+          "type": "string",
+          "value": "ell"
+        }
+      ],
+      "expect": "fail",
+      "message_contains": [
+        "ell"
+      ]
+    }
+  ]
+}
