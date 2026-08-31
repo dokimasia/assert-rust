@@ -35,9 +35,12 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "2"
-      ]
+      "detail": {
+        "length": {
+          "type": "int",
+          "value": 2
+        }
+      }
     }
   ]
 }

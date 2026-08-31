@@ -42,10 +42,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "cache: missing",
-        "store: "
-      ]
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "cache: missing"
+        },
+        "prefix": {
+          "type": "string",
+          "value": "store: "
+        }
+      }
     }
   ]
 }

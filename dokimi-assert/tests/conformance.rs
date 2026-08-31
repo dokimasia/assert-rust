@@ -10,13 +10,16 @@
 
 mod conformance {
     pub mod corpus;
+    pub mod subject;
     pub mod value;
 }
 
 use conformance::corpus::{Case, cases};
 use conformance::value::Value;
+use dokimi_assert::clock::Controlled;
 use dokimi_assert::seat::Recorder;
 use dokimi_assert::{check, soft};
+use std::sync::Arc;
 
 /// Drives one assertion against a case's decoded arguments.
 type Invoke = fn(&Recorder, &[Value], &str);
@@ -132,24 +135,65 @@ fn every_case_agrees_with_this_library() {
                 eprintln!("declared skip: {} ({why})", case.id);
                 continue;
             }
-            let Some((_, invoke)) = registry.iter().find(|(id, _)| *id == case.assertion) else {
+            let held = registry.iter().find(|(id, _)| *id == case.assertion);
+            if held.is_none() && case.subject.is_none() {
                 // A case for an assertion no corpus argument can express
                 // is covered by this crate's own tests instead.
                 continue;
-            };
+            }
 
-            let seat = Recorder::new();
-            invoke(&seat, &case.args, &case.id);
+            let seat = Recorder::new().with_clock(Arc::new(Controlled::new()));
+            if let Some(named) = &case.subject {
+                // A kind this language cannot build is a skip, which is
+                // what the standard states for one an implementation
+                // cannot make.
+                let Some(kind) = conformance::subject::Kind::read(named) else {
+                    skipped += 1;
+                    continue;
+                };
+                if !conformance::subject::run(surface, &case.assertion, kind, &seat, &case.id) {
+                    skipped += 1;
+                    continue;
+                }
+            } else {
+                let (_, invoke) = held.expect("a case stating values has an invoker");
+                invoke(&seat, &case.args, &case.id);
+            }
 
             if let Err(mismatch) = case.verdict(&seat) {
                 panic!("{surface} disagrees with the corpus: {mismatch}");
             }
+            check_where(case, &seat);
             ran += 1;
         }
     }
 
     assert!(ran > 0, "the corpus reached no assertion at all");
     eprintln!("corpus: {ran} case-runs across both surfaces, {skipped} declared skips");
+}
+
+/// Hold every record to naming a real call site outside the library.
+///
+/// A case cannot state a line: the line is wherever the caller put the call. What
+/// every case can state is that the record points somewhere a reader can open, and
+/// never at the machinery that built it. Both call-site bugs this standard has
+/// found were of that shape.
+fn check_where(case: &Case, seat: &Recorder) {
+    for held in seat.failures() {
+        assert!(
+            held.where_at.line > 0,
+            "{}: {} reported line zero",
+            case.id,
+            held.assertion
+        );
+        assert!(
+            !held.where_at.file.contains("/matcher/"),
+            "{}: {} points at {}, which is the library reporting its own frame",
+            case.id,
+            held.assertion,
+            held.where_at.file
+        );
+    }
 }
 
 #[test]
@@ -159,7 +203,8 @@ fn the_verdict_refuses_a_case_it_cannot_read() {
         assertion: "equal".to_owned(),
         args: vec![],
         expect: "maybe".to_owned(),
-        message_contains: vec![],
+        detail: vec![],
+        subject: None,
         skip: None,
     };
     assert!(
@@ -169,20 +214,56 @@ fn the_verdict_refuses_a_case_it_cannot_read() {
 }
 
 #[test]
-fn the_verdict_refuses_a_failure_missing_its_substring() {
+fn the_verdict_refuses_a_failure_that_reported_no_record() {
     let seat = Recorder::new();
-    dokimi_assert::seat::Seat::fail(&seat, "reported without the detail");
+    dokimi_assert::seat::Seat::fail(&seat, "a message reported without a record");
 
     let case = Case {
         id: "x".to_owned(),
         assertion: "equal".to_owned(),
         args: vec![],
         expect: "fail".to_owned(),
-        message_contains: vec!["absent".to_owned()],
+        detail: vec![],
+        subject: None,
         skip: None,
     };
     assert!(
         case.verdict(&seat).is_err(),
-        "a failure that drops a required substring is refused"
+        "a failure that bypassed the record seam is refused"
+    );
+}
+
+#[test]
+fn the_verdict_refuses_a_record_holding_a_different_value() {
+    let seat = Recorder::new();
+    check::equal(&seat, &1_i64, &2_i64, "x");
+
+    let wrong = Case {
+        id: "x".to_owned(),
+        assertion: "equal".to_owned(),
+        args: vec![],
+        expect: "fail".to_owned(),
+        detail: vec![("want".to_owned(), Value::Int(9))],
+        subject: None,
+        skip: None,
+    };
+    assert!(
+        wrong.verdict(&seat).is_err(),
+        "a record whose want differs from the case is refused"
+    );
+
+    let right = Case {
+        id: "x".to_owned(),
+        assertion: "equal".to_owned(),
+        args: vec![],
+        expect: "fail".to_owned(),
+        detail: vec![("want".to_owned(), Value::Int(2))],
+        subject: None,
+        skip: None,
+    };
+    assert!(
+        right.verdict(&seat).is_ok(),
+        "a record matching the case is accepted: {:?}",
+        right.verdict(&seat)
     );
 }

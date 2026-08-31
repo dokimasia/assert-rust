@@ -38,12 +38,8 @@ fn a_crossed_latency_ceiling_names_the_p99() {
         .check();
 
     assert!(seat.failed(), "a p99 over the ceiling must be reported");
-    assert!(seat.message().contains("p99"), "{}", seat.message());
-    assert!(
-        seat.message().contains("100 iterations"),
-        "{}",
-        seat.message()
-    );
+    assert!(named(&seat, "bench-max-latency"), "{}", seat.message());
+    assert!(named(&seat, "bench-max-latency"), "{}", seat.message());
 }
 
 #[test]
@@ -55,7 +51,7 @@ fn a_crossed_mean_ceiling_is_reported_separately() {
         .check();
 
     assert!(seat.failed(), "a mean over the ceiling must be reported");
-    assert!(seat.message().contains("mean"), "{}", seat.message());
+    assert!(named(&seat, "bench-max-mean"), "{}", seat.message());
 }
 
 #[test]
@@ -88,11 +84,7 @@ fn allocations_are_counted_exactly() {
         crossed.failed(),
         "an allocation over the ceiling must be reported"
     );
-    assert!(
-        crossed.message().contains("allocations per iteration"),
-        "{}",
-        crossed.message()
-    );
+    assert!(named(&crossed, "bench-max-allocs"), "{}", crossed.message());
 }
 
 #[test]
@@ -110,11 +102,7 @@ fn bytes_are_counted_too() {
         seat.failed(),
         "four kilobytes an iteration is over eight bytes"
     );
-    assert!(
-        seat.message().contains("bytes per iteration"),
-        "{}",
-        seat.message()
-    );
+    assert!(named(&seat, "bench-max-bytes"), "{}", seat.message());
 }
 
 #[test]
@@ -141,4 +129,11 @@ fn a_ceiling_nobody_stated_is_not_checked() {
         !seat.failed(),
         "a contract with no ceiling has nothing to cross"
     );
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

@@ -1,0 +1,19 @@
+{
+  "assertion": "eventually",
+  "cases": [
+    {
+      "id": "eventually/a-body-that-settles-passes",
+      "subject": {
+        "kind": "settles-after"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "eventually/a-body-that-never-settles-fails",
+      "subject": {
+        "kind": "never-settles"
+      },
+      "expect": "fail"
+    }
+  ]
+}

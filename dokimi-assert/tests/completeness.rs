@@ -8,6 +8,8 @@
 //!
 //! What is checked at run time is only that this file has not fallen behind the table.
 
+use dokimi_assert::clock::{Clock, Controlled, System};
+use dokimi_assert::failure::{Detail, Failure, Where};
 use dokimi_assert::seat::{Recorder, Seat};
 use dokimi_assert::{bench, check, golden, soft};
 use std::error::Error;
@@ -300,12 +302,35 @@ fn every_surface_row_exists_under_its_name() {
         dokimi_assert::seat::Collector::collected;
     let _: fn(&dokimi_assert::seat::Collector) = dokimi_assert::seat::Collector::flush;
 
+    // the clock a seat carries, and the one a test moves
+    let _: Option<&dyn Clock> = None;
+    let _: fn() -> Controlled = Controlled::new;
+    let _: fn() -> System = System::new;
+    let _: Option<Failure> = None;
+    let _: Option<Where> = None;
+    pins_failure_detail();
+    let _: fn(&Recorder, &Failure, bool) = <Recorder as Seat>::report;
+    let _: fn(&Controlled) -> Duration = <Controlled as Clock>::now;
+    let _: fn(&Controlled, Duration) = <Controlled as Clock>::sleep;
+    let _: fn(&Controlled, Duration) = <Controlled as Clock>::advance;
+    let _: fn(&Recorder) -> &dyn Clock = <Recorder as Seat>::clock;
+    let _: fn(&Recorder) -> Vec<Failure> = Recorder::failures;
+
     // helpers
     let _: fn() -> golden::Scrubber = golden::scrub_timestamps;
     let _: fn() -> golden::Scrubber = golden::scrub_hashes;
     let _: fn() -> golden::Scrubber = golden::scrub_run_ids;
     let _: fn(&[&str]) -> golden::Scrubber = golden::scrub_json_fields;
     let _: fn() -> bool = golden::should_update;
+}
+
+/// The record's reader, pinned with the lifetime it borrows for.
+#[expect(
+    clippy::extra_unused_lifetimes,
+    reason = "the lifetime is what lets the annotation inside be written at all"
+)]
+fn pins_failure_detail<'f>() {
+    let _: fn(&'f Failure, &str) -> Option<&'f Detail> = Failure::detail;
 }
 
 /// The contract rows, pinned with the lifetime their type carries.
@@ -332,6 +357,18 @@ fn the_surface_table_names_nothing_this_file_leaves_out() {
     let surface = table["surface"]
         .as_object()
         .expect("the table states a surface");
+
+    // A row the overlay declines is answered, so it needs no pin.
+    let overlay_raw = std::fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/spec/overlay.json"),
+    )
+    .expect("the vendored overlay is readable");
+    let overlay: serde_json::Value =
+        serde_json::from_str(&overlay_raw).expect("the overlay is JSON");
+    let waived: Vec<&str> = overlay["surface"]
+        .as_array()
+        .map(|held| held.iter().filter_map(|one| one["id"].as_str()).collect())
+        .unwrap_or_default();
     let source = include_str!("completeness.rs");
 
     let mut missing: Vec<String> = Vec::new();
@@ -341,7 +378,11 @@ fn the_surface_table_names_nothing_this_file_leaves_out() {
             .expect("a section is an object")
         {
             let Some(name) = per_language["rust"].as_str() else {
-                panic!("{sid} has no rust name and rust declines no surface ids");
+                assert!(
+                    waived.contains(&sid.as_str()),
+                    "{sid} has no rust name and the overlay does not decline it"
+                );
+                continue;
             };
             let leaf = name.rsplit('.').next().expect("a name has a last segment");
             if !source.contains(leaf) {

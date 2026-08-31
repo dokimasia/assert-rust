@@ -1,0 +1,19 @@
+{
+  "assertion": "honours-deadline",
+  "cases": [
+    {
+      "id": "honours-deadline/a-subject-that-reads-the-handle-passes",
+      "subject": {
+        "kind": "reads-handle"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "honours-deadline/a-subject-that-ignores-it-fails",
+      "subject": {
+        "kind": "ignores-handle"
+      },
+      "expect": "fail"
+    }
+  ]
+}

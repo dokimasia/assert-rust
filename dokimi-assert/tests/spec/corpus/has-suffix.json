@@ -28,9 +28,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "types.go"
-      ]
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "types.go"
+        },
+        "suffix": {
+          "type": "string",
+          "value": ".gen.go"
+        }
+      }
     }
   ]
 }

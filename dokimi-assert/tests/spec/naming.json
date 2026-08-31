@@ -398,6 +398,22 @@
             }
         },
         "members": {
+            "clock.now": {
+                "go": "Now",
+                "java": "now",
+                "kotlin": "now",
+                "python": "now",
+                "rust": "now",
+                "typescript": "now"
+            },
+            "clock.sleep": {
+                "go": "Sleep",
+                "java": "sleep",
+                "kotlin": "sleep",
+                "python": "sleep",
+                "rust": "sleep",
+                "typescript": "sleep"
+            },
             "collector-seat.collected": {
                 "java": "collected",
                 "kotlin": "collected",
@@ -428,6 +444,38 @@
                 "rust": "run",
                 "typescript": "loop"
             },
+            "controlled-clock.advance": {
+                "go": "Advance",
+                "java": "advance",
+                "kotlin": "advance",
+                "python": "advance",
+                "rust": "advance",
+                "typescript": "advance"
+            },
+            "failure.assertion": {
+                "go": "Assertion",
+                "java": "assertion",
+                "kotlin": "assertion",
+                "python": "assertion",
+                "rust": "assertion",
+                "typescript": "assertion"
+            },
+            "failure.contract": {
+                "go": "Contract",
+                "java": "contract",
+                "kotlin": "contract",
+                "python": "contract",
+                "rust": "contract",
+                "typescript": "contract"
+            },
+            "failure.detail": {
+                "go": "Detail",
+                "java": "detail",
+                "kotlin": "detail",
+                "python": "detail",
+                "rust": "detail",
+                "typescript": "detail"
+            },
             "recorder-seat.failed": {
                 "go": "Failed",
                 "java": "failed",
@@ -435,6 +483,14 @@
                 "python": "failed",
                 "rust": "failed",
                 "typescript": "failed"
+            },
+            "recorder-seat.failures": {
+                "go": "Failures",
+                "java": "failures",
+                "kotlin": "failures",
+                "python": "failures",
+                "rust": "failures",
+                "typescript": "failures"
             },
             "recorder-seat.helper-calls": {
                 "go": "HelperCalls",
@@ -460,6 +516,14 @@
                 "rust": "messages",
                 "typescript": "messages"
             },
+            "seat.clock": {
+                "go": "Clock",
+                "java": "clock",
+                "kotlin": "clock",
+                "python": "clock",
+                "rust": "clock",
+                "typescript": "clock"
+            },
             "seat.fail": {
                 "go": "Fatalf",
                 "java": "fail",
@@ -483,9 +547,30 @@
                 "python": "record",
                 "rust": "record",
                 "typescript": "record"
+            },
+            "seat.report": {
+                "go": "Report",
+                "java": "report",
+                "kotlin": "report",
+                "python": "report",
+                "rust": "report",
+                "typescript": "report"
             }
         },
         "types": {
+            "clock": {
+                "go": "Clock",
+                "java": "Clock",
+                "kotlin": "Clock",
+                "python": "Clock",
+                "rust": "Clock",
+                "typescript": "Clock"
+            },
+            "clocked": {
+                "go": "Clocked",
+                "java": "Clocked",
+                "kotlin": "Clocked"
+            },
             "collector-seat": {
                 "go": "testing.T",
                 "java": "Collector",
@@ -502,6 +587,22 @@
                 "rust": "bench.Contract",
                 "typescript": "bench.Contract"
             },
+            "controlled-clock": {
+                "go": "Controlled",
+                "java": "Controlled",
+                "kotlin": "Controlled",
+                "python": "Controlled",
+                "rust": "Controlled",
+                "typescript": "Controlled"
+            },
+            "failure": {
+                "go": "Failure",
+                "java": "Failure",
+                "kotlin": "Failure",
+                "python": "Failure",
+                "rust": "Failure",
+                "typescript": "Failure"
+            },
             "recorder-seat": {
                 "go": "Recorder",
                 "java": "Recorder",
@@ -509,6 +610,11 @@
                 "python": "Recorder",
                 "rust": "Recorder",
                 "typescript": "Recorder"
+            },
+            "reporter": {
+                "go": "Reporter",
+                "java": "Reporter",
+                "kotlin": "Reporter"
             },
             "scrubber": {
                 "go": "golden.Scrubber",
@@ -532,6 +638,22 @@
                 "python": "Standard",
                 "rust": "Standard",
                 "typescript": "Standard"
+            },
+            "system-clock": {
+                "go": "System",
+                "java": "SystemClock",
+                "kotlin": "SystemClock",
+                "python": "System",
+                "rust": "System",
+                "typescript": "System"
+            },
+            "where": {
+                "go": "Where",
+                "java": "Where",
+                "kotlin": "Where",
+                "python": "Where",
+                "rust": "Where",
+                "typescript": "Where"
             }
         }
     },

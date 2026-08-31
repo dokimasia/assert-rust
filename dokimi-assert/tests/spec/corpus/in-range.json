@@ -72,9 +72,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "80"
-      ]
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 80
+        },
+        "low": {
+          "type": "float",
+          "value": 1024
+        },
+        "high": {
+          "type": "float",
+          "value": 65535
+        }
+      }
     },
     {
       "id": "in-range/nan-is-in-no-range",
@@ -93,9 +104,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "NaN"
-      ]
+      "detail": {
+        "got": {
+          "type": "float",
+          "value": "NaN"
+        },
+        "low": {
+          "type": "float",
+          "value": 0
+        },
+        "high": {
+          "type": "float",
+          "value": 100
+        }
+      }
     },
     {
       "id": "in-range/inverted-range-fails",
@@ -114,9 +136,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "empty range"
-      ]
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 5
+        },
+        "low": {
+          "type": "float",
+          "value": 10
+        },
+        "high": {
+          "type": "float",
+          "value": 1
+        }
+      }
     }
   ]
 }

@@ -42,9 +42,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "zzz"
-      ]
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "zzz"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      }
     },
     {
       "id": "matches/anchored-rejects-partial",
@@ -58,7 +65,17 @@
           "value": "^[0-9a-f]+$"
         }
       ],
-      "expect": "fail"
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "id=deadbeef"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      }
     }
   ]
 }

@@ -18,15 +18,13 @@ fn a_pattern_that_does_not_compile_is_reported_as_a_broken_pattern() {
     );
 
     assert!(seat.failed(), "a pattern that cannot compile has to say so");
-    assert!(
-        seat.message().contains("does not compile"),
-        "{}",
-        seat.message()
-    );
+    assert!(named(&seat, "matches"), "{}", seat.message());
     // Without this the message reads as a subject that failed to match,
     // and the typo sends someone looking for a bug in the code under test.
     assert!(
-        !seat.message().contains("does not match"),
+        seat.failures()[0]
+            .detail("pattern")
+            .is_some_and(|held| held.to_string().contains("[unclosed")),
         "{}",
         seat.message()
     );
@@ -77,7 +75,7 @@ fn nan_is_outside_every_tolerance() {
         let seat = Recorder::new();
         check::close_to(&seat, got, want, tolerance, "the rate is about one");
         assert!(seat.failed(), "{why}");
-        assert!(seat.message().contains("NaN"), "{}", seat.message());
+        assert!(named(&seat, "close-to"), "{}", seat.message());
     }
 }
 
@@ -116,7 +114,7 @@ fn a_range_with_the_bounds_reversed_says_so() {
         seat.failed(),
         "a range that can hold nothing is the mistake, not the value"
     );
-    assert!(seat.message().contains("empty range"), "{}", seat.message());
+    assert!(named(&seat, "in-range"), "{}", seat.message());
 }
 
 #[test]
@@ -161,4 +159,11 @@ fn equality_is_the_languages_own_and_already_says_what_the_standard_wants() {
         "containers compare by their elements",
     );
     assert!(!arrays.failed(), "{}", arrays.message());
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

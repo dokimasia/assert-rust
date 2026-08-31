@@ -292,6 +292,26 @@ proposed. What the harness does not give is a hook after the test body,
 which is why `Collector` reports from a drop; a framework offering one
 could report more directly.
 
+### The failure record holds the caller's values as text
+
+A failure carries named values, and here they are typed where the
+library computed them and text where they came from the caller.
+
+An assertion is generic over what it compares: `equal` takes any `T`
+that is `PartialEq + Debug`. Requiring `T: Into<Detail>` would stop a
+caller comparing their own types, which is the thing that makes the
+library useful. So `want` and `got` on the comparing assertions hold
+what the assertion would have printed.
+
+Everything the library measures itself is a number. `length`, `index`,
+`attempts` and the ends of a range are counts and reals rather than
+renderings, and the corpus compares them as numbers.
+
+That leaves a real limit on the fields holding a caller's value: two
+values that print alike are not told apart. It is smaller than it was,
+and it is the price of an assertion that compares anything.
+
+
 ## References
 
 - The standard, its corpus and the overlay format:

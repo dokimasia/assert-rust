@@ -1,6 +1,7 @@
 //! Reading the corpus, and saying whether an outcome matched a case.
 
 use super::value::{Value, decode};
+use dokimi_assert::failure::{Detail, Failure};
 use dokimi_assert::seat::Recorder;
 use serde_json::Value as Json;
 use std::path::Path;
@@ -16,8 +17,12 @@ pub struct Case {
     pub args: Vec<Value>,
     /// Whether the call should pass or fail.
     pub expect: String,
-    /// Substrings the failure has to carry.
-    pub message_contains: Vec<String>,
+    /// What the failure's record has to hold, keyed by the names the assertion
+    /// declares. A field the case leaves out is not checked.
+    pub detail: Vec<(String, Value)>,
+    /// The behaviour this case hands the assertion in place of arguments, or None
+    /// for a case that states values.
+    pub subject: Option<String>,
     /// Why this language skips the case, when it does.
     pub skip: Option<String>,
 }
@@ -37,22 +42,90 @@ impl Case {
             "pass" => Ok(()),
             "fail" if !seat.failed() => Err(format!("{}: expects fail, got pass", self.id)),
             "fail" => {
-                let got = seat.message();
-                for wanted in &self.message_contains {
-                    if !got.contains(wanted.as_str()) {
-                        return Err(format!(
-                            "{}: failure {got:?} does not carry {wanted:?}",
-                            self.id
-                        ));
-                    }
-                }
-                Ok(())
+                let Some(held) = seat.failures().into_iter().next() else {
+                    return Err(format!(
+                        "{}: reported no record; the assertion did not report one",
+                        self.id
+                    ));
+                };
+                self.check_detail(&held)
             }
             other => Err(format!(
                 "{}: states an unknown expectation {other:?}",
                 self.id
             )),
         }
+    }
+
+    /// Say how a record's detail differs from what this case states.
+    ///
+    /// Rust's records hold text rather than values, because there is no untyped value to
+    /// put in a field. A case states a typed literal, so the comparison is against the
+    /// two ways an assertion writes one: the value's own `Debug`, and the plain scalar a
+    /// count or a measurement is written as.
+    fn check_detail(&self, held: &Failure) -> Result<(), String> {
+        for (name, want) in &self.detail {
+            let Some(found) = held.detail(name) else {
+                return Err(format!(
+                    "{}: the record holds no detail {name:?}, want {want:?}",
+                    self.id
+                ));
+            };
+            if !written_as(want, found) {
+                return Err(format!(
+                    "{}: detail {name:?} is {found:?}, want {want:?}",
+                    self.id
+                ));
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Whether a reported field is how an assertion writes this value.
+///
+/// A NaN is unequal to itself under the standard's own rules, but here the question is
+/// whether the assertion reported the value the case named, so the text settles it.
+fn written_as(want: &Value, found: &Detail) -> bool {
+    // A field the library computed is compared as the number it is. One
+    // holding the caller's own value is text, because an assertion is
+    // generic over what it compares.
+    match (want, found) {
+        (Value::Int(held), Detail::Count(at)) => usize::try_from(*held) == Ok(*at),
+        // A whole number stated where the library reported a real one
+        // is compared by rendering, which loses nothing either way.
+        (Value::Int(held), Detail::Number(at)) => at.to_string() == held.to_string(),
+        (Value::Float(held), Detail::Number(at)) => same_number(*at, *held),
+        (_, Detail::Said(said)) => said_as(want, said),
+        _ => false,
+    }
+}
+
+/// Whether two readings are the same number.
+///
+/// A NaN is unequal to itself under the standard's own rules, but here the
+/// question is whether the assertion reported the value the case named.
+fn same_number(at: f64, held: f64) -> bool {
+    // A NaN is unequal to itself and an infinity minus itself is a NaN,
+    // so neither survives a tolerance. Both are settled by rendering.
+    if !at.is_finite() || !held.is_finite() {
+        return at.to_string() == held.to_string();
+    }
+    (at - held).abs() <= f64::EPSILON * at.abs().max(held.abs()).max(1.0)
+}
+
+/// Whether a rendered field is how an assertion writes this value.
+fn said_as(want: &Value, found: &str) -> bool {
+    if found == format!("{want:?}") {
+        return true;
+    }
+    match want {
+        Value::Int(held) => found == held.to_string(),
+        Value::Float(held) => found == held.to_string(),
+        Value::Str(held) => found == *held || found == format!("{held:?}"),
+        Value::Bool(held) => found == held.to_string(),
+        Value::List(items) => found == format!("{items:?}"),
+        Value::Null | Value::Map(_) => false,
     }
 }
 
@@ -103,14 +176,17 @@ pub fn cases() -> Vec<Case> {
                     .as_str()
                     .expect("a case states an outcome")
                     .to_owned(),
-                message_contains: raw["message_contains"]
-                    .as_array()
+                detail: raw["detail"]
+                    .as_object()
                     .map(|held| {
                         held.iter()
-                            .filter_map(|one| one.as_str().map(str::to_owned))
+                            .filter_map(|(name, one)| {
+                                decode(one).ok().map(|value| (name.clone(), value))
+                            })
                             .collect()
                     })
                     .unwrap_or_default(),
+                subject: raw["subject"]["kind"].as_str().map(str::to_owned),
                 skip: raw["skip"]["rust"].as_str().map(str::to_owned),
             });
         }

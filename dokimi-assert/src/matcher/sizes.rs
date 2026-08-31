@@ -1,6 +1,6 @@
 //! How much a container holds.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
 use std::hash::BuildHasher;
@@ -84,10 +84,12 @@ pub fn length<C: Container + ?Sized>(seat: &dyn Seat, mode: Mode, got: &C, want:
     seat.helper();
     let size = got.size();
     if size != want {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: want length {want}, got {size}"),
+            "length",
+            msg,
+            vec![("want", want.into()), ("got", size.into())],
         );
     }
 }
@@ -100,11 +102,7 @@ pub fn is_empty<C: Container + ?Sized>(seat: &dyn Seat, mode: Mode, got: &C, msg
     seat.helper();
     let size = got.size();
     if size != 0 {
-        report(
-            seat,
-            mode,
-            &format!("{msg}: expected empty, got {size} items"),
-        );
+        fail(seat, mode, "empty", msg, vec![("length", size.into())]);
     }
 }
 
@@ -113,10 +111,6 @@ pub fn is_empty<C: Container + ?Sized>(seat: &dyn Seat, mode: Mode, got: &C, msg
 pub fn is_not_empty<C: Container + ?Sized>(seat: &dyn Seat, mode: Mode, got: &C, msg: &str) {
     seat.helper();
     if got.size() == 0 {
-        report(
-            seat,
-            mode,
-            &format!("{msg}: expected something, got an empty container"),
-        );
+        fail(seat, mode, "not-empty", msg, vec![]);
     }
 }

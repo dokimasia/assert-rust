@@ -28,9 +28,12 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "got"
-      ]
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
     },
     {
       "id": "not-equal/null-against-empty-list",

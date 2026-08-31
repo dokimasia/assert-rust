@@ -52,9 +52,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "b"
-      ]
+      "detail": {
+        "needle": {
+          "type": "string",
+          "value": "b"
+        },
+        "index": {
+          "type": "int",
+          "value": 1
+        }
+      }
     },
     {
       "id": "contains-in-order/absent-needle-fails",
@@ -73,9 +80,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "z"
-      ]
+      "detail": {
+        "needle": {
+          "type": "string",
+          "value": "z"
+        },
+        "index": {
+          "type": "int",
+          "value": 1
+        }
+      }
     },
     {
       "id": "contains-in-order/repeated-needle-must-match-twice",
@@ -94,9 +108,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "a"
-      ]
+      "detail": {
+        "needle": {
+          "type": "string",
+          "value": "a"
+        },
+        "index": {
+          "type": "int",
+          "value": 1
+        }
+      }
     }
   ]
 }

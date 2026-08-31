@@ -1,6 +1,6 @@
 //! What a container holds.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
@@ -85,10 +85,15 @@ where
 {
     seat.helper();
     if !haystack.holds(needle) {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: {haystack:?} does not contain {needle:?}"),
+            "contains",
+            msg,
+            vec![
+                ("haystack", format!("{haystack:?}").into()),
+                ("needle", format!("{needle:?}").into()),
+            ],
         );
     }
 }
@@ -102,10 +107,15 @@ where
 {
     seat.helper();
     if haystack.holds(needle) {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: {haystack:?} contains {needle:?}"),
+            "not-contains",
+            msg,
+            vec![
+                ("haystack", format!("{haystack:?}").into()),
+                ("needle", format!("{needle:?}").into()),
+            ],
         );
     }
 }
@@ -118,12 +128,20 @@ where
 pub fn contains_in_order(seat: &dyn Seat, mode: Mode, got: &str, needles: &[&str], msg: &str) {
     seat.helper();
     let mut from = 0;
-    for needle in needles {
+    // The index is the needle's place in the list, not its place in the
+    // text: a needle listed twice must report the one that failed.
+    for (index, needle) in needles.iter().enumerate() {
         let Some(at) = got[from..].find(needle) else {
-            report(
+            fail(
                 seat,
                 mode,
-                &format!("{msg}: {got:?} does not contain {needle:?} after the earlier needles"),
+                "contains-in-order",
+                msg,
+                vec![
+                    ("haystack", format!("{got:?}").into()),
+                    ("needle", format!("{needle:?}").into()),
+                    ("index", index.into()),
+                ],
             );
             return;
         };

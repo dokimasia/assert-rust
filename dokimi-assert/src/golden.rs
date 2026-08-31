@@ -3,7 +3,7 @@
 //! For output too large or too fiddly to write out in a test: record it once, and let the
 //! test say only that it has not changed. Set `UPDATE_GOLDEN=1` to rewrite the files.
 
-use crate::matcher::{Mode, report};
+use crate::matcher::{Mode, fail, report};
 use crate::seat::Seat;
 use std::path::{Path, PathBuf};
 
@@ -159,14 +159,15 @@ pub fn matches_at(seat: &dyn Seat, path: &Path, got: &str, scrubbers: &[Scrubber
 
     let want = scrubbed(&recorded, scrubbers);
     if cleaned != want {
-        report(
+        fail(
             seat,
             Mode::Fatal,
-            &format!(
-                "{} does not match; run the test again with {UPDATE_ENV}=1 to accept it\n\
-                 --- recorded\n{want}\n--- got\n{cleaned}",
-                path.display()
-            ),
+            "golden-match-at",
+            &path.display().to_string(),
+            vec![
+                ("want", want.clone().into()),
+                ("got", cleaned.clone().into()),
+            ],
         );
     }
 }
@@ -236,13 +237,16 @@ pub fn matches_json_field(
     let want = scrubbed(raw.trim(), scrubbers);
     let cleaned = scrubbed(got.trim(), scrubbers);
     if cleaned != want {
-        report(
+        fail(
             seat,
             Mode::Fatal,
-            &format!(
-                "{} field {field:?} does not match\n--- recorded\n{want}\n--- got\n{cleaned}",
-                path.display()
-            ),
+            "golden-match-json-field",
+            &path.display().to_string(),
+            vec![
+                ("want", want.clone().into()),
+                ("got", cleaned.clone().into()),
+                ("field", field.to_owned().into()),
+            ],
         );
     }
 }

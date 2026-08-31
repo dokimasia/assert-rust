@@ -7,7 +7,7 @@
 //! Matching follows the chain of sources, which is what [`Error::source`] is for and what
 //! lets a wrapped failure still be recognised.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use std::error::Error;
 use std::fmt::Debug;
@@ -44,7 +44,13 @@ where
 {
     seat.helper();
     if let Err(error) = got {
-        report(seat, mode, &format!("{msg}: unexpected error {error:?}"));
+        fail(
+            seat,
+            mode,
+            "err-absent",
+            msg,
+            vec![("got", format!("{error:?}").into())],
+        );
     }
 }
 
@@ -55,12 +61,8 @@ where
     T: Debug,
 {
     seat.helper();
-    if let Ok(value) = got {
-        report(
-            seat,
-            mode,
-            &format!("{msg}: expected an error, got {value:?}"),
-        );
+    if got.is_ok() {
+        fail(seat, mode, "err-present", msg, vec![]);
     }
 }
 
@@ -92,10 +94,15 @@ pub fn error_is<T>(
 {
     seat.helper();
     if !matched(error, target) {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: {error} does not match {target:?}"),
+            "err-is",
+            msg,
+            vec![
+                ("want", format!("{target:?}").into()),
+                ("got", format!("{error}").into()),
+            ],
         );
     }
 }
@@ -113,7 +120,13 @@ pub fn error_is_not<T>(
 {
     seat.helper();
     if matched(error, target) {
-        report(seat, mode, &format!("{msg}: {error} matches {target:?}"));
+        fail(
+            seat,
+            mode,
+            "err-is-not",
+            msg,
+            vec![("got", format!("{error}").into())],
+        );
     }
 }
 
@@ -136,10 +149,15 @@ where
         .into_iter()
         .find_map(<dyn Error>::downcast_ref::<T>);
     if found.is_none() {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: no {} in {error}", std::any::type_name::<T>()),
+            "err-as",
+            msg,
+            vec![
+                ("want", std::any::type_name::<T>().into()),
+                ("got", format!("{error}").into()),
+            ],
         );
     }
     found

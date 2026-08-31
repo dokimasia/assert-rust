@@ -69,9 +69,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "9"
-      ]
+      "detail": {
+        "haystack": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        "needle": {
+          "type": "int",
+          "value": 9
+        }
+      }
     },
     {
       "id": "contains/absent-substring-fails",
@@ -86,9 +97,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "xyz"
-      ]
+      "detail": {
+        "haystack": {
+          "type": "string",
+          "value": "hello"
+        },
+        "needle": {
+          "type": "string",
+          "value": "xyz"
+        }
+      }
     },
     {
       "id": "contains/absent-key-fails",
@@ -107,9 +125,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "b"
-      ]
+      "detail": {
+        "haystack": {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        "needle": {
+          "type": "string",
+          "value": "b"
+        }
+      }
     }
   ]
 }

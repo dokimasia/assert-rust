@@ -1,6 +1,6 @@
 //! How neighbouring items relate.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use std::fmt::Debug;
 
@@ -21,10 +21,16 @@ where
     for (at, pair) in items.windows(2).enumerate() {
         let (earlier, later) = (&pair[0], &pair[1]);
         if !predicate(earlier, later) {
-            report(
+            fail(
                 seat,
                 mode,
-                &format!("{msg}: the pair at index {at} fails: {earlier:?} then {later:?}"),
+                "pairwise",
+                msg,
+                vec![
+                    ("index", at.into()),
+                    ("first", format!("{earlier:?}").into()),
+                    ("second", format!("{later:?}").into()),
+                ],
             );
             return;
         }

@@ -2,54 +2,62 @@
     "assertions": {
         "bench-max-allocs": {
             "arity": 1,
-            "message_fields": [
-                "ceiling"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "package": "bench",
             "summary": "The allocations per iteration stay within a ceiling.\n"
         },
         "bench-max-bytes": {
             "arity": 1,
-            "message_fields": [
-                "ceiling"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "package": "bench",
             "summary": "The bytes allocated per iteration stay within a ceiling.\n"
         },
         "bench-max-latency": {
             "arity": 1,
-            "message_fields": [
-                "ceiling"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "package": "bench",
             "summary": "The p99 latency per iteration stays within a ceiling.\n"
         },
         "bench-max-mean": {
             "arity": 1,
-            "message_fields": [
-                "ceiling"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "package": "bench",
             "summary": "The mean latency per iteration stays within a ceiling.\n"
         },
         "close-to": {
             "arity": 4,
-            "message_fields": [
-                "within"
+            "detail_fields": [
+                "got",
+                "want",
+                "tolerance"
             ],
             "summary": "A number is within a tolerance of another, by absolute difference. NaN is outside every tolerance.\n"
         },
         "completes-within": {
             "arity": 4,
-            "message_fields": [
-                "within"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "summary": "A subject finishes before the stated duration.\n"
         },
         "contains": {
             "arity": 3,
-            "message_fields": [
-                "contain"
+            "detail_fields": [
+                "haystack",
+                "needle"
             ],
             "relaxations": [
                 "equate-empty",
@@ -59,21 +67,23 @@
         },
         "contains-in-order": {
             "arity": 3,
-            "message_fields": [
-                "found"
+            "detail_fields": [
+                "haystack",
+                "needle",
+                "index"
             ],
             "summary": "Text holds every needle, each after the previous one's match ends.\n"
         },
         "empty": {
             "arity": 2,
-            "message_fields": [
-                "empty"
+            "detail_fields": [
+                "length"
             ],
             "summary": "The container holds nothing.\n"
         },
         "equal": {
             "arity": 3,
-            "message_fields": [
+            "detail_fields": [
                 "want",
                 "got"
             ],
@@ -85,61 +95,62 @@
         },
         "err-absent": {
             "arity": 3,
-            "message_fields": [
-                "error"
+            "detail_fields": [
+                "got"
             ],
             "summary": "No failure value is present.\n"
         },
         "err-as": {
             "arity": 3,
-            "message_fields": [
-                "type"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "summary": "A failure of the given type is in the chain. Yields it.\n"
         },
         "err-is": {
             "arity": 4,
-            "message_fields": [
-                "want"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "summary": "A failure matches a sentinel, through the chain of wrapped causes.\n"
         },
         "err-is-not": {
             "arity": 4,
-            "message_fields": [
-                "distinct"
+            "detail_fields": [
+                "got"
             ],
             "summary": "A failure does not match a sentinel.\n"
         },
         "err-present": {
             "arity": 3,
-            "message_fields": [
-                "error"
-            ],
+            "detail_fields": [],
             "summary": "Some failure value is present.\n"
         },
         "eventually": {
             "arity": 5,
-            "message_fields": [
-                "still"
+            "detail_fields": [
+                "attempts",
+                "last"
             ],
             "summary": "An assertion body passes within a timeout, retried at an interval. Reports the last failure.\n"
         },
         "eventually-true": {
             "arity": 4,
-            "message_fields": [
-                "still"
+            "detail_fields": [
+                "attempts"
             ],
             "summary": "A predicate becomes true within a timeout, retried with backoff.\n"
         },
         "false": {
             "arity": 2,
-            "message_fields": [],
+            "detail_fields": [],
             "summary": "The condition does not hold.\n"
         },
         "golden-match": {
             "arity": 5,
-            "message_fields": [
+            "detail_fields": [
                 "want",
                 "got"
             ],
@@ -148,7 +159,7 @@
         },
         "golden-match-at": {
             "arity": 5,
-            "message_fields": [
+            "detail_fields": [
                 "want",
                 "got"
             ],
@@ -157,87 +168,95 @@
         },
         "golden-match-json-field": {
             "arity": 6,
-            "message_fields": [
+            "detail_fields": [
                 "want",
-                "got"
+                "got",
+                "field"
             ],
             "package": "golden",
             "summary": "Output matches one named field of a golden JSON object.\n"
         },
         "has-prefix": {
             "arity": 3,
-            "message_fields": [
-                "start"
+            "detail_fields": [
+                "got",
+                "prefix"
             ],
             "summary": "Text starts with the given prefix.\n"
         },
         "has-suffix": {
             "arity": 3,
-            "message_fields": [
-                "end"
+            "detail_fields": [
+                "got",
+                "suffix"
             ],
             "summary": "Text ends with the given suffix.\n"
         },
         "honours-cancellation": {
             "arity": 3,
-            "message_fields": [
-                "cancel"
+            "detail_fields": [
+                "got"
             ],
             "summary": "A subject given a cancelled handle reports a cancellation failure.\n"
         },
         "honours-deadline": {
             "arity": 3,
-            "message_fields": [
-                "deadline"
+            "detail_fields": [
+                "got"
             ],
             "summary": "A subject given an expired deadline reports a deadline failure.\n"
         },
         "in-range": {
             "arity": 4,
-            "message_fields": [
-                "range"
+            "detail_fields": [
+                "got",
+                "low",
+                "high"
             ],
             "summary": "A number falls in a closed interval. NaN is in no range.\n"
         },
         "length": {
             "arity": 3,
-            "message_fields": [
-                "length"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "summary": "The container holds the stated number of items. Answers for any sized container or text.\n"
         },
         "matches": {
             "arity": 3,
-            "message_fields": [
-                "match"
+            "detail_fields": [
+                "got",
+                "pattern"
             ],
             "summary": "Text matches a regular expression. A pattern that does not compile is a failure, not an error.\n"
         },
         "nil": {
             "arity": 2,
-            "message_fields": [
-                "nil"
+            "detail_fields": [
+                "got"
             ],
             "summary": "The value is absent. A typed nil counts as nil.\n"
         },
         "nil-context-safe": {
             "arity": 3,
-            "message_fields": [
-                "panic"
+            "detail_fields": [
+                "got"
             ],
             "summary": "A subject given an absent cancellation handle does not crash.\n"
         },
         "no-task-leaks": {
             "arity": 2,
-            "message_fields": [
-                "running"
+            "detail_fields": [
+                "leaked"
             ],
             "summary": "No concurrent task started in the scope outlives it.\n"
         },
         "not-contains": {
             "arity": 3,
-            "message_fields": [
-                "contain"
+            "detail_fields": [
+                "haystack",
+                "needle"
             ],
             "relaxations": [
                 "equate-empty",
@@ -247,14 +266,12 @@
         },
         "not-empty": {
             "arity": 2,
-            "message_fields": [
-                "empty"
-            ],
+            "detail_fields": [],
             "summary": "The container holds something.\n"
         },
         "not-equal": {
             "arity": 3,
-            "message_fields": [
+            "detail_fields": [
                 "got"
             ],
             "relaxations": [
@@ -265,29 +282,30 @@
         },
         "not-nil": {
             "arity": 2,
-            "message_fields": [
-                "nil"
-            ],
+            "detail_fields": [],
             "summary": "The value is present. A typed nil counts as nil.\n"
         },
         "not-throws": {
             "arity": 3,
-            "message_fields": [
-                "panic"
+            "detail_fields": [
+                "got"
             ],
             "summary": "A callable does not raise.\n"
         },
         "pairwise": {
             "arity": 4,
-            "message_fields": [
-                "order"
+            "detail_fields": [
+                "index",
+                "first",
+                "second"
             ],
             "summary": "Every adjacent pair of a sequence satisfies a predicate. Nought or one item passes.\n"
         },
         "pure": {
             "arity": 4,
-            "message_fields": [
-                "changed"
+            "detail_fields": [
+                "want",
+                "got"
             ],
             "relaxations": [
                 "equate-empty",
@@ -297,21 +315,17 @@
         },
         "rejects": {
             "arity": 3,
-            "message_fields": [
-                "reject"
-            ],
+            "detail_fields": [],
             "summary": "A check fails against an implementation it is meant to reject. Yields the failure message.\n"
         },
         "throws": {
             "arity": 3,
-            "message_fields": [
-                "panic"
-            ],
+            "detail_fields": [],
             "summary": "A callable raises. Yields what was raised.\n"
         },
         "true": {
             "arity": 2,
-            "message_fields": [],
+            "detail_fields": [],
             "summary": "The condition holds. The failure carries the caller's message alone.\n"
         }
     },
@@ -321,6 +335,38 @@
         },
         "equate-nans": {
             "summary": "A NaN equals another NaN of the same type. Without it NaN is unequal to itself, which is what IEEE 754 states and what the standard states by default.\n"
+        }
+    },
+    "subjects": {
+        "accumulates": {
+            "summary": "Changes the observed state once per call.\n"
+        },
+        "dereferences-handle": {
+            "summary": "Reads a handle without checking it is there, so a missing one crashes it.\n"
+        },
+        "fails-otherwise": {
+            "summary": "Answers a failure of its own, unrelated to any handle it was given.\n"
+        },
+        "ignores-handle": {
+            "summary": "Answers success without reading the handle at all.\n"
+        },
+        "leaves-state-alone": {
+            "summary": "Reads the observed state and changes nothing.\n"
+        },
+        "never-settles": {
+            "summary": "Reports a failure on every attempt.\n"
+        },
+        "raises": {
+            "summary": "Raises rather than answering.\n"
+        },
+        "reads-handle": {
+            "summary": "Reads the cancellation handle and answers the reason it gives, or success when the handle is absent or still running.\n"
+        },
+        "returns-ok": {
+            "summary": "Does the work and answers success, whatever it was handed.\n"
+        },
+        "settles-after": {
+            "summary": "Reports a failure twice and succeeds on the third attempt.\n"
         }
     },
     "version": "1.0.0"

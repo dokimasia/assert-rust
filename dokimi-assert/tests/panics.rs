@@ -30,11 +30,7 @@ fn panics_reports_a_body_that_returns() {
         raised.is_none(),
         "nothing panicked, so there is nothing to hand back"
     );
-    assert!(
-        seat.message().contains("without panicking"),
-        "{}",
-        seat.message()
-    );
+    assert!(named(&seat, "throws"), "{}", seat.message());
 }
 
 #[test]
@@ -64,7 +60,9 @@ fn does_not_panic_passes_a_quiet_body_and_reports_a_panicking_one() {
     );
     assert!(failing.failed(), "a panic must be reported");
     assert!(
-        failing.message().contains("bad input"),
+        failing.failures()[0]
+            .detail("got")
+            .is_some_and(|got| got.to_string().contains("bad input")),
         "{}",
         failing.message()
     );
@@ -82,4 +80,11 @@ fn an_expected_panic_leaves_the_hook_working_for_other_threads() {
         elsewhere.join().expect("the thread runs").is_err(),
         "an unrelated panic still unwinds"
     );
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

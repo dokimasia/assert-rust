@@ -65,7 +65,7 @@ fn has_error_passes_err_and_reports_ok() {
     let failing = Recorder::new();
     check::has_error(&failing, &Ok::<i32, Refused>(7), "the call refuses");
     assert!(failing.failed(), "the absence of an error must be reported");
-    assert!(failing.message().contains('7'), "{}", failing.message());
+    assert!(named(&failing, "err-present"), "{}", failing.message());
 }
 
 #[test]
@@ -87,11 +87,7 @@ fn error_is_matches_and_rejects() {
         "the reason is stated",
     );
     assert!(failing.failed(), "a different value must be reported");
-    assert!(
-        failing.message().contains("does not match"),
-        "{}",
-        failing.message()
-    );
+    assert!(named(&failing, "err-is"), "{}", failing.message());
 }
 
 #[test]
@@ -125,11 +121,7 @@ fn error_is_not_is_the_mirror() {
         "it fails otherwise",
     );
     assert!(failing.failed(), "a match must be reported");
-    assert!(
-        failing.message().contains("matches"),
-        "{}",
-        failing.message()
-    );
+    assert!(named(&failing, "err-is-not"), "{}", failing.message());
 }
 
 #[test]
@@ -219,4 +211,11 @@ fn both_surfaces_report_the_same_text() {
         1,
         "soft uses the recording path"
     );
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

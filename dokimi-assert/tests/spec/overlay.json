@@ -28,5 +28,15 @@
       "what": "Sees tasks spawned on the Tokio runtime the test is running under. A thread started with std::thread is not seen.",
       "why": "Rust's standard library has no way to enumerate threads: nothing in std::thread lists them, so the synchronous crate cannot answer the question at all. Tokio counts its own live tasks, which is why this assertion ships in the tokio crate rather than the core."
     }
+  ],
+  "surface": [
+    {
+      "id": "reporter",
+      "why": "The seat states report and clock itself, with a default, so a seat that supplies neither gets the platform clock and a rendered sentence. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    },
+    {
+      "id": "clocked",
+      "why": "The seat states report and clock itself, with a default, so a seat that supplies neither gets the platform clock and a rendered sentence. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    }
   ]
 }

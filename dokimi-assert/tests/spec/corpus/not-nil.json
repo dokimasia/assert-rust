@@ -18,10 +18,7 @@
           "type": "null"
         }
       ],
-      "expect": "fail",
-      "message_contains": [
-        "nil"
-      ]
+      "expect": "fail"
     }
   ]
 }

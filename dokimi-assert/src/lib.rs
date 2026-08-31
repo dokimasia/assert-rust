@@ -28,6 +28,8 @@
 
 pub mod bench;
 pub mod check;
+pub mod clock;
+pub mod failure;
 pub mod golden;
 pub mod matcher;
 pub mod seat;

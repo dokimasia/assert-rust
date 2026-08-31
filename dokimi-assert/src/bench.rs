@@ -23,7 +23,7 @@
 //! this standard that can count allocations exactly, and this is the price: a library
 //! cannot install an allocator on a caller's behalf.
 
-use crate::matcher::{Mode, report};
+use crate::matcher::{Mode, fail, report};
 use crate::seat::Seat;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
@@ -89,7 +89,6 @@ unsafe impl GlobalAlloc for CountingAllocator {
 /// What one run of the body cost.
 #[derive(Debug)]
 struct Measured {
-    iterations: usize,
     latencies: Vec<Duration>,
     allocations: Option<u64>,
     bytes: Option<u64>,
@@ -201,7 +200,6 @@ impl<'seat> Contract<'seat> {
 
         latencies.sort_unstable();
         self.measured = Some(Measured {
-            iterations,
             latencies,
             allocations,
             bytes,
@@ -225,61 +223,67 @@ impl<'seat> Contract<'seat> {
         if let Some(ceiling) = self.max_latency {
             let p99 = percentile(&run.latencies);
             if p99 > ceiling {
-                self.crossed("p99", p99, ceiling, run.iterations);
+                self.crossed("bench-max-latency", p99, ceiling);
             }
         }
         if let Some(ceiling) = self.max_mean {
             let mean = mean(&run.latencies);
             if mean > ceiling {
-                self.crossed("mean", mean, ceiling, run.iterations);
+                self.crossed("bench-max-mean", mean, ceiling);
             }
         }
-        self.weighed(
-            "allocations",
-            run.allocations,
-            self.max_allocs,
-            run.iterations,
-        );
-        self.weighed("bytes", run.bytes, self.max_bytes, run.iterations);
+        self.weighed("bench-max-allocs", run.allocations, self.max_allocs);
+        self.weighed("bench-max-bytes", run.bytes, self.max_bytes);
     }
 
-    fn crossed(&self, what: &str, measured: Duration, ceiling: Duration, iterations: usize) {
-        report(
+    fn crossed(&self, assertion: &'static str, measured: Duration, ceiling: Duration) {
+        fail(
             self.seat,
             Mode::Fatal,
-            &format!(
-                "{}: {what} was {:.3}ms, want at most {}ms over {iterations} iterations",
-                self.msg,
-                measured.as_secs_f64() * 1000.0,
-                ceiling.as_millis()
-            ),
+            assertion,
+            self.msg,
+            vec![
+                ("want", format!("{}ms", ceiling.as_millis()).into()),
+                (
+                    "got",
+                    format!("{:.3}ms", measured.as_secs_f64() * 1000.0).into(),
+                ),
+            ],
         );
     }
 
     /// Report a crossed allocation ceiling, or that nothing was counting.
-    fn weighed(&self, what: &str, measured: Option<u64>, ceiling: Option<u64>, iterations: usize) {
+    fn weighed(&self, assertion: &'static str, measured: Option<u64>, ceiling: Option<u64>) {
         let Some(ceiling) = ceiling else { return };
         let Some(measured) = measured else {
-            report(
+            // Nothing counted, which is the allocator being absent rather
+            // than a ceiling being crossed. It still reports as the
+            // assertion the caller wrote.
+            fail(
                 self.seat,
                 Mode::Fatal,
-                &format!(
-                    "{}: a ceiling on {what} needs CountingAllocator installed as the \
-                     global allocator, and nothing counted this run",
-                    self.msg
-                ),
+                assertion,
+                self.msg,
+                vec![
+                    ("want", format!("{ceiling}").into()),
+                    (
+                        "got",
+                        "nothing counted; CountingAllocator is not installed".into(),
+                    ),
+                ],
             );
             return;
         };
         if measured > ceiling {
-            report(
+            fail(
                 self.seat,
                 Mode::Fatal,
-                &format!(
-                    "{}: {measured} {what} per iteration, want at most {ceiling} \
-                     over {iterations} iterations",
-                    self.msg
-                ),
+                assertion,
+                self.msg,
+                vec![
+                    ("want", format!("{ceiling}").into()),
+                    ("got", format!("{measured}").into()),
+                ],
             );
         }
     }

@@ -60,11 +60,7 @@ fn honours_cancellation_reports_a_subject_that_ignores_the_handle() {
         seat.failed(),
         "a subject that never reads the handle must be reported"
     );
-    assert!(
-        seat.message().contains("as if it had done the work"),
-        "{}",
-        seat.message()
-    );
+    assert!(named(&seat, "honours-cancellation"), "{}", seat.message());
 }
 
 #[test]
@@ -78,7 +74,7 @@ fn honours_cancellation_reports_a_subject_that_fails_for_its_own_reasons() {
     );
 
     assert!(seat.failed(), "the wrong reason is not the right reason");
-    assert!(seat.message().contains("instead"), "{}", seat.message());
+    assert!(named(&seat, "honours-cancellation"), "{}", seat.message());
 }
 
 #[test]
@@ -145,11 +141,7 @@ fn completes_within_passes_a_quick_body_and_reports_a_slow_one() {
         "get stays quick",
     );
     assert!(failing.failed(), "a body over the ceiling must be reported");
-    assert!(
-        failing.message().contains("want at most 1ms"),
-        "{}",
-        failing.message()
-    );
+    assert!(named(&failing, "completes-within"), "{}", failing.message());
 }
 
 #[test]
@@ -215,7 +207,7 @@ fn none_handle_safe_passes_a_subject_that_declines_and_reports_one_that_panics()
         "unwrapping the missing handle must be reported"
     );
     assert!(
-        crashing.message().contains("missing handle"),
+        named(&crashing, "nil-context-safe"),
         "{}",
         crashing.message()
     );
@@ -243,11 +235,7 @@ fn is_pure_passes_an_unchanged_projection_and_reports_a_changed_one() {
         "count reads",
     );
     assert!(failing.failed(), "a changed projection must be reported");
-    assert!(
-        failing.message().contains("observable state changed"),
-        "{}",
-        failing.message()
-    );
+    assert!(named(&failing, "pure"), "{}", failing.message());
 }
 
 #[test]
@@ -307,4 +295,11 @@ fn rejects_sees_a_soft_assertion_inside_the_body() {
         !seat.failed(),
         "recorded or thrown, the body failed either way"
     );
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

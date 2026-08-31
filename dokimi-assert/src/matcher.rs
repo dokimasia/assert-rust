@@ -17,5 +17,5 @@ pub mod text;
 pub mod values;
 pub mod waiting;
 
-pub use report::{Mode, report};
+pub use report::{Mode, fail, report};
 pub use sizes::Container;

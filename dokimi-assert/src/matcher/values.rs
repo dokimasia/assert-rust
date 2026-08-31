@@ -1,6 +1,6 @@
 //! Equality, truth and absence.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use std::fmt::Debug;
 
@@ -17,7 +17,16 @@ where
 {
     seat.helper();
     if got != want {
-        report(seat, mode, &format!("{msg}: want {want:?}, got {got:?}"));
+        fail(
+            seat,
+            mode,
+            "equal",
+            msg,
+            vec![
+                ("want", format!("{want:?}").into()),
+                ("got", format!("{got:?}").into()),
+            ],
+        );
     }
 }
 
@@ -31,10 +40,12 @@ where
 {
     seat.helper();
     if got == want {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: got {got:?}, want anything else"),
+            "not-equal",
+            msg,
+            vec![("got", format!("{got:?}").into())],
         );
     }
 }
@@ -47,7 +58,7 @@ where
 pub fn is_true(seat: &dyn Seat, mode: Mode, condition: bool, msg: &str) {
     seat.helper();
     if !condition {
-        report(seat, mode, &format!("{msg}: expected true, got false"));
+        fail(seat, mode, "true", msg, vec![]);
     }
 }
 
@@ -56,7 +67,7 @@ pub fn is_true(seat: &dyn Seat, mode: Mode, condition: bool, msg: &str) {
 pub fn is_false(seat: &dyn Seat, mode: Mode, condition: bool, msg: &str) {
     seat.helper();
     if condition {
-        report(seat, mode, &format!("{msg}: expected false, got true"));
+        fail(seat, mode, "false", msg, vec![]);
     }
 }
 
@@ -68,7 +79,13 @@ pub fn is_false(seat: &dyn Seat, mode: Mode, condition: bool, msg: &str) {
 pub fn is_none<T: Debug>(seat: &dyn Seat, mode: Mode, got: Option<&T>, msg: &str) {
     seat.helper();
     if let Some(held) = got {
-        report(seat, mode, &format!("{msg}: expected none, got {held:?}"));
+        fail(
+            seat,
+            mode,
+            "nil",
+            msg,
+            vec![("got", format!("{held:?}").into())],
+        );
     }
 }
 
@@ -80,6 +97,6 @@ pub fn is_none<T: Debug>(seat: &dyn Seat, mode: Mode, got: Option<&T>, msg: &str
 pub fn is_some<T: Debug>(seat: &dyn Seat, mode: Mode, got: Option<&T>, msg: &str) {
     seat.helper();
     if got.is_none() {
-        report(seat, mode, &format!("{msg}: expected a value, got none"));
+        fail(seat, mode, "not-nil", msg, vec![]);
     }
 }

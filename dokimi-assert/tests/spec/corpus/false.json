@@ -19,10 +19,7 @@
           "value": true
         }
       ],
-      "expect": "fail",
-      "message_contains": [
-        "false"
-      ]
+      "expect": "fail"
     }
   ]
 }

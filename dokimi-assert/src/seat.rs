@@ -1,7 +1,10 @@
 //! Where an assertion reports, and what it may do about it.
 
+use crate::clock::{Clock, System};
+use crate::failure::Failure;
 use std::fmt::Write as _;
 use std::panic::Location;
+use std::sync::Arc;
 use std::sync::Mutex;
 
 /// Where a failure goes, and what may be done about it.
@@ -28,7 +31,36 @@ pub trait Seat {
     /// Report a failure the test may carry on past.
     #[track_caller]
     fn record(&self, message: &str);
+
+    /// Whether this seat takes records rather than only sentences.
+    ///
+    /// A seat that answers true has [`Seat::report`] called with the record; one that
+    /// does not gets the sentence rendered from it through [`Seat::fail`] or
+    /// [`Seat::record`]. Two methods rather than an `Option` return, because a trait
+    /// object cannot be downcast without `Any` and the standard states this as a
+    /// capability a seat either has or does not.
+    fn takes_records(&self) -> bool {
+        false
+    }
+
+    /// Take one record.
+    ///
+    /// Called only when [`Seat::takes_records`] answers true, so the default does
+    /// nothing.
+    #[track_caller]
+    fn report(&self, _failure: &Failure, _aborting: bool) {}
+
+    /// The clock assertions reported here read.
+    ///
+    /// A seat that supplies none gets the platform clock, which is what every assertion
+    /// read before a clock existed.
+    fn clock(&self) -> &dyn Clock {
+        &SYSTEM
+    }
 }
+
+/// The platform clock every seat reads unless it supplies another.
+static SYSTEM: System = System::shared();
 
 /// A seat that panics on either path.
 ///
@@ -64,6 +96,7 @@ impl Seat for Standard {
 struct Reported {
     fatal: Option<String>,
     recorded: Vec<String>,
+    records: Vec<Failure>,
     helpers: usize,
 }
 
@@ -74,9 +107,31 @@ struct Reported {
 #[derive(Debug, Default)]
 pub struct Recorder {
     reported: Mutex<Reported>,
+    /// What assertions reported here read time from, or `None` for the platform clock.
+    supplied: Option<Arc<dyn Clock>>,
 }
 
 impl Recorder {
+    /// Every record that arrived, in call order.
+    ///
+    /// A message passed straight to `fail` or `record` leaves none, so an assertion that
+    /// did not report a record is visible here.
+    ///
+    /// # Panics
+    ///
+    /// If another thread panicked while holding this seat's lock.
+    #[must_use]
+    pub fn failures(&self) -> Vec<Failure> {
+        self.locked().records.clone()
+    }
+
+    /// Make assertions reported here read the given clock.
+    #[must_use]
+    pub fn with_clock(mut self, clock: Arc<dyn Clock>) -> Self {
+        self.supplied = Some(clock);
+        self
+    }
+
     /// Return a recorder that has collected nothing.
     #[must_use]
     pub fn new() -> Self {
@@ -130,6 +185,32 @@ impl Recorder {
 impl Seat for Recorder {
     fn helper(&self) {
         self.locked().helpers += 1;
+    }
+
+    fn takes_records(&self) -> bool {
+        true
+    }
+
+    /// Record one failure as the record it is.
+    ///
+    /// This is what lets a test read the assertion's own fields rather than search its
+    /// sentence for words. The rendered sentence is kept too, so [`Recorder::message`]
+    /// answers what it always did.
+    #[track_caller]
+    fn report(&self, failure: &Failure, aborting: bool) {
+        self.locked().records.push(failure.clone());
+        if aborting {
+            self.fail(&failure.render());
+            return;
+        }
+        self.record(&failure.render());
+    }
+
+    fn clock(&self) -> &dyn Clock {
+        match &self.supplied {
+            Some(held) => held.as_ref(),
+            None => &SYSTEM,
+        }
     }
 
     #[track_caller]

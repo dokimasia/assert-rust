@@ -83,10 +83,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "3",
-        "1"
-      ]
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 3
+        },
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
     }
   ]
 }

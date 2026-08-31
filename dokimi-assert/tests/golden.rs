@@ -50,11 +50,7 @@ fn matching_content_passes_and_differing_content_is_reported() {
     let failing = Recorder::new();
     golden::matches_at(&failing, &path, "something else", &[]);
     assert!(failing.failed(), "changed output must be reported");
-    assert!(
-        failing.message().contains("does not match"),
-        "{}",
-        failing.message()
-    );
+    assert!(named(&failing, "golden-match-at"), "{}", failing.message());
 }
 
 #[test]
@@ -211,4 +207,11 @@ fn scrub_json_fields_leaves_unnamed_fields_to_fail() {
         seat.failed(),
         "a field the scrubber does not name still has to match"
     );
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

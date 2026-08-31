@@ -4,9 +4,10 @@
 //! test makes true, which is what a controlled clock cannot reach: a fake clock only
 //! moves when someone advances it, and nobody will while this is waiting.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
+use crate::clock::Clock;
 use crate::seat::{Recorder, Seat};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 /// Report when a body of assertions never passes within the timeout.
 ///
@@ -25,7 +26,8 @@ pub fn eventually<F>(
     F: Fn(&Recorder),
 {
     seat.helper();
-    let deadline = Instant::now() + timeout;
+    let clock = seat.clock();
+    let deadline = clock.now() + timeout;
 
     for attempt in 1.. {
         let trial = Recorder::new();
@@ -34,19 +36,20 @@ pub fn eventually<F>(
         if !trial.failed() {
             return;
         }
-        if Instant::now() > deadline {
-            report(
+        if clock.now() > deadline {
+            fail(
                 seat,
                 mode,
-                &format!(
-                    "{msg}: still failing after {}ms and {attempt} attempts: {}",
-                    timeout.as_millis(),
-                    trial.message()
-                ),
+                "eventually",
+                msg,
+                vec![
+                    ("attempts", attempt.into()),
+                    ("last", trial.message().into()),
+                ],
             );
             return;
         }
-        std::thread::sleep(interval.max(Duration::from_millis(1)));
+        wait(clock, interval.max(Duration::from_millis(1)));
     }
 }
 
@@ -62,7 +65,8 @@ where
     P: Fn() -> bool,
 {
     seat.helper();
-    let deadline = Instant::now() + timeout;
+    let clock = seat.clock();
+    let deadline = clock.now() + timeout;
     let cap = timeout / 4;
     let mut backoff = Duration::from_millis(1);
 
@@ -70,18 +74,29 @@ where
         if predicate() {
             return;
         }
-        if Instant::now() > deadline {
-            report(
+        if clock.now() > deadline {
+            fail(
                 seat,
                 mode,
-                &format!(
-                    "{msg}: still false after {}ms and {attempt} attempts",
-                    timeout.as_millis()
-                ),
+                "eventually-true",
+                msg,
+                vec![("attempts", attempt.into())],
             );
             return;
         }
-        std::thread::sleep(backoff.max(Duration::from_millis(1)));
+        wait(clock, backoff.max(Duration::from_millis(1)));
         backoff = (backoff * 2).min(cap.max(Duration::from_millis(1)));
+    }
+}
+
+/// Move time forward by the duration.
+///
+/// A clock a test controls is advanced, because nothing else will move it while this
+/// call is running. The platform clock ignores an advance, so it is slept against.
+fn wait(clock: &dyn Clock, duration: Duration) {
+    let before = clock.now();
+    clock.advance(duration);
+    if clock.now() == before {
+        clock.sleep(duration);
     }
 }

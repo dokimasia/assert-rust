@@ -1,0 +1,26 @@
+{
+  "assertion": "honours-cancellation",
+  "cases": [
+    {
+      "id": "honours-cancellation/a-subject-that-reads-the-handle-passes",
+      "subject": {
+        "kind": "reads-handle"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "honours-cancellation/a-subject-that-ignores-it-fails",
+      "subject": {
+        "kind": "ignores-handle"
+      },
+      "expect": "fail"
+    },
+    {
+      "id": "honours-cancellation/a-subject-failing-for-its-own-reason-fails",
+      "subject": {
+        "kind": "fails-otherwise"
+      },
+      "expect": "fail"
+    }
+  ]
+}

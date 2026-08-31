@@ -45,11 +45,15 @@ fn eventually_carries_the_last_attempts_own_reason() {
 
     assert!(seat.failed(), "a body that never passes must be reported");
     assert!(
-        seat.message().contains("queue still holds 4"),
+        seat.failures()[0]
+            .detail("last")
+            .map(ToString::to_string)
+            .as_deref()
+            == Some("queue still holds 4"),
         "{}",
         seat.message()
     );
-    assert!(seat.message().contains("attempts"), "{}", seat.message());
+    assert!(named(&seat, "eventually"), "{}", seat.message());
 }
 
 #[test]
@@ -120,9 +124,12 @@ fn eventually_true_passes_a_predicate_that_flips_and_reports_one_that_never_does
         failing.failed(),
         "a predicate that never holds must be reported"
     );
-    assert!(
-        failing.message().contains("still false"),
-        "{}",
-        failing.message()
-    );
+    assert!(named(&failing, "eventually-true"), "{}", failing.message());
+}
+
+/// Whether the seat's first record names that assertion.
+fn named(seat: &Recorder, assertion: &str) -> bool {
+    seat.failures()
+        .first()
+        .is_some_and(|held| held.assertion == assertion)
 }

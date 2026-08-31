@@ -1,6 +1,6 @@
 //! Assertions about text.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use regex::Regex;
 
@@ -9,10 +9,15 @@ use regex::Regex;
 pub fn has_prefix(seat: &dyn Seat, mode: Mode, got: &str, prefix: &str, msg: &str) {
     seat.helper();
     if !got.starts_with(prefix) {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: {got:?} does not start with {prefix:?}"),
+            "has-prefix",
+            msg,
+            vec![
+                ("got", format!("{got:?}").into()),
+                ("prefix", format!("{prefix:?}").into()),
+            ],
         );
     }
 }
@@ -22,10 +27,15 @@ pub fn has_prefix(seat: &dyn Seat, mode: Mode, got: &str, prefix: &str, msg: &st
 pub fn has_suffix(seat: &dyn Seat, mode: Mode, got: &str, suffix: &str, msg: &str) {
     seat.helper();
     if !got.ends_with(suffix) {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: {got:?} does not end with {suffix:?}"),
+            "has-suffix",
+            msg,
+            vec![
+                ("got", format!("{got:?}").into()),
+                ("suffix", format!("{suffix:?}").into()),
+            ],
         );
     }
 }
@@ -39,19 +49,29 @@ pub fn has_suffix(seat: &dyn Seat, mode: Mode, got: &str, suffix: &str, msg: &st
 pub fn matches(seat: &dyn Seat, mode: Mode, got: &str, pattern: &str, msg: &str) {
     seat.helper();
     match Regex::new(pattern) {
-        Err(broken) => {
-            report(
+        Err(_) => {
+            fail(
                 seat,
                 mode,
-                &format!("{msg}: pattern {pattern:?} does not compile: {broken}"),
+                "matches",
+                msg,
+                vec![
+                    ("got", format!("{got:?}").into()),
+                    ("pattern", format!("{pattern:?}").into()),
+                ],
             );
         }
         Ok(compiled) => {
             if !compiled.is_match(got) {
-                report(
+                fail(
                     seat,
                     mode,
-                    &format!("{msg}: {got:?} does not match {pattern:?}"),
+                    "matches",
+                    msg,
+                    vec![
+                        ("got", format!("{got:?}").into()),
+                        ("pattern", format!("{pattern:?}").into()),
+                    ],
                 );
             }
         }

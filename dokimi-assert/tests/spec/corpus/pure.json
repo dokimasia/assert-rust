@@ -1,0 +1,19 @@
+{
+  "assertion": "pure",
+  "cases": [
+    {
+      "id": "pure/a-subject-that-changes-nothing-passes",
+      "subject": {
+        "kind": "leaves-state-alone"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "pure/a-subject-that-changes-state-fails",
+      "subject": {
+        "kind": "accumulates"
+      },
+      "expect": "fail"
+    }
+  ]
+}

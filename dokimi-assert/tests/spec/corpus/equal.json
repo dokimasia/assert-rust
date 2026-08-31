@@ -28,10 +28,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ]
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 2
+        },
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
     },
     {
       "id": "equal/identical-strings",
@@ -60,10 +66,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ]
+      "detail": {
+        "want": {
+          "type": "null"
+        },
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      }
     },
     {
       "id": "equal/null-against-empty-map",
@@ -79,10 +91,17 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ]
+      "detail": {
+        "want": {
+          "type": "null"
+        },
+        "got": {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {}
+        }
+      }
     },
     {
       "id": "equal/two-empty-lists",
@@ -135,12 +154,18 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ],
       "skip": {
         "go": "the type parameter refuses a mismatch at compile time; the runner drives the dynamic form"
+      },
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": "1"
+        },
+        "got": {
+          "type": "int",
+          "value": 1
+        }
       }
     },
     {
@@ -156,10 +181,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ]
+      "detail": {
+        "want": {
+          "type": "bool",
+          "value": false
+        },
+        "got": {
+          "type": "int",
+          "value": 0
+        }
+      }
     },
     {
       "id": "equal/nan-against-itself",
@@ -174,10 +205,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ]
+      "detail": {
+        "want": {
+          "type": "float",
+          "value": "NaN"
+        },
+        "got": {
+          "type": "float",
+          "value": "NaN"
+        }
+      }
     },
     {
       "id": "equal/floats-compare-exactly",
@@ -192,10 +229,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "want",
-        "got"
-      ]
+      "detail": {
+        "want": {
+          "type": "float",
+          "value": 0.3
+        },
+        "got": {
+          "type": "float",
+          "value": 0.30000000000000004
+        }
+      }
     }
   ]
 }

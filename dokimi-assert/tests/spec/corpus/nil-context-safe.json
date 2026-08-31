@@ -1,0 +1,19 @@
+{
+  "assertion": "nil-context-safe",
+  "cases": [
+    {
+      "id": "nil-context-safe/a-subject-that-declines-passes",
+      "subject": {
+        "kind": "returns-ok"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "nil-context-safe/a-subject-that-dereferences-fails",
+      "subject": {
+        "kind": "dereferences-handle"
+      },
+      "expect": "fail"
+    }
+  ]
+}

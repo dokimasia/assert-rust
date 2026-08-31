@@ -10,7 +10,7 @@
 //! standard actually asks. [`Cancel`] is that value.
 
 use super::errors::error_as;
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::{Recorder, Seat};
 use std::error::Error;
 use std::fmt::{self, Debug, Display};
@@ -124,12 +124,15 @@ where
 {
     match body(Some(handle)) {
         Ok(()) => {
-            report(
+            fail(
                 seat,
                 mode,
-                &format!(
-                    "{msg}: a subject given a {want} handle returned as if it had done the work"
-                ),
+                assertion_for(want),
+                msg,
+                vec![(
+                    "got",
+                    "returned as if it had done the work".to_owned().into(),
+                )],
             );
         }
         Err(raised) => {
@@ -139,10 +142,12 @@ where
             let found = error_as::<Stop>(&quiet, Mode::Soft, &raised, msg);
             match found {
                 Some(&got) if got == want => {}
-                _ => report(
+                _ => fail(
                     seat,
                     mode,
-                    &format!("{msg}: a subject given a {want} handle failed with {raised} instead"),
+                    assertion_for(want),
+                    msg,
+                    vec![("got", format!("{raised}").into())],
                 ),
             }
         }
@@ -197,10 +202,12 @@ where
 {
     seat.helper();
     if super::panics::quietly(|| drop(body(None))) {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: a missing handle caused a panic"),
+            "nil-context-safe",
+            msg,
+            vec![("got", "a panic".to_owned().into())],
         );
     }
 }
@@ -251,14 +258,15 @@ where
     let _ = deadline.join();
 
     if elapsed > within {
-        report(
+        fail(
             seat,
             mode,
-            &format!(
-                "{msg}: took {}ms, want at most {}ms",
-                elapsed.as_millis(),
-                within.as_millis()
-            ),
+            "completes-within",
+            msg,
+            vec![
+                ("want", format!("{}ms", within.as_millis()).into()),
+                ("got", format!("{}ms", elapsed.as_millis()).into()),
+            ],
         );
     }
 }
@@ -281,10 +289,15 @@ where
     let after = observe();
 
     if before != after {
-        report(
+        fail(
             seat,
             mode,
-            &format!("{msg}: observable state changed: was {before:?}, now {after:?}"),
+            "pure",
+            msg,
+            vec![
+                ("want", format!("{before:?}").into()),
+                ("got", format!("{after:?}").into()),
+            ],
         );
     }
 }
@@ -306,6 +319,17 @@ where
     if recorder.failed() {
         return recorder.message();
     }
-    report(seat, mode, &format!("{msg}: the body reported no failure"));
+    fail(seat, mode, "rejects", msg, vec![]);
     String::new()
+}
+
+/// The canonical id a stopped-handle assertion reports under.
+///
+/// One matcher serves both, because the only difference is which reason the subject has
+/// to give; the failure still names the assertion the caller wrote.
+const fn assertion_for(want: Stop) -> &'static str {
+    match want {
+        Stop::Cancelled => "honours-cancellation",
+        Stop::DeadlineExceeded => "honours-deadline",
+    }
 }

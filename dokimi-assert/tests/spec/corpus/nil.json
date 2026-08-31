@@ -19,9 +19,12 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "nil"
-      ]
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 0
+        }
+      }
     },
     {
       "id": "nil/empty-string-is-not-null",
@@ -32,9 +35,12 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "nil"
-      ]
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": ""
+        }
+      }
     },
     {
       "id": "nil/empty-list-is-not-null",
@@ -46,9 +52,13 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "nil"
-      ]
+      "detail": {
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      }
     }
   ]
 }

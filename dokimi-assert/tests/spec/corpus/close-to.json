@@ -71,7 +71,21 @@
           "value": 0.05
         }
       ],
-      "expect": "fail"
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "float",
+          "value": 2.0
+        },
+        "want": {
+          "type": "float",
+          "value": 1.0
+        },
+        "tolerance": {
+          "type": "float",
+          "value": 0.05
+        }
+      }
     },
     {
       "id": "close-to/nan-value-fails",
@@ -90,9 +104,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "NaN"
-      ]
+      "detail": {
+        "got": {
+          "type": "float",
+          "value": "NaN"
+        },
+        "want": {
+          "type": "float",
+          "value": 1.0
+        },
+        "tolerance": {
+          "type": "float",
+          "value": "Inf"
+        }
+      }
     },
     {
       "id": "close-to/nan-want-fails",
@@ -111,9 +136,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "NaN"
-      ]
+      "detail": {
+        "got": {
+          "type": "float",
+          "value": 1.0
+        },
+        "want": {
+          "type": "float",
+          "value": "NaN"
+        },
+        "tolerance": {
+          "type": "float",
+          "value": 10.0
+        }
+      }
     }
   ]
 }

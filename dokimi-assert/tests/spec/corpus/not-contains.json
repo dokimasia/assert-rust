@@ -36,9 +36,20 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "1"
-      ]
+      "detail": {
+        "haystack": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        "needle": {
+          "type": "int",
+          "value": 1
+        }
+      }
     },
     {
       "id": "not-contains/present-substring-fails",
@@ -53,9 +64,16 @@
         }
       ],
       "expect": "fail",
-      "message_contains": [
-        "ell"
-      ]
+      "detail": {
+        "haystack": {
+          "type": "string",
+          "value": "hello"
+        },
+        "needle": {
+          "type": "string",
+          "value": "ell"
+        }
+      }
     }
   ]
 }

@@ -7,7 +7,7 @@
 //! Both take a body rather than a value, because the panic has to happen inside the
 //! assertion for it to be caught.
 
-use super::report::{Mode, report};
+use super::report::{Mode, fail};
 use crate::seat::Seat;
 use std::any::Any;
 use std::cell::Cell;
@@ -71,7 +71,7 @@ pub fn panics<F: FnOnce()>(seat: &dyn Seat, mode: Mode, body: F, msg: &str) -> O
     seat.helper();
     let raised = caught(body);
     if raised.is_none() {
-        report(seat, mode, &format!("{msg}: returned without panicking"));
+        fail(seat, mode, "throws", msg, vec![]);
     }
     raised
 }
@@ -81,7 +81,13 @@ pub fn panics<F: FnOnce()>(seat: &dyn Seat, mode: Mode, body: F, msg: &str) -> O
 pub fn does_not_panic<F: FnOnce()>(seat: &dyn Seat, mode: Mode, body: F, msg: &str) {
     seat.helper();
     if let Some(raised) = caught(body) {
-        report(seat, mode, &format!("{msg}: panicked with {raised:?}"));
+        fail(
+            seat,
+            mode,
+            "not-throws",
+            msg,
+            vec![("got", format!("{raised:?}").into())],
+        );
     }
 }
 
