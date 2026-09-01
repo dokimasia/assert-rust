@@ -333,6 +333,10 @@ fn pins_failure_detail<'f>() {
     let _: fn(&'f Failure, &str) -> Option<&'f Detail> = Failure::detail;
 }
 
+/// The shape a contract's setup-taking runner has, named so the pin below
+/// reads as one line rather than four.
+type Measuring<'s> = fn(bench::Contract<'s>, usize, fn() -> u8, fn(u8)) -> bench::Contract<'s>;
+
 /// The contract rows, pinned with the lifetime their type carries.
 #[expect(
     clippy::extra_unused_lifetimes,
@@ -343,6 +347,7 @@ fn pins_contract_type<'s>() {
     let _: fn(bench::Contract<'s>, usize, fn()) -> bench::Contract<'s> =
         bench::Contract::run::<fn()>;
     let _: fn(bench::Contract<'s>) = bench::Contract::check;
+    let _: Measuring<'s> = bench::Contract::measuring::<u8, fn() -> u8, fn(u8)>;
 }
 
 /// Every surface id the table names for Rust is pinned above.

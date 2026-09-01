@@ -173,6 +173,66 @@ impl<'seat> Contract<'seat> {
         self
     }
 
+    /// Measure a body whose input is built fresh each iteration.
+    ///
+    /// A benchmark whose operation consumes its input builds a new one every
+    /// time, and [`Contract::run`] would state what the build and the operation
+    /// cost together. This builds every input first, outside the measurement,
+    /// and measures only the bodies:
+    ///
+    /// ```ignore
+    /// Contract::new(&seat, "settling stays cheap")
+    ///     .max_allocs(4)
+    ///     .measuring(10_000, fresh_store, |store| store.settle())
+    ///     .check();
+    /// ```
+    ///
+    /// Every input exists at once, so a large fixture and a long run cost that
+    /// much memory. A body needing no input wants [`Contract::run`], which
+    /// holds nothing.
+    #[must_use]
+    pub fn measuring<T, S: FnMut() -> T, F: FnMut(T)>(
+        mut self,
+        iterations: usize,
+        mut setup: S,
+        mut body: F,
+    ) -> Self {
+        // Built first and all at once, so no counter is read between one
+        // iteration's setup and the next iteration's work.
+        let mut inputs = Vec::with_capacity(iterations);
+        for _ in 0..iterations {
+            inputs.push(setup());
+        }
+
+        let mut latencies = Vec::with_capacity(inputs.len());
+        let counting = INSTALLED.load(Ordering::Relaxed) == 1;
+        let allocs_before = ALLOCATIONS.load(Ordering::Relaxed);
+        let bytes_before = BYTES.load(Ordering::Relaxed);
+
+        for input in inputs {
+            let started = Instant::now();
+            body(input);
+            latencies.push(started.elapsed());
+        }
+
+        let per = |before: u64, counter: &AtomicU64| -> Option<u64> {
+            if !counting || iterations == 0 {
+                return None;
+            }
+            Some((counter.load(Ordering::Relaxed) - before) / iterations as u64)
+        };
+        let allocations = per(allocs_before, &ALLOCATIONS);
+        let bytes = per(bytes_before, &BYTES);
+
+        latencies.sort_unstable();
+        self.measured = Some(Measured {
+            latencies,
+            allocations,
+            bytes,
+        });
+        self
+    }
+
     /// Run the body the given number of times, timing each and weighing the whole.
     #[must_use]
     pub fn run<F: FnMut()>(mut self, iterations: usize, mut body: F) -> Self {

@@ -1,5 +1,5 @@
 {
-    "digest": "sha256:3b1e6408735c3b97ff78f26da9a8211c126d44238332622f5f36d08179235d7e",
+    "digest": "sha256:d33647e81aa982e7eeb4f816bbaf5bc582d69ad19ab6f7e0571bcce70d680be2",
     "files": {
         "VERSION": "sha256:59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
         "corpus/close-to.json": "sha256:3a44444500cc6af46b2e2d32acbd9ceae9c4e73d604649d666482bd6161af812",
@@ -27,14 +27,14 @@
         "corpus/pure.json": "sha256:ad3dd837179217ed368d298d1f80f9f122758849404ad89bf6df2ef5542b2cd6",
         "corpus/throws.json": "sha256:40dd385108c7ada8c0ce236a79c13db2da23e8e142f2fa5947fcce1623e7e365",
         "corpus/true.json": "sha256:43e01f045228fd01449d2abad5c07b50b8d700fd6c986e6877a4f192ff86b616",
-        "overlays/go.json": "sha256:ba8a0e26402b75e18e6927ea9de65766817d347b57a2eb445c4a4a48b9e92cfd",
-        "overlays/java.json": "sha256:f9d8257232beb465a0713ba966f17e5bd1d66812271ed688ccab3e0f8a779ff1",
-        "overlays/kotlin.json": "sha256:3574d8ebdf8b2fd8a5f4ee057f81a572c3efdaa7038e9bb54125a7472baecb41",
-        "overlays/python.json": "sha256:d1fe552cf25739e8189acecc31f31b051784d5a1a1b820fd83973a1a55376ee5",
-        "overlays/rust.json": "sha256:7b1a93507719f05f86d8cacc9ba5ae3f2a1b3ecc9211e83ab80c654b33639c4c",
-        "overlays/typescript.json": "sha256:fd09d00b92e7786ac08aa7c0883e942848cc78445285935f8b30326cdd92f650",
+        "overlays/go.json": "sha256:5bb8b6395ee26a4fb2b7e1722bc1c845701d07626a0ede073c26f8f62540bae4",
+        "overlays/java.json": "sha256:69a4c505fe05e2747834352ab5f8111e611b4d7bfc63293cac75f5df48baab14",
+        "overlays/kotlin.json": "sha256:b8e6ae45e68f40715ddb284df94632abc51e8b6fd4df54a97876ad43d0cd73ad",
+        "overlays/python.json": "sha256:dc0bdb912a9475603a3e237305c4eeb98377a93ad547cece0d446f25cb943c37",
+        "overlays/rust.json": "sha256:8e77b67c506a8450baabcb5d7ccc876a98cc4fd970b36c31abb037199d1a93e7",
+        "overlays/typescript.json": "sha256:e6337e77c380da9f77a79ca0fefd579c891141210e215c3f5885170ebcc480d9",
         "spec/assertions.json": "sha256:206d1ed41156f29447bf2168cbfba7fe6cef8579d2c501b013e5b3b13a76dd3c",
-        "spec/naming.json": "sha256:266e3a7b6a4a9bb7bd776e71aeb6cf8eab4aa7362a9975a9ebf9ef507bacdb84",
+        "spec/naming.json": "sha256:9567ff7ce3485dae848c45f647637c076a9816b3d70718a1f8161ddb4b59077c",
         "tools/spec-check.sh": "sha256:14656ebad17fe124a9964e57fd6485cac716d5879f0a8e8fe4dd2a3b14a97520",
         "tools/spec-sync.sh": "sha256:ac45da2ae8546a565a3b8c923d6f8e807e810fe2b31903682c91135a2c744638"
     },

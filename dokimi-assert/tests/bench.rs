@@ -137,3 +137,69 @@ fn named(seat: &Recorder, assertion: &str) -> bool {
         .first()
         .is_some_and(|held| held.assertion == assertion)
 }
+
+/// Allocate well past a ceiling of two, so a run counting it cannot meet one.
+///
+/// The counter is process-wide and tests here run in parallel, so a case reading
+/// it uses enough iterations that another test's allocations divide away.
+fn heavy_fixture() -> Vec<Vec<u8>> {
+    (0..16).map(|_| vec![0_u8; 256]).collect()
+}
+
+#[test]
+fn measuring_takes_the_setup_out_of_the_ceilings() {
+    let seat = Recorder::new();
+    Contract::new(&seat, "settling stays cheap")
+        .max_allocs(2)
+        .measuring(1_000, heavy_fixture, |held| {
+            let _ = held.len();
+        })
+        .check();
+
+    assert!(
+        !seat.failed(),
+        "an excluded fixture is not counted: {}",
+        seat.message()
+    );
+}
+
+#[test]
+fn the_same_fixture_unexcluded_crosses_the_ceiling() {
+    // Without this the case above passes against a measuring that
+    // counted the setup anyway.
+    let seat = Recorder::new();
+    Contract::new(&seat, "settling stays cheap")
+        .max_allocs(2)
+        .run(1_000, || {
+            let _ = heavy_fixture().len();
+        })
+        .check();
+
+    assert!(seat.failed(), "a fixture nobody excluded has to count");
+}
+
+#[test]
+fn measuring_takes_the_setup_time_out_of_the_ceiling() {
+    let seat = Recorder::new();
+    Contract::new(&seat, "settling stays quick")
+        .max_latency(Duration::from_millis(5))
+        .measuring(3, || std::thread::sleep(Duration::from_millis(20)), |()| {})
+        .check();
+
+    assert!(
+        !seat.failed(),
+        "an excluded sleep is not timed: {}",
+        seat.message()
+    );
+}
+
+#[test]
+fn the_same_sleep_unexcluded_crosses_the_ceiling() {
+    let seat = Recorder::new();
+    Contract::new(&seat, "settling stays quick")
+        .max_latency(Duration::from_millis(5))
+        .run(3, || std::thread::sleep(Duration::from_millis(20)))
+        .check();
+
+    assert!(seat.failed(), "a sleep nobody excluded has to be timed");
+}

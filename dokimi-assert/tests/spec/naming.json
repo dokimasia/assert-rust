@@ -436,6 +436,10 @@
                 "rust": "check",
                 "typescript": "check"
             },
+            "contract.excluding": {
+                "go": "Excluding",
+                "python": "excluding"
+            },
             "contract.loop": {
                 "go": "Loop",
                 "java": "loop",
@@ -443,6 +447,12 @@
                 "python": "loop",
                 "rust": "run",
                 "typescript": "loop"
+            },
+            "contract.measuring": {
+                "java": "measuring",
+                "kotlin": "measuring",
+                "rust": "measuring",
+                "typescript": "measuring"
             },
             "controlled-clock.advance": {
                 "go": "Advance",
