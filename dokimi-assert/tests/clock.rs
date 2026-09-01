@@ -126,3 +126,35 @@ fn eventually_stops_once_the_body_settles() {
         "it stops once the body comes right"
     );
 }
+
+/// The verdict of `completes_within` comes from the clock the seat
+/// carries, not from the platform.
+///
+/// A test that drives a controlled clock is stating how long the
+/// subject took, so a body that really slept has still taken nothing
+/// until the test says otherwise. Reading the platform here would make
+/// the seam decorative for the one assertion that measures.
+#[test]
+fn completes_within_measures_on_the_seats_clock() {
+    let seat = Recorder::new().with_clock(Arc::new(Controlled::new()));
+
+    let started = Instant::now();
+    check::completes_within(
+        &seat,
+        Duration::from_millis(1),
+        |_| -> Result<(), String> {
+            std::thread::sleep(Duration::from_millis(40));
+            Ok(())
+        },
+        "the subject finishes within a millisecond",
+    );
+
+    assert!(
+        started.elapsed() >= Duration::from_millis(40),
+        "the body really did sleep"
+    );
+    assert!(
+        !seat.failed(),
+        "a controlled clock that nobody advanced measures no time, so the ceiling holds"
+    );
+}

@@ -16,7 +16,7 @@ use std::error::Error;
 use std::fmt::{self, Debug, Display};
 use std::sync::atomic::{AtomicU8, Ordering};
 use std::sync::{Arc, Condvar, Mutex, PoisonError};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 /// Why a subject was asked to stop.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -246,9 +246,14 @@ where
         }
     });
 
-    let started = Instant::now();
+    // The verdict is read from the seat's clock, as every other timed
+    // assertion here is, so a test driving a controlled clock decides
+    // what the subject took. The watcher above expires on the platform
+    // clock, because a condition variable takes no other.
+    let clock = seat.clock();
+    let started = clock.now();
     let _ = body(Some(&handle));
-    let elapsed = started.elapsed();
+    let elapsed = clock.now().saturating_sub(started);
 
     {
         let (lock, wake) = &*signal;

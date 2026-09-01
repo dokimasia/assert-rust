@@ -41,6 +41,14 @@
     {
       "id": "contract.excluding",
       "why": "Go writes a benchmark body inline under testing.B, so a setup closure would take the caller out of both the loop and the chain. It marks the setup in place with Excluding instead."
+    },
+    {
+      "id": "assertion",
+      "why": "equal takes two references of one type parameter, so a mismatched pair is already a compile error. A chain would hold a borrow of the subject across every method for no check the static form is missing."
+    },
+    {
+      "id": "that",
+      "why": "equal takes two references of one type parameter, so a mismatched pair is already a compile error. A chain would hold a borrow of the subject across every method for no check the static form is missing."
     }
   ]
 }

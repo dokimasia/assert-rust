@@ -395,6 +395,11 @@
                 "python": "golden.should_update",
                 "rust": "golden.should_update",
                 "typescript": "golden.shouldUpdate"
+            },
+            "that": {
+                "go": "That",
+                "java": "Check.that",
+                "kotlin": "Check.that"
             }
         },
         "members": {
@@ -568,6 +573,11 @@
             }
         },
         "types": {
+            "assertion": {
+                "go": "Assertion",
+                "java": "Assertion",
+                "kotlin": "Assertion"
+            },
             "clock": {
                 "go": "Clock",
                 "java": "Clock",
