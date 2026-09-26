@@ -14,13 +14,14 @@
 //!
 //! The members are grouped by family, in the order the other implementations of this
 //! standard use: values, sizes, containment, text, numbers, errors, panicking, ordering,
-//! behaviour and waiting.
+//! behaviour, waiting and allocations.
 
 use crate::matcher::Mode;
 use crate::matcher::behaviour::Cancel;
 use crate::matcher::sizes::Container;
-use crate::matcher::{behaviour, containment, errors, numbers, order, panics, sizes, text, values};
+use crate::matcher::{allocations, behaviour, containment, errors, numbers, order, panics};
 use crate::matcher::{containment::Holds, waiting};
+use crate::matcher::{sizes, text, values};
 use crate::seat::{Recorder, Seat};
 use std::error::Error;
 use std::fmt::Debug;
@@ -380,4 +381,17 @@ where
 {
     seat.helper();
     waiting::eventually_true(seat, MODE, timeout, predicate, msg);
+}
+
+/// Record a failure when the body makes more than `ceiling` heap allocations per call.
+///
+/// One call warms the body first, and the count is the average over the 100 calls after
+/// it, rounded down. It counts the calling thread's allocations, so a test running beside
+/// it on another thread does not change the count. Needs
+/// [`CountingAllocator`](crate::bench::CountingAllocator) installed, and says so rather
+/// than passing quietly when it is not.
+#[track_caller]
+pub fn max_allocs<F: FnMut()>(seat: &dyn Seat, body: F, ceiling: u64, msg: &str) {
+    seat.helper();
+    allocations::max_allocs(seat, MODE, body, ceiling, msg);
 }

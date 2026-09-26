@@ -233,6 +233,14 @@
             "rust": "matches",
             "typescript": "matches"
         },
+        "max-allocs": {
+            "go": "MaxAllocs",
+            "java": "maxAllocs",
+            "kotlin": "maxAllocs",
+            "python": "max_allocs",
+            "rust": "max_allocs",
+            "typescript": "maxAllocs"
+        },
         "nil": {
             "go": "Nil",
             "java": "isNull",
@@ -677,5 +685,5 @@
             }
         }
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
 }

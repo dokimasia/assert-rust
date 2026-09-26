@@ -97,6 +97,9 @@ fn every_assertion_exists_under_its_name() {
         check::eventually::<fn(&Recorder)>;
     let _: fn(&dyn Seat, Duration, fn() -> bool, &str) = check::eventually_true::<fn() -> bool>;
 
+    // allocations
+    let _: fn(&dyn Seat, fn(), u64, &str) = check::max_allocs::<fn()>;
+
     // testing an assertion, on the aborting surface only
     let _: fn(&dyn Seat, fn(&Recorder), &str) -> String = check::rejects::<fn(&Recorder)>;
 
@@ -159,6 +162,7 @@ fn both_surfaces_carry_the_same_assertions() {
     let _: fn(&dyn Seat, &(dyn Error + 'static), &Sample, &str) = soft::error_is::<Sample>;
     let _: fn(&dyn Seat, &(dyn Error + 'static), &Sample, &str) = soft::error_is_not::<Sample>;
     let _: fn(&dyn Seat, fn(), &str) = soft::does_not_panic::<fn()>;
+    let _: fn(&dyn Seat, fn(), u64, &str) = soft::max_allocs::<fn()>;
 }
 
 /// Every name in the table is one this file pins.
@@ -185,7 +189,7 @@ fn the_table_names_nothing_this_file_leaves_out() {
         })
         .collect();
 
-    assert_eq!(named.len(), 41, "the standard states 41 assertions");
+    assert_eq!(named.len(), 42, "the standard states 42 assertions");
 
     // Read at compile time: file!() is relative to the workspace root
     // and a test runs from its own crate, so the two do not meet.

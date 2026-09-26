@@ -231,6 +231,14 @@
             ],
             "summary": "Text matches a regular expression. A pattern that does not compile is a failure, not an error.\n"
         },
+        "max-allocs": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "A callable makes at most a stated number of heap allocations per call. One call warms it first, and the count is the average over the calls after it, rounded down.\n"
+        },
         "nil": {
             "arity": 2,
             "detail_fields": [
@@ -369,5 +377,5 @@
             "summary": "Reports a failure twice and succeeds on the third attempt.\n"
         }
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
 }

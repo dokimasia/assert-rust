@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@1.0.0",
+  "extends": "spec://assertions@1.1.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -16,7 +16,12 @@
     {
       "id": "bench-max-allocs",
       "what": "Counts allocations exactly, once CountingAllocator is installed as the test binary's global allocator. Without it the assertion reports that nothing counted rather than passing.",
-      "why": "Rust can count every allocation, which no other implementation of this standard can. What it cannot do is install a global allocator on a caller's behalf: a program has one, the program chooses it, and a library that took it would take it from the caller."
+      "why": "Rust counts every allocation through the allocator, as Go counts them through its runtime. What it cannot do is install a global allocator on a caller's behalf: a program has one, the program chooses it, and a library that took it would take it from the caller."
+    },
+    {
+      "id": "max-allocs",
+      "what": "Counts the calling thread's allocations exactly, once CountingAllocator is installed as the test binary's global allocator, so a test on another thread does not change the count. Without the allocator the assertion reports that nothing counted rather than passing.",
+      "why": "The allocator that counts for bench-max-allocs counts for this assertion too, and a library cannot install a global allocator on a caller's behalf."
     },
     {
       "id": "bench-max-bytes",
@@ -40,7 +45,7 @@
     },
     {
       "id": "contract.excluding",
-      "why": "Go writes a benchmark body inline under testing.B, so a setup closure would take the caller out of both the loop and the chain. It marks the setup in place with Excluding instead."
+      "why": "The harness owns the loop here, so setup goes in a second closure, handed to measuring, that the harness runs outside the measurement. Marking the setup in place would need the body to reach the contract it was handed to, and two closures cannot hold one variable mutably, so the fixture would arrive through an Option that every benchmark unwraps."
     },
     {
       "id": "assertion",

@@ -109,11 +109,11 @@ If both `soft` calls fail, both are reported together with their lines:
 
 ## The assertions
 
-Thirty-three on `check` and thirty-two on `soft`, since only `check` can
+Thirty-four on `check` and thirty-three on `soft`, since only `check` can
 drive an assertion to failure. Three more compare against a golden file
-and four state benchmark ceilings, which is forty. The forty-first is
-`no_task_leaks`, and it lives in the tokio crate because Rust's standard
-library cannot count what is running.
+and four state benchmark ceilings, which is forty-one. The forty-second
+is `no_task_leaks`, and it lives in the tokio crate because Rust's
+standard library cannot count what is running.
 
 Every signature below takes `seat: &dyn Seat` first and `msg: &str` last;
 both are elided here to keep the shapes readable.
@@ -223,6 +223,17 @@ check::eventually<F: Fn(&Recorder)>(timeout: Duration, interval: Duration, body:
 check::eventually_true<P: Fn() -> bool>(timeout: Duration, predicate: P)
 ```
 
+**Allocations.** A ceiling on the heap allocations of one call, which the
+ordinary test run checks rather than a benchmark run. One call warms the
+body, and the count is the average over the 100 calls after it, rounded
+down. It counts the calling thread's allocations, so tests running in
+parallel do not change each other's counts. It needs `CountingAllocator`,
+as the benchmark ceilings do.
+
+```rust
+check::max_allocs<F: FnMut()>(body: F, ceiling: u64)
+```
+
 **Testing an assertion.** On `check` only: `soft` cannot drive a check to
 failure, because it does not stop.
 
@@ -288,9 +299,9 @@ Contract::new(&seat, "get stays quick")
 
 `max_allocs` and `max_bytes` need `CountingAllocator` installed as the
 test binary's global allocator, and say so rather than passing quietly
-when it is missing. Rust is the only implementation of this standard that
-counts allocations exactly: the JVM reports bytes and no count, and V8
-answers neither.
+when it is missing. So does `check::max_allocs`. Rust counts allocations
+through that allocator, as Go counts them through its runtime. The JVM
+reports bytes and no count, and V8 reports neither.
 
 ## The standard
 
@@ -306,11 +317,11 @@ and holds itself to it:
   fails the build rather than a test.
 - An overlay records what this language supplies only partly.
 
-Rust is the first implementation with nothing absent: 41 of 41. Three are
-recorded as partial. `max_allocs` and `max_bytes` need the allocator
-installed, and `no_task_leaks` sees Tokio tasks but not a thread started
-with `std::thread`, because Rust's standard library cannot enumerate
-threads at all.
+Rust declares nothing absent: 42 of 42. Four are recorded as partial.
+`check::max_allocs` and the contract's `max_allocs` and `max_bytes` need
+the allocator installed, and `no_task_leaks` sees Tokio tasks but not a
+thread started with `std::thread`, because Rust's standard library cannot
+enumerate threads at all.
 
 [docs/rfc/0001](docs/rfc/0001-the-rust-implementation.md) records what
 Rust does differently from the other implementations, and why.

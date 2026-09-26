@@ -5,6 +5,7 @@
 //! [`soft`](crate::soft) are the same calls with the mode fixed, which is what makes the
 //! two surfaces agree by construction rather than by review.
 
+pub mod allocations;
 pub mod behaviour;
 pub mod containment;
 pub mod errors;

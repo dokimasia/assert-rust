@@ -19,13 +19,17 @@
 //! # Counting allocations
 //!
 //! [`Contract::max_allocs`] and [`Contract::max_bytes`] need [`CountingAllocator`]
-//! installed as the test binary's global allocator. Rust is the only implementation of
-//! this standard that can count allocations exactly, and this is the price: a library
-//! cannot install an allocator on a caller's behalf.
+//! installed as the test binary's global allocator. Rust counts allocations through the
+//! allocator, as Go counts them through its runtime, and the installation is the price: a
+//! library cannot install an allocator on a caller's behalf.
+//!
+//! [`check::max_allocs`](crate::check::max_allocs) states the same ceiling on a call in a
+//! test, which the ordinary test run checks. It needs the allocator too.
 
 use crate::matcher::{Mode, fail, report};
 use crate::seat::Seat;
 use std::alloc::{GlobalAlloc, Layout, System};
+use std::cell::Cell;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::time::{Duration, Instant};
 
@@ -35,6 +39,33 @@ const P99_MINIMUM: usize = 100;
 static ALLOCATIONS: AtomicU64 = AtomicU64::new(0);
 static BYTES: AtomicU64 = AtomicU64::new(0);
 static INSTALLED: AtomicUsize = AtomicUsize::new(0);
+
+thread_local! {
+    /// The allocations this thread has made. An allocation ceiling on one call reads
+    /// this rather than the process-wide count, so a test running beside it on another
+    /// thread does not change its count.
+    ///
+    /// Initialised by a constant and holding no destructor, so reading it from the
+    /// allocator allocates nothing.
+    static THREAD_ALLOCATIONS: Cell<u64> = const { Cell::new(0) };
+}
+
+/// Count one allocation against the thread that made it.
+///
+/// `try_with` rather than `with`, because a thread can allocate while its storage is
+/// being torn down, and counting must never be why an allocation fails.
+fn count_on_this_thread() {
+    let _ = THREAD_ALLOCATIONS.try_with(|held| held.set(held.get() + 1));
+}
+
+/// The allocations the calling thread has made, or `None` when [`CountingAllocator`] is
+/// not installed and nothing counts.
+pub(crate) fn thread_allocations() -> Option<u64> {
+    if INSTALLED.load(Ordering::Relaxed) != 1 {
+        return None;
+    }
+    THREAD_ALLOCATIONS.try_with(Cell::get).ok()
+}
 
 /// A global allocator that counts what the program asks for.
 ///
@@ -69,6 +100,7 @@ unsafe impl GlobalAlloc for CountingAllocator {
         INSTALLED.store(1, Ordering::Relaxed);
         ALLOCATIONS.fetch_add(1, Ordering::Relaxed);
         BYTES.fetch_add(layout.size() as u64, Ordering::Relaxed);
+        count_on_this_thread();
         unsafe { System.alloc(layout) }
     }
 
@@ -78,6 +110,7 @@ unsafe impl GlobalAlloc for CountingAllocator {
 
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
         ALLOCATIONS.fetch_add(1, Ordering::Relaxed);
+        count_on_this_thread();
         BYTES.fetch_add(
             new_size.saturating_sub(layout.size()) as u64,
             Ordering::Relaxed,
