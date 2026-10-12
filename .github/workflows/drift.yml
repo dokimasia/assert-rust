@@ -23,18 +23,29 @@ jobs:
   # itself, and nothing has to hold a key to five other repositories.
   drift:
     runs-on: ubuntu-latest
+    env:
+      # Every refresh issue has a title that starts with this text.
+      PREFIX: "Refresh the vendored definition to "
     steps:
       - uses: actions/checkout@v7
 
+      # spec-check prints "spec: matches" when the copy matches upstream. It
+      # prints an upstream line when the copy differs. The issue steps act on
+      # these two outcomes alone. Any other outcome fails the run, because the
+      # copy is not intact or spec-check could not read upstream.
       - name: Compare the vendored definition against upstream
         id: check
         run: |
-          if ./tools/spec-check.sh dokimi-assert/tests/spec --strict > drift.txt 2>&1; then
-            echo "drifted=no" >> "$GITHUB_OUTPUT"
-          else
-            echo "drifted=yes" >> "$GITHUB_OUTPUT"
-          fi
+          status=0
+          ./tools/spec-check.sh dokimi-assert/tests/spec --strict > drift.txt 2>&1 || status=$?
           cat drift.txt
+          if [ "$status" -eq 0 ] && grep -q '^spec: matches ' drift.txt; then
+            echo "drifted=no" >> "$GITHUB_OUTPUT"
+          elif [ "$status" -eq 1 ] && grep -q '^ *upstream ' drift.txt; then
+            echo "drifted=yes" >> "$GITHUB_OUTPUT"
+          else
+            exit 1
+          fi
 
       - name: Read what upstream now digests to
         if: steps.check.outputs.drifted == 'yes'
@@ -44,18 +55,19 @@ jobs:
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
           echo "short=${digest:7:12}" >> "$GITHUB_OUTPUT"
 
-      - name: Open a refresh issue where one is not already open
+      # The title of a refresh issue contains one upstream digest. When
+      # upstream moves again, the issue of the new digest replaces every
+      # older one.
+      - name: Open a refresh issue and close the issues that it replaces
         if: steps.check.outputs.drifted == 'yes'
         env:
           GH_TOKEN: ${{ github.token }}
-          TITLE: "Refresh the vendored definition to ${{ steps.spec.outputs.short }}"
+          TITLE: "${{ env.PREFIX }}${{ steps.spec.outputs.short }}"
         run: |
-          if gh issue list --state open --search "$TITLE" --json title \
-               --jq '.[].title' | grep -qF "$TITLE"; then
-            echo "one is already open"
-            exit 0
-          fi
-          gh issue create --title "$TITLE" --body "$(cat <<BODY
+          current=$(gh issue list --state open --limit 200 --json number,title \
+            --jq '[.[] | select(.title == env.TITLE) | .number][0] // empty')
+          if [ -z "$current" ]; then
+            url=$(gh issue create --title "$TITLE" --body "$(cat <<BODY
           The definition moved. This library vendors a copy, so its build
           is still green against the copy it has.
 
@@ -70,4 +82,24 @@ jobs:
 
           Lagging is allowed. Not knowing is what this issue is for.
           BODY
-          )"
+          )")
+            current=${url##*/}
+          fi
+          gh issue list --state open --limit 200 --json number,title \
+            --jq '.[] | select((.title | startswith(env.PREFIX)) and .title != env.TITLE) | .number' |
+            while read -r number; do
+              gh issue close "$number" --duplicate-of "$current" \
+                --comment "Upstream moved again. #$current replaces this issue." < /dev/null
+            done
+
+      - name: Close the refresh issues of a copy that matches upstream
+        if: steps.check.outputs.drifted == 'no'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue list --state open --limit 200 --json number,title \
+            --jq '.[] | select(.title | startswith(env.PREFIX)) | .number' |
+            while read -r number; do
+              gh issue close "$number" --reason completed \
+                --comment "The vendored definition matches upstream." < /dev/null
+            done
