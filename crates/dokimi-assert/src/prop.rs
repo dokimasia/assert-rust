@@ -35,7 +35,13 @@
 //!
 //! The settings of a run are an [`Options`] builder. A free function of the
 //! name of each setting, such as [`cases`] or [`seed`], starts the builder,
-//! and its methods of the same names extend it.
+//! and its methods of the same names extend it. [`using`] gives a type
+//! another generator in one run.
+//!
+//! # Values outside a property
+//!
+//! [`values`] returns the values of a generator for a seed, so a benchmark
+//! measures the same inputs in every run.
 //!
 //! # The environment
 //!
@@ -59,7 +65,9 @@ mod native;
 pub(crate) mod options;
 pub(crate) mod property;
 pub(crate) mod registry;
+pub(crate) mod scope;
 mod shape;
+mod values;
 
 pub use arbitrary::{Arbitrary, Definitions};
 pub use case::{Case, Rand};
@@ -85,3 +93,4 @@ pub use options::{
 pub use property::{for_all, fuzz};
 pub use registry::{Variant, of, register, register_values, register_variants, shape_of};
 pub use shape::{Shape, ShapeError, of_shape};
+pub use values::values;
