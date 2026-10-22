@@ -2,12 +2,12 @@
 rfc: 0002
 title: Definition 8.0 in Rust
 author: Roy Klopper <roy.klopper@stealthscale.io>
-status: Draft
+status: Withdrawn
 created: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-21
 discussion: https://github.com/dokimasia/assert-rust/issues/7
 supersedes: none
-superseded-by: none
+superseded-by: RFC-0003
 produces-adr: none
 ---
 
@@ -559,3 +559,10 @@ names of Go's options keep the two libraries readable side by side.
 | The cancellation handle of a Rust seat | assert-spec RFC-0029: <https://github.com/dokimasia/assert-spec/blob/main/docs/rfc/0029-the-cancellation-handle-of-a-seat.md> |
 | The options of Go's generators | <https://github.com/dokimasia/assert-go/tree/main/prop> |
 | The TypeScript implementation of the same definition, and its size | <https://github.com/dokimasia/assert-typescript/blob/main/docs/rfc/0003-definition-7-2-in-typescript.md>; `src` and `tests` counted with `wc -l` on 2026-10-11 |
+
+## Withdrawal
+
+RFC-0003 replaces this proposal. It implements definition 9.0.0, which
+this proposal predates. It states the settings of a run as builders and
+the bounds of a generator as ranges, where this proposal states both as
+lists of option values.
