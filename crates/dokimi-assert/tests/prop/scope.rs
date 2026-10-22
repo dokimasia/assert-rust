@@ -212,7 +212,7 @@ mod of {
 
     #[test]
     fn decodes_with_the_generator_of_the_test_process_outside_a_run() {
-        let digits = prop::values(&prop::of::<u16>(), 42, 20);
+        let digits = prop::values(&prop::of::<u16>(), 42, 20, Options::default());
         assert!(digits.iter().any(|n| *n >= 10), "{digits:?}");
     }
 }

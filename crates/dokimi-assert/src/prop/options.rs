@@ -280,6 +280,25 @@ impl<T> Options<T> {
         self
     }
 
+    /// Returns `true` when every setting other than `using` keeps its
+    /// default.
+    pub(crate) fn states_using_alone(&self) -> bool {
+        self.cases == DEFAULT_CASES
+            && self.seed.is_none()
+            && self.replay.is_none()
+            && self.requirements.is_empty()
+            && self.shrink == DEFAULT_BUDGET
+            && self.shrink_time == DEFAULT_SHRINK_TIME
+            && self.max_choices == MAX_CHOICES
+            && self.store.is_none()
+            && self.explain
+            && self.workers == 1
+            && !self.hermetic
+            && self.around.is_none()
+            && self.draws.is_none()
+            && self.examples.is_empty()
+    }
+
     /// States one case of a property form that runs first: one value for
     /// each argument that the form generates, in order.
     pub fn example(mut self, values: impl IntoIterator<Item = T>) -> Self {
