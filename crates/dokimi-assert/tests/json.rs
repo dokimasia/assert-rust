@@ -4,7 +4,7 @@
 //! and reads JSON from that golden file and from the text that the golden
 //! assertion compares.
 
-use crate::helpers::Scratch;
+use crate::helpers::{Scratch, definition};
 use dokimi_assert::{Recorder, check, golden};
 
 /// Returns the message of the fault of a comparison of `got` with the field
@@ -37,10 +37,11 @@ mod write {
         let seat = Recorder::new();
         check::length(&seat, "ab", 2, "the code has two characters");
         let line = &seat.records()[0];
-        assert!(
-            line.starts_with(r#"{"definition":"10.0.0","seq":1,"assertion":"length","#),
-            "{line}"
+        let start = format!(
+            r#"{{"definition":"{}","seq":1,"assertion":"length","#,
+            definition()
         );
+        assert!(line.starts_with(&start), "{line}");
         assert!(!line.contains('\n'), "{line}");
     }
 

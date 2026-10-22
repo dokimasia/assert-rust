@@ -1,6 +1,6 @@
 //! The spec of `record`, the call records of a run.
 
-use crate::helpers::{Scratch, in_child, records};
+use crate::helpers::{Scratch, definition, in_child, records};
 use dokimi_assert::{Collector, Controlled, Recorder, Seat, Standard, check, golden};
 use serde_json::Value as Json;
 use std::path::PathBuf;
@@ -50,10 +50,11 @@ mod recorder {
         let line = line!() + 1;
         check::length(&seat, "ab", 3, "the code has three characters");
         let record = &seat.records()[0];
+        let definition = definition();
         assert_eq!(
             *record,
             format!(
-                r#"{{"definition":"10.0.0","seq":1,"assertion":"length","contract":"the code has three characters","verdict":"fail","aborting":true,"where":{{"file":"record.rs","line":{line}}},"detail":{{"want":{{"type":"int","value":3}},"got":{{"type":"int","value":2}}}}}}"#
+                r#"{{"definition":"{definition}","seq":1,"assertion":"length","contract":"the code has three characters","verdict":"fail","aborting":true,"where":{{"file":"record.rs","line":{line}}},"detail":{{"want":{{"type":"int","value":3}},"got":{{"type":"int","value":2}}}}}}"#
             )
         );
     }

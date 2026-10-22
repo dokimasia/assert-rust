@@ -601,6 +601,7 @@ pub fn compare_record(
     let line = observed.records.first().ok_or(Disagreement::NoCallRecord)?;
     let record: Json =
         serde_json::from_str(line).map_err(|_| Disagreement::CallRecordJson(line.clone()))?;
+    let version = definition::version().map_err(Disagreement::Definition)?;
     let members = [
         ("seq", Json::from(1)),
         ("assertion", Json::from(case.assertion.as_str())),
@@ -610,7 +611,7 @@ pub fn compare_record(
             Json::from(if case.fails { "fail" } else { "pass" }),
         ),
         ("aborting", Json::from(surface.aborting())),
-        ("definition", Json::from("10.0.0")),
+        ("definition", Json::from(version)),
     ];
     if let Some((name, _)) = members
         .into_iter()

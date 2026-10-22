@@ -85,6 +85,17 @@ pub(crate) fn commit(history: &History, client: usize, ops: &[Op]) {
     txn(history, client, ops).ok(Value::List(ops.iter().map(|op| op.returned()).collect()));
 }
 
+/// Returns the version of the definition that the conformance crate of the
+/// workspace vendors, which its file `VERSION` contains. Every call record
+/// states it.
+pub(crate) fn definition() -> String {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../dokimi-assert-conformance/VERSION");
+    std::fs::read_to_string(path)
+        .expect("the conformance crate has the file VERSION")
+        .trim()
+        .to_owned()
+}
+
 /// Returns the call records of `seat` as JSON values, in the order of their
 /// numbers.
 pub(crate) fn records(seat: &Recorder) -> Vec<serde_json::Value> {

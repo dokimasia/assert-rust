@@ -42,7 +42,7 @@ fn recorded(record: &Json, failed: bool) -> Observed {
 /// case expects and without a detail.
 fn record_of(case: &Case) -> Json {
     json!({
-        "definition": "10.0.0",
+        "definition": definition::version().expect("the definition states its version"),
         "seq": 1,
         "assertion": case.assertion,
         "contract": case.id,
