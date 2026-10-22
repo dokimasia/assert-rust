@@ -20,13 +20,13 @@ mod options {
         assert_eq!(
             stated(&Options::<()>::default()),
             "Options { cases: 100, seed: None, replay: None, shrink: 2000, shrink_time: 30s, max_choices: 8192, \
-             store: None, explain: true, workers: 1, hermetic: false, .. }"
+             store: None, explain: true, workers: 1, hermetic: false, using: {}, .. }"
         );
     }
 
     #[test]
     fn starts_a_chain_with_the_function_of_each_setting() {
-        let tests: [(Options, &str); 11] = [
+        let tests: [(Options, &str); 12] = [
             (prop::cases(5), "cases: 5"),
             (prop::seed(7), "seed: Some(7)"),
             (prop::replay("prop1:AA"), r#"replay: Some("prop1:AA")"#),
@@ -37,6 +37,7 @@ mod options {
             (prop::explain(false), "explain: false"),
             (prop::workers(2), "workers: 2"),
             (prop::hermetic(), "hermetic: true"),
+            (prop::using(&prop::just(1_u8)), r#"using: {"u8"}"#),
             (
                 prop::require("small", 0.5).draws("[]").around(|run| run()),
                 "cases: 100",

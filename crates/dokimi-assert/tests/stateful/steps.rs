@@ -163,6 +163,22 @@ mod steps {
     }
 
     #[test]
+    fn draws_with_the_generators_of_the_run_on_the_threads_of_its_clients() {
+        let large = AtomicUsize::new(0);
+        let seat = run(prop::using(&prop::integer(0..=9_u16)), |c| {
+            let machine =
+                Machine::<i64>::new([Action::new("draw", async |c: &Case<'_>, _: usize| {
+                    if c.draw(&prop::of::<u16>(), "n") >= 10 {
+                        large.fetch_add(1, Ordering::SeqCst);
+                    }
+                })]);
+            stateful::steps(c, &machine, stateful::clients(2).max(4));
+        });
+        assert!(!seat.failed(), "{}", seat.message());
+        assert_eq!(large.load(Ordering::SeqCst), 0);
+    }
+
+    #[test]
     fn runs_a_case_with_a_section_on_threads_up_to_its_repeats() {
         let calls = |repeats: usize| {
             let count = AtomicUsize::new(0);

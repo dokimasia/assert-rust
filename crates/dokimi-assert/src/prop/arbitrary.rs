@@ -21,12 +21,14 @@ mod uuid;
 
 use super::generator::Generator;
 use super::registry::{self, convert_from, convert_to};
+use super::scope::Generators;
 use super::shape::{Shape, ShapeError};
 use crate::value::Value;
 use std::any::TypeId;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::hash::Hash;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 /// The nanoseconds of a second.
@@ -127,15 +129,33 @@ pub struct Definitions {
     pub(crate) shapes: Vec<(String, Shape)>,
     open: Vec<(TypeId, bool)>,
     defined: Vec<TypeId>,
-    /// The registered generators that the shape refers to, by the name of
-    /// their type.
+    /// The registered and the stated generators that the shape refers to, by
+    /// the name of their type.
     pub(crate) externals: Vec<(String, Generator<Value>)>,
+    /// The generators of the run that reads the type, or `None` for a read
+    /// of the test process.
+    pub(crate) using: Option<Arc<Generators>>,
 }
 
 impl Definitions {
-    /// Returns the shape of `T` at a place where `T` occurs: the shape that a
-    /// registration states for `T`, or else `T`'s own shape.
+    /// Returns the definitions of a read under `using`, the generators of a
+    /// run, or of a read of the test process for `None`.
+    pub(crate) fn under(using: Option<Arc<Generators>>) -> Self {
+        Self {
+            using,
+            ..Self::default()
+        }
+    }
+
+    /// Returns the shape of `T` at a place where `T` occurs: a ref to the
+    /// generator that the run states for `T`, the shape that a registration
+    /// states for `T`, or else `T`'s own shape.
     pub fn shape<T: Arbitrary>(&mut self) -> Shape {
+        if let Some(external) = self.using.as_ref().and_then(|using| using.external::<T>()) {
+            let name = std::any::type_name::<T>();
+            self.externals.push((name.to_owned(), external));
+            return Shape::reference(name);
+        }
         match registry::shape_of_type::<T>(self) {
             Some(shape) => shape,
             None => T::shape(self),

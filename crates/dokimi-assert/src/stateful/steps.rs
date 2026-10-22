@@ -12,6 +12,7 @@ use crate::prop::engine::choice::{Bounds, IntegerBounds};
 use crate::prop::engine::collection::{Sizes, more};
 use crate::prop::engine::draw::{Draw, HALF};
 use crate::prop::engine::trace::TraceError;
+use crate::prop::scope::{current, enter};
 use crate::seat::Seat;
 use std::fmt::Debug;
 use std::future::Future;
@@ -458,11 +459,15 @@ where
         }
         let repeat = self.options.repeat;
         case.with_record(|record| record.repeats = repeat);
+        // The draws of a client pick the generators of the run.
+        let using = current();
         let ended: Vec<thread::Result<()>> = thread::scope(|scope| {
             let handles: Vec<_> = active
                 .into_iter()
                 .map(|(client, steps)| {
+                    let using = using.clone();
                     scope.spawn(move || {
+                        let _run = enter(using);
                         for step in steps {
                             block_on(step(case, client));
                         }

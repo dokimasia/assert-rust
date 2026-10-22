@@ -1,10 +1,12 @@
 //! The settings of a property: a builder whose methods each state one
 //! setting.
 
+use super::arbitrary::Arbitrary;
 use super::engine::case::MAX_CHOICES;
 use super::engine::runner::{DEFAULT_CASES, Requirement};
 use super::engine::shrink::DEFAULT_BUDGET;
 use super::generator::Generator;
+use super::scope::Using;
 use std::fmt::{self, Debug};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -33,10 +35,9 @@ pub(crate) type Wrapper = Arc<dyn Fn(&mut dyn FnMut()) + Send + Sync>;
 /// });
 /// ```
 ///
-/// `T` is the input of a property form, so [`Options::using`],
-/// [`Options::example`] and [`Options::examples`] state values that the
-/// compiler checks against the form. [`for_all`](crate::prop::for_all) takes
-/// `Options<()>`.
+/// `T` is the input of a property form, so [`Options::example`] and
+/// [`Options::examples`] state values that the compiler checks against the
+/// form. [`for_all`](crate::prop::for_all) takes `Options<()>`.
 #[must_use]
 pub struct Options<T = ()> {
     pub(crate) cases: usize,
@@ -52,7 +53,7 @@ pub struct Options<T = ()> {
     pub(crate) hermetic: bool,
     pub(crate) around: Option<Wrapper>,
     pub(crate) draws: Option<String>,
-    pub(crate) using: Option<Generator<T>>,
+    pub(crate) using: Using,
     pub(crate) examples: Vec<Vec<T>>,
 }
 
@@ -91,6 +92,7 @@ impl<T> Debug for Options<T> {
             .field("explain", &self.explain)
             .field("workers", &self.workers)
             .field("hermetic", &self.hermetic)
+            .field("using", &self.using)
             .finish_non_exhaustive()
     }
 }
@@ -114,7 +116,7 @@ impl<T> Default for Options<T> {
             hermetic: false,
             around: None,
             draws: None,
-            using: None,
+            using: Using::default(),
             examples: Vec::new(),
         }
     }
@@ -246,10 +248,35 @@ impl<T> Options<T> {
         self
     }
 
-    /// States the generator of a property form's input, in place of the
-    /// generator of its type.
-    pub fn using(mut self, generator: &Generator<T>) -> Self {
-        self.using = Some(generator.clone());
+    /// Makes `generator` the generator of `U` in the run that takes the
+    /// settings.
+    ///
+    /// [`for_all`](crate::prop::for_all), [`fuzz`](crate::prop::fuzz) and
+    /// every property form take the setting. In the run, a draw of
+    /// [`of::<U>()`](crate::prop::of) decodes with `generator`, and a draw of
+    /// `of` of a type that contains `U` generates each `U` with it. The input
+    /// of a form is such a draw. The generator takes precedence over the
+    /// generator that [`register`](crate::prop::register) gives `U` and over
+    /// the shape of `U`. Every other generator, such as `prop::integer(0..=9)`,
+    /// decodes as it does without the setting. A second `using` of one type
+    /// replaces the first.
+    ///
+    /// Inside `generator`, a draw of `of::<U>()` decodes with the generator of
+    /// `U` without the setting, so `generator` can narrow the values of its own
+    /// type:
+    ///
+    /// ```
+    /// use dokimi_assert::{Collector, check, prop};
+    ///
+    /// let t = Collector::new();
+    /// let small = prop::of::<u16>().filter(|n| *n < 10);
+    /// prop::for_all(&t, "a digit stays a digit", prop::using(&small).cases(20), |c| {
+    ///     let digits = c.draw(&prop::of::<Vec<u16>>(), "digits");
+    ///     check::is_true(c, digits.iter().all(|n| *n < 10), "every element is a digit");
+    /// });
+    /// ```
+    pub fn using<U: Arbitrary + Debug>(mut self, generator: &Generator<U>) -> Self {
+        self.using.insert(generator);
         self
     }
 
@@ -350,8 +377,8 @@ pub fn draws<T>(entries: &str) -> Options<T> {
     Options::default().draws(entries)
 }
 
-/// Returns the settings with the generator of a property form's input.
-pub fn using<T>(generator: &Generator<T>) -> Options<T> {
+/// Returns the settings with `generator` as the generator of `U` in the run.
+pub fn using<T, U: Arbitrary + Debug>(generator: &Generator<U>) -> Options<T> {
     Options::default().using(generator)
 }
 

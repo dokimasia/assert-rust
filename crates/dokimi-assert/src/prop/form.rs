@@ -14,6 +14,7 @@ use super::generator::Generator;
 use super::options::Options;
 use super::property::{Call, Property, Refused, fault};
 use super::registry::generator_of;
+use super::scope;
 use crate::seat::Seat;
 use crate::verdict::Run;
 use std::any::Any;
@@ -41,12 +42,12 @@ pub(crate) struct Form {
 /// input for each of `labels`, in order, and `check` runs the form's
 /// assertion on them with the case as its seat.
 ///
-/// The input's generator is the one that `using` states, and otherwise the
-/// one that `prop::of` returns. The call ends with a fault, without a run,
-/// for a type whose shape does not read, for an example of another number of
-/// values than the form generates, for a value of an example that the
-/// generator does not produce, and for each fault for which `for_all` ends
-/// its call.
+/// The input's generator is the generator of its type under the generators
+/// that `using` states, as a draw of `prop::of` picks it. The call ends with
+/// a fault, without a run, for a type whose shape does not read, for an
+/// example of another number of values than the form generates, for a value
+/// of an example that the generator does not produce, and for each fault for
+/// which `for_all` ends its call.
 #[track_caller]
 pub(crate) fn run<T, const N: usize>(
     seat: &dyn Seat,
@@ -66,7 +67,13 @@ pub(crate) fn run<T, const N: usize>(
         contract: msg,
         pinned: true,
     };
-    let generator = match options.using.take().map_or_else(generator_of::<T>, Ok) {
+    let using = options.using.generators();
+    let _run = scope::enter(using.clone());
+    let read = match &using {
+        Some(generators) => generators.read::<T>(),
+        None => generator_of::<T>(),
+    };
+    let generator = match read {
         Ok(generator) => generator,
         Err(refused) => return fault(&run, call, &Refused::new("", refused.reason())),
     };

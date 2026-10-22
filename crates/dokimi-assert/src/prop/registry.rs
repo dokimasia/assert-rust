@@ -14,6 +14,7 @@ use super::engine::choice::IntegerBounds;
 use super::engine::inverse::{CannotInvert, Emitted};
 use super::generator::{Generator, Node};
 use super::native::Walk;
+use super::scope::{Generators, picking};
 use super::shape::{Shape, ShapeError, put, reader};
 use crate::json::{Json, object};
 use crate::value::Value;
@@ -81,8 +82,8 @@ fn to_native<T: Arbitrary>() -> To {
     Box::new(|value: &dyn Any| value.downcast_ref::<T>().map(T::to_value))
 }
 
-/// Makes `generator` the generator that [`of`] returns for `T`, and that
-/// every derived input uses wherever `T` occurs.
+/// Makes `generator` the generator that a draw of [`of`] decodes with for
+/// `T`, and that every derived input uses wherever `T` occurs.
 ///
 /// A registered generator has no shape, so [`shape_of`] fails for a type
 /// that contains `T`.
@@ -353,9 +354,11 @@ struct Document {
     externals: Vec<(String, Generator<Value>)>,
 }
 
-/// Returns the shape file of `T`, with `source` naming the type.
-fn document<T: Arbitrary>() -> Result<Document, ShapeError> {
-    let mut definitions = Definitions::default();
+/// Returns the shape file of `T`, with `source` naming the type. A read under
+/// `using`, the generators of a run, states a ref to each type that the run
+/// states.
+fn document<T: Arbitrary>(using: Option<Arc<Generators>>) -> Result<Document, ShapeError> {
+    let mut definitions = Definitions::under(using);
     let mut json = definitions.shape::<T>().json()?.clone();
     let mut named = Vec::with_capacity(definitions.shapes.len());
     for (name, shape) in &definitions.shapes {
@@ -392,7 +395,7 @@ fn document<T: Arbitrary>() -> Result<Document, ShapeError> {
 /// Returns [`ShapeError`] for a shape that does not read, and for a type
 /// that contains a type with a registered generator, which has no shape.
 pub fn shape_of<T: Arbitrary>() -> Result<String, ShapeError> {
-    let document = document::<T>()?;
+    let document = document::<T>(None)?;
     if let Some((name, _)) = document.externals.first() {
         return Err(ShapeError::new(format!(
             "{name} has a registered generator, which has no shape"
@@ -422,18 +425,35 @@ pub fn shape_of<T: Arbitrary>() -> Result<String, ShapeError> {
 /// });
 /// ```
 ///
+/// In a run that gives types generators through
+/// [`using`](super::Options::using), a draw of the generator decodes with
+/// the generator that the run gives `T`. A draw of a type that contains such
+/// a type reads the type again with the run's generators in place, once per
+/// run, and panics inside its case when that read fails.
+///
 /// # Panics
 ///
 /// Panics when the shape of `T` does not read, with the reason.
 #[must_use]
 pub fn of<T: Arbitrary>() -> Generator<T> {
-    generator_of::<T>()
-        .unwrap_or_else(|refused| panic!("prop::of::<{}>: {refused}", type_name::<T>()))
+    picking(
+        generator_of::<T>()
+            .unwrap_or_else(|refused| panic!("prop::of::<{}>: {refused}", type_name::<T>())),
+    )
 }
 
-/// Returns the generator that [`of`] returns, or the refusal of a shape that
-/// does not read.
+/// Returns the generator of `T` in the test process, or the refusal of a
+/// shape that does not read.
 pub(crate) fn generator_of<T: Arbitrary>() -> Result<Generator<T>, ShapeError> {
+    generator_under::<T>(None)
+}
+
+/// Returns the generator of `T` that a read under `using`, the generators of
+/// a run, returns: the registered generator of `T`, or else the generator of
+/// `T`'s shape with a ref to each type that the run states.
+pub(crate) fn generator_under<T: Arbitrary>(
+    using: Option<Arc<Generators>>,
+) -> Result<Generator<T>, ShapeError> {
     if let Some(generator) = registered::<T>().and_then(|registration| {
         registration
             .generator
@@ -442,7 +462,7 @@ pub(crate) fn generator_of<T: Arbitrary>() -> Result<Generator<T>, ShapeError> {
     }) {
         return Ok(generator);
     }
-    let document = document::<T>()?;
+    let document = document::<T>(using)?;
     let shape = reader::read(&document.json, &document.externals)?;
     Ok(Generator::from_node(Derived::<T> {
         shape,
@@ -494,10 +514,10 @@ impl<T: Arbitrary> Node<T> for Derived<T> {
     }
 }
 
-/// A registered generator, whose values a derived input takes as native
-/// values.
-struct Native<T> {
-    of: Generator<T>,
+/// A registered or stated generator, whose values a derived input takes as
+/// native values.
+pub(crate) struct Native<T> {
+    pub(crate) of: Generator<T>,
 }
 
 impl<T: Arbitrary + Debug> Node<Value> for Native<T> {

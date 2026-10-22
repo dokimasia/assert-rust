@@ -113,6 +113,22 @@ mod run {
     }
 
     #[test]
+    fn reads_an_input_that_contains_a_stated_type_with_the_stated_generator() {
+        let seat = Recorder::new();
+        let options = prop::using(&prop::integer(0..=9_u16))
+            .hermetic()
+            .seed(1)
+            .store("");
+        prop::is_true(
+            &seat,
+            |ns: &Vec<u16>| ns.iter().all(|n| *n < 10),
+            "every element is a digit",
+            options,
+        );
+        assert!(!seat.failed(), "{}", seat.message());
+    }
+
+    #[test]
     fn runs_an_example_of_a_value_without_a_typed_literal_as_its_value() {
         let generator = prop::integer(0..=255_u8).map(Id);
         let seat = Recorder::new();

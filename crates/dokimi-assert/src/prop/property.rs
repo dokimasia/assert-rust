@@ -20,14 +20,16 @@ use super::engine::token;
 use super::engine::trace::{Entry, Refusal, TraceError};
 use super::environment;
 use super::options::{Options, Wrapper};
+use super::scope::{self, Generators};
 use crate::json::{self, Json};
 use crate::matcher::panics::{message, quietly};
 use crate::record::DEFINITION;
 use crate::seat::{Seat, Standard};
 use crate::value::Value;
-use crate::verdict::{Mode, Run};
+use crate::verdict::{self, Mode, Run};
 use std::panic::resume_unwind;
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 /// The call of a property: its operation, which each fault's text starts
@@ -200,6 +202,9 @@ pub(crate) struct Property<'c> {
     replay: Option<Vec<Choice>>,
     directory: Option<PathBuf>,
     around: Option<Wrapper>,
+    /// The generators that `using` gives types in the runs, or `None` for
+    /// runs that state none.
+    using: Option<Arc<Generators>>,
     test: Option<String>,
 }
 
@@ -236,6 +241,7 @@ impl<'c> Property<'c> {
             replay,
             directory: directory::store_of(test.as_deref(), options.store.as_deref()),
             around: options.around,
+            using: options.using.generators(),
             test,
         })
     }
@@ -318,7 +324,7 @@ impl<'c> Property<'c> {
             notes.extend(self.save(&outcome));
         }
         notes.append(&mut saved);
-        self.note(&notes);
+        self.note(seat, &notes);
         self.report(run, &outcome);
     }
 
@@ -350,7 +356,7 @@ impl<'c> Property<'c> {
         }) else {
             return;
         };
-        self.note(&self.store_notes(&loaded, &outcome));
+        self.note(seat, &self.store_notes(&loaded, &outcome));
         self.report(run, &outcome);
     }
 
@@ -381,7 +387,7 @@ impl<'c> Property<'c> {
             return;
         };
         if outcome.kind == Kind::Counterexample {
-            self.note(&self.save(&outcome));
+            self.note(seat, &self.save(&outcome));
         }
         self.report(run, &outcome);
     }
@@ -430,6 +436,9 @@ impl<'c> Property<'c> {
     /// Runs `work` with the property's body, and returns its outcome, or
     /// `None` after the call ended with a fault: an entry of the draws option
     /// that the body cannot follow, or a fault of a case.
+    ///
+    /// The generators that `using` states apply on the thread of the call and
+    /// in each run of the body, on any thread.
     #[track_caller]
     fn drive<'s>(
         &self,
@@ -438,10 +447,15 @@ impl<'c> Property<'c> {
         body: &(dyn Fn(&Case<'s>) + Sync),
         work: impl FnOnce(&mut EngineRun<'_, 's>) -> Result<Outcome, Fault>,
     ) -> Option<Outcome> {
+        let _run = scope::enter(self.using.clone());
         let around = self.around.clone();
-        let adapted = move |case: &Case<'s>| match &around {
-            None => body(case),
-            Some(wrapper) => wrapped(wrapper, case, body),
+        let using = self.using.clone();
+        let adapted = move |case: &Case<'s>| {
+            let _run = scope::enter(using.clone());
+            match &around {
+                None => body(case),
+                Some(wrapper) => wrapped(wrapper, case, body),
+            }
         };
         let mut observer = |phase: Phase, execution: &Execution| {
             for calls in execution.calls.iter().flatten() {
@@ -546,11 +560,12 @@ impl<'c> Property<'c> {
         notes
     }
 
-    /// Notes each fault that does not end the call on the standard error,
-    /// which the test runner shows with the output of the test.
-    fn note(&self, faults: &[Refused]) {
+    /// Notes each fault that does not end the call through the seat's
+    /// `report_fault`. A seat that keeps no fault prints it to the standard
+    /// error, which the test runner shows with the output of the test.
+    fn note(&self, seat: &dyn Seat, faults: &[Refused]) {
         for fault in faults {
-            eprintln!("{}", fault.text(self.call.op));
+            verdict::note(seat, fault.text(self.call.op));
         }
     }
 
