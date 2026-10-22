@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The generators of the property vectors, built from their JSON.
 //!
 //! A vector states a generator as a JSON object whose `gen` key names its

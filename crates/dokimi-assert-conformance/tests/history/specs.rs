@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::specs`, the named specs of the definition.
 
 use dokimi_assert::history::{History, Spec};

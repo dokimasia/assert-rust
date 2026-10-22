@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The typed literals of the definition, decoded to the values that a driver
 //! hands an assertion, and compared with the values of a record.
 

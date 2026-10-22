@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The named specs of the definition, which a history vector names in place
 //! of a spec of its own.
 //!

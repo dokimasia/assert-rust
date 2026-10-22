@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The bodies of the property vectors, stated as data.
 //!
 //! A body spec draws one value, labelled `value`, from its `draw` generator.

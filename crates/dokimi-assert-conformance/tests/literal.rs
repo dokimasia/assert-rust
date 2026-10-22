@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `literal`, the decoder of the definition's typed literals.
 
 use dokimi_assert::Value;

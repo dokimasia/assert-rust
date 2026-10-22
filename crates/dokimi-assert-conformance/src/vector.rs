@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The vectors of the definition's history and machine engines, and how a
 //! run disagrees with one.
 

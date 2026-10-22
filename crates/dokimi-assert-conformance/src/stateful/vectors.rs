@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The runner of the machines vectors.
 //!
 //! A machines vector names a machine subject. It may state the options of

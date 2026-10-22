@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `subject`, the native subjects of the corpus.
 
 use dokimi_assert::Recorder;

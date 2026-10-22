@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The fixture types of the definition, and the shape file that
 //! `prop::shape_of` writes for each.
 //!

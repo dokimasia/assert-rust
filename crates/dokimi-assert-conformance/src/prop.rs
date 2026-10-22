@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The property vectors of the definition, run against the property engine
 //! of `dokimi-assert`.
 //!

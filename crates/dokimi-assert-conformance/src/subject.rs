@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The subjects that a corpus case names in place of a value, built
 //! natively, as the `subjects` section of the definition states them.
 

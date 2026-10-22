@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The definition's corpus and vectors, run against `dokimi-assert` and
 //! `dokimi-assert-tokio` through their public APIs.
 //!

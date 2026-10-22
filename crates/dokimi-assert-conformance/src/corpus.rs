@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The corpus of the definition, run on each surface through a recorder.
 //!
 //! A case runs on `check` and on `soft` of each library that states its

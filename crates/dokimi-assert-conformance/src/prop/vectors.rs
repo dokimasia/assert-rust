@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The runners of the property vectors.
 //!
 //! Each kind of property vector has a function that takes the inputs of a

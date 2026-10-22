@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `vector`, which reads the vectors of an engine.
 
 use dokimi_assert_conformance::definition::{self, Error};

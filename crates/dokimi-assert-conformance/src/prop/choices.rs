@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The corpus form of choices, values and seeds, and the comparison of JSON.
 //!
 //! A vector writes a choice as a JSON integer, or as a decimal string beyond

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `definition`, the reader of the vendored definition.
 
 use dokimi_assert_conformance::definition::{self, Error};

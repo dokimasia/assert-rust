@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The machines vectors of the definition, run against the steps of a
 //! machine of `dokimi-assert`.
 //!

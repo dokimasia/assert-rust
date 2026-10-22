@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The predicates of the property vectors, stated as data.
 //!
 //! A predicate is a JSON object with a `kind` and its parameters, and

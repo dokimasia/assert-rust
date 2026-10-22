@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `corpus`, which runs the definition's corpus on both
 //! surfaces of each library.
 

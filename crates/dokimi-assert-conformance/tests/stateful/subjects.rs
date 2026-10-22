@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `stateful::subjects`, the machine subjects of the definition.
 
 use dokimi_assert::prop;

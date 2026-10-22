@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The runner of the forms vectors.
 //!
 //! A forms vector has a form, the kinds of the subjects that the form's

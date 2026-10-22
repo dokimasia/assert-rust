@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The files vectors of the definition, run against `dokimi-assert`.
 //!
 //! A vector states the tree of a workspace, the arguments of a call of an
