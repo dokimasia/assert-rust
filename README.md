@@ -561,9 +561,11 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   does each value of that type inside a derived type. Inside `generator`, a
   draw of its own type decodes without the setting, so a run can narrow a
   type with `prop::of::<T>().filter(…)`.
-- `prop::values(&generator, seed, n)` returns the values of the first
-  random cases of a seed outside a property. A benchmark then measures the
-  same inputs in every run.
+- `prop::values(&generator, seed, n, options)` returns the values of the
+  first random cases of a seed outside a property. A benchmark then
+  measures the same inputs in every run. `options` takes `using` alone, so
+  the benchmark and a run of the property draw from one domain. A call
+  without it passes `Options::default()`.
 
 A form takes a type with a derived generator:
 
@@ -834,7 +836,7 @@ and has the binary's name with the suffix `.dokimi-assert.jsonl`, such as
 
 [assert-spec](https://github.com/dokimasia/assert-spec) defines the
 assertions. The unpublished crate `dokimi-assert-conformance` contains a
-copy of definition 10.0.0. `make spec-sync` writes the copy from a commit of
+copy of the definition. `make spec-sync` writes the copy from a commit of
 assert-spec, and `make spec-check` verifies it. The crate's tests run the
 definition's cases and vectors through the public API of both crates. They
 compare JSON with `serde_json`, never with the library under test.
