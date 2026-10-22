@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The comparisons of the assertions, which both surfaces call with the mode
 //! of their surface.
 

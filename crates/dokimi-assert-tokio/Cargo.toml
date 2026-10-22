@@ -1,3 +1,6 @@
+# Copyright Dokimasia B.V. 2026
+# SPDX-License-Identifier: MIT
+
 [package]
 name = "dokimi-assert-tokio"
 description = "The assertions of dokimi-assert whose subject is a future, for tests on tokio"

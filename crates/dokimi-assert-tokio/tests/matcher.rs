@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher`: the comparisons that both surfaces share.
 
 use crate::helpers::records;

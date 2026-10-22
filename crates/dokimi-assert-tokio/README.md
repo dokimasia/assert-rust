@@ -1,3 +1,8 @@
+<!--
+  ~ Copyright Dokimasia B.V. 2026
+  ~ SPDX-License-Identifier: MIT
+-->
+
 # dokimi-assert-tokio
 
 The assertions of [dokimi-assert](https://github.com/dokimasia/assert-rust)

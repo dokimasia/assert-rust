@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Assertions over futures that end the test at the first failure.
 //!
 //! Each assertion takes the seat first and the contract last, as the

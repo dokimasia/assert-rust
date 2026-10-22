@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Assertions over futures that record a failure and let the test continue.
 //!
 //! The assertions are those of [`check`](crate::check), under the same names
