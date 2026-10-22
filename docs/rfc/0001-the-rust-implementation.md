@@ -11,6 +11,11 @@ superseded-by: none
 produces-adr: none
 ---
 
+<!--
+  ~ Copyright Dokimasia B.V. 2026
+  ~ SPDX-License-Identifier: MIT
+-->
+
 # RFC-0001: The Rust assertion library
 
 ## Summary
@@ -313,7 +318,6 @@ renderings, and the corpus compares them as numbers.
 That leaves a real limit on the fields holding a caller's value: two
 values that print alike are not told apart. It is smaller than it was,
 and it is the price of an assertion that compares anything.
-
 
 ## References
 

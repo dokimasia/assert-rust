@@ -11,6 +11,11 @@ superseded-by: RFC-0003
 produces-adr: none
 ---
 
+<!--
+  ~ Copyright Dokimasia B.V. 2026
+  ~ SPDX-License-Identifier: MIT
+-->
+
 # RFC-0002: Definition 8.0 in Rust
 
 ## Summary
