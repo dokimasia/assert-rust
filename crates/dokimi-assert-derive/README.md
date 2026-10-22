@@ -1,3 +1,8 @@
+<!--
+  ~ Copyright Dokimasia B.V. 2026
+  ~ SPDX-License-Identifier: MIT
+-->
+
 # dokimi-assert-derive
 
 `#[derive(Arbitrary)]` states the shape of a struct or an enum for the

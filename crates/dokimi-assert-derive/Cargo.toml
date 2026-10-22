@@ -1,3 +1,6 @@
+# Copyright Dokimasia B.V. 2026
+# SPDX-License-Identifier: MIT
+
 [package]
 name = "dokimi-assert-derive"
 description = "#[derive(Arbitrary)] for the property forms of dokimi-assert"

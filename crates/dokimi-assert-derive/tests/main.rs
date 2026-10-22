@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `dokimi-assert-derive`, whose derive writes the shape of a
 //! struct or an enum and the conversions between the type's values and the
 //! values of its shape.

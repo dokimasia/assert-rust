@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! `#[derive(Arbitrary)]`, which states the shape of a struct or an enum for
 //! the property forms of `dokimi-assert`.
 //!
