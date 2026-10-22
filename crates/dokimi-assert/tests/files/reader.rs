@@ -124,7 +124,8 @@ mod read_tree {
         );
     }
 
-    #[cfg(unix)]
+    // The file systems of Apple refuse a name that is no UTF-8 text.
+    #[cfg(all(unix, not(target_vendor = "apple")))]
     #[test]
     fn ends_the_call_with_a_fault_for_a_name_that_is_no_utf8_text() {
         use std::os::unix::ffi::OsStrExt;
