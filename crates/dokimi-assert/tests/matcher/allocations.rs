@@ -72,14 +72,55 @@ mod max_allocs {
     }
 
     #[test]
-    fn warms_the_body_before_each_of_three_counts() {
+    fn warms_the_body_before_each_of_ten_counts() {
         let calls = Cell::new(0);
         let counting = || {
             calls.set(calls.get() + 1);
             black_box(Box::new(calls.get()));
         };
         let _ = failure_of(|t| soft::max_allocs(t, counting, 0, "c"));
-        assert_eq!(calls.get(), 3 * 101);
+        assert_eq!(calls.get(), 10 * 101);
+    }
+
+    #[test]
+    fn passes_a_ceiling_that_the_tenth_count_meets() {
+        let calls = Cell::new(0);
+        let passes_last = allocating_in_counts(&calls, |count| if count < 9 { 2 } else { 1 });
+        passes(|t| check::max_allocs(t, passes_last, 0, "c"));
+        assert_eq!(calls.get(), 10 * 101);
+    }
+
+    #[test]
+    fn states_the_lowest_total_after_ten_counts_that_exceed_the_ceiling() {
+        let calls = Cell::new(0);
+        let twice = allocating_in_counts(&calls, |_| 2);
+        let failure = failure_of(|t| soft::max_allocs(t, twice, 0, "c"));
+        assert_eq!(
+            failure.detail(),
+            [
+                ("want", Value::Int(0)),
+                ("got", Value::Int(0)),
+                ("total", Value::Int(2))
+            ]
+        );
+    }
+}
+
+/// Returns a body that allocates `allocations(count)` times in the first
+/// counted call of each count, numbered from 0, and counts its calls in
+/// `calls`. A count is one call that warms the body and 100 counted calls.
+fn allocating_in_counts<'a>(
+    calls: &'a Cell<u64>,
+    allocations: impl Fn(u64) -> u64 + 'a,
+) -> impl FnMut() + 'a {
+    move || {
+        let call = calls.get();
+        calls.set(call + 1);
+        if call % 101 == 1 {
+            for _ in 0..allocations(call / 101) {
+                black_box(Box::new(call));
+            }
+        }
     }
 }
 

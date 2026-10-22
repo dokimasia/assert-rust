@@ -2,7 +2,7 @@
 //! allocates.
 
 use dokimi_assert::bench::{Contract, CountingAllocator};
-use dokimi_assert::{Recorder, Value};
+use dokimi_assert::{Recorder, Value, allocs_checked};
 use std::hint::black_box;
 
 /// Returns the detail field `got` of the one failure of `seat`.
@@ -14,6 +14,15 @@ fn got(seat: &Recorder) -> Value {
         "the contract reports one failure: {failures:?}"
     );
     failures[0].got().cloned().unwrap_or(Value::Null)
+}
+
+mod allocs_checked {
+    use super::*;
+
+    #[test]
+    fn returns_ok_in_a_binary_that_installs_the_counting_allocator() {
+        assert_eq!(allocs_checked(), Ok(()));
+    }
 }
 
 mod counting_allocator {

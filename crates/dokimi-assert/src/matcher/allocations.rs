@@ -10,16 +10,12 @@ const RUNS: u64 = 100;
 
 /// The most counts that a ceiling takes. The assertion fails when none of
 /// them meets the ceiling.
-const COUNTS: usize = 3;
+const COUNTS: usize = 10;
 
 /// The most allocations that the counted calls can make and still meet a
 /// ceiling of 0. It admits an allocation that the process makes while a
 /// count runs.
 const ZERO_SLACK: u64 = 1;
-
-/// The fault of a ceiling in a process whose global allocator counts nothing.
-const UNCOUNTED: &str = "no allocator counts allocations in this process: install \
-                         dokimi_assert::bench::CountingAllocator as the global allocator";
 
 /// Returns `total`, the allocations of [`RUNS`] calls, per call: the average
 /// rounded to the nearest whole number, with a half rounded up.
@@ -49,7 +45,7 @@ fn reading() -> Option<u64> {
 /// next 100 calls on the calling thread. A ceiling of 0 admits one
 /// allocation in all, and any other ceiling admits an average per call that
 /// rounds to at most the ceiling. A count that exceeds the ceiling is taken
-/// again, three times at most, and the failure states the count with the
+/// again, ten times at most, and the failure states the count with the
 /// lowest total.
 #[track_caller]
 pub(crate) fn max_allocs(
@@ -65,7 +61,7 @@ pub(crate) fn max_allocs(
     for _ in 0..COUNTS {
         body();
         let Some(before) = reading() else {
-            run.fault(mode, "max-allocs", msg, UNCOUNTED);
+            run.fault(mode, "max-allocs", msg, alloc::UNCOUNTED);
             return;
         };
         for _ in 0..RUNS {
@@ -109,7 +105,7 @@ pub(crate) fn max_allocs_with_setup<T>(
     for _ in 0..COUNTS {
         body(setup());
         if reading().is_none() {
-            run.fault(mode, "max-allocs-with-setup", msg, UNCOUNTED);
+            run.fault(mode, "max-allocs-with-setup", msg, alloc::UNCOUNTED);
             return;
         }
         let mut total = 0;

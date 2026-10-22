@@ -3,7 +3,7 @@
 //! allocator to install.
 
 use dokimi_assert::bench::Contract;
-use dokimi_assert::{Recorder, check, prop, soft};
+use dokimi_assert::{Recorder, allocs_checked, check, prop, soft};
 
 /// The text of the fault of every allocation ceiling without the counting
 /// allocator.
@@ -15,6 +15,15 @@ fn verdict(seat: &Recorder) -> String {
     let record: serde_json::Value =
         serde_json::from_str(&seat.records()[0]).expect("a call record is JSON");
     record["verdict"].as_str().unwrap_or_default().to_owned()
+}
+
+mod allocs_checked {
+    use super::*;
+
+    #[test]
+    fn returns_the_reason_without_the_counting_allocator() {
+        assert_eq!(allocs_checked(), Err(UNCOUNTED));
+    }
 }
 
 mod max_allocs {

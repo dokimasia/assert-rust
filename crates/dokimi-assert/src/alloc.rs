@@ -1,4 +1,5 @@
-//! The global allocator that counts what a program allocates.
+//! The global allocator that counts what a program allocates, and whether a
+//! test binary checks allocation ceilings.
 
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
@@ -6,6 +7,11 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 /// Whether the counting allocator has allocated in this process.
 static INSTALLED: AtomicBool = AtomicBool::new(false);
+
+/// The fault of an allocation ceiling in a process whose global allocator
+/// counts nothing, and the reason that [`allocs_checked`] returns there.
+pub(crate) const UNCOUNTED: &str = "no allocator counts allocations in this process: install \
+                                    dokimi_assert::bench::CountingAllocator as the global allocator";
 
 thread_local! {
     /// The allocations and the requested bytes of this thread. A constant
@@ -79,6 +85,29 @@ unsafe impl GlobalAlloc for CountingAllocator {
         // SAFETY: the pointer and its layout come from System.
         unsafe { System.realloc(ptr, layout, new_size) }
     }
+}
+
+/// Returns `Ok(())` when `max_allocs`, `max_allocs_with_setup`, their
+/// property forms and the allocation ceilings of a benchmark contract check
+/// their ceilings in this test binary.
+///
+/// The result is the same for every call in one process. A harness reads it
+/// before it reports a ceiling as checked:
+///
+/// ```
+/// use dokimi_assert::allocs_checked;
+///
+/// if let Err(reason) = allocs_checked() {
+///     eprintln!("the allocation ceilings are not checked: {reason}");
+/// }
+/// ```
+///
+/// # Errors
+///
+/// Returns the reason when the test binary does not install
+/// [`CountingAllocator`] as its global allocator.
+pub fn allocs_checked() -> Result<(), &'static str> {
+    thread_allocations().map(drop).ok_or(UNCOUNTED)
 }
 
 /// Returns the allocations of the calling thread, or `None` when the
