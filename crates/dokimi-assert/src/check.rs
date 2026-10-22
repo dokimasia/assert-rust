@@ -614,7 +614,7 @@ pub fn eventually_true(
 /// A count calls the body once to warm it, and counts the allocations of the
 /// next 100 calls on the calling thread. A ceiling of 0 admits one allocation
 /// in all, and any other ceiling admits an average per call that rounds to at
-/// most the ceiling. A count that exceeds the ceiling is taken again, three
+/// most the ceiling. A count that exceeds the ceiling is taken again, ten
 /// times at most. The test binary installs
 /// [`CountingAllocator`](crate::bench::CountingAllocator), and without it the
 /// call ends with a fault.
@@ -643,7 +643,11 @@ pub fn max_allocs_with_setup<T>(
 /// and ends the test when the check does not fail.
 ///
 /// A check proves that it can fail by failing against a subject that it must
-/// refuse. A failure on `check` ends the check, as it ends a test. The
+/// refuse. A failure on `check` ends the check, as it ends a test. A fault
+/// that ends a call of the check ends the call of `rejects` with the same
+/// fault, because a check that ends with a fault rejects nothing: the seat
+/// receives the fault through [`Seat::report_fault`], and `rejects` returns
+/// no records. A fault that the check notes passes to the seat. The
 /// assertion exists on this surface alone, because a recording surface does
 /// not stop a check.
 ///

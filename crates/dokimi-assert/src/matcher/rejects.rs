@@ -13,7 +13,9 @@ use crate::verdict::{Mode, Run};
 /// call order.
 ///
 /// A failure on `check` ends the check, as it ends a test. A message passed
-/// to the seat's `fail` or `record` fails the check without a record.
+/// to the seat's `fail` or `record` fails the check without a record. A
+/// fault that ends a call of the check ends the call of `rejects` with the
+/// same fault, and `rejects` returns no records.
 #[track_caller]
 pub(crate) fn rejects(seat: &dyn Seat, msg: &str, body: impl FnOnce(&dyn Seat)) -> Vec<Failure> {
     seat.helper();
@@ -22,6 +24,10 @@ pub(crate) fn rejects(seat: &dyn Seat, msg: &str, body: impl FnOnce(&dyn Seat)) 
     let check = Body::new(seat, calls.clone());
     check.run(body);
     run.take(calls.as_ref());
+    if let Some(fault) = check.fault() {
+        run.fault_with(Mode::Fatal, "rejects", msg, fault);
+        return Vec::new();
+    }
     if check.failed() {
         run.pass(Mode::Fatal, "rejects", msg);
     } else {
