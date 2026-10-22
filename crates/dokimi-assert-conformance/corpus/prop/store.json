@@ -1,0 +1,342 @@
+{
+  "kind": "store",
+  "cases": [
+    {
+      "id": "store/names-an-entry-by-its-contract-and-token",
+      "contract": "decoding undoes encoding",
+      "choices": [
+        1,
+        0,
+        1,
+        -1,
+        0
+      ],
+      "identity": {
+        "assertion": "equal",
+        "file": "codec_test.go",
+        "line": 18
+      },
+      "counterexample": [
+        {
+          "label": "values",
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              0,
+              -1
+            ]
+          }
+        }
+      ],
+      "definition": "1.2.0",
+      "found": "2026-10-01",
+      "name": "ccc741d57d7f920d.json",
+      "entry": {
+        "store": 1,
+        "definition": "1.2.0",
+        "property": "decoding undoes encoding",
+        "identity": {
+          "assertion": "equal",
+          "file": "codec_test.go",
+          "line": 18
+        },
+        "choices": "prop1:AAEAAAABAQEAAA",
+        "counterexample": [
+          {
+            "label": "values",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0,
+                -1
+              ]
+            }
+          }
+        ],
+        "found": "2026-10-01"
+      }
+    },
+    {
+      "id": "store/names-the-same-choices-of-another-contract-otherwise",
+      "contract": "encoding is deterministic",
+      "choices": [
+        1,
+        0,
+        1,
+        -1,
+        0
+      ],
+      "identity": {
+        "assertion": "equal",
+        "file": "codec_test.go",
+        "line": 31
+      },
+      "counterexample": [
+        {
+          "label": "values",
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              0,
+              -1
+            ]
+          }
+        }
+      ],
+      "definition": "1.2.0",
+      "found": "2026-10-01",
+      "name": "110988f43e88e891.json",
+      "entry": {
+        "store": 1,
+        "definition": "1.2.0",
+        "property": "encoding is deterministic",
+        "identity": {
+          "assertion": "equal",
+          "file": "codec_test.go",
+          "line": 31
+        },
+        "choices": "prop1:AAEAAAABAQEAAA",
+        "counterexample": [
+          {
+            "label": "values",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0,
+                -1
+              ]
+            }
+          }
+        ],
+        "found": "2026-10-01"
+      }
+    },
+    {
+      "id": "store/names-an-entry-of-no-choices",
+      "contract": "an empty request is refused",
+      "choices": [],
+      "identity": {
+        "file": "server_test.go",
+        "line": 40
+      },
+      "counterexample": [],
+      "definition": "1.2.0",
+      "found": "2026-10-01",
+      "name": "3a15add8c7f746d1.json",
+      "entry": {
+        "store": 1,
+        "definition": "1.2.0",
+        "property": "an empty request is refused",
+        "identity": {
+          "file": "server_test.go",
+          "line": 40
+        },
+        "choices": "prop1:",
+        "counterexample": [],
+        "found": "2026-10-01"
+      }
+    },
+    {
+      "id": "store/records-a-draw-without-a-typed-literal-by-its-label",
+      "contract": "a closed connection refuses writes",
+      "choices": [
+        3
+      ],
+      "identity": {
+        "error": "ErrClosed",
+        "file": "conn_test.go",
+        "line": 12
+      },
+      "counterexample": [
+        {
+          "label": "conn"
+        }
+      ],
+      "definition": "1.2.0",
+      "found": "2026-10-01",
+      "name": "f115b8dd3d6fdbf7.json",
+      "entry": {
+        "store": 1,
+        "definition": "1.2.0",
+        "property": "a closed connection refuses writes",
+        "identity": {
+          "error": "ErrClosed",
+          "file": "conn_test.go",
+          "line": 12
+        },
+        "choices": "prop1:AAM",
+        "counterexample": [
+          {
+            "label": "conn"
+          }
+        ],
+        "found": "2026-10-01"
+      }
+    },
+    {
+      "id": "store/records-an-assertion-without-a-location-by-its-contract",
+      "contract": "a stored session expires",
+      "choices": [
+        7
+      ],
+      "identity": {
+        "assertion": "equal",
+        "contract": "the session is gone"
+      },
+      "counterexample": [
+        {
+          "label": "ttl",
+          "value": {
+            "type": "int",
+            "value": 7
+          }
+        }
+      ],
+      "definition": "1.2.0",
+      "found": "2026-10-01",
+      "name": "68df0f22b1940653.json",
+      "entry": {
+        "store": 1,
+        "definition": "1.2.0",
+        "property": "a stored session expires",
+        "identity": {
+          "assertion": "equal",
+          "contract": "the session is gone"
+        },
+        "choices": "prop1:AAc",
+        "counterexample": [
+          {
+            "label": "ttl",
+            "value": {
+              "type": "int",
+              "value": 7
+            }
+          }
+        ],
+        "found": "2026-10-01"
+      }
+    },
+    {
+      "id": "store/replays-an-entry-of-the-property",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "replay",
+      "choices": [
+        7
+      ]
+    },
+    {
+      "id": "store/replays-an-entry-of-another-definition-version",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.1.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-09-01\"}\n",
+      "verdict": "replay",
+      "choices": [
+        7
+      ]
+    },
+    {
+      "id": "store/ignores-an-entry-of-another-property",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"encoding is deterministic\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 31},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "other",
+      "choices": null
+    },
+    {
+      "id": "store/skips-an-entry-of-a-later-format",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 2, \"layout\": \"unknown to format 1\"}",
+      "verdict": "skip",
+      "choices": null
+    },
+    {
+      "id": "store/skips-an-entry-of-a-format-beyond-64-bits",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 100000000000000000000}",
+      "verdict": "skip",
+      "choices": null
+    },
+    {
+      "id": "store/skips-an-entry-whose-token-is-of-a-later-version",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop2:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "skip",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-text-that-is-not-json",
+      "contract": "decoding undoes encoding",
+      "text": "store: 1",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-an-object-that-repeats-a-name",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"choices\": \"prop1:AAM\",\n \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-an-entry-without-a-field-of-the-format",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": []}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-an-entry-with-a-field-the-format-does-not-state",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\",\n \"comment\": \"found in review\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-token-not-in-canonical-form",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc=\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-an-identity-of-no-stated-shape",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/replays-an-entry-nested-64-levels",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"found\": \"2026-10-01\", \"counterexample\": [{\"label\": \"v\", \"value\":\n [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[\n ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}]}\n",
+      "verdict": "replay",
+      "choices": [
+        7
+      ]
+    },
+    {
+      "id": "store/rejects-an-entry-nested-65-levels",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"found\": \"2026-10-01\", \"counterexample\": [{\"label\": \"v\", \"value\":\n [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[\n ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}]}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-line-past-2-to-the-31-minus-1",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 2147483648},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-date-the-calendar-does-not-have",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-02-30\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    }
+  ]
+}

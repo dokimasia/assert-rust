@@ -1,0 +1,180 @@
+{
+  "kind": "draws",
+  "cases": [
+    {
+      "id": "draws/every-draw-matches-its-entry",
+      "draws": [
+        {
+          "label": "count",
+          "generator": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          }
+        },
+        {
+          "label": "name",
+          "generator": {
+            "gen": "string",
+            "max_size": 3
+          }
+        }
+      ],
+      "entries": [
+        {
+          "label": "count",
+          "value": {
+            "type": "int",
+            "value": 4
+          }
+        },
+        {
+          "label": "name",
+          "value": {
+            "type": "string",
+            "value": "ab"
+          }
+        }
+      ],
+      "choices": [
+        4,
+        {
+          "sequence": [
+            10,
+            11
+          ]
+        }
+      ],
+      "values": [
+        {
+          "label": "count",
+          "value": {
+            "type": "int",
+            "value": 4
+          }
+        },
+        {
+          "label": "name",
+          "value": {
+            "type": "string",
+            "value": "ab"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "draws/a-draw-past-the-entries-takes-its-target",
+      "draws": [
+        {
+          "label": "count",
+          "generator": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          }
+        },
+        {
+          "label": "name",
+          "generator": {
+            "gen": "string",
+            "min_size": 1,
+            "max_size": 3
+          }
+        }
+      ],
+      "entries": [
+        {
+          "label": "count",
+          "value": {
+            "type": "int",
+            "value": 4
+          }
+        }
+      ],
+      "choices": [
+        4
+      ],
+      "values": [
+        {
+          "label": "count",
+          "value": {
+            "type": "int",
+            "value": 4
+          }
+        },
+        {
+          "label": "name",
+          "value": {
+            "type": "string",
+            "value": "0"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "draws/a-label-that-differs-fails-at-that-draw",
+      "draws": [
+        {
+          "label": "count",
+          "generator": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          }
+        },
+        {
+          "label": "name",
+          "generator": {
+            "gen": "string",
+            "max_size": 3
+          }
+        }
+      ],
+      "entries": [
+        {
+          "label": "name",
+          "value": {
+            "type": "string",
+            "value": "ab"
+          }
+        }
+      ],
+      "choices": null,
+      "values": null,
+      "error": {
+        "label": "count",
+        "reason": "label"
+      }
+    },
+    {
+      "id": "draws/a-value-out-of-bounds-fails-at-that-draw",
+      "draws": [
+        {
+          "label": "count",
+          "generator": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          }
+        }
+      ],
+      "entries": [
+        {
+          "label": "count",
+          "value": {
+            "type": "int",
+            "value": 12
+          }
+        }
+      ],
+      "choices": null,
+      "values": null,
+      "error": {
+        "label": "count",
+        "reason": "value"
+      }
+    }
+  ]
+}

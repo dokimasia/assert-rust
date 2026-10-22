@@ -1,0 +1,1111 @@
+{
+  "kind": "shrinking",
+  "cases": [
+    {
+      "id": "integer/shrinks-to-the-lower-boundary-of-the-failing-range",
+      "generator": {
+        "gen": "integer",
+        "min": -1000,
+        "max": 1000
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 500
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 4,
+      "value": {
+        "type": "int",
+        "value": 500
+      },
+      "choices": [
+        500
+      ],
+      "token": "prop1:APQD",
+      "runs": 15
+    },
+    {
+      "id": "integer/passes-when-no-value-fails",
+      "generator": {
+        "gen": "integer",
+        "min": -1000,
+        "max": 1000
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "float/shrinks-to-the-simplest-float-above-a-bound",
+      "generator": {
+        "gen": "float",
+        "min": 0,
+        "max": 100
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 2.5
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "float",
+        "value": 3.0
+      },
+      "choices": [
+        {
+          "float": 3.0
+        }
+      ],
+      "token": "prop1:AgAAAAAAAAhA",
+      "runs": 13
+    },
+    {
+      "id": "float/passes-when-no-value-fails",
+      "generator": {
+        "gen": "float",
+        "min": 0,
+        "max": 100
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "boolean/shrinks-to-true-when-only-true-fails",
+      "generator": {
+        "gen": "boolean"
+      },
+      "fails-when": {
+        "kind": "equals",
+        "value": {
+          "type": "bool",
+          "value": true
+        }
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "bool",
+        "value": true
+      },
+      "choices": [
+        1
+      ],
+      "token": "prop1:AAE",
+      "runs": 5
+    },
+    {
+      "id": "boolean/passes-when-no-value-fails",
+      "generator": {
+        "gen": "boolean"
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 2,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "just/fails-on-the-simplest-case",
+      "generator": {
+        "gen": "just",
+        "value": {
+          "type": "int",
+          "value": 5
+        }
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 5
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 0,
+      "value": {
+        "type": "int",
+        "value": 5
+      },
+      "choices": [],
+      "token": "prop1:",
+      "runs": 0
+    },
+    {
+      "id": "just/passes-after-one-case",
+      "generator": {
+        "gen": "just",
+        "value": {
+          "type": "int",
+          "value": 5
+        }
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 1,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "sampled-from/shrinks-to-the-first-failing-value",
+      "generator": {
+        "gen": "sampled-from",
+        "values": [
+          {
+            "type": "int",
+            "value": 10
+          },
+          {
+            "type": "int",
+            "value": 20
+          },
+          {
+            "type": "int",
+            "value": 30
+          },
+          {
+            "type": "int",
+            "value": 40
+          }
+        ]
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 25
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "int",
+        "value": 30
+      },
+      "choices": [
+        2
+      ],
+      "token": "prop1:AAI",
+      "runs": 5
+    },
+    {
+      "id": "sampled-from/passes-when-no-value-fails",
+      "generator": {
+        "gen": "sampled-from",
+        "values": [
+          {
+            "type": "int",
+            "value": 10
+          },
+          {
+            "type": "int",
+            "value": 20
+          },
+          {
+            "type": "int",
+            "value": 30
+          },
+          {
+            "type": "int",
+            "value": 40
+          }
+        ]
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 4,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "one-of/shrinks-to-the-simplest-failing-value-of-the-second-generator",
+      "generator": {
+        "gen": "one-of",
+        "of": [
+          {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          {
+            "gen": "integer",
+            "min": 100,
+            "max": 200
+          }
+        ]
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 150
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "int",
+        "value": 150
+      },
+      "choices": [
+        1,
+        150
+      ],
+      "token": "prop1:AAEAlgE",
+      "runs": 18
+    },
+    {
+      "id": "one-of/passes-when-no-value-fails",
+      "generator": {
+        "gen": "one-of",
+        "of": [
+          {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          {
+            "gen": "integer",
+            "min": 100,
+            "max": 200
+          }
+        ]
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "optional/shrinks-a-present-value",
+      "generator": {
+        "gen": "optional",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 7
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "int",
+        "value": 7
+      },
+      "choices": [
+        1,
+        7
+      ],
+      "token": "prop1:AAEABw",
+      "runs": 16
+    },
+    {
+      "id": "optional/passes-when-no-value-fails",
+      "generator": {
+        "gen": "optional",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 98,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "list/shrinks-an-unsorted-list-to-two-elements",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "fails-when": {
+        "kind": "not-sorted"
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          1,
+          0
+        ]
+      },
+      "choices": [
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "token": "prop1:AAEAAQABAAAAAA",
+      "runs": 35
+    },
+    {
+      "id": "list/shrinks-a-large-sum-to-one-element",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "fails-when": {
+        "kind": "sum-above",
+        "n": 10
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          11
+        ]
+      },
+      "choices": [
+        1,
+        11,
+        0
+      ],
+      "token": "prop1:AAEACwAA",
+      "runs": 21
+    },
+    {
+      "id": "list/stops-shrinking-when-the-budget-is-spent",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "fails-when": {
+        "kind": "sum-above",
+        "n": 150
+      },
+      "seed": "7",
+      "budget": 5,
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          66,
+          47,
+          47
+        ]
+      },
+      "choices": [
+        1,
+        66,
+        1,
+        47,
+        1,
+        47,
+        0
+      ],
+      "token": "prop1:AAEAQgABAC8AAQAvAAA",
+      "runs": 5
+    },
+    {
+      "id": "list/shrinks-an-indexed-element-to-the-front",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        }
+      },
+      "fails-when": {
+        "kind": "indexed-above",
+        "n": 5
+      },
+      "seed": "13",
+      "outcome": "counterexample",
+      "cases": 4,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          6,
+          0
+        ]
+      },
+      "choices": [
+        1,
+        6,
+        1,
+        0,
+        0
+      ],
+      "token": "prop1:AAEABgABAAAAAA",
+      "runs": 83
+    },
+    {
+      "id": "list/passes-when-no-value-fails",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "dict/shrinks-to-two-entries-of-targets",
+      "generator": {
+        "gen": "dict",
+        "keys": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "values": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        }
+      },
+      "fails-when": {
+        "kind": "length-at-least",
+        "n": 2
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "map",
+        "entries": [
+          [
+            {
+              "type": "int",
+              "value": 0
+            },
+            {
+              "type": "int",
+              "value": 0
+            }
+          ],
+          [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 0
+            }
+          ]
+        ]
+      },
+      "choices": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "token": "prop1:AAEAAAAAAAEAAQAAAAA",
+      "runs": 50
+    },
+    {
+      "id": "dict/passes-when-no-value-fails",
+      "generator": {
+        "gen": "dict",
+        "keys": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "values": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        }
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "string/shrinks-to-the-shortest-string-of-the-simplest-character",
+      "generator": {
+        "gen": "string"
+      },
+      "fails-when": {
+        "kind": "length-at-least",
+        "n": 3
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "string",
+        "value": "000"
+      },
+      "choices": [
+        {
+          "sequence": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "token": "prop1:AwMAAAA",
+      "runs": 15
+    },
+    {
+      "id": "string/passes-when-no-value-fails",
+      "generator": {
+        "gen": "string"
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "bytes/shrinks-to-the-byte-that-fails",
+      "generator": {
+        "gen": "bytes"
+      },
+      "fails-when": {
+        "kind": "contains",
+        "value": {
+          "type": "bytes",
+          "value": "ff"
+        }
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 3,
+      "value": {
+        "type": "bytes",
+        "value": "ff"
+      },
+      "choices": [
+        {
+          "sequence": [
+            255
+          ]
+        }
+      ],
+      "token": "prop1:AwH_AQ",
+      "runs": 24
+    },
+    {
+      "id": "bytes/passes-when-no-value-fails",
+      "generator": {
+        "gen": "bytes"
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "duration/shrinks-to-the-lower-boundary-of-the-failing-range",
+      "generator": {
+        "gen": "duration",
+        "min": 0,
+        "max": 60000000000
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 1000000
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "int",
+        "value": 1000000
+      },
+      "choices": [
+        1000000
+      ],
+      "token": "prop1:AMCEPQ",
+      "runs": 57
+    },
+    {
+      "id": "duration/passes-when-no-value-fails",
+      "generator": {
+        "gen": "duration",
+        "min": 0,
+        "max": 60000000000
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "permutation/shrinks-to-one-swap-at-the-end",
+      "generator": {
+        "gen": "permutation",
+        "values": [
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "int",
+            "value": 2
+          },
+          {
+            "type": "int",
+            "value": 3
+          },
+          {
+            "type": "int",
+            "value": 4
+          }
+        ]
+      },
+      "fails-when": {
+        "kind": "not-sorted"
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          1,
+          3,
+          2,
+          4
+        ]
+      },
+      "choices": [
+        0,
+        2,
+        2
+      ],
+      "token": "prop1:AAAAAgAC",
+      "runs": 8
+    },
+    {
+      "id": "permutation/passes-when-no-value-fails",
+      "generator": {
+        "gen": "permutation",
+        "values": [
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "int",
+            "value": 2
+          },
+          {
+            "type": "int",
+            "value": 3
+          },
+          {
+            "type": "int",
+            "value": 4
+          }
+        ]
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 24,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "string-matching/shrinks-to-the-simplest-matching-string",
+      "generator": {
+        "gen": "string-matching",
+        "pattern": "[a-z]+[0-9]"
+      },
+      "fails-when": {
+        "kind": "length-at-least",
+        "n": 4
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "string",
+        "value": "aaa0"
+      },
+      "choices": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "token": "prop1:AAEAAAABAAAAAQAAAAAAAA",
+      "runs": 31
+    },
+    {
+      "id": "string-matching/passes-when-no-value-fails",
+      "generator": {
+        "gen": "string-matching",
+        "pattern": "[a-z]+[0-9]"
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "recursive/shrinks-each-child-to-the-simplest-leaf",
+      "generator": {
+        "gen": "recursive",
+        "base": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "extend": {
+          "gen": "list",
+          "of": {
+            "gen": "self"
+          },
+          "max_size": 3
+        }
+      },
+      "fails-when": {
+        "kind": "length-at-least",
+        "n": 3
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 5,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          0,
+          0,
+          0
+        ]
+      },
+      "choices": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "token": "prop1:AAEAAQAAAAAAAQAAAAAAAQAAAAAAAA",
+      "runs": 65
+    },
+    {
+      "id": "recursive/stops-at-two-equal-children",
+      "generator": {
+        "gen": "recursive",
+        "base": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "extend": {
+          "gen": "list",
+          "of": {
+            "gen": "self"
+          },
+          "max_size": 3
+        }
+      },
+      "fails-when": {
+        "kind": "has-duplicate"
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 5,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          0,
+          0
+        ]
+      },
+      "choices": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "token": "prop1:AAEAAQAAAAAAAQAAAAAAAA",
+      "runs": 67
+    },
+    {
+      "id": "recursive/passes-when-no-value-fails",
+      "generator": {
+        "gen": "recursive",
+        "base": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "extend": {
+          "gen": "list",
+          "of": {
+            "gen": "self"
+          },
+          "max_size": 3
+        }
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "filter/shrinks-to-the-simplest-kept-value-that-fails",
+      "generator": {
+        "gen": "filter",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "keep": {
+          "kind": "divisible-by",
+          "n": 2
+        }
+      },
+      "fails-when": {
+        "kind": "at-least",
+        "n": 501
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 2,
+      "value": {
+        "type": "int",
+        "value": 502
+      },
+      "choices": [
+        502
+      ],
+      "token": "prop1:APYD",
+      "runs": 36
+    },
+    {
+      "id": "filter/passes-when-no-value-fails",
+      "generator": {
+        "gen": "filter",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "keep": {
+          "kind": "divisible-by",
+          "n": 2
+        }
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    },
+    {
+      "id": "map/shrinks-the-choices-of-its-source",
+      "generator": {
+        "gen": "map",
+        "of": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "max_size": 6
+        },
+        "subject": "prepends-zero"
+      },
+      "fails-when": {
+        "kind": "length-at-least",
+        "n": 3
+      },
+      "seed": "7",
+      "outcome": "counterexample",
+      "cases": 1,
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          0,
+          0,
+          0
+        ]
+      },
+      "choices": [
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "token": "prop1:AAEAAAABAAAAAA",
+      "runs": 21
+    },
+    {
+      "id": "map/passes-when-no-value-fails",
+      "generator": {
+        "gen": "map",
+        "of": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "max_size": 6
+        },
+        "subject": "prepends-zero"
+      },
+      "fails-when": {
+        "kind": "never"
+      },
+      "seed": "7",
+      "outcome": "passed",
+      "cases": 100,
+      "value": null,
+      "choices": null,
+      "token": null,
+      "runs": 0
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "kind": "links-to",
+  "cases": [
+    {
+      "id": "links-to/the-stated-target-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "current",
+            "link": "a.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "current"
+        },
+        {
+          "type": "string",
+          "value": "a.txt"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "links-to/a-target-outside-the-workspace-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "up",
+            "link": "../outside.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "up"
+        },
+        {
+          "type": "string",
+          "value": "../outside.txt"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "links-to/another-target-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "b.txt",
+            "text": "b\n"
+          },
+          {
+            "path": "current",
+            "link": "a.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "current"
+        },
+        {
+          "type": "string",
+          "value": "b.txt"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": "b.txt"
+        },
+        "got": {
+          "type": "string",
+          "value": "a.txt"
+        },
+        "kind": {
+          "type": "string",
+          "value": "link"
+        }
+      }
+    },
+    {
+      "id": "links-to/a-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "current",
+            "text": "a.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "current"
+        },
+        {
+          "type": "string",
+          "value": "a.txt"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": "a.txt"
+        },
+        "got": {
+          "type": "null"
+        },
+        "kind": {
+          "type": "string",
+          "value": "file"
+        }
+      }
+    },
+    {
+      "id": "links-to/nothing-at-the-path-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "current"
+        },
+        {
+          "type": "string",
+          "value": "a.txt"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": "a.txt"
+        },
+        "got": {
+          "type": "null"
+        },
+        "kind": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

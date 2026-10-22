@@ -1,0 +1,5455 @@
+{
+  "kind": "shapes",
+  "cases": [
+    {
+      "id": "bool/one-coin-each",
+      "shape": {
+        "shape": "bool"
+      },
+      "seed": "100",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "bool/a-second-seed",
+      "shape": {
+        "shape": "bool"
+      },
+      "seed": "200",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "int/a-signed-byte",
+      "shape": {
+        "shape": "int",
+        "width": 8,
+        "signed": true
+      },
+      "seed": "300",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            -1
+          ],
+          "value": {
+            "type": "int",
+            "value": -1
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -41
+          ],
+          "value": {
+            "type": "int",
+            "value": -41
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            48
+          ],
+          "value": {
+            "type": "int",
+            "value": 48
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "int/two-halves-of-a-128-bit-int",
+      "shape": {
+        "shape": "int",
+        "width": 128,
+        "signed": true
+      },
+      "seed": "400",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            137,
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": "2527203938098208571392"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -1,
+            "610713142202028870"
+          ],
+          "value": {
+            "type": "int",
+            "value": "-17836030931507522746"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -7,
+            "6988018693495377803"
+          ],
+          "value": {
+            "type": "int",
+            "value": "-122139189822471483509"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "float/a-finite-double",
+      "shape": {
+        "shape": "float",
+        "width": 64
+      },
+      "seed": "500",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "float": -6.434282096320591e+38
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -6.434282096320591e+38
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 1.5358739374577785e-99
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 1.5358739374577785e-99
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 60174.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 60174.0
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "float/a-single-with-nan-and-the-infinities",
+      "shape": {
+        "shape": "float",
+        "width": 32,
+        "allow_nan": true,
+        "allow_infinity": true
+      },
+      "seed": "600",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "float": 7181.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 7181.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 0.13482174277305603
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 0.13482174277305603
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 7.279435843172977e-13
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 7.279435843172977e-13
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "char/the-default-alphabet",
+      "shape": {
+        "shape": "char"
+      },
+      "seed": "700",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                75
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "-"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                19203
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\u4b03"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "0"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "char/a-stated-alphabet",
+      "shape": {
+        "shape": "char",
+        "alphabet": "xyz"
+      },
+      "seed": "800",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "x"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "y"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "y"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "string/the-default-alphabet",
+      "shape": {
+        "shape": "string",
+        "max_size": 5
+      },
+      "seed": "900",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                355223,
+                118472,
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\ud91c\udf97\ud835\udec80"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1009585,
+                97013,
+                29589,
+                8,
+                60342
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\udb9b\udfb1\ud820\udef5\u73958\uf3b6"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "string/a-pattern",
+      "shape": {
+        "shape": "string",
+        "pattern": "[A-Z]{3}-[0-9]{2}"
+      },
+      "seed": "1000",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            24,
+            1,
+            22,
+            1,
+            11,
+            0,
+            1,
+            0,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "YWL-01"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            6,
+            1,
+            22,
+            0,
+            1,
+            7,
+            1,
+            9,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "BGW-79"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            3,
+            1,
+            1,
+            0,
+            1,
+            5,
+            1,
+            3,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "ADB-53"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "bytes/up-to-four",
+      "shape": {
+        "shape": "bytes",
+        "max_size": 4
+      },
+      "seed": "1100",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                123,
+                255,
+                1,
+                101
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "7bff0165"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                9,
+                66
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "0942"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "bytes/exactly-two",
+      "shape": {
+        "shape": "bytes",
+        "min_size": 2,
+        "max_size": 2
+      },
+      "seed": "1200",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                148,
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "9401"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                187,
+                77
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "bb4d"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                118,
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "7601"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "list/up-to-four-bytes",
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        },
+        "max_size": 4
+      },
+      "seed": "1300",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            41,
+            1,
+            88,
+            1,
+            41,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              41,
+              88,
+              41
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              0
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "list/at-least-two-bools",
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "bool"
+        },
+        "min_size": 2,
+        "max_size": 4
+      },
+      "seed": "1400",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "bool",
+            "value": [
+              true,
+              true,
+              false,
+              false
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "bool",
+            "value": [
+              false,
+              true,
+              true
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "bool",
+            "value": [
+              false,
+              false
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "fixed-list/three-bytes",
+      "shape": {
+        "shape": "fixed-list",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        },
+        "size": 3
+      },
+      "seed": "1500",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            6,
+            1,
+            213,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              6,
+              213,
+              1
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            190,
+            1,
+            87,
+            1,
+            190,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              190,
+              87,
+              190
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            204,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              204,
+              0,
+              0
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "fixed-list/none",
+      "shape": {
+        "shape": "fixed-list",
+        "of": {
+          "shape": "bool"
+        },
+        "size": 0
+      },
+      "seed": "1600",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "set/signed-bytes",
+      "shape": {
+        "shape": "set",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": true
+        },
+        "max_size": 4
+      },
+      "seed": "1700",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            -33,
+            1,
+            -4,
+            1,
+            -71,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              -33,
+              -4,
+              -71
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            7,
+            1,
+            -47,
+            1,
+            7,
+            1,
+            -5,
+            1,
+            7,
+            1,
+            7,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              7,
+              -47,
+              -5
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "set/strings",
+      "shape": {
+        "shape": "set",
+        "of": {
+          "shape": "string",
+          "max_size": 2
+        },
+        "max_size": 3
+      },
+      "seed": "1800",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                8
+              ]
+            },
+            1,
+            {
+              "sequence": [
+                720150
+              ]
+            },
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "8",
+              "\uda81\udd16"
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            1,
+            {
+              "sequence": []
+            },
+            1,
+            {
+              "sequence": [
+                11,
+                772184
+              ]
+            },
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "1",
+              "",
+              "b\udab4\udc58"
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            },
+            1,
+            {
+              "sequence": [
+                511703,
+                11
+              ]
+            },
+            1,
+            {
+              "sequence": []
+            },
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "",
+              "\ud9b5\uded7b"
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "map/string-keys",
+      "shape": {
+        "shape": "map",
+        "key": {
+          "shape": "string",
+          "max_size": 2
+        },
+        "of": {
+          "shape": "bool"
+        },
+        "max_size": 3
+      },
+      "seed": "1900",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                3,
+                1112063
+              ]
+            },
+            0,
+            1,
+            {
+              "sequence": []
+            },
+            0,
+            1,
+            {
+              "sequence": [
+                13,
+                88
+              ]
+            },
+            1,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "3\udbff\udfff"
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": ""
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "d^"
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                60010,
+                98
+              ]
+            },
+            1,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "\uf26a\u0003"
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": []
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "map/byte-keys-to-lists",
+      "shape": {
+        "shape": "map",
+        "key": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        },
+        "of": {
+          "shape": "list",
+          "of": {
+            "shape": "bool"
+          },
+          "max_size": 2
+        },
+        "max_size": 2
+      },
+      "seed": "2000",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            106,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 106
+                },
+                {
+                  "type": "list",
+                  "of": "bool",
+                  "value": [
+                    false,
+                    false
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            138,
+            0,
+            1,
+            152,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 138
+                },
+                {
+                  "type": "list",
+                  "items": []
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 152
+                },
+                {
+                  "type": "list",
+                  "of": "bool",
+                  "value": [
+                    true,
+                    true
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            176,
+            0,
+            1,
+            206,
+            1,
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 176
+                },
+                {
+                  "type": "list",
+                  "items": []
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 206
+                },
+                {
+                  "type": "list",
+                  "of": "bool",
+                  "value": [
+                    false,
+                    true
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "optional/a-byte",
+      "shape": {
+        "shape": "optional",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        }
+      },
+      "seed": "2100",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            219
+          ],
+          "value": {
+            "type": "int",
+            "value": 219
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            153
+          ],
+          "value": {
+            "type": "int",
+            "value": 153
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "optional/a-string",
+      "shape": {
+        "shape": "optional",
+        "of": {
+          "shape": "string",
+          "max_size": 3
+        }
+      },
+      "seed": "2200",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                14534,
+                32464,
+                1959
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\u38c6\u7ed0\u07a7"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "record/an-order",
+      "shape": {
+        "shape": "record",
+        "fields": [
+          [
+            "id",
+            {
+              "shape": "int",
+              "width": 32,
+              "signed": false
+            }
+          ],
+          [
+            "lines",
+            {
+              "shape": "list",
+              "of": {
+                "shape": "record",
+                "fields": [
+                  [
+                    "sku",
+                    {
+                      "shape": "string",
+                      "max_size": 4
+                    }
+                  ],
+                  [
+                    "qty",
+                    {
+                      "shape": "int",
+                      "width": 16,
+                      "signed": true,
+                      "min": 1,
+                      "max": 99
+                    }
+                  ]
+                ]
+              },
+              "max_size": 2
+            }
+          ],
+          [
+            "note",
+            {
+              "shape": "optional",
+              "of": {
+                "shape": "string",
+                "max_size": 4
+              }
+            }
+          ]
+        ]
+      },
+      "seed": "2300",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            2086,
+            1,
+            {
+              "sequence": [
+                5,
+                0,
+                0,
+                64729
+              ]
+            },
+            21,
+            1,
+            {
+              "sequence": [
+                2,
+                1112063
+              ]
+            },
+            62,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "id",
+                {
+                  "type": "int",
+                  "value": 2086
+                }
+              ],
+              [
+                "lines",
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "record",
+                      "fields": [
+                        [
+                          "sku",
+                          {
+                            "type": "string",
+                            "value": "500\ud801\udcd9"
+                          }
+                        ],
+                        [
+                          "qty",
+                          {
+                            "type": "int",
+                            "value": 21
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "type": "record",
+                      "fields": [
+                        [
+                          "sku",
+                          {
+                            "type": "string",
+                            "value": "2\udbff\udfff"
+                          }
+                        ],
+                        [
+                          "qty",
+                          {
+                            "type": "int",
+                            "value": 62
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ],
+              [
+                "note",
+                {
+                  "type": "null"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            37832,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "id",
+                {
+                  "type": "int",
+                  "value": 37832
+                }
+              ],
+              [
+                "lines",
+                {
+                  "type": "list",
+                  "items": []
+                }
+              ],
+              [
+                "note",
+                {
+                  "type": "null"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            0,
+            1,
+            {
+              "sequence": [
+                2,
+                3450,
+                14
+              ]
+            }
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "id",
+                {
+                  "type": "int",
+                  "value": 0
+                }
+              ],
+              [
+                "lines",
+                {
+                  "type": "list",
+                  "items": []
+                }
+              ],
+              [
+                "note",
+                {
+                  "type": "string",
+                  "value": "2\u0d7ae"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "record/a-pair",
+      "shape": {
+        "shape": "record",
+        "fields": [
+          [
+            "left",
+            {
+              "shape": "bool"
+            }
+          ],
+          [
+            "right",
+            {
+              "shape": "char"
+            }
+          ]
+        ]
+      },
+      "seed": "2400",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                484839
+              ]
+            }
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "left",
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                "right",
+                {
+                  "type": "string",
+                  "value": "\ud99b\udde7"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                4
+              ]
+            }
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "left",
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                "right",
+                {
+                  "type": "string",
+                  "value": "4"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            {
+              "sequence": [
+                39891
+              ]
+            }
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "left",
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                "right",
+                {
+                  "type": "string",
+                  "value": "\u9bd3"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "enum/a-payment-state",
+      "shape": {
+        "shape": "enum",
+        "variants": [
+          [
+            "pending",
+            null
+          ],
+          [
+            "paid",
+            {
+              "shape": "record",
+              "fields": [
+                [
+                  "amount",
+                  {
+                    "shape": "int",
+                    "width": 64,
+                    "signed": true
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "refunded",
+            {
+              "shape": "string",
+              "max_size": 3
+            }
+          ]
+        ]
+      },
+      "seed": "2500",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            2,
+            {
+              "sequence": [
+                28218,
+                42658,
+                28243
+              ]
+            }
+          ],
+          "value": {
+            "type": "variant",
+            "name": "refunded",
+            "payload": {
+              "type": "string",
+              "value": "\u6e3a\ua6a2\u6e53"
+            }
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0
+          ],
+          "value": {
+            "type": "variant",
+            "name": "paid",
+            "payload": {
+              "type": "record",
+              "fields": [
+                [
+                  "amount",
+                  {
+                    "type": "int",
+                    "value": 0
+                  }
+                ]
+              ]
+            }
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            2,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "variant",
+            "name": "refunded",
+            "payload": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "enum/variants-without-payloads",
+      "shape": {
+        "shape": "enum",
+        "variants": [
+          [
+            "north",
+            null
+          ],
+          [
+            "east",
+            null
+          ],
+          [
+            "south",
+            null
+          ],
+          [
+            "west",
+            null
+          ]
+        ]
+      },
+      "seed": "2600",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "variant",
+            "name": "east"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            3
+          ],
+          "value": {
+            "type": "variant",
+            "name": "west"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "variant",
+            "name": "north"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "literal/statuses",
+      "shape": {
+        "shape": "literal",
+        "values": [
+          {
+            "type": "string",
+            "value": "pending"
+          },
+          {
+            "type": "string",
+            "value": "paid"
+          },
+          {
+            "type": "string",
+            "value": "shipped"
+          }
+        ]
+      },
+      "seed": "2700",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            2
+          ],
+          "value": {
+            "type": "string",
+            "value": "shipped"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "pending"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "string",
+            "value": "paid"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "literal/values-of-three-types",
+      "shape": {
+        "shape": "literal",
+        "values": [
+          {
+            "type": "int",
+            "value": 7
+          },
+          {
+            "type": "string",
+            "value": "seven"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "seed": "2800",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            2
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": 7
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "string",
+            "value": "seven"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "ref/a-tree",
+      "shape": {
+        "shape": "ref",
+        "name": "tree",
+        "definitions": {
+          "tree": {
+            "shape": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "shape": "int",
+                  "width": 8,
+                  "signed": false
+                }
+              ],
+              [
+                "children",
+                {
+                  "shape": "list",
+                  "of": {
+                    "shape": "ref",
+                    "name": "tree"
+                  },
+                  "max_size": 2
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "seed": "2900",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            226,
+            1,
+            3,
+            1,
+            3,
+            1,
+            226,
+            1,
+            5,
+            0,
+            0,
+            1,
+            107,
+            0,
+            0,
+            1,
+            44,
+            1,
+            13,
+            0,
+            1,
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "type": "int",
+                  "value": 226
+                }
+              ],
+              [
+                "children",
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "record",
+                      "fields": [
+                        [
+                          "value",
+                          {
+                            "type": "int",
+                            "value": 3
+                          }
+                        ],
+                        [
+                          "children",
+                          {
+                            "type": "list",
+                            "items": [
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 3
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": [
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 226
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": [
+                                                  {
+                                                    "type": "record",
+                                                    "fields": [
+                                                      [
+                                                        "value",
+                                                        {
+                                                          "type": "int",
+                                                          "value": 5
+                                                        }
+                                                      ],
+                                                      [
+                                                        "children",
+                                                        {
+                                                          "type": "list",
+                                                          "items": []
+                                                        }
+                                                      ]
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 107
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 44
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": [
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 13
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 6
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            84,
+            1,
+            225,
+            1,
+            225,
+            1,
+            225,
+            0,
+            1,
+            84,
+            1,
+            31,
+            0,
+            0,
+            0,
+            1,
+            52,
+            1,
+            106,
+            0,
+            0,
+            0,
+            1,
+            255,
+            1,
+            255,
+            0,
+            1,
+            212,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "type": "int",
+                  "value": 84
+                }
+              ],
+              [
+                "children",
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "record",
+                      "fields": [
+                        [
+                          "value",
+                          {
+                            "type": "int",
+                            "value": 225
+                          }
+                        ],
+                        [
+                          "children",
+                          {
+                            "type": "list",
+                            "items": [
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 225
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": [
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 225
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 84
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": [
+                                                  {
+                                                    "type": "record",
+                                                    "fields": [
+                                                      [
+                                                        "value",
+                                                        {
+                                                          "type": "int",
+                                                          "value": 31
+                                                        }
+                                                      ],
+                                                      [
+                                                        "children",
+                                                        {
+                                                          "type": "list",
+                                                          "items": []
+                                                        }
+                                                      ]
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 52
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": [
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 106
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "type": "record",
+                      "fields": [
+                        [
+                          "value",
+                          {
+                            "type": "int",
+                            "value": 255
+                          }
+                        ],
+                        [
+                          "children",
+                          {
+                            "type": "list",
+                            "items": [
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 255
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": []
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 212
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": []
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            255,
+            1,
+            4,
+            1,
+            110,
+            1,
+            196,
+            0,
+            1,
+            110,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "type": "int",
+                  "value": 255
+                }
+              ],
+              [
+                "children",
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "record",
+                      "fields": [
+                        [
+                          "value",
+                          {
+                            "type": "int",
+                            "value": 4
+                          }
+                        ],
+                        [
+                          "children",
+                          {
+                            "type": "list",
+                            "items": [
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 110
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": [
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 196
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "type": "record",
+                                          "fields": [
+                                            [
+                                              "value",
+                                              {
+                                                "type": "int",
+                                                "value": 110
+                                              }
+                                            ],
+                                            [
+                                              "children",
+                                              {
+                                                "type": "list",
+                                                "items": []
+                                              }
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "type": "record",
+                                "fields": [
+                                  [
+                                    "value",
+                                    {
+                                      "type": "int",
+                                      "value": 0
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "type": "list",
+                                      "items": []
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "ref/a-linked-list",
+      "shape": {
+        "shape": "ref",
+        "name": "node",
+        "definitions": {
+          "node": {
+            "shape": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "shape": "bool"
+                }
+              ],
+              [
+                "next",
+                {
+                  "shape": "optional",
+                  "of": {
+                    "shape": "ref",
+                    "name": "node"
+                  }
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "seed": "3000",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                "next",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "value",
+                      {
+                        "type": "bool",
+                        "value": true
+                      }
+                    ],
+                    [
+                      "next",
+                      {
+                        "type": "record",
+                        "fields": [
+                          [
+                            "value",
+                            {
+                              "type": "bool",
+                              "value": false
+                            }
+                          ],
+                          [
+                            "next",
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                "next",
+                {
+                  "type": "null"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                "next",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "value",
+                      {
+                        "type": "bool",
+                        "value": false
+                      }
+                    ],
+                    [
+                      "next",
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "uuid/sixteen-bytes",
+      "shape": {
+        "shape": "uuid"
+      },
+      "seed": "3100",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                102,
+                172,
+                7,
+                208,
+                0,
+                18,
+                23,
+                52,
+                12,
+                229,
+                226,
+                9,
+                1,
+                84,
+                214,
+                53
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "66ac07d0001217340ce5e2090154d635"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                12,
+                208,
+                194,
+                42,
+                157,
+                0,
+                197,
+                67,
+                1,
+                2,
+                5,
+                59,
+                8,
+                0,
+                1,
+                11
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "0cd0c22a9d00c5430102053b0800010b"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                9,
+                86,
+                14,
+                127,
+                1,
+                197,
+                109,
+                255,
+                32,
+                230,
+                158,
+                197,
+                180,
+                89,
+                74,
+                5
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "09560e7f01c56dff20e69ec5b4594a05"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "uuid/a-second-seed",
+      "shape": {
+        "shape": "uuid"
+      },
+      "seed": "3200",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                1,
+                77,
+                255,
+                3,
+                3,
+                239,
+                242,
+                3,
+                143,
+                78,
+                12,
+                0,
+                164,
+                253,
+                249,
+                38
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "014dff0303eff2038f4e0c00a4fdf926"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                6,
+                252,
+                247,
+                168,
+                107,
+                0,
+                4,
+                1,
+                34,
+                22,
+                223,
+                5,
+                226,
+                178,
+                48,
+                83
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "06fcf7a86b0004012216df05e2b23053"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                108,
+                15,
+                4,
+                140,
+                17,
+                1,
+                241,
+                216,
+                236,
+                1,
+                144,
+                219,
+                10,
+                169,
+                58,
+                77
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "6c0f048c1101f1d8ec0190db0aa93a4d"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "ip-address/either-version",
+      "shape": {
+        "shape": "ip-address"
+      },
+      "seed": "3300",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            0,
+            {
+              "sequence": [
+                255,
+                78,
+                15,
+                115
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "ff4e0f73"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                2,
+                214,
+                135,
+                14,
+                16,
+                226,
+                106,
+                1,
+                194,
+                77,
+                2,
+                12,
+                6,
+                27,
+                7,
+                157
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "02d6870e10e26a01c24d020c061b079d"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            {
+              "sequence": [
+                68,
+                41,
+                10,
+                5
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "44290a05"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "ip-address/version-6",
+      "shape": {
+        "shape": "ip-address",
+        "version": 6
+      },
+      "seed": "3400",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                176,
+                79,
+                140,
+                8,
+                117,
+                255,
+                11,
+                7,
+                235,
+                77,
+                203,
+                46,
+                1,
+                168,
+                198,
+                40
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "b04f8c0875ff0b07eb4dcb2e01a8c628"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                186,
+                161,
+                254,
+                1,
+                39,
+                34,
+                175,
+                10,
+                11,
+                0,
+                1,
+                0,
+                6,
+                3,
+                12,
+                28
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "baa1fe012722af0a0b00010006030c1c"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                37,
+                44,
+                50,
+                9,
+                30,
+                189,
+                164,
+                255,
+                1,
+                255,
+                28,
+                254,
+                0,
+                115,
+                192,
+                11
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "252c32091ebda4ff01ff1cfe0073c00b"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "decimal/money",
+      "shape": {
+        "shape": "decimal",
+        "scale": 2,
+        "min": "0.00",
+        "max": "100.00"
+      },
+      "seed": "3500",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            6297
+          ],
+          "value": {
+            "type": "int",
+            "value": 6297
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            683
+          ],
+          "value": {
+            "type": "int",
+            "value": 683
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            935
+          ],
+          "value": {
+            "type": "int",
+            "value": 935
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "decimal/unbounded-at-scale-4",
+      "shape": {
+        "shape": "decimal",
+        "scale": 4
+      },
+      "seed": "3600",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            "-4712974222844313751"
+          ],
+          "value": {
+            "type": "int",
+            "value": "-4712974222844313751"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -11
+          ],
+          "value": {
+            "type": "int",
+            "value": -11
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            5
+          ],
+          "value": {
+            "type": "int",
+            "value": 5
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "instant/nanoseconds",
+      "shape": {
+        "shape": "instant",
+        "unit": "ns"
+      },
+      "seed": "3700",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            -13,
+            14
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "seconds",
+                {
+                  "type": "int",
+                  "value": -13
+                }
+              ],
+              [
+                "units",
+                {
+                  "type": "int",
+                  "value": 14
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            20776,
+            381101002
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "seconds",
+                {
+                  "type": "int",
+                  "value": 20776
+                }
+              ],
+              [
+                "units",
+                {
+                  "type": "int",
+                  "value": 381101002
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            4073549899,
+            2
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "seconds",
+                {
+                  "type": "int",
+                  "value": 4073549899
+                }
+              ],
+              [
+                "units",
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "instant/milliseconds-in-2020",
+      "shape": {
+        "shape": "instant",
+        "unit": "ms",
+        "min": "2020-01-01T00:00:00Z",
+        "max": "2020-12-31T23:59:59.999Z"
+      },
+      "seed": "3800",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            1577836820,
+            13
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "seconds",
+                {
+                  "type": "int",
+                  "value": 1577836820
+                }
+              ],
+              [
+                "units",
+                {
+                  "type": "int",
+                  "value": 13
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1597749046,
+            904
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "seconds",
+                {
+                  "type": "int",
+                  "value": 1597749046
+                }
+              ],
+              [
+                "units",
+                {
+                  "type": "int",
+                  "value": 904
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1577841593,
+            1
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "seconds",
+                {
+                  "type": "int",
+                  "value": 1577841593
+                }
+              ],
+              [
+                "units",
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "date/the-years-1-to-9999",
+      "shape": {
+        "shape": "date"
+      },
+      "seed": "3900",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            764421
+          ],
+          "value": {
+            "type": "int",
+            "value": 764421
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -10
+          ],
+          "value": {
+            "type": "int",
+            "value": -10
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -294732
+          ],
+          "value": {
+            "type": "int",
+            "value": -294732
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "date/one-year",
+      "shape": {
+        "shape": "date",
+        "min": "2024-01-01",
+        "max": "2024-12-31"
+      },
+      "seed": "4000",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            19976
+          ],
+          "value": {
+            "type": "int",
+            "value": 19976
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            19793
+          ],
+          "value": {
+            "type": "int",
+            "value": 19793
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            19857
+          ],
+          "value": {
+            "type": "int",
+            "value": 19857
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "time-of-day/microseconds",
+      "shape": {
+        "shape": "time-of-day",
+        "unit": "us"
+      },
+      "seed": "4100",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            41330
+          ],
+          "value": {
+            "type": "int",
+            "value": 41330
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "int",
+            "value": 1
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            48657
+          ],
+          "value": {
+            "type": "int",
+            "value": 48657
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "time-of-day/seconds-after-noon",
+      "shape": {
+        "shape": "time-of-day",
+        "unit": "s",
+        "min": "12:00:00"
+      },
+      "seed": "4200",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            43202
+          ],
+          "value": {
+            "type": "int",
+            "value": 43202
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            43213
+          ],
+          "value": {
+            "type": "int",
+            "value": 43213
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            43209
+          ],
+          "value": {
+            "type": "int",
+            "value": 43209
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "local-date-time/seconds",
+      "shape": {
+        "shape": "local-date-time",
+        "unit": "s"
+      },
+      "seed": "4300",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            15,
+            15
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "date",
+                {
+                  "type": "int",
+                  "value": 15
+                }
+              ],
+              [
+                "time-of-day",
+                {
+                  "type": "int",
+                  "value": 15
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            12611,
+            29119
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "date",
+                {
+                  "type": "int",
+                  "value": 12611
+                }
+              ],
+              [
+                "time-of-day",
+                {
+                  "type": "int",
+                  "value": 29119
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            7,
+            46895
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "date",
+                {
+                  "type": "int",
+                  "value": 7
+                }
+              ],
+              [
+                "time-of-day",
+                {
+                  "type": "int",
+                  "value": 46895
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "local-date-time/milliseconds-on-one-day",
+      "shape": {
+        "shape": "local-date-time",
+        "unit": "ms",
+        "min": "2024-02-29T00:00:00",
+        "max": "2024-02-29T23:59:59.999"
+      },
+      "seed": "4400",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            19782,
+            132
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "date",
+                {
+                  "type": "int",
+                  "value": 19782
+                }
+              ],
+              [
+                "time-of-day",
+                {
+                  "type": "int",
+                  "value": 132
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            19782,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "date",
+                {
+                  "type": "int",
+                  "value": 19782
+                }
+              ],
+              [
+                "time-of-day",
+                {
+                  "type": "int",
+                  "value": 0
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            19782,
+            86399999
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "date",
+                {
+                  "type": "int",
+                  "value": 19782
+                }
+              ],
+              [
+                "time-of-day",
+                {
+                  "type": "int",
+                  "value": 86399999
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "duration/nanoseconds",
+      "shape": {
+        "shape": "duration",
+        "unit": "ns"
+      },
+      "seed": "4500",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            "7100421464496794614"
+          ],
+          "value": {
+            "type": "int",
+            "value": "7100421464496794614"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            121
+          ],
+          "value": {
+            "type": "int",
+            "value": 121
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            "2927553123551135311"
+          ],
+          "value": {
+            "type": "int",
+            "value": "2927553123551135311"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "duration/non-negative-seconds",
+      "shape": {
+        "shape": "duration",
+        "unit": "s",
+        "min": 0
+      },
+      "seed": "4600",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            4
+          ],
+          "value": {
+            "type": "int",
+            "value": 4
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            7765643027
+          ],
+          "value": {
+            "type": "int",
+            "value": 7765643027
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": 0
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "offset/eighteen-hours-either-way",
+      "shape": {
+        "shape": "offset"
+      },
+      "seed": "4700",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            -12
+          ],
+          "value": {
+            "type": "int",
+            "value": -12
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -21863
+          ],
+          "value": {
+            "type": "int",
+            "value": -21863
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -9
+          ],
+          "value": {
+            "type": "int",
+            "value": -9
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "offset/one-hour-either-way",
+      "shape": {
+        "shape": "offset",
+        "min": -3600,
+        "max": 3600
+      },
+      "seed": "4800",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            2403
+          ],
+          "value": {
+            "type": "int",
+            "value": 2403
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            18
+          ],
+          "value": {
+            "type": "int",
+            "value": 18
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -8
+          ],
+          "value": {
+            "type": "int",
+            "value": -8
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "zone/the-zone-list",
+      "shape": {
+        "shape": "zone"
+      },
+      "seed": "4900",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "UTC"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            11
+          ],
+          "value": {
+            "type": "string",
+            "value": "Pacific/Kiritimati"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6
+          ],
+          "value": {
+            "type": "string",
+            "value": "Asia/Kolkata"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "zone/a-second-seed",
+      "shape": {
+        "shape": "zone"
+      },
+      "seed": "5000",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            11
+          ],
+          "value": {
+            "type": "string",
+            "value": "Pacific/Kiritimati"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            9
+          ],
+          "value": {
+            "type": "string",
+            "value": "Asia/Tehran"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            11
+          ],
+          "value": {
+            "type": "string",
+            "value": "Pacific/Kiritimati"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "zoned-date-time/nanoseconds",
+      "shape": {
+        "shape": "zoned-date-time",
+        "unit": "ns"
+      },
+      "seed": "5100",
+      "count": 8,
+      "skip": {
+        "python": "datetime has a resolution of one microsecond, and no Python type represents a zoned date and time at nanoseconds"
+      },
+      "cases": [
+        {
+          "choices": [
+            0,
+            9,
+            676300858
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 9
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 676300858
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "UTC"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            9,
+            0,
+            57178101295,
+            734930013
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 57178101295
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 734930013
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Asia/Tehran"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            12,
+            1,
+            9,
+            1
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 1380376800
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 1
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Pacific/Apia"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            14,
+            1,
+            12,
+            -1
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 207701999
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 999999999
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Africa/Casablanca"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            2,
+            0,
+            20824,
+            44057
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 20824
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 44057
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "America/New_York"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            13,
+            0,
+            198,
+            12671
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 198
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 12671
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Dublin"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            5,
+            0,
+            12024,
+            95
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 12024
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 95
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Pacific/Chatham"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            14,
+            0,
+            -6441,
+            186814903
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": -6441
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 186814903
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Africa/Casablanca"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "zoned-date-time/seconds",
+      "shape": {
+        "shape": "zoned-date-time",
+        "unit": "s"
+      },
+      "seed": "5200",
+      "count": 8,
+      "cases": [
+        {
+          "choices": [
+            10,
+            0,
+            -4
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": -4
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "America/Sao_Paulo"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            4,
+            0,
+            -4
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": -4
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Australia/Lord_Howe"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            15,
+            0,
+            2
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 2
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Antarctica/Troll"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            14,
+            0,
+            10
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 10
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Africa/Casablanca"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            7,
+            0,
+            -1
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": -1
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Asia/Kathmandu"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            13,
+            0,
+            31990
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 31990
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Dublin"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6,
+            0,
+            50493
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": 50493
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Asia/Kolkata"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            14,
+            0,
+            -44406959824
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "instant",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "seconds",
+                      {
+                        "type": "int",
+                        "value": -44406959824
+                      }
+                    ],
+                    [
+                      "units",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Africa/Casablanca"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "wall-time/seconds",
+      "shape": {
+        "shape": "wall-time",
+        "unit": "s"
+      },
+      "seed": "5300",
+      "count": 8,
+      "cases": [
+        {
+          "choices": [
+            1,
+            0,
+            -3,
+            1
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -3
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 1
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Amsterdam"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            205,
+            64301
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": 205
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 64301
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Amsterdam"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            12,
+            1,
+            4,
+            1,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": 15241
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 10801
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Pacific/Apia"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            9,
+            0,
+            -84,
+            160
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -84
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 160
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Asia/Tehran"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            3,
+            0,
+            -132,
+            30748
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -132
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 30748
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Australia/Sydney"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            12,
+            0,
+            -47094,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -47094
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 0
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Pacific/Apia"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            10,
+            1,
+            55,
+            -1,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": 11608
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 86399
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "America/Sao_Paulo"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            19786,
+            12
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": 19786
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 12
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Amsterdam"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "wall-time/milliseconds",
+      "shape": {
+        "shape": "wall-time",
+        "unit": "ms"
+      },
+      "seed": "5400",
+      "count": 8,
+      "cases": [
+        {
+          "choices": [
+            6,
+            0,
+            -1,
+            20073
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -1
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 20073
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Asia/Kolkata"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            -2,
+            17824059
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -2
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 17824059
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Amsterdam"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            -14928,
+            2807
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -14928
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 2807
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Amsterdam"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            8,
+            1,
+            8,
+            1,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -17777
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 82800001
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "America/St_Johns"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            9,
+            0,
+            -2670,
+            7921
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -2670
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 7921
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Asia/Tehran"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            -93,
+            62192
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -93
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 62192
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Europe/Amsterdam"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            14,
+            1,
+            67,
+            1,
+            0
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": 20184
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 7200001
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "Africa/Casablanca"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            2,
+            1,
+            4,
+            -1,
+            1
+          ],
+          "value": {
+            "type": "record",
+            "fields": [
+              [
+                "local-date-time",
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "date",
+                      {
+                        "type": "int",
+                        "value": -18176
+                      }
+                    ],
+                    [
+                      "time-of-day",
+                      {
+                        "type": "int",
+                        "value": 10799999
+                      }
+                    ]
+                  ]
+                }
+              ],
+              [
+                "zone",
+                {
+                  "type": "string",
+                  "value": "America/New_York"
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    }
+  ]
+}

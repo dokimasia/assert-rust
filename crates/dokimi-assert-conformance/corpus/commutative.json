@@ -1,0 +1,29 @@
+{
+  "assertion": "commutative",
+  "cases": [
+    {
+      "id": "commutative/addition-passes",
+      "subject": {
+        "kind": "adds"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "commutative/subtraction-fails",
+      "subject": {
+        "kind": "subtracts"
+      },
+      "expect": "fail",
+      "detail": {
+        "first": {
+          "type": "int",
+          "value": -1
+        },
+        "second": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

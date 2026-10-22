@@ -1,0 +1,2260 @@
+{
+    "forms": {
+        "exceptions": {
+            "permutation": {
+                "go": "prop.IsPermutation"
+            }
+        },
+        "qualifiers": {
+            "go": "prop.",
+            "java": "Prop.",
+            "kotlin": "Prop.",
+            "python": "prop.",
+            "rust": "prop::",
+            "typescript": "prop."
+        }
+    },
+    "languages": [
+        "go",
+        "java",
+        "kotlin",
+        "php",
+        "python",
+        "rust",
+        "typescript"
+    ],
+    "names": {
+        "accumulates": {
+            "go": "Accumulates",
+            "java": "accumulates",
+            "kotlin": "accumulates",
+            "python": "accumulates",
+            "rust": "accumulates",
+            "typescript": "accumulates"
+        },
+        "after-close": {
+            "go": "FailsAfterClose",
+            "java": "failsAfterClose",
+            "kotlin": "failsAfterClose",
+            "python": "fails_after_close",
+            "rust": "fails_after_close",
+            "typescript": "failsAfterClose"
+        },
+        "associative": {
+            "go": "Associative",
+            "java": "isAssociative",
+            "kotlin": "isAssociative",
+            "python": "is_associative",
+            "rust": "is_associative",
+            "typescript": "isAssociative"
+        },
+        "bench-max-allocs": {
+            "go": "bench.Contract.MaxAllocs",
+            "java": "Contract.maxAllocs",
+            "kotlin": "Contract.maxAllocs",
+            "python": "bench.Contract.max_allocs",
+            "rust": "bench::Contract::max_allocs",
+            "typescript": "bench.Contract.maxAllocs"
+        },
+        "bench-max-bytes": {
+            "go": "bench.Contract.MaxBytes",
+            "java": "Contract.maxBytes",
+            "kotlin": "Contract.maxBytes",
+            "python": "bench.Contract.max_bytes",
+            "rust": "bench::Contract::max_bytes",
+            "typescript": "bench.Contract.maxBytes"
+        },
+        "bench-max-latency": {
+            "go": "bench.Contract.MaxLatency",
+            "java": "Contract.maxLatency",
+            "kotlin": "Contract.maxLatency",
+            "python": "bench.Contract.max_latency",
+            "rust": "bench::Contract::max_latency",
+            "typescript": "bench.Contract.maxLatency"
+        },
+        "bench-max-mean": {
+            "go": "bench.Contract.MaxMean",
+            "java": "Contract.maxMean",
+            "kotlin": "Contract.maxMean",
+            "python": "bench.Contract.max_mean",
+            "rust": "bench::Contract::max_mean",
+            "typescript": "bench.Contract.maxMean"
+        },
+        "close-to": {
+            "go": "CloseTo",
+            "java": "closeTo",
+            "kotlin": "closeTo",
+            "python": "close_to",
+            "rust": "close_to",
+            "typescript": "isCloseTo"
+        },
+        "commutative": {
+            "go": "Commutative",
+            "java": "isCommutative",
+            "kotlin": "isCommutative",
+            "python": "is_commutative",
+            "rust": "is_commutative",
+            "typescript": "isCommutative"
+        },
+        "completes-within": {
+            "go": "CompletesWithin",
+            "java": "completesWithin",
+            "kotlin": "completesWithin",
+            "python": "completes_within",
+            "rust": "completes_within",
+            "typescript": "completesWithin"
+        },
+        "contains": {
+            "go": "Contains",
+            "java": "contains",
+            "kotlin": "contains",
+            "python": "contains",
+            "rust": "contains",
+            "typescript": "doesContain"
+        },
+        "contains-in-order": {
+            "go": "ContainsInOrder",
+            "java": "containsInOrder",
+            "kotlin": "containsInOrder",
+            "python": "contains_in_order",
+            "rust": "contains_in_order",
+            "typescript": "containsInOrder"
+        },
+        "deterministic": {
+            "go": "Deterministic",
+            "java": "isDeterministic",
+            "kotlin": "isDeterministic",
+            "python": "is_deterministic",
+            "rust": "is_deterministic",
+            "typescript": "isDeterministic"
+        },
+        "empty": {
+            "go": "Empty",
+            "java": "isEmpty",
+            "kotlin": "isEmpty",
+            "python": "is_empty",
+            "rust": "is_empty",
+            "typescript": "isEmpty"
+        },
+        "equal": {
+            "go": "Equal",
+            "java": "equal",
+            "kotlin": "equal",
+            "python": "equal",
+            "rust": "equal",
+            "typescript": "isEqualTo"
+        },
+        "err-absent": {
+            "go": "NoError",
+            "java": "noError",
+            "kotlin": "noError",
+            "python": "no_error",
+            "rust": "no_error",
+            "typescript": "noError"
+        },
+        "err-as": {
+            "go": "ErrorAs",
+            "java": "errorAs",
+            "kotlin": "errorAs",
+            "python": "error_as",
+            "rust": "error_as",
+            "typescript": "errorAs"
+        },
+        "err-is": {
+            "go": "ErrorIs",
+            "java": "errorIs",
+            "kotlin": "errorIs",
+            "python": "error_is",
+            "rust": "error_is",
+            "typescript": "errorIs"
+        },
+        "err-is-not": {
+            "go": "ErrorIsNot",
+            "java": "errorIsNot",
+            "kotlin": "errorIsNot",
+            "python": "error_is_not",
+            "rust": "error_is_not",
+            "typescript": "errorIsNot"
+        },
+        "err-present": {
+            "go": "HasError",
+            "java": "hasError",
+            "kotlin": "hasError",
+            "python": "has_error",
+            "rust": "has_error",
+            "typescript": "hasError"
+        },
+        "eventually": {
+            "go": "Eventually",
+            "java": "eventually",
+            "kotlin": "eventually",
+            "python": "eventually",
+            "rust": "eventually",
+            "typescript": "eventually"
+        },
+        "eventually-true": {
+            "go": "EventuallyTrue",
+            "java": "eventuallyTrue",
+            "kotlin": "eventuallyTrue",
+            "python": "eventually_true",
+            "rust": "eventually_true",
+            "typescript": "eventuallyTrue"
+        },
+        "false": {
+            "go": "False",
+            "java": "isFalse",
+            "kotlin": "isFalse",
+            "python": "is_false",
+            "rust": "is_false",
+            "typescript": "isFalse"
+        },
+        "golden-match": {
+            "go": "golden.Match",
+            "java": "Golden.match",
+            "kotlin": "Golden.match",
+            "python": "golden.match",
+            "rust": "golden::matches",
+            "typescript": "golden.match"
+        },
+        "golden-match-at": {
+            "go": "golden.MatchAt",
+            "java": "Golden.matchAt",
+            "kotlin": "Golden.matchAt",
+            "python": "golden.match_at",
+            "rust": "golden::matches_at",
+            "typescript": "golden.matchAt"
+        },
+        "golden-match-json-field": {
+            "go": "golden.MatchJSONField",
+            "java": "Golden.matchJsonField",
+            "kotlin": "Golden.matchJsonField",
+            "python": "golden.match_json_field",
+            "rust": "golden::matches_json_field",
+            "typescript": "golden.matchJsonField"
+        },
+        "golden-match-tree": {
+            "go": "golden.MatchTree",
+            "java": "Golden.matchTree",
+            "kotlin": "Golden.matchTree",
+            "python": "golden.match_tree",
+            "rust": "golden::matches_tree",
+            "typescript": "golden.matchTree"
+        },
+        "has-content": {
+            "go": "files.HasContent",
+            "java": "FileTrees.hasContent",
+            "kotlin": "FileTrees.hasContent",
+            "python": "files.has_content",
+            "rust": "files::has_content",
+            "typescript": "files.hasContent"
+        },
+        "has-mode": {
+            "go": "files.HasMode",
+            "java": "FileTrees.hasMode",
+            "kotlin": "FileTrees.hasMode",
+            "python": "files.has_mode",
+            "rust": "files::has_mode",
+            "typescript": "files.hasMode"
+        },
+        "has-prefix": {
+            "go": "HasPrefix",
+            "java": "hasPrefix",
+            "kotlin": "hasPrefix",
+            "python": "has_prefix",
+            "rust": "has_prefix",
+            "typescript": "hasPrefix"
+        },
+        "has-suffix": {
+            "go": "HasSuffix",
+            "java": "hasSuffix",
+            "kotlin": "hasSuffix",
+            "python": "has_suffix",
+            "rust": "has_suffix",
+            "typescript": "hasSuffix"
+        },
+        "honours-cancellation": {
+            "go": "HonoursCancellation",
+            "java": "honoursCancellation",
+            "kotlin": "honoursCancellation",
+            "python": "honours_cancellation",
+            "rust": "honours_cancellation",
+            "typescript": "honoursCancellation"
+        },
+        "honours-deadline": {
+            "go": "HonoursDeadline",
+            "java": "honoursDeadline",
+            "kotlin": "honoursDeadline",
+            "python": "honours_deadline",
+            "rust": "honours_deadline",
+            "typescript": "honoursDeadline"
+        },
+        "idempotent": {
+            "go": "Idempotent",
+            "java": "isIdempotent",
+            "kotlin": "isIdempotent",
+            "python": "is_idempotent",
+            "rust": "is_idempotent",
+            "typescript": "isIdempotent"
+        },
+        "in-range": {
+            "go": "InRange",
+            "java": "inRange",
+            "kotlin": "inRange",
+            "python": "in_range",
+            "rust": "in_range",
+            "typescript": "inRange"
+        },
+        "is-dir": {
+            "go": "files.IsDir",
+            "java": "FileTrees.isDir",
+            "kotlin": "FileTrees.isDir",
+            "python": "files.is_dir",
+            "rust": "files::is_dir",
+            "typescript": "files.isDir"
+        },
+        "is-file": {
+            "go": "files.IsFile",
+            "java": "FileTrees.isFile",
+            "kotlin": "FileTrees.isFile",
+            "python": "files.is_file",
+            "rust": "files::is_file",
+            "typescript": "files.isFile"
+        },
+        "length": {
+            "go": "Length",
+            "java": "length",
+            "kotlin": "length",
+            "python": "length",
+            "rust": "length",
+            "typescript": "hasLength"
+        },
+        "linearizable": {
+            "go": "history.Linearizable",
+            "java": "History.isLinearizable",
+            "kotlin": "History.isLinearizable",
+            "python": "history.is_linearizable",
+            "rust": "history::is_linearizable",
+            "typescript": "history.isLinearizable"
+        },
+        "links-to": {
+            "go": "files.LinksTo",
+            "java": "FileTrees.linksTo",
+            "kotlin": "FileTrees.linksTo",
+            "python": "files.links_to",
+            "rust": "files::links_to",
+            "typescript": "files.linksTo"
+        },
+        "matches": {
+            "go": "Matches",
+            "java": "matches",
+            "kotlin": "matches",
+            "python": "matches",
+            "rust": "matches",
+            "typescript": "doesMatch"
+        },
+        "max-allocs": {
+            "go": "MaxAllocs",
+            "java": "maxAllocs",
+            "kotlin": "maxAllocs",
+            "python": "max_allocs",
+            "rust": "max_allocs",
+            "typescript": "maxAllocs"
+        },
+        "max-allocs-with-setup": {
+            "go": "MaxAllocsWithSetup",
+            "java": "maxAllocsWithSetup",
+            "kotlin": "maxAllocsWithSetup",
+            "python": "max_allocs_with_setup",
+            "rust": "max_allocs_with_setup",
+            "typescript": "maxAllocsWithSetup"
+        },
+        "monotonic": {
+            "go": "Monotonic",
+            "java": "isMonotonic",
+            "kotlin": "isMonotonic",
+            "python": "is_monotonic",
+            "rust": "is_monotonic",
+            "typescript": "isMonotonic"
+        },
+        "nil": {
+            "go": "Nil",
+            "java": "isNull",
+            "kotlin": "isNull",
+            "python": "is_none",
+            "rust": "is_none",
+            "typescript": "isNil"
+        },
+        "nil-context-safe": {
+            "go": "NilContextSafe",
+            "java": "nullHandleSafe",
+            "kotlin": "nullHandleSafe",
+            "python": "none_handle_safe",
+            "rust": "none_handle_safe",
+            "typescript": "nullHandleSafe"
+        },
+        "no-duplicates": {
+            "go": "NoDuplicates",
+            "java": "noDuplicates",
+            "kotlin": "noDuplicates",
+            "python": "no_duplicates",
+            "rust": "no_duplicates",
+            "typescript": "noDuplicates"
+        },
+        "no-task-leaks": {
+            "go": "NoGoroutineLeaks",
+            "java": "noTaskLeaks",
+            "kotlin": "noTaskLeaks",
+            "python": "no_task_leaks",
+            "rust": "no_task_leaks",
+            "typescript": "noTaskLeaks"
+        },
+        "not-contains": {
+            "go": "NotContains",
+            "java": "notContains",
+            "kotlin": "notContains",
+            "python": "not_contains",
+            "rust": "not_contains",
+            "typescript": "doesNotContain"
+        },
+        "not-empty": {
+            "go": "NotEmpty",
+            "java": "isNotEmpty",
+            "kotlin": "isNotEmpty",
+            "python": "is_not_empty",
+            "rust": "is_not_empty",
+            "typescript": "isNotEmpty"
+        },
+        "not-equal": {
+            "go": "NotEqual",
+            "java": "notEqual",
+            "kotlin": "notEqual",
+            "python": "not_equal",
+            "rust": "not_equal",
+            "typescript": "isNotEqualTo"
+        },
+        "not-nil": {
+            "go": "NotNil",
+            "java": "isNotNull",
+            "kotlin": "isNotNull",
+            "python": "is_not_none",
+            "rust": "is_some",
+            "typescript": "isNotNil"
+        },
+        "not-pure": {
+            "go": "NotPure",
+            "java": "isNotPure",
+            "kotlin": "isNotPure",
+            "python": "is_not_pure",
+            "rust": "is_not_pure",
+            "typescript": "isNotPure"
+        },
+        "not-throws": {
+            "go": "NotPanics",
+            "java": "doesNotThrow",
+            "kotlin": "doesNotThrow",
+            "python": "does_not_raise",
+            "rust": "does_not_panic",
+            "typescript": "doesNotThrow"
+        },
+        "pairwise": {
+            "go": "Pairwise",
+            "java": "pairwise",
+            "kotlin": "pairwise",
+            "python": "pairwise",
+            "rust": "pairwise",
+            "typescript": "pairwise"
+        },
+        "path-absent": {
+            "go": "files.Absent",
+            "java": "FileTrees.absent",
+            "kotlin": "FileTrees.absent",
+            "python": "files.absent",
+            "rust": "files::absent",
+            "typescript": "files.absent"
+        },
+        "permutation": {
+            "go": "Permutation",
+            "java": "isPermutation",
+            "kotlin": "isPermutation",
+            "python": "is_permutation",
+            "rust": "is_permutation",
+            "typescript": "isPermutation"
+        },
+        "poisoned": {
+            "go": "Poisoned",
+            "java": "isPoisoned",
+            "kotlin": "isPoisoned",
+            "python": "is_poisoned",
+            "rust": "is_poisoned",
+            "typescript": "isPoisoned"
+        },
+        "prop-accumulates": {
+            "go": "prop.Accumulates",
+            "java": "Prop.accumulates",
+            "kotlin": "Prop.accumulates",
+            "python": "prop.accumulates",
+            "rust": "prop::accumulates",
+            "typescript": "prop.accumulates"
+        },
+        "prop-associative": {
+            "go": "prop.Associative",
+            "java": "Prop.isAssociative",
+            "kotlin": "Prop.isAssociative",
+            "python": "prop.is_associative",
+            "rust": "prop::is_associative",
+            "typescript": "prop.isAssociative"
+        },
+        "prop-close-to": {
+            "go": "prop.CloseTo",
+            "java": "Prop.closeTo",
+            "kotlin": "Prop.closeTo",
+            "python": "prop.close_to",
+            "rust": "prop::close_to",
+            "typescript": "prop.isCloseTo"
+        },
+        "prop-commutative": {
+            "go": "prop.Commutative",
+            "java": "Prop.isCommutative",
+            "kotlin": "Prop.isCommutative",
+            "python": "prop.is_commutative",
+            "rust": "prop::is_commutative",
+            "typescript": "prop.isCommutative"
+        },
+        "prop-contains": {
+            "go": "prop.Contains",
+            "java": "Prop.contains",
+            "kotlin": "Prop.contains",
+            "python": "prop.contains",
+            "rust": "prop::contains",
+            "typescript": "prop.doesContain"
+        },
+        "prop-contains-in-order": {
+            "go": "prop.ContainsInOrder",
+            "java": "Prop.containsInOrder",
+            "kotlin": "Prop.containsInOrder",
+            "python": "prop.contains_in_order",
+            "rust": "prop::contains_in_order",
+            "typescript": "prop.containsInOrder"
+        },
+        "prop-deterministic": {
+            "go": "prop.Deterministic",
+            "java": "Prop.isDeterministic",
+            "kotlin": "Prop.isDeterministic",
+            "python": "prop.is_deterministic",
+            "rust": "prop::is_deterministic",
+            "typescript": "prop.isDeterministic"
+        },
+        "prop-empty": {
+            "go": "prop.Empty",
+            "java": "Prop.isEmpty",
+            "kotlin": "Prop.isEmpty",
+            "python": "prop.is_empty",
+            "rust": "prop::is_empty",
+            "typescript": "prop.isEmpty"
+        },
+        "prop-equal": {
+            "go": "prop.Equal",
+            "java": "Prop.equal",
+            "kotlin": "Prop.equal",
+            "python": "prop.equal",
+            "rust": "prop::equal",
+            "typescript": "prop.isEqualTo"
+        },
+        "prop-err-absent": {
+            "go": "prop.NoError",
+            "java": "Prop.noError",
+            "kotlin": "Prop.noError",
+            "python": "prop.no_error",
+            "rust": "prop::no_error",
+            "typescript": "prop.noError"
+        },
+        "prop-err-as": {
+            "go": "prop.ErrorAs",
+            "java": "Prop.errorAs",
+            "kotlin": "Prop.errorAs",
+            "python": "prop.error_as",
+            "rust": "prop::error_as",
+            "typescript": "prop.errorAs"
+        },
+        "prop-err-is": {
+            "go": "prop.ErrorIs",
+            "java": "Prop.errorIs",
+            "kotlin": "Prop.errorIs",
+            "python": "prop.error_is",
+            "rust": "prop::error_is",
+            "typescript": "prop.errorIs"
+        },
+        "prop-err-is-not": {
+            "go": "prop.ErrorIsNot",
+            "java": "Prop.errorIsNot",
+            "kotlin": "Prop.errorIsNot",
+            "python": "prop.error_is_not",
+            "rust": "prop::error_is_not",
+            "typescript": "prop.errorIsNot"
+        },
+        "prop-err-present": {
+            "go": "prop.HasError",
+            "java": "Prop.hasError",
+            "kotlin": "Prop.hasError",
+            "python": "prop.has_error",
+            "rust": "prop::has_error",
+            "typescript": "prop.hasError"
+        },
+        "prop-false": {
+            "go": "prop.False",
+            "java": "Prop.isFalse",
+            "kotlin": "Prop.isFalse",
+            "python": "prop.is_false",
+            "rust": "prop::is_false",
+            "typescript": "prop.isFalse"
+        },
+        "prop-for-all": {
+            "go": "prop.ForAll",
+            "java": "Prop.forAll",
+            "kotlin": "Prop.forAll",
+            "python": "prop.for_all",
+            "rust": "prop::for_all",
+            "typescript": "prop.forAll"
+        },
+        "prop-has-prefix": {
+            "go": "prop.HasPrefix",
+            "java": "Prop.hasPrefix",
+            "kotlin": "Prop.hasPrefix",
+            "python": "prop.has_prefix",
+            "rust": "prop::has_prefix",
+            "typescript": "prop.hasPrefix"
+        },
+        "prop-has-suffix": {
+            "go": "prop.HasSuffix",
+            "java": "Prop.hasSuffix",
+            "kotlin": "Prop.hasSuffix",
+            "python": "prop.has_suffix",
+            "rust": "prop::has_suffix",
+            "typescript": "prop.hasSuffix"
+        },
+        "prop-honours-cancellation": {
+            "go": "prop.HonoursCancellation",
+            "java": "Prop.honoursCancellation",
+            "kotlin": "Prop.honoursCancellation",
+            "python": "prop.honours_cancellation",
+            "rust": "prop::honours_cancellation",
+            "typescript": "prop.honoursCancellation"
+        },
+        "prop-honours-deadline": {
+            "go": "prop.HonoursDeadline",
+            "java": "Prop.honoursDeadline",
+            "kotlin": "Prop.honoursDeadline",
+            "python": "prop.honours_deadline",
+            "rust": "prop::honours_deadline",
+            "typescript": "prop.honoursDeadline"
+        },
+        "prop-idempotent": {
+            "go": "prop.Idempotent",
+            "java": "Prop.isIdempotent",
+            "kotlin": "Prop.isIdempotent",
+            "python": "prop.is_idempotent",
+            "rust": "prop::is_idempotent",
+            "typescript": "prop.isIdempotent"
+        },
+        "prop-in-range": {
+            "go": "prop.InRange",
+            "java": "Prop.inRange",
+            "kotlin": "Prop.inRange",
+            "python": "prop.in_range",
+            "rust": "prop::in_range",
+            "typescript": "prop.inRange"
+        },
+        "prop-length": {
+            "go": "prop.Length",
+            "java": "Prop.length",
+            "kotlin": "Prop.length",
+            "python": "prop.length",
+            "rust": "prop::length",
+            "typescript": "prop.hasLength"
+        },
+        "prop-matches": {
+            "go": "prop.Matches",
+            "java": "Prop.matches",
+            "kotlin": "Prop.matches",
+            "python": "prop.matches",
+            "rust": "prop::matches",
+            "typescript": "prop.doesMatch"
+        },
+        "prop-max-allocs": {
+            "go": "prop.MaxAllocs",
+            "java": "Prop.maxAllocs",
+            "kotlin": "Prop.maxAllocs",
+            "python": "prop.max_allocs",
+            "rust": "prop::max_allocs",
+            "typescript": "prop.maxAllocs"
+        },
+        "prop-max-allocs-with-setup": {
+            "go": "prop.MaxAllocsWithSetup",
+            "java": "Prop.maxAllocsWithSetup",
+            "kotlin": "Prop.maxAllocsWithSetup",
+            "python": "prop.max_allocs_with_setup",
+            "rust": "prop::max_allocs_with_setup",
+            "typescript": "prop.maxAllocsWithSetup"
+        },
+        "prop-nil": {
+            "go": "prop.Nil",
+            "java": "Prop.isNull",
+            "kotlin": "Prop.isNull",
+            "python": "prop.is_none",
+            "rust": "prop::is_none",
+            "typescript": "prop.isNil"
+        },
+        "prop-nil-context-safe": {
+            "go": "prop.NilContextSafe",
+            "java": "Prop.nullHandleSafe",
+            "kotlin": "Prop.nullHandleSafe",
+            "python": "prop.none_handle_safe",
+            "rust": "prop::none_handle_safe",
+            "typescript": "prop.nullHandleSafe"
+        },
+        "prop-not-contains": {
+            "go": "prop.NotContains",
+            "java": "Prop.notContains",
+            "kotlin": "Prop.notContains",
+            "python": "prop.not_contains",
+            "rust": "prop::not_contains",
+            "typescript": "prop.doesNotContain"
+        },
+        "prop-not-empty": {
+            "go": "prop.NotEmpty",
+            "java": "Prop.isNotEmpty",
+            "kotlin": "Prop.isNotEmpty",
+            "python": "prop.is_not_empty",
+            "rust": "prop::is_not_empty",
+            "typescript": "prop.isNotEmpty"
+        },
+        "prop-not-equal": {
+            "go": "prop.NotEqual",
+            "java": "Prop.notEqual",
+            "kotlin": "Prop.notEqual",
+            "python": "prop.not_equal",
+            "rust": "prop::not_equal",
+            "typescript": "prop.isNotEqualTo"
+        },
+        "prop-not-nil": {
+            "go": "prop.NotNil",
+            "java": "Prop.isNotNull",
+            "kotlin": "Prop.isNotNull",
+            "python": "prop.is_not_none",
+            "rust": "prop::is_some",
+            "typescript": "prop.isNotNil"
+        },
+        "prop-not-pure": {
+            "go": "prop.NotPure",
+            "java": "Prop.isNotPure",
+            "kotlin": "Prop.isNotPure",
+            "python": "prop.is_not_pure",
+            "rust": "prop::is_not_pure",
+            "typescript": "prop.isNotPure"
+        },
+        "prop-not-throws": {
+            "go": "prop.NotPanics",
+            "java": "Prop.doesNotThrow",
+            "kotlin": "Prop.doesNotThrow",
+            "python": "prop.does_not_raise",
+            "rust": "prop::does_not_panic",
+            "typescript": "prop.doesNotThrow"
+        },
+        "prop-pairwise": {
+            "go": "prop.Pairwise",
+            "java": "Prop.pairwise",
+            "kotlin": "Prop.pairwise",
+            "python": "prop.pairwise",
+            "rust": "prop::pairwise",
+            "typescript": "prop.pairwise"
+        },
+        "prop-permutation": {
+            "go": "prop.IsPermutation",
+            "java": "Prop.isPermutation",
+            "kotlin": "Prop.isPermutation",
+            "python": "prop.is_permutation",
+            "rust": "prop::is_permutation",
+            "typescript": "prop.isPermutation"
+        },
+        "prop-pure": {
+            "go": "prop.Pure",
+            "java": "Prop.isPure",
+            "kotlin": "Prop.isPure",
+            "python": "prop.is_pure",
+            "rust": "prop::is_pure",
+            "typescript": "prop.isPure"
+        },
+        "prop-round-trip": {
+            "go": "prop.RoundTrip",
+            "java": "Prop.roundTrip",
+            "kotlin": "Prop.roundTrip",
+            "python": "prop.round_trip",
+            "rust": "prop::round_trip",
+            "typescript": "prop.roundTrip"
+        },
+        "prop-throws": {
+            "go": "prop.Panics",
+            "java": "Prop.throwsException",
+            "kotlin": "Prop.throwsException",
+            "python": "prop.raises",
+            "rust": "prop::panics",
+            "typescript": "prop.doesThrow"
+        },
+        "prop-true": {
+            "go": "prop.True",
+            "java": "Prop.isTrue",
+            "kotlin": "Prop.isTrue",
+            "python": "prop.is_true",
+            "rust": "prop::is_true",
+            "typescript": "prop.isTrue"
+        },
+        "pure": {
+            "go": "Pure",
+            "java": "isPure",
+            "kotlin": "isPure",
+            "python": "is_pure",
+            "rust": "is_pure",
+            "typescript": "isPure"
+        },
+        "rejects": {
+            "go": "Rejects",
+            "java": "rejects",
+            "kotlin": "rejects",
+            "python": "rejects",
+            "rust": "rejects",
+            "typescript": "doesReject"
+        },
+        "round-trip": {
+            "go": "RoundTrip",
+            "java": "roundTrip",
+            "kotlin": "roundTrip",
+            "python": "round_trip",
+            "rust": "round_trip",
+            "typescript": "roundTrip"
+        },
+        "serializable": {
+            "go": "history.Serializable",
+            "java": "History.isSerializable",
+            "kotlin": "History.isSerializable",
+            "python": "history.is_serializable",
+            "rust": "history::is_serializable",
+            "typescript": "history.isSerializable"
+        },
+        "snapshot-isolation": {
+            "go": "history.HasSnapshotIsolation",
+            "java": "History.hasSnapshotIsolation",
+            "kotlin": "History.hasSnapshotIsolation",
+            "python": "history.has_snapshot_isolation",
+            "rust": "history::has_snapshot_isolation",
+            "typescript": "history.hasSnapshotIsolation"
+        },
+        "stable-order": {
+            "go": "StableOrder",
+            "java": "hasStableOrder",
+            "kotlin": "hasStableOrder",
+            "python": "has_stable_order",
+            "rust": "has_stable_order",
+            "typescript": "hasStableOrder"
+        },
+        "throws": {
+            "go": "Panics",
+            "java": "throwsException",
+            "kotlin": "throwsException",
+            "python": "raises",
+            "rust": "panics",
+            "typescript": "doesThrow"
+        },
+        "total": {
+            "go": "Total",
+            "java": "isTotal",
+            "kotlin": "isTotal",
+            "python": "is_total",
+            "rust": "is_total",
+            "typescript": "isTotal"
+        },
+        "tree-contains": {
+            "go": "files.Contains",
+            "java": "FileTrees.contains",
+            "kotlin": "FileTrees.contains",
+            "python": "files.contains",
+            "rust": "files::contains",
+            "typescript": "files.contains"
+        },
+        "tree-equal": {
+            "go": "files.Equal",
+            "java": "FileTrees.equal",
+            "kotlin": "FileTrees.equal",
+            "python": "files.equal",
+            "rust": "files::equal",
+            "typescript": "files.equal"
+        },
+        "tree-unchanged": {
+            "go": "files.Unchanged",
+            "java": "FileTrees.unchanged",
+            "kotlin": "FileTrees.unchanged",
+            "python": "files.unchanged",
+            "rust": "files::unchanged",
+            "typescript": "files.unchanged"
+        },
+        "true": {
+            "go": "True",
+            "java": "isTrue",
+            "kotlin": "isTrue",
+            "python": "is_true",
+            "rust": "is_true",
+            "typescript": "isTrue"
+        }
+    },
+    "relaxations": {
+        "by-identity": {
+            "go": "ByIdentity",
+            "java": "Option.BY_IDENTITY",
+            "kotlin": "Option.BY_IDENTITY",
+            "python": "by_identity",
+            "typescript": "byIdentity"
+        },
+        "equate-empty": {
+            "go": "EquateEmpty",
+            "java": "Option.EQUATE_EMPTY",
+            "kotlin": "Option.EQUATE_EMPTY",
+            "python": "equate_empty",
+            "typescript": "equateEmpty"
+        },
+        "equate-nans": {
+            "go": "EquateNaNs",
+            "java": "Option.EQUATE_NANS",
+            "kotlin": "Option.EQUATE_NANS",
+            "python": "equate_nans",
+            "typescript": "equateNans"
+        }
+    },
+    "surface": {
+        "helpers": {
+            "cancellation-of": {
+                "go": "Context",
+                "typescript": "signalOf"
+            },
+            "files.bytes": {
+                "go": "files.Bytes",
+                "java": "FileTrees.bytes",
+                "kotlin": "FileTrees.bytes",
+                "python": "files.bytes",
+                "rust": "files::bytes",
+                "typescript": "files.bytes"
+            },
+            "files.directory": {
+                "go": "files.Dir",
+                "java": "FileTrees.directory",
+                "kotlin": "FileTrees.directory",
+                "python": "files.directory",
+                "rust": "files::directory",
+                "typescript": "files.directory"
+            },
+            "files.executable": {
+                "go": "files.Executable",
+                "java": "FileTrees.executable",
+                "kotlin": "FileTrees.executable",
+                "python": "files.executable",
+                "rust": "files::executable",
+                "typescript": "files.executable"
+            },
+            "files.link": {
+                "go": "files.Link",
+                "java": "FileTrees.link",
+                "kotlin": "FileTrees.link",
+                "python": "files.link",
+                "rust": "files::link",
+                "typescript": "files.link"
+            },
+            "files.read": {
+                "go": "files.Read",
+                "java": "FileTrees.read",
+                "kotlin": "FileTrees.read",
+                "python": "files.read",
+                "rust": "files::read",
+                "typescript": "files.read"
+            },
+            "files.text": {
+                "go": "files.Text",
+                "java": "FileTrees.text",
+                "kotlin": "FileTrees.text",
+                "python": "files.text",
+                "rust": "files::text",
+                "typescript": "files.text"
+            },
+            "files.workspace": {
+                "go": "files.Workspace",
+                "java": "FileTrees.workspace",
+                "kotlin": "FileTrees.workspace",
+                "python": "files.workspace",
+                "rust": "files::workspace",
+                "typescript": "files.workspace"
+            },
+            "files.write": {
+                "go": "files.Write",
+                "java": "FileTrees.write",
+                "kotlin": "FileTrees.write",
+                "python": "files.write",
+                "rust": "files::write",
+                "typescript": "files.write"
+            },
+            "golden.scrub-hashes": {
+                "go": "golden.ScrubHashes",
+                "java": "Golden.scrubHashes",
+                "kotlin": "Golden.scrubHashes",
+                "python": "golden.scrub_hashes",
+                "rust": "golden::scrub_hashes",
+                "typescript": "golden.scrubHashes"
+            },
+            "golden.scrub-json-fields": {
+                "go": "golden.ScrubJSONFields",
+                "java": "Golden.scrubJsonFields",
+                "kotlin": "Golden.scrubJsonFields",
+                "python": "golden.scrub_json_fields",
+                "rust": "golden::scrub_json_fields",
+                "typescript": "golden.scrubJsonFields"
+            },
+            "golden.scrub-run-ids": {
+                "go": "golden.ScrubRunIDs",
+                "java": "Golden.scrubRunIds",
+                "kotlin": "Golden.scrubRunIds",
+                "python": "golden.scrub_run_ids",
+                "rust": "golden::scrub_run_ids",
+                "typescript": "golden.scrubRunIds"
+            },
+            "golden.scrub-timestamps": {
+                "go": "golden.ScrubTimestamps",
+                "java": "Golden.scrubTimestamps",
+                "kotlin": "Golden.scrubTimestamps",
+                "python": "golden.scrub_timestamps",
+                "rust": "golden::scrub_timestamps",
+                "typescript": "golden.scrubTimestamps"
+            },
+            "golden.should-update": {
+                "go": "golden.ShouldUpdate",
+                "java": "Golden.shouldUpdate",
+                "kotlin": "Golden.shouldUpdate",
+                "python": "golden.should_update",
+                "rust": "golden::should_update",
+                "typescript": "golden.shouldUpdate"
+            },
+            "history.budget": {
+                "go": "history.Budget",
+                "java": "History.budget",
+                "kotlin": "History.budget",
+                "python": "history.budget",
+                "rust": "history::budget",
+                "typescript": "history.budget"
+            },
+            "history.concurrently": {
+                "go": "history.Concurrently",
+                "java": "History.concurrently",
+                "kotlin": "History.concurrently",
+                "python": "history.concurrently",
+                "rust": "history::concurrently",
+                "typescript": "history.concurrently"
+            },
+            "history.from-intervals": {
+                "go": "history.FromIntervals",
+                "java": "History.fromIntervals",
+                "kotlin": "History.fromIntervals",
+                "python": "history.from_intervals",
+                "rust": "history::from_intervals",
+                "typescript": "history.fromIntervals"
+            },
+            "history.memo-limit": {
+                "go": "history.MemoLimit",
+                "java": "History.memoLimit",
+                "kotlin": "History.memoLimit",
+                "python": "history.memo_limit",
+                "rust": "history::memo_limit",
+                "typescript": "history.memoLimit"
+            },
+            "history.spec-from": {
+                "go": "history.SpecFrom",
+                "java": "History.specFrom",
+                "kotlin": "History.specFrom",
+                "python": "history.spec_from",
+                "rust": "history::spec_from",
+                "typescript": "history.specFrom"
+            },
+            "history.time-limit": {
+                "go": "history.TimeLimit",
+                "java": "History.timeLimit",
+                "kotlin": "History.timeLimit",
+                "python": "history.time_limit",
+                "rust": "history::time_limit",
+                "typescript": "history.timeLimit"
+            },
+            "history.workers": {
+                "go": "history.Workers",
+                "java": "History.workers",
+                "kotlin": "History.workers",
+                "python": "history.workers",
+                "rust": "history::workers",
+                "typescript": "history.workers"
+            },
+            "prop.around": {
+                "go": "prop.Around",
+                "java": "Prop.around",
+                "kotlin": "Prop.around",
+                "python": "prop.around",
+                "rust": "prop::around",
+                "typescript": "prop.around"
+            },
+            "prop.boolean": {
+                "go": "prop.Boolean",
+                "java": "Prop.bool",
+                "kotlin": "Prop.bool",
+                "python": "prop.boolean",
+                "rust": "prop::boolean",
+                "typescript": "prop.boolean"
+            },
+            "prop.bytes": {
+                "go": "prop.Bytes",
+                "java": "Prop.bytes",
+                "kotlin": "Prop.bytes",
+                "python": "prop.bytes",
+                "rust": "prop::bytes",
+                "typescript": "prop.bytes"
+            },
+            "prop.cases": {
+                "go": "prop.Cases",
+                "java": "Prop.cases",
+                "kotlin": "Prop.cases",
+                "python": "prop.cases",
+                "rust": "prop::cases",
+                "typescript": "prop.cases"
+            },
+            "prop.composite": {
+                "go": "prop.Composite",
+                "java": "Prop.composite",
+                "kotlin": "Prop.composite",
+                "python": "prop.composite",
+                "rust": "prop::composite",
+                "typescript": "prop.composite"
+            },
+            "prop.dict": {
+                "go": "prop.Dict",
+                "java": "Prop.dict",
+                "kotlin": "Prop.dict",
+                "python": "prop.dict",
+                "rust": "prop::dict",
+                "typescript": "prop.dict"
+            },
+            "prop.draws": {
+                "go": "prop.Draws",
+                "java": "Prop.draws",
+                "kotlin": "Prop.draws",
+                "python": "prop.draws",
+                "rust": "prop::draws",
+                "typescript": "prop.draws"
+            },
+            "prop.duration": {
+                "go": "prop.Duration",
+                "java": "Prop.duration",
+                "kotlin": "Prop.duration",
+                "python": "prop.duration",
+                "rust": "prop::duration",
+                "typescript": "prop.duration"
+            },
+            "prop.example": {
+                "go": "prop.Example",
+                "java": "Prop.example",
+                "kotlin": "Prop.example",
+                "python": "prop.example",
+                "rust": "prop::example",
+                "typescript": "prop.example"
+            },
+            "prop.examples": {
+                "go": "prop.Examples",
+                "java": "Prop.examples",
+                "kotlin": "Prop.examples",
+                "python": "prop.examples",
+                "rust": "prop::examples",
+                "typescript": "prop.examples"
+            },
+            "prop.explain": {
+                "go": "prop.Explain",
+                "java": "Prop.explain",
+                "kotlin": "Prop.explain",
+                "python": "prop.explain",
+                "rust": "prop::explain",
+                "typescript": "prop.explain"
+            },
+            "prop.float": {
+                "go": "prop.Float",
+                "java": "Prop.floating",
+                "kotlin": "Prop.floating",
+                "python": "prop.float",
+                "rust": "prop::float",
+                "typescript": "prop.float"
+            },
+            "prop.fuzz": {
+                "go": "prop.Fuzz",
+                "java": "Prop.fuzz",
+                "kotlin": "Prop.fuzz",
+                "python": "prop.fuzz",
+                "rust": "prop::fuzz",
+                "typescript": "prop.fuzz"
+            },
+            "prop.hermetic": {
+                "go": "prop.Hermetic",
+                "java": "Prop.hermetic",
+                "kotlin": "Prop.hermetic",
+                "python": "prop.hermetic",
+                "rust": "prop::hermetic",
+                "typescript": "prop.hermetic"
+            },
+            "prop.integer": {
+                "go": "prop.Integer",
+                "java": "Prop.integer",
+                "kotlin": "Prop.integer",
+                "python": "prop.integer",
+                "rust": "prop::integer",
+                "typescript": "prop.integer"
+            },
+            "prop.just": {
+                "go": "prop.Just",
+                "java": "Prop.just",
+                "kotlin": "Prop.just",
+                "python": "prop.just",
+                "rust": "prop::just",
+                "typescript": "prop.just"
+            },
+            "prop.list": {
+                "go": "prop.List",
+                "java": "Prop.list",
+                "kotlin": "Prop.list",
+                "python": "prop.list",
+                "rust": "prop::list",
+                "typescript": "prop.list"
+            },
+            "prop.max-choices": {
+                "go": "prop.MaxChoices",
+                "java": "Prop.maxChoices",
+                "kotlin": "Prop.maxChoices",
+                "python": "prop.max_choices",
+                "rust": "prop::max_choices",
+                "typescript": "prop.maxChoices"
+            },
+            "prop.of": {
+                "go": "prop.Of",
+                "java": "Prop.of",
+                "kotlin": "Prop.of",
+                "python": "prop.of",
+                "rust": "prop::of",
+                "typescript": "prop.of"
+            },
+            "prop.of-shape": {
+                "go": "prop.OfShape",
+                "java": "Prop.ofShape",
+                "kotlin": "Prop.ofShape",
+                "python": "prop.of_shape",
+                "rust": "prop::of_shape",
+                "typescript": "prop.ofShape"
+            },
+            "prop.one-of": {
+                "go": "prop.OneOf",
+                "java": "Prop.oneOf",
+                "kotlin": "Prop.oneOf",
+                "python": "prop.one_of",
+                "rust": "prop::one_of",
+                "typescript": "prop.oneOf"
+            },
+            "prop.optional": {
+                "go": "prop.Optional",
+                "java": "Prop.optional",
+                "kotlin": "Prop.optional",
+                "python": "prop.optional",
+                "rust": "prop::optional",
+                "typescript": "prop.optional"
+            },
+            "prop.permutation": {
+                "go": "prop.Permutation",
+                "java": "Prop.permutation",
+                "kotlin": "Prop.permutation",
+                "python": "prop.permutation",
+                "rust": "prop::permutation",
+                "typescript": "prop.permutation"
+            },
+            "prop.recursive": {
+                "go": "prop.Recursive",
+                "java": "Prop.recursive",
+                "kotlin": "Prop.recursive",
+                "python": "prop.recursive",
+                "rust": "prop::recursive",
+                "typescript": "prop.recursive"
+            },
+            "prop.register": {
+                "go": "prop.Register",
+                "java": "Prop.register",
+                "kotlin": "Prop.register",
+                "python": "prop.register",
+                "rust": "prop::register",
+                "typescript": "prop.register"
+            },
+            "prop.register-values": {
+                "go": "prop.RegisterValues",
+                "java": "Prop.registerValues",
+                "kotlin": "Prop.registerValues",
+                "python": "prop.register_values",
+                "rust": "prop::register_values",
+                "typescript": "prop.registerValues"
+            },
+            "prop.register-variants": {
+                "go": "prop.RegisterVariants",
+                "java": "Prop.registerVariants",
+                "kotlin": "Prop.registerVariants",
+                "python": "prop.register_variants",
+                "rust": "prop::register_variants",
+                "typescript": "prop.registerVariants"
+            },
+            "prop.replay": {
+                "go": "prop.Replay",
+                "java": "Prop.replay",
+                "kotlin": "Prop.replay",
+                "python": "prop.replay",
+                "rust": "prop::replay",
+                "typescript": "prop.replay"
+            },
+            "prop.require": {
+                "go": "prop.Require",
+                "java": "Prop.require",
+                "kotlin": "Prop.require",
+                "python": "prop.require",
+                "rust": "prop::require",
+                "typescript": "prop.require"
+            },
+            "prop.sampled-from": {
+                "go": "prop.SampledFrom",
+                "java": "Prop.sampledFrom",
+                "kotlin": "Prop.sampledFrom",
+                "python": "prop.sampled_from",
+                "rust": "prop::sampled_from",
+                "typescript": "prop.sampledFrom"
+            },
+            "prop.seed": {
+                "go": "prop.Seed",
+                "java": "Prop.seed",
+                "kotlin": "Prop.seed",
+                "python": "prop.seed",
+                "rust": "prop::seed",
+                "typescript": "prop.seed"
+            },
+            "prop.shape-of": {
+                "go": "prop.ShapeOf",
+                "java": "Prop.shapeOf",
+                "kotlin": "Prop.shapeOf",
+                "python": "prop.shape_of",
+                "rust": "prop::shape_of",
+                "typescript": "prop.shapeOf"
+            },
+            "prop.shrink": {
+                "go": "prop.Shrink",
+                "java": "Prop.shrink",
+                "kotlin": "Prop.shrink",
+                "python": "prop.shrink",
+                "rust": "prop::shrink",
+                "typescript": "prop.shrink"
+            },
+            "prop.shrink-time": {
+                "go": "prop.ShrinkTime",
+                "java": "Prop.shrinkTime",
+                "kotlin": "Prop.shrinkTime",
+                "python": "prop.shrink_time",
+                "rust": "prop::shrink_time",
+                "typescript": "prop.shrinkTime"
+            },
+            "prop.store": {
+                "go": "prop.Store",
+                "java": "Prop.store",
+                "kotlin": "Prop.store",
+                "python": "prop.store",
+                "rust": "prop::store",
+                "typescript": "prop.store"
+            },
+            "prop.string": {
+                "go": "prop.String",
+                "java": "Prop.string",
+                "kotlin": "Prop.string",
+                "python": "prop.string",
+                "rust": "prop::string",
+                "typescript": "prop.string"
+            },
+            "prop.string-matching": {
+                "go": "prop.StringMatching",
+                "java": "Prop.stringMatching",
+                "kotlin": "Prop.stringMatching",
+                "python": "prop.string_matching",
+                "rust": "prop::string_matching",
+                "typescript": "prop.stringMatching"
+            },
+            "prop.using": {
+                "go": "prop.Using",
+                "java": "Prop.using",
+                "kotlin": "Prop.using",
+                "python": "prop.using",
+                "rust": "prop::using",
+                "typescript": "prop.using"
+            },
+            "prop.workers": {
+                "go": "prop.Workers",
+                "java": "Prop.workers",
+                "kotlin": "Prop.workers",
+                "python": "prop.workers",
+                "rust": "prop::workers",
+                "typescript": "prop.workers"
+            },
+            "scheduler.new": {
+                "go": "stateful.NewScheduler",
+                "java": "new Scheduler()",
+                "kotlin": "Scheduler()",
+                "python": "stateful.Scheduler()",
+                "rust": "stateful::Scheduler::new",
+                "typescript": "new stateful.Scheduler()"
+            },
+            "scheduler.pct": {
+                "go": "stateful.PCT",
+                "java": "Stateful.pct",
+                "kotlin": "Stateful.pct",
+                "python": "stateful.pct",
+                "rust": "stateful::pct",
+                "typescript": "stateful.pct"
+            },
+            "scheduler.uniform": {
+                "go": "stateful.Uniform",
+                "java": "Stateful.uniform",
+                "kotlin": "Stateful.uniform",
+                "python": "stateful.uniform",
+                "rust": "stateful::uniform",
+                "typescript": "stateful.uniform"
+            },
+            "stateful.steps": {
+                "go": "stateful.Steps",
+                "java": "Stateful.steps",
+                "kotlin": "Stateful.steps",
+                "python": "stateful.steps",
+                "rust": "stateful::steps",
+                "typescript": "stateful.steps"
+            },
+            "steps.clients": {
+                "go": "stateful.Clients",
+                "java": "Stateful.clients",
+                "kotlin": "Stateful.clients",
+                "python": "stateful.clients",
+                "rust": "stateful::clients",
+                "typescript": "stateful.clients"
+            },
+            "steps.concurrent": {
+                "go": "stateful.Concurrent",
+                "java": "Stateful.concurrent",
+                "kotlin": "Stateful.concurrent",
+                "python": "stateful.concurrent",
+                "rust": "stateful::concurrent",
+                "typescript": "stateful.concurrent"
+            },
+            "steps.max": {
+                "go": "stateful.Max",
+                "java": "Stateful.max",
+                "kotlin": "Stateful.max",
+                "python": "stateful.max_steps",
+                "rust": "stateful::max",
+                "typescript": "stateful.max"
+            },
+            "steps.mean": {
+                "go": "stateful.Mean",
+                "java": "Stateful.mean",
+                "kotlin": "Stateful.mean",
+                "python": "stateful.mean",
+                "rust": "stateful::mean",
+                "typescript": "stateful.mean"
+            },
+            "steps.repeat": {
+                "go": "stateful.Repeat",
+                "java": "Stateful.repeat",
+                "kotlin": "Stateful.repeat",
+                "python": "stateful.repeat",
+                "rust": "stateful::repeat"
+            },
+            "steps.scheduler": {
+                "go": "stateful.Tasks",
+                "java": "Stateful.tasks",
+                "kotlin": "Stateful.tasks",
+                "python": "stateful.tasks",
+                "rust": "stateful::tasks",
+                "typescript": "stateful.tasks"
+            },
+            "steps.swarm": {
+                "go": "stateful.Swarm",
+                "java": "Stateful.swarm",
+                "kotlin": "Stateful.swarm",
+                "python": "stateful.swarm",
+                "rust": "stateful::swarm",
+                "typescript": "stateful.swarm"
+            },
+            "that": {
+                "go": "That",
+                "java": "Check.that",
+                "kotlin": "Check.that",
+                "typescript": "expect"
+            }
+        },
+        "members": {
+            "action.drain": {
+                "go": "Drain",
+                "java": "drain",
+                "kotlin": "drain",
+                "python": "drain",
+                "rust": "drain",
+                "typescript": "drain"
+            },
+            "action.enabled": {
+                "go": "Enabled",
+                "java": "enabled",
+                "kotlin": "enabled",
+                "python": "enabled",
+                "rust": "enabled",
+                "typescript": "enabled"
+            },
+            "action.input": {
+                "go": "Input",
+                "java": "input",
+                "kotlin": "input",
+                "python": "input",
+                "rust": "input",
+                "typescript": "input"
+            },
+            "action.name": {
+                "go": "Name",
+                "java": "name",
+                "kotlin": "name",
+                "python": "name",
+                "rust": "name",
+                "typescript": "name"
+            },
+            "action.run": {
+                "go": "Run",
+                "java": "run",
+                "kotlin": "run",
+                "python": "run",
+                "rust": "run",
+                "typescript": "run"
+            },
+            "action.weight": {
+                "go": "Weight",
+                "java": "weight",
+                "kotlin": "weight",
+                "python": "weight",
+                "rust": "weight",
+                "typescript": "weight"
+            },
+            "call.fail": {
+                "go": "Fail",
+                "java": "fail",
+                "kotlin": "fail",
+                "python": "fail",
+                "rust": "fail",
+                "typescript": "fail"
+            },
+            "call.ok": {
+                "go": "OK",
+                "java": "ok",
+                "kotlin": "ok",
+                "python": "ok",
+                "rust": "ok",
+                "typescript": "ok"
+            },
+            "call.unknown": {
+                "go": "Unknown",
+                "java": "unknown",
+                "kotlin": "unknown",
+                "python": "unknown",
+                "rust": "unknown",
+                "typescript": "unknown"
+            },
+            "case.assume": {
+                "go": "Assume",
+                "java": "assume",
+                "kotlin": "assume",
+                "python": "assume",
+                "rust": "assume",
+                "typescript": "assume"
+            },
+            "case.cancellation": {
+                "go": "Context",
+                "java": "cancelled",
+                "rust": "cancellation",
+                "typescript": "signal"
+            },
+            "case.classify": {
+                "go": "Classify",
+                "java": "classify",
+                "kotlin": "classify",
+                "python": "classify",
+                "rust": "classify",
+                "typescript": "classify"
+            },
+            "case.cleanup": {
+                "go": "Cleanup",
+                "java": "cleanup",
+                "kotlin": "cleanup",
+                "python": "cleanup",
+                "rust": "cleanup",
+                "typescript": "cleanup"
+            },
+            "case.draw": {
+                "go": "Draw",
+                "java": "draw",
+                "kotlin": "draw",
+                "python": "draw",
+                "rust": "draw",
+                "typescript": "draw"
+            },
+            "case.history": {
+                "go": "History",
+                "java": "history",
+                "kotlin": "history",
+                "python": "history",
+                "rust": "history",
+                "typescript": "history"
+            },
+            "case.note": {
+                "go": "Logf",
+                "java": "note",
+                "kotlin": "note",
+                "python": "note",
+                "rust": "note",
+                "typescript": "note"
+            },
+            "case.observe": {
+                "go": "Observe",
+                "java": "observe",
+                "kotlin": "observe",
+                "python": "observe",
+                "rust": "observe",
+                "typescript": "observe"
+            },
+            "case.rand": {
+                "go": "Rand",
+                "java": "rand",
+                "kotlin": "rand",
+                "python": "rand",
+                "rust": "rand",
+                "typescript": "rand"
+            },
+            "case.target": {
+                "go": "Target",
+                "java": "target",
+                "kotlin": "target",
+                "python": "target",
+                "rust": "target",
+                "typescript": "target"
+            },
+            "clock.now": {
+                "go": "Now",
+                "java": "now",
+                "kotlin": "now",
+                "python": "now",
+                "rust": "now",
+                "typescript": "now"
+            },
+            "clock.sleep": {
+                "go": "Sleep",
+                "java": "sleep",
+                "kotlin": "sleep",
+                "python": "sleep",
+                "rust": "sleep",
+                "typescript": "sleep"
+            },
+            "collector-seat.collected": {
+                "java": "collected",
+                "kotlin": "collected",
+                "python": "collected",
+                "rust": "collected",
+                "typescript": "collected"
+            },
+            "collector-seat.flush": {
+                "java": "flush",
+                "kotlin": "flush",
+                "python": "flush",
+                "rust": "flush",
+                "typescript": "flush"
+            },
+            "contract.check": {
+                "go": "End",
+                "java": "check",
+                "kotlin": "check",
+                "python": "check",
+                "rust": "check",
+                "typescript": "check"
+            },
+            "contract.excluding": {
+                "go": "Excluding",
+                "python": "excluding"
+            },
+            "contract.loop": {
+                "go": "Loop",
+                "java": "loop",
+                "kotlin": "loop",
+                "python": "loop",
+                "rust": "run",
+                "typescript": "loop"
+            },
+            "contract.measuring": {
+                "java": "measuring",
+                "kotlin": "measuring",
+                "rust": "measuring",
+                "typescript": "measuring"
+            },
+            "contract.run-parallel": {
+                "go": "RunParallel",
+                "java": "runParallel",
+                "kotlin": "runParallel",
+                "rust": "run_parallel"
+            },
+            "contract.warmup": {
+                "go": "Warmup",
+                "java": "warmup",
+                "kotlin": "warmup",
+                "python": "warmup",
+                "rust": "warmup",
+                "typescript": "warmup"
+            },
+            "controlled-clock.advance": {
+                "go": "Advance",
+                "java": "advance",
+                "kotlin": "advance",
+                "python": "advance",
+                "rust": "advance",
+                "typescript": "advance"
+            },
+            "entry.with-mode": {
+                "go": "WithMode",
+                "java": "withMode",
+                "kotlin": "withMode",
+                "python": "with_mode",
+                "rust": "with_mode",
+                "typescript": "withMode"
+            },
+            "failure.assertion": {
+                "go": "Assertion",
+                "java": "assertion",
+                "kotlin": "assertion",
+                "python": "assertion",
+                "rust": "assertion",
+                "typescript": "assertion"
+            },
+            "failure.case-failure": {
+                "go": "CaseFailure",
+                "java": "caseFailure",
+                "kotlin": "caseFailure",
+                "python": "case_failure",
+                "rust": "case_failure",
+                "typescript": "caseFailure"
+            },
+            "failure.contract": {
+                "go": "Contract",
+                "java": "contract",
+                "kotlin": "contract",
+                "python": "contract",
+                "rust": "contract",
+                "typescript": "contract"
+            },
+            "failure.detail": {
+                "go": "Detail",
+                "java": "detail",
+                "kotlin": "detail",
+                "python": "detail",
+                "rust": "detail",
+                "typescript": "detail"
+            },
+            "failure.got": {
+                "go": "Got",
+                "java": "got",
+                "kotlin": "got",
+                "python": "got",
+                "rust": "got",
+                "typescript": "got"
+            },
+            "failure.want": {
+                "go": "Want",
+                "java": "want",
+                "kotlin": "want",
+                "python": "want",
+                "rust": "want",
+                "typescript": "want"
+            },
+            "generator.bind": {
+                "go": "Bind",
+                "java": "bind",
+                "kotlin": "bind",
+                "python": "bind",
+                "rust": "bind",
+                "typescript": "bind"
+            },
+            "generator.filter": {
+                "go": "Filter",
+                "java": "filter",
+                "kotlin": "filter",
+                "python": "filter",
+                "rust": "filter",
+                "typescript": "filter"
+            },
+            "generator.map": {
+                "go": "Map",
+                "java": "map",
+                "kotlin": "map",
+                "python": "map",
+                "rust": "map",
+                "typescript": "map"
+            },
+            "history.events": {
+                "go": "Events",
+                "java": "events",
+                "kotlin": "events",
+                "python": "events",
+                "rust": "events",
+                "typescript": "events"
+            },
+            "history.invoke": {
+                "go": "Invoke",
+                "java": "invoke",
+                "kotlin": "invoke",
+                "python": "invoke",
+                "rust": "invoke",
+                "typescript": "invoke"
+            },
+            "history.new": {
+                "go": "history.New",
+                "java": "new History()",
+                "kotlin": "History()",
+                "python": "History()",
+                "rust": "History::new",
+                "typescript": "new History()"
+            },
+            "machine.actions": {
+                "go": "Actions",
+                "java": "actions",
+                "kotlin": "actions",
+                "python": "actions",
+                "rust": "actions",
+                "typescript": "actions"
+            },
+            "machine.invariant": {
+                "go": "Invariant",
+                "java": "invariant",
+                "kotlin": "invariant",
+                "python": "invariant",
+                "rust": "invariant",
+                "typescript": "invariant"
+            },
+            "machine.settle": {
+                "go": "Settle",
+                "java": "settle",
+                "kotlin": "settle",
+                "python": "settle",
+                "rust": "settle",
+                "typescript": "settle"
+            },
+            "machine.spec": {
+                "go": "Spec",
+                "java": "spec",
+                "kotlin": "spec",
+                "python": "spec",
+                "rust": "spec",
+                "typescript": "spec"
+            },
+            "operation.args": {
+                "go": "Args",
+                "java": "args",
+                "kotlin": "args",
+                "python": "args",
+                "rust": "args",
+                "typescript": "args"
+            },
+            "operation.known": {
+                "go": "Known",
+                "java": "known",
+                "kotlin": "known",
+                "python": "known",
+                "rust": "known",
+                "typescript": "known"
+            },
+            "operation.name": {
+                "go": "Name",
+                "java": "name",
+                "kotlin": "name",
+                "python": "name",
+                "rust": "name",
+                "typescript": "name"
+            },
+            "operation.output": {
+                "go": "Output",
+                "java": "output",
+                "kotlin": "output",
+                "python": "output",
+                "rust": "output",
+                "typescript": "output"
+            },
+            "operation.returned": {
+                "go": "Returned",
+                "java": "returned",
+                "kotlin": "returned",
+                "python": "returned",
+                "rust": "returned",
+                "typescript": "returned"
+            },
+            "recorder-seat.failed": {
+                "go": "Failed",
+                "java": "failed",
+                "kotlin": "failed",
+                "python": "failed",
+                "rust": "failed",
+                "typescript": "failed"
+            },
+            "recorder-seat.failures": {
+                "go": "Failures",
+                "java": "failures",
+                "kotlin": "failures",
+                "python": "failures",
+                "rust": "failures",
+                "typescript": "failures"
+            },
+            "recorder-seat.helper-calls": {
+                "go": "HelperCalls",
+                "java": "helperCalls",
+                "kotlin": "helperCalls",
+                "python": "helper_calls",
+                "rust": "helper_calls",
+                "typescript": "helperCalls"
+            },
+            "recorder-seat.message": {
+                "go": "Message",
+                "java": "message",
+                "kotlin": "message",
+                "python": "message",
+                "rust": "message",
+                "typescript": "message"
+            },
+            "recorder-seat.messages": {
+                "go": "Messages",
+                "java": "messages",
+                "kotlin": "messages",
+                "python": "messages",
+                "rust": "messages",
+                "typescript": "messages"
+            },
+            "recorder-seat.records": {
+                "go": "Records",
+                "java": "records",
+                "kotlin": "records",
+                "python": "records",
+                "rust": "records",
+                "typescript": "records"
+            },
+            "scheduler.run": {
+                "go": "Run",
+                "java": "run",
+                "kotlin": "run",
+                "python": "run",
+                "rust": "run",
+                "typescript": "run"
+            },
+            "scheduler.spawn": {
+                "go": "Spawn",
+                "java": "spawn",
+                "kotlin": "spawn",
+                "python": "spawn",
+                "rust": "spawn",
+                "typescript": "spawn"
+            },
+            "scheduler.yield": {
+                "go": "Yield",
+                "java": "yield",
+                "rust": "yield_now",
+                "typescript": "yield"
+            },
+            "seat.cancellation": {
+                "go": "Context",
+                "java": "cancelled",
+                "rust": "cancellation",
+                "typescript": "signal"
+            },
+            "seat.clock": {
+                "go": "Clock",
+                "java": "clock",
+                "kotlin": "clock",
+                "python": "clock",
+                "rust": "clock",
+                "typescript": "clock"
+            },
+            "seat.fail": {
+                "go": "Fatalf",
+                "java": "fail",
+                "kotlin": "fail",
+                "python": "fail",
+                "rust": "fail",
+                "typescript": "fail"
+            },
+            "seat.helper": {
+                "go": "Helper",
+                "java": "helper",
+                "kotlin": "helper",
+                "python": "helper",
+                "rust": "helper",
+                "typescript": "helper"
+            },
+            "seat.record": {
+                "go": "Errorf",
+                "java": "record",
+                "kotlin": "record",
+                "python": "record",
+                "rust": "record",
+                "typescript": "record"
+            },
+            "seat.report": {
+                "go": "Report",
+                "java": "report",
+                "kotlin": "report",
+                "python": "report",
+                "rust": "report",
+                "typescript": "report"
+            },
+            "spec.equal": {
+                "go": "Equal",
+                "java": "equal",
+                "kotlin": "equal",
+                "python": "equal",
+                "rust": "equal",
+                "typescript": "equal"
+            },
+            "spec.initial": {
+                "go": "Initial",
+                "java": "initial",
+                "kotlin": "initial",
+                "python": "initial",
+                "rust": "initial",
+                "typescript": "initial"
+            },
+            "spec.next": {
+                "go": "Next",
+                "java": "next",
+                "kotlin": "next",
+                "python": "next",
+                "rust": "next",
+                "typescript": "next"
+            }
+        },
+        "types": {
+            "action": {
+                "go": "stateful.Action",
+                "java": "Action",
+                "kotlin": "Action",
+                "python": "stateful.Action",
+                "rust": "stateful::Action",
+                "typescript": "stateful.Action"
+            },
+            "assertion": {
+                "go": "Assertion",
+                "java": "Assertion",
+                "kotlin": "Assertion",
+                "typescript": "Assertion"
+            },
+            "call": {
+                "go": "history.Call",
+                "java": "Call",
+                "kotlin": "Call",
+                "python": "history.Call",
+                "rust": "history::Call",
+                "typescript": "history.Call"
+            },
+            "case": {
+                "go": "prop.Case",
+                "java": "Case",
+                "kotlin": "Case",
+                "python": "prop.Case",
+                "rust": "prop::Case",
+                "typescript": "prop.Case"
+            },
+            "clock": {
+                "go": "Clock",
+                "java": "Clock",
+                "kotlin": "Clock",
+                "python": "Clock",
+                "rust": "Clock",
+                "typescript": "Clock"
+            },
+            "clocked": {
+                "go": "Clocked",
+                "java": "Clocked",
+                "kotlin": "Clocked"
+            },
+            "collector-seat": {
+                "go": "testing.T",
+                "java": "Collector",
+                "kotlin": "Collector",
+                "python": "Collector",
+                "rust": "Collector",
+                "typescript": "Collector"
+            },
+            "contract": {
+                "go": "bench.Contract",
+                "java": "Contract",
+                "kotlin": "Contract",
+                "python": "bench.Contract",
+                "rust": "bench::Contract",
+                "typescript": "bench.Contract"
+            },
+            "controlled-clock": {
+                "go": "Controlled",
+                "java": "Controlled",
+                "kotlin": "Controlled",
+                "python": "Controlled",
+                "rust": "Controlled",
+                "typescript": "Controlled"
+            },
+            "entry": {
+                "go": "files.Entry",
+                "java": "FileTree.Entry",
+                "kotlin": "FileTree.Entry",
+                "python": "files.Entry",
+                "rust": "files::Entry",
+                "typescript": "files.Entry"
+            },
+            "event": {
+                "go": "history.Event",
+                "java": "Event",
+                "kotlin": "Event",
+                "python": "history.Event",
+                "rust": "history::Event",
+                "typescript": "history.Event"
+            },
+            "failure": {
+                "go": "Failure",
+                "java": "Failure",
+                "kotlin": "Failure",
+                "python": "Failure",
+                "rust": "Failure",
+                "typescript": "Failure"
+            },
+            "generator": {
+                "go": "prop.Generator",
+                "java": "Generator",
+                "kotlin": "Generator",
+                "python": "prop.Generator",
+                "rust": "prop::Generator",
+                "typescript": "prop.Generator"
+            },
+            "history": {
+                "go": "history.History",
+                "java": "History",
+                "kotlin": "History",
+                "python": "history.History",
+                "rust": "history::History",
+                "typescript": "history.History"
+            },
+            "machine": {
+                "go": "stateful.Machine",
+                "java": "Machine",
+                "kotlin": "Machine",
+                "python": "stateful.Machine",
+                "rust": "stateful::Machine",
+                "typescript": "stateful.Machine"
+            },
+            "operation": {
+                "go": "history.Operation",
+                "java": "Operation",
+                "kotlin": "Operation",
+                "python": "history.Operation",
+                "rust": "history::Operation",
+                "typescript": "history.Operation"
+            },
+            "outcome": {
+                "go": "history.Outcome",
+                "java": "Outcome",
+                "kotlin": "Outcome",
+                "python": "history.Outcome",
+                "rust": "history::Outcome",
+                "typescript": "history.Outcome"
+            },
+            "recorder-seat": {
+                "go": "Recorder",
+                "java": "Recorder",
+                "kotlin": "Recorder",
+                "python": "Recorder",
+                "rust": "Recorder",
+                "typescript": "Recorder"
+            },
+            "reporter": {
+                "go": "Reporter",
+                "java": "Reporter",
+                "kotlin": "Reporter"
+            },
+            "scheduler": {
+                "go": "stateful.Scheduler",
+                "java": "Scheduler",
+                "kotlin": "Scheduler",
+                "python": "stateful.Scheduler",
+                "rust": "stateful::Scheduler",
+                "typescript": "stateful.Scheduler"
+            },
+            "scrubber": {
+                "go": "golden.Scrubber",
+                "java": "Golden.Scrubber",
+                "kotlin": "Golden.Scrubber",
+                "python": "golden.Scrubber",
+                "rust": "golden::Scrubber",
+                "typescript": "golden.Scrubber"
+            },
+            "seat": {
+                "go": "TB",
+                "java": "Seat",
+                "kotlin": "Seat",
+                "python": "Seat",
+                "rust": "Seat",
+                "typescript": "Seat"
+            },
+            "spec": {
+                "go": "history.Spec",
+                "java": "Spec",
+                "kotlin": "Spec",
+                "python": "history.Spec",
+                "rust": "history::Spec",
+                "typescript": "history.Spec"
+            },
+            "standard-seat": {
+                "java": "Standard",
+                "kotlin": "Standard",
+                "python": "Standard",
+                "rust": "Standard",
+                "typescript": "Standard"
+            },
+            "system-clock": {
+                "go": "System",
+                "java": "SystemClock",
+                "kotlin": "SystemClock",
+                "python": "System",
+                "rust": "System",
+                "typescript": "System"
+            },
+            "tree": {
+                "go": "files.Tree",
+                "java": "FileTree",
+                "kotlin": "FileTree",
+                "python": "files.Tree",
+                "rust": "files::Tree",
+                "typescript": "files.Tree"
+            },
+            "where": {
+                "go": "Where",
+                "java": "Where",
+                "kotlin": "Where",
+                "python": "Where",
+                "rust": "Where",
+                "typescript": "Where"
+            }
+        }
+    },
+    "version": "9.0.0"
+}

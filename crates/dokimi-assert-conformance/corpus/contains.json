@@ -1,0 +1,445 @@
+{
+  "assertion": "contains",
+  "cases": [
+    {
+      "id": "contains/text-holds-substring",
+      "args": [
+        {
+          "type": "string",
+          "value": "hello world"
+        },
+        {
+          "type": "string",
+          "value": "lo wo"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/list-holds-element",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/map-holds-key",
+      "args": [
+        {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/absent-element-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "int",
+          "value": 9
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "haystack": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        "needle": {
+          "type": "int",
+          "value": 9
+        }
+      }
+    },
+    {
+      "id": "contains/absent-substring-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "hello"
+        },
+        {
+          "type": "string",
+          "value": "xyz"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "haystack": {
+          "type": "string",
+          "value": "hello"
+        },
+        "needle": {
+          "type": "string",
+          "value": "xyz"
+        }
+      }
+    },
+    {
+      "id": "contains/absent-key-fails",
+      "args": [
+        {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "haystack": {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        "needle": {
+          "type": "string",
+          "value": "b"
+        }
+      }
+    },
+    {
+      "id": "contains/an-int-does-not-match-a-float",
+      "args": [
+        {
+          "type": "list",
+          "of": "float",
+          "value": [
+            1.0,
+            2.0
+          ]
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "fail",
+      "skip": {
+        "typescript": "JavaScript has one number type, so the int 1 and the float 1.0 are one value"
+      },
+      "detail": {
+        "haystack": {
+          "type": "list",
+          "of": "float",
+          "value": [
+            1.0,
+            2.0
+          ]
+        },
+        "needle": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "contains/a-nan-is-not-found",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "float",
+              "value": "NaN"
+            }
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "contains/a-nan-is-found-under-equate-nans",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "float",
+              "value": "NaN"
+            }
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/an-empty-list-does-not-match-an-absent-one",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "list",
+              "of": "int",
+              "value": null
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "contains/an-empty-list-matches-an-absent-one-under-equate-empty",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "list",
+              "of": "int",
+              "value": null
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "options": [
+        "equate-empty"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/a-nan-key-is-not-found",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "expect": "fail",
+      "skip": {
+        "rust": "a std map needs keys that implement Eq and Hash, or Ord, and f64 implements none of them"
+      }
+    },
+    {
+      "id": "contains/a-nan-key-is-found-under-equate-nans",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/a-negative-zero-key-matches-zero",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": -0.0
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "float",
+          "value": 0.0
+        }
+      ],
+      "expect": "pass",
+      "skip": {
+        "rust": "a std map needs keys that implement Eq and Hash, or Ord, and f64 implements none of them"
+      }
+    },
+    {
+      "id": "contains/a-null-key-is-found",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "null"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/the-object-itself-by-identity-passes",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "a",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "type": "reference",
+          "id": "a",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "contains/an-object-of-an-equal-value-by-identity-fails",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "a",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "type": "reference",
+          "id": "b",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "fail",
+      "detail": {
+        "haystack": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1
+          ]
+        },
+        "needle": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

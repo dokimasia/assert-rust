@@ -1,0 +1,130 @@
+{
+  "kind": "tree-unchanged",
+  "cases": [
+    {
+      "id": "tree-unchanged/a-subject-that-reads-every-file-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "current",
+            "link": "a.txt"
+          },
+          {
+            "path": "docs/b.md",
+            "text": "# b\n"
+          },
+          {
+            "path": "run.sh",
+            "text": "#!/bin/sh\n",
+            "executable": true
+          }
+        ]
+      },
+      "subject": {
+        "kind": "leaves-files-alone"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "tree-unchanged/a-subject-that-rewrites-every-file-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "docs/b.md",
+            "text": "# b\n"
+          },
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 384
+          }
+        ]
+      },
+      "subject": {
+        "kind": "rewrites-files"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "tree-unchanged/a-subject-that-writes-a-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "subject": {
+        "kind": "writes-a-file"
+      },
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": []
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "new.txt",
+              "text": "new"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-unchanged/a-subject-that-writes-a-large-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "subject": {
+        "kind": "writes-a-large-file"
+      },
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": []
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "large.bin",
+              "digest": "sha256:008ffc88d3c96a9f307524eb361e47c5222a887fc45fa0c1fb8d429c5c23b430",
+              "size": 65537
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

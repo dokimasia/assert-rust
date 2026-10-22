@@ -1,0 +1,3175 @@
+{
+  "kind": "forms",
+  "cases": [
+    {
+      "id": "prop-equal/passes-when-both-functions-return-the-input",
+      "form": "prop-equal",
+      "subjects": [
+        "identity",
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-equal/fails-when-a-sort-reorders-the-input",
+      "form": "prop-equal",
+      "subjects": [
+        "sorts",
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 3,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                1,
+                0
+              ]
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "equal",
+          "detail": {
+            "want": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                1,
+                0
+              ]
+            },
+            "got": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0,
+                1
+              ]
+            }
+          }
+        },
+        "choices": "prop1:AAEAAQABAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-equal/passes-an-example-of-a-map",
+      "form": "prop-equal",
+      "subjects": [
+        "identity",
+        "identity"
+      ],
+      "generator": {
+        "gen": "map",
+        "of": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "max_size": 4
+        },
+        "subject": "sorts"
+      },
+      "examples": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            3,
+            1
+          ]
+        }
+      ],
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-equal/passes-when-a-zero-is-prepended",
+      "form": "prop-not-equal",
+      "subjects": [
+        "prepends-zero",
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-equal/fails-when-both-functions-return-the-input",
+      "form": "prop-not-equal",
+      "subjects": [
+        "identity",
+        "identity"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "not-equal",
+          "detail": {
+            "got": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-true/passes-for-non-negative-inputs",
+      "form": "prop-true",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": 0,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-true/fails-for-a-negative-input",
+      "form": "prop-true",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "true",
+          "detail": {}
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-true/passes-its-three-examples",
+      "form": "prop-true",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": 0,
+        "max": 1000
+      },
+      "examples": [
+        {
+          "type": "int",
+          "value": 0
+        },
+        {
+          "type": "int",
+          "value": 500
+        },
+        {
+          "type": "int",
+          "value": 1000
+        }
+      ],
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-true/fails-at-its-second-example",
+      "form": "prop-true",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "examples": [
+        {
+          "type": "int",
+          "value": 3
+        },
+        {
+          "type": "int",
+          "value": -700
+        },
+        {
+          "type": "int",
+          "value": 5
+        }
+      ],
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "true",
+          "detail": {}
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-true/fails-at-an-example-of-a-map-as-found",
+      "form": "prop-true",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "generator": {
+        "gen": "map",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "subject": "identity"
+      },
+      "examples": [
+        {
+          "type": "int",
+          "value": -5
+        }
+      ],
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -5
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "true",
+          "detail": {}
+        },
+        "choices": null,
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-true/fails-at-an-example-that-only-a-map-might-produce",
+      "form": "prop-true",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "generator": {
+        "gen": "one-of",
+        "of": [
+          {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          {
+            "gen": "map",
+            "of": {
+              "gen": "integer",
+              "min": 0,
+              "max": 9
+            },
+            "subject": "identity"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "type": "int",
+          "value": -5
+        }
+      ],
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -5
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "true",
+          "detail": {}
+        },
+        "choices": null,
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-false/passes-for-negative-inputs",
+      "form": "prop-false",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": -1
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-false/fails-for-a-non-negative-input",
+      "form": "prop-false",
+      "subjects": [
+        "is-non-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "false",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-nil/passes-when-the-function-returns-null",
+      "form": "prop-nil",
+      "subjects": [
+        "returns-null"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-nil/fails-when-the-function-returns-the-input",
+      "form": "prop-nil",
+      "subjects": [
+        "identity"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "nil",
+          "detail": {
+            "got": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-nil/passes-when-the-function-returns-the-input",
+      "form": "prop-not-nil",
+      "subjects": [
+        "identity"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-nil/fails-when-the-function-returns-null",
+      "form": "prop-not-nil",
+      "subjects": [
+        "returns-null"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "not-nil",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-length/passes-for-lists-of-three",
+      "form": "prop-length",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "int",
+          "value": 3
+        }
+      ],
+      "shape": {
+        "shape": "fixed-list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        },
+        "size": 3
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-length/fails-for-a-list-of-another-length",
+      "form": "prop-length",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "int",
+          "value": 3
+        }
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "items": []
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "length",
+          "detail": {
+            "want": {
+              "type": "int",
+              "value": 3
+            },
+            "got": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-empty/passes-when-the-first-of-at-most-one-element-is-dropped",
+      "form": "prop-empty",
+      "subjects": [
+        "drops-the-first"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        },
+        "max_size": 1
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-empty/fails-for-a-list-with-an-element",
+      "form": "prop-empty",
+      "subjects": [
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0
+              ]
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "empty",
+          "detail": {
+            "got": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0
+              ]
+            },
+            "length": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        },
+        "choices": "prop1:AAEAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-empty/passes-when-a-zero-is-prepended",
+      "form": "prop-not-empty",
+      "subjects": [
+        "prepends-zero"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-empty/fails-for-the-empty-list",
+      "form": "prop-not-empty",
+      "subjects": [
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "items": []
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "not-empty",
+          "detail": {
+            "got": {
+              "type": "list",
+              "items": []
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-contains/passes-when-a-zero-is-prepended",
+      "form": "prop-contains",
+      "subjects": [
+        "prepends-zero"
+      ],
+      "args": [
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-contains/fails-for-a-list-without-zero",
+      "form": "prop-contains",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "items": []
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "contains",
+          "detail": {
+            "haystack": {
+              "type": "list",
+              "items": []
+            },
+            "needle": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-contains/passes-for-lists-of-positive-integers",
+      "form": "prop-not-contains",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": 1,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-contains/fails-for-a-list-with-zero",
+      "form": "prop-not-contains",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 3,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0
+              ]
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "not-contains",
+          "detail": {
+            "haystack": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0
+              ]
+            },
+            "needle": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAEAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-contains-in-order/passes-when-the-text-is-wrapped-in-a-and-b",
+      "form": "prop-contains-in-order",
+      "subjects": [
+        "wraps-in-a-and-b"
+      ],
+      "args": [
+        {
+          "type": "list",
+          "of": "string",
+          "value": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-contains-in-order/fails-for-text-without-a",
+      "form": "prop-contains-in-order",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "list",
+          "of": "string",
+          "value": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "string",
+              "value": ""
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "contains-in-order",
+          "detail": {
+            "haystack": {
+              "type": "string",
+              "value": ""
+            },
+            "needle": {
+              "type": "string",
+              "value": "a"
+            },
+            "index": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AwA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-permutation/passes-when-a-sort-reorders-the-input",
+      "form": "prop-permutation",
+      "subjects": [
+        "sorts",
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-permutation/fails-when-the-first-element-is-dropped",
+      "form": "prop-permutation",
+      "subjects": [
+        "drops-the-first",
+        "identity"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0
+              ]
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "permutation",
+          "detail": {
+            "want": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0
+              ]
+            },
+            "got": {
+              "type": "list",
+              "items": []
+            }
+          }
+        },
+        "choices": "prop1:AAEAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-has-prefix/passes-when-the-text-is-wrapped-in-a-and-b",
+      "form": "prop-has-prefix",
+      "subjects": [
+        "wraps-in-a-and-b"
+      ],
+      "args": [
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-has-prefix/fails-for-text-that-does-not-start-with-a",
+      "form": "prop-has-prefix",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "string",
+              "value": ""
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "has-prefix",
+          "detail": {
+            "got": {
+              "type": "string",
+              "value": ""
+            },
+            "prefix": {
+              "type": "string",
+              "value": "a"
+            }
+          }
+        },
+        "choices": "prop1:AwA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-has-suffix/passes-when-the-text-is-wrapped-in-a-and-b",
+      "form": "prop-has-suffix",
+      "subjects": [
+        "wraps-in-a-and-b"
+      ],
+      "args": [
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-has-suffix/fails-for-text-that-does-not-end-with-b",
+      "form": "prop-has-suffix",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "string",
+              "value": ""
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "has-suffix",
+          "detail": {
+            "got": {
+              "type": "string",
+              "value": ""
+            },
+            "suffix": {
+              "type": "string",
+              "value": "b"
+            }
+          }
+        },
+        "choices": "prop1:AwA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-matches/passes-when-the-text-is-wrapped-in-a-and-b",
+      "form": "prop-matches",
+      "subjects": [
+        "wraps-in-a-and-b"
+      ],
+      "args": [
+        {
+          "type": "string",
+          "value": "^a"
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-matches/fails-for-text-that-does-not-start-with-a",
+      "form": "prop-matches",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "string",
+          "value": "^a"
+        }
+      ],
+      "shape": {
+        "shape": "string"
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "string",
+              "value": ""
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "matches",
+          "detail": {
+            "got": {
+              "type": "string",
+              "value": ""
+            },
+            "pattern": {
+              "type": "string",
+              "value": "^a"
+            },
+            "reason": {
+              "type": "null"
+            }
+          }
+        },
+        "choices": "prop1:AwA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-close-to/passes-within-a-tolerance-of-the-whole-range",
+      "form": "prop-close-to",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "float",
+          "value": 0
+        },
+        {
+          "type": "float",
+          "value": 1000
+        }
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-close-to/fails-beyond-a-tolerance-of-one-half",
+      "form": "prop-close-to",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "float",
+          "value": 0
+        },
+        {
+          "type": "float",
+          "value": 0.5
+        }
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "close-to",
+          "detail": {
+            "got": {
+              "type": "int",
+              "value": 1
+            },
+            "want": {
+              "type": "float",
+              "value": 0.0
+            },
+            "tolerance": {
+              "type": "float",
+              "value": 0.5
+            }
+          }
+        },
+        "choices": "prop1:AAE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-in-range/passes-for-non-negative-inputs",
+      "form": "prop-in-range",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "float",
+          "value": 0
+        },
+        {
+          "type": "float",
+          "value": 1000
+        }
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": 0,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-in-range/fails-for-a-negative-input",
+      "form": "prop-in-range",
+      "subjects": [
+        "identity"
+      ],
+      "args": [
+        {
+          "type": "float",
+          "value": 0
+        },
+        {
+          "type": "float",
+          "value": 1000
+        }
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "in-range",
+          "detail": {
+            "got": {
+              "type": "int",
+              "value": -1
+            },
+            "low": {
+              "type": "float",
+              "value": 0.0
+            },
+            "high": {
+              "type": "float",
+              "value": 1000.0
+            }
+          }
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-pairwise/passes-when-a-sort-orders-the-input",
+      "form": "prop-pairwise",
+      "subjects": [
+        "sorts",
+        "ascending"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-pairwise/fails-for-a-list-out-of-order",
+      "form": "prop-pairwise",
+      "subjects": [
+        "identity",
+        "ascending"
+      ],
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "int",
+          "width": 32,
+          "signed": true,
+          "min": -1000,
+          "max": 1000
+        }
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 3,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                1,
+                0
+              ]
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "pairwise",
+          "detail": {
+            "index": {
+              "type": "int",
+              "value": 0
+            },
+            "first": {
+              "type": "int",
+              "value": 1
+            },
+            "second": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAEAAQABAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-absent/passes-when-the-call-succeeds",
+      "form": "prop-err-absent",
+      "subjects": [
+        "returns-ok"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-absent/fails-when-a-negative-input-fails-the-call",
+      "form": "prop-err-absent",
+      "subjects": [
+        "fails-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "err-absent",
+          "detail": {}
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-present/passes-when-the-call-fails",
+      "form": "prop-err-present",
+      "subjects": [
+        "fails-otherwise"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-present/fails-when-a-non-negative-input-succeeds",
+      "form": "prop-err-present",
+      "subjects": [
+        "fails-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "err-present",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-is/passes-when-the-call-fails-with-its-own-failure",
+      "form": "prop-err-is",
+      "subjects": [
+        "fails-otherwise"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-is/fails-when-a-non-negative-input-succeeds",
+      "form": "prop-err-is",
+      "subjects": [
+        "fails-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "err-is",
+          "detail": {
+            "got": {
+              "type": "null"
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-is-not/passes-when-the-call-succeeds",
+      "form": "prop-err-is-not",
+      "subjects": [
+        "returns-ok"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-is-not/fails-when-a-negative-input-fails-the-call",
+      "form": "prop-err-is-not",
+      "subjects": [
+        "fails-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "err-is-not",
+          "detail": {}
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-as/passes-when-the-call-fails-with-its-own-failure",
+      "form": "prop-err-as",
+      "subjects": [
+        "fails-otherwise"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-err-as/fails-when-a-non-negative-input-succeeds",
+      "form": "prop-err-as",
+      "subjects": [
+        "fails-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "err-as",
+          "detail": {
+            "got": {
+              "type": "null"
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-throws/passes-when-the-call-raises",
+      "form": "prop-throws",
+      "subjects": [
+        "raises"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-throws/fails-when-a-non-negative-input-returns",
+      "form": "prop-throws",
+      "subjects": [
+        "raises-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": false,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "throws",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-throws/passes-when-the-call-returns",
+      "form": "prop-not-throws",
+      "subjects": [
+        "returns-ok"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-throws/fails-when-a-negative-input-raises",
+      "form": "prop-not-throws",
+      "subjects": [
+        "raises-on-negative"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "not-throws",
+          "detail": {}
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-pure/passes-when-the-call-changes-nothing",
+      "form": "prop-pure",
+      "subjects": [
+        "leaves-state-alone"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-pure/fails-when-the-call-changes-the-state",
+      "form": "prop-pure",
+      "subjects": [
+        "accumulates"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "pure",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-pure/passes-when-the-call-changes-the-state",
+      "form": "prop-not-pure",
+      "subjects": [
+        "accumulates"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-not-pure/fails-when-the-call-changes-nothing",
+      "form": "prop-not-pure",
+      "subjects": [
+        "leaves-state-alone"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "not-pure",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-nil-context-safe/passes-when-the-call-declines-the-handle",
+      "form": "prop-nil-context-safe",
+      "subjects": [
+        "returns-ok"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-nil-context-safe/fails-when-an-absent-handle-crashes-the-call",
+      "form": "prop-nil-context-safe",
+      "subjects": [
+        "dereferences-handle"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "nil-context-safe",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-honours-cancellation/passes-when-the-call-reads-the-handle",
+      "form": "prop-honours-cancellation",
+      "subjects": [
+        "reads-handle"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-honours-cancellation/fails-when-the-call-ignores-the-handle",
+      "form": "prop-honours-cancellation",
+      "subjects": [
+        "ignores-handle"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "honours-cancellation",
+          "detail": {
+            "got": {
+              "type": "null"
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-honours-deadline/passes-when-the-call-reads-the-handle",
+      "form": "prop-honours-deadline",
+      "subjects": [
+        "reads-handle"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-honours-deadline/fails-when-the-call-ignores-the-handle",
+      "form": "prop-honours-deadline",
+      "subjects": [
+        "ignores-handle"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "honours-deadline",
+          "detail": {
+            "got": {
+              "type": "null"
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-idempotent/passes-when-the-call-sets-a-value",
+      "form": "prop-idempotent",
+      "subjects": [
+        "sets-value"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-idempotent/fails-when-the-call-accumulates",
+      "form": "prop-idempotent",
+      "subjects": [
+        "accumulates"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "idempotent",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-accumulates/passes-when-the-call-accumulates",
+      "form": "prop-accumulates",
+      "subjects": [
+        "accumulates"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-accumulates/fails-when-the-call-changes-nothing",
+      "form": "prop-accumulates",
+      "subjects": [
+        "leaves-state-alone"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "accumulates",
+          "detail": {
+            "first": {
+              "type": "int",
+              "value": 0
+            },
+            "second": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-deterministic/passes-when-the-call-returns-its-input",
+      "form": "prop-deterministic",
+      "subjects": [
+        "returns-ok"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-deterministic/fails-when-the-call-counts-its-calls",
+      "form": "prop-deterministic",
+      "subjects": [
+        "counts-calls"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "deterministic",
+          "detail": {}
+        },
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-commutative/passes-for-addition",
+      "form": "prop-commutative",
+      "subjects": [
+        "adds"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-commutative/fails-for-subtraction",
+      "form": "prop-commutative",
+      "subjects": [
+        "subtracts"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "a",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "label": "b",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "commutative",
+          "detail": {
+            "first": {
+              "type": "int",
+              "value": -1
+            },
+            "second": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        },
+        "choices": "prop1:AAAAAQ",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-associative/passes-for-addition",
+      "form": "prop-associative",
+      "subjects": [
+        "adds"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-associative/fails-for-subtraction",
+      "form": "prop-associative",
+      "subjects": [
+        "subtracts"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "a",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "label": "b",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "label": "c",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": {
+          "assertion": "associative",
+          "detail": {
+            "first": {
+              "type": "int",
+              "value": -1
+            },
+            "second": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        },
+        "choices": "prop1:AAAAAAAB",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-round-trip/passes-for-a-decimal-rendering",
+      "form": "prop-round-trip",
+      "subjects": [
+        "renders-decimal"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "prop-round-trip/fails-for-a-rendering-that-drops-the-sign",
+      "form": "prop-round-trip",
+      "subjects": [
+        "drops-the-sign"
+      ],
+      "shape": {
+        "shape": "int",
+        "width": 32,
+        "signed": true,
+        "min": -1000,
+        "max": 1000
+      },
+      "seed": "7",
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "input",
+            "value": {
+              "type": "int",
+              "value": -1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": {
+          "assertion": "round-trip",
+          "detail": {
+            "want": {
+              "type": "int",
+              "value": -1
+            },
+            "got": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        },
+        "choices": "prop1:AQE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "assertion": "total",
+  "cases": [
+    {
+      "id": "total/a-subject-that-succeeds-for-every-input-passes",
+      "subject": {
+        "kind": "returns-ok"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "total/a-subject-that-fails-on-the-first-input-fails",
+      "subject": {
+        "kind": "fails-otherwise"
+      },
+      "expect": "fail",
+      "detail": {
+        "index": {
+          "type": "int",
+          "value": 0
+        }
+      }
+    }
+  ]
+}

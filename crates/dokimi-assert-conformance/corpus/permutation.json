@@ -1,0 +1,441 @@
+{
+  "assertion": "permutation",
+  "cases": [
+    {
+      "id": "permutation/the-same-elements-in-another-order-pass",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            3,
+            1,
+            2
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "permutation/repeated-elements-in-another-order-pass",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            1,
+            2
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "permutation/an-element-repeated-a-different-number-of-times-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            2
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            2
+          ]
+        },
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "permutation/an-extra-element-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "permutation/a-missing-element-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "permutation/an-int-does-not-match-a-float",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "float",
+              "value": 1.0
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "skip": {
+        "typescript": "JavaScript has one number type, so the int 1 and the float 1.0 are one value"
+      },
+      "detail": {
+        "want": {
+          "type": "list",
+          "items": [
+            {
+              "type": "float",
+              "value": 1.0
+            }
+          ]
+        },
+        "got": {
+          "type": "list",
+          "items": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "permutation/a-nan-does-not-match-a-nan",
+      "args": [
+        {
+          "type": "list",
+          "of": "float",
+          "value": [
+            "NaN"
+          ]
+        },
+        {
+          "type": "list",
+          "of": "float",
+          "value": [
+            "NaN"
+          ]
+        }
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "permutation/a-nan-matches-a-nan-under-equate-nans",
+      "args": [
+        {
+          "type": "list",
+          "of": "float",
+          "value": [
+            "NaN"
+          ]
+        },
+        {
+          "type": "list",
+          "of": "float",
+          "value": [
+            "NaN"
+          ]
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "permutation/an-absent-list-against-an-empty-one-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": null
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "expect": "fail",
+      "skip": {
+        "rust": "is_permutation takes two slices, and a slice is never absent"
+      },
+      "detail": {
+        "want": {
+          "type": "list",
+          "of": "int",
+          "value": []
+        },
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": null
+        }
+      }
+    },
+    {
+      "id": "permutation/an-absent-list-equals-an-empty-one-under-equate-empty",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": null
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "options": [
+        "equate-empty"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "permutation/the-same-objects-in-another-order-by-identity-pass",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "a",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            },
+            {
+              "type": "reference",
+              "id": "b",
+              "value": {
+                "type": "int",
+                "value": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "b",
+              "value": {
+                "type": "int",
+                "value": 2
+              }
+            },
+            {
+              "type": "reference",
+              "id": "a",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "permutation/an-object-of-an-equal-value-in-place-of-one-by-identity-fails",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "a",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            },
+            {
+              "type": "reference",
+              "id": "b",
+              "value": {
+                "type": "int",
+                "value": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "c",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            },
+            {
+              "type": "reference",
+              "id": "b",
+              "value": {
+                "type": "int",
+                "value": 2
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        "got": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        }
+      }
+    }
+  ]
+}

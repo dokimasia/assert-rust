@@ -1,0 +1,19 @@
+{
+  "assertion": "eventually-true",
+  "cases": [
+    {
+      "id": "eventually-true/a-predicate-that-flips-passes",
+      "subject": {
+        "kind": "settles-after"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "eventually-true/a-predicate-that-never-holds-fails",
+      "subject": {
+        "kind": "never-settles"
+      },
+      "expect": "fail"
+    }
+  ]
+}

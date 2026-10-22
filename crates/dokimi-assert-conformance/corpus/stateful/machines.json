@@ -1,0 +1,486 @@
+{
+  "kind": "machines",
+  "cases": [
+    {
+      "id": "queue-loses-on-wrap/a-put-at-the-last-slot-overwrites-the-first-value",
+      "subject": "queue-loses-on-wrap",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 7,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "label": "capacity",
+            "value": {
+              "type": "int",
+              "value": 2
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "get"
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAIAAQABAAEAAAAAAAEAAAABAAEAAQ",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "queue-loses-on-wrap/two-steps-cannot-fill-the-ring-and-read-it",
+      "subject": "queue-loses-on-wrap",
+      "setup": {
+        "max": 2
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "counter-overflows/a-third-increment-without-a-reset-returns-0",
+      "subject": "counter-overflows",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "increment"
+          },
+          {
+            "step": "increment"
+          },
+          {
+            "step": "increment"
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAEAAAABAAAAAQAAAAEAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "counter-overflows/two-steps-never-overflow",
+      "subject": "counter-overflows",
+      "setup": {
+        "max": 2
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 13,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "store-loses-on-crash/a-crash-loses-an-acknowledged-put",
+      "subject": "store-loses-on-crash",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 16,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "put"
+          },
+          {
+            "label": "key",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "crash"
+          }
+        ],
+        "failure": "lost-write",
+        "choices": "prop1:AAEAAAABAAEAAAAAAAEAAQAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "store-loses-on-crash/one-step-cannot-put-and-crash",
+      "subject": "store-loses-on-crash",
+      "setup": {
+        "max": 1
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 27,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "correct-queue/passes-with-swarm",
+      "subject": "correct-queue",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "correct-queue/passes-without-swarm",
+      "subject": "correct-queue",
+      "setup": {
+        "swarm": false
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "racy-counter/two-increments-on-two-clients-both-return-1",
+      "subject": "racy-counter",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "increment",
+            "client": 1
+          },
+          {
+            "step": "increment",
+            "client": 2
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAEAAAABAAEAAAABAAIAAAAAAAAAAAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "correct-counter/passes-with-two-clients",
+      "subject": "correct-counter",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "counter-refuses-every-third/a-refusal-changes-the-actions-a-step-lists",
+      "subject": "counter-refuses-every-third",
+      "setup": {
+        "swarm": false
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "flaky",
+        "cases": 7,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": {
+          "what": "request",
+          "index": 9,
+          "recorded": {
+            "kind": "integer",
+            "min": 0,
+            "max": 0
+          },
+          "replayed": {
+            "kind": "integer",
+            "min": 0,
+            "max": 1
+          },
+          "label": null,
+          "step": {
+            "part": "sequential",
+            "position": 4,
+            "action": null
+          }
+        },
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "queue-loses-on-wrap/the-minimal-steps-as-a-trace-fail",
+      "subject": "queue-loses-on-wrap",
+      "settings": {
+        "seed": "1"
+      },
+      "trace": [
+        {
+          "label": "capacity",
+          "value": {
+            "type": "int",
+            "value": 2
+          }
+        },
+        {
+          "step": "put"
+        },
+        {
+          "label": "v",
+          "value": {
+            "type": "int",
+            "value": 0
+          }
+        },
+        {
+          "step": "put"
+        },
+        {
+          "label": "v",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "step": "get"
+        }
+      ],
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "label": "capacity",
+            "value": {
+              "type": "int",
+              "value": 2
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "get"
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAIAAQABAAEAAAAAAAEAAAABAAEAAQ",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    },
+    {
+      "id": "store-loses-on-crash/a-flush-of-an-empty-buffer-is-refused",
+      "subject": "store-loses-on-crash",
+      "settings": {
+        "seed": "1"
+      },
+      "trace": [
+        {
+          "step": "crash"
+        },
+        {
+          "step": "flush"
+        }
+      ],
+      "detail": null,
+      "error": {
+        "entry": 1,
+        "name": "flush",
+        "reason": "step"
+      }
+    },
+    {
+      "id": "racy-counter/the-minimal-steps-as-a-trace-state-their-clients",
+      "subject": "racy-counter",
+      "settings": {
+        "seed": "1"
+      },
+      "trace": [
+        {
+          "step": "increment",
+          "client": 1
+        },
+        {
+          "step": "increment",
+          "client": 2
+        }
+      ],
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "increment",
+            "client": 1
+          },
+          {
+            "step": "increment",
+            "client": 2
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAEAAAABAAEAAAABAAIAAAAAAAAAAAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      },
+      "error": null
+    }
+  ]
+}

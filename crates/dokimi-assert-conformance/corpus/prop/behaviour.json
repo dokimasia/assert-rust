@@ -1,0 +1,1085 @@
+{
+  "kind": "behaviour",
+  "cases": [
+    {
+      "id": "behaviour/passes-a-body-that-never-fails",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        }
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/reports-the-minimal-counterexample-and-the-nearest-passing-value",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 10000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 1001
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 1001
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1000
+            }
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AOkH",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/reports-on-four-workers-what-it-reports-on-one",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 10000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 1001
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "workers": 4
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 1001
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1000
+            }
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AOkH",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/reports-the-first-failing-case-when-shrinking-is-off",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 10000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 1001
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "shrink": 0
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 8522
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AMpC",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/marks-a-draw-where-any-value-fails",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        },
+        "fails": [
+          {
+            "identity": "every",
+            "when": {
+              "kind": "always"
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "every",
+        "choices": "prop1:AAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/marks-a-draw-whose-rejected-fillings-are-skipped",
+      "body": {
+        "draw": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 2
+          },
+          "unique": true,
+          "min_size": 3,
+          "max_size": 3
+        },
+        "fails": [
+          {
+            "identity": "always",
+            "when": {
+              "kind": "always"
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "0"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 1,
+        "seed": "0",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                0,
+                1,
+                2
+              ]
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "always",
+        "choices": "prop1:AAEAAAABAAEAAQACAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/leaves-a-draw-untested-when-no-filling-decodes",
+      "body": {
+        "draw": {
+          "gen": "filter",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "keep": {
+            "kind": "equals",
+            "value": {
+              "type": "int",
+              "value": 7
+            }
+          }
+        },
+        "fails": [
+          {
+            "identity": "seven",
+            "when": {
+              "kind": "always"
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "2"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 2,
+        "seed": "2",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 7
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "seven",
+        "choices": "prop1:AAc",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/reports-a-second-failure-under-others",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "fails": [
+          {
+            "identity": "odd",
+            "when": {
+              "kind": "divisible-by",
+              "n": 2,
+              "not": true
+            }
+          },
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 51
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 0
+            }
+          }
+        ],
+        "failure": "odd",
+        "choices": "prop1:AAE",
+        "others": [
+          {
+            "failure": "big",
+            "counterexample": [
+              {
+                "label": "value",
+                "value": {
+                  "type": "int",
+                  "value": 52
+                }
+              }
+            ],
+            "choices": "prop1:ADQ"
+          }
+        ],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/finds-a-failure-at-the-maximum-in-an-edge-case",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": "18446744073709551615"
+        },
+        "fails": [
+          {
+            "identity": "largest",
+            "when": {
+              "kind": "at-least",
+              "n": "18446744073709551615"
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 3,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": "18446744073709551615"
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": "18446744073709551614"
+            }
+          }
+        ],
+        "failure": "largest",
+        "choices": "prop1:AP___________wE",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/finds-a-failure-in-the-prefix-case-of-random-case-0",
+      "body": {
+        "draw": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 1000000000
+          },
+          "min_size": 2,
+          "max_size": 2
+        },
+        "fails": [
+          {
+            "identity": "prefix",
+            "when": {
+              "kind": "equals",
+              "value": {
+                "type": "list",
+                "of": "int",
+                "value": [
+                  558560502,
+                  0
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "shrink": 0
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 2,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                558560502,
+                0
+              ]
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "prefix",
+        "choices": "prop1:AAEA9umrigIAAQAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/tries-a-stored-case-before-the-simplest",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 900
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "stored": [
+          [
+            950
+          ]
+        ]
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 900
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 899
+            }
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AIQH",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/replays-a-failing-token-and-nothing-else",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 5
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "replay": "prop1:AAc"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 7
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AAc",
+        "others": [],
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/passes-a-replayed-case-that-passes",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 5
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "replay": "prop1:AAM"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/rejects-a-run-that-rejects-every-case",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "rejects-when": {
+          "kind": "always"
+        }
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "rejected",
+        "cases": 0,
+        "rejected": 458,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/passes-a-run-that-rejects-four-cases-in-five",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "rejects-when": {
+          "kind": "divisible-by",
+          "n": 5,
+          "not": true
+        }
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 98,
+        "rejected": 360,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/rejects-a-case-larger-than-max-choices",
+      "body": {
+        "draw": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 1000
+          }
+        },
+        "fails": [
+          {
+            "identity": "long",
+            "when": {
+              "kind": "length-at-least",
+              "n": 2
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "max-choices": 4
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 604,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/fails-a-body-that-requests-no-input",
+      "body": {
+        "kind": "draws-nothing"
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "vacuous",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/reports-a-body-whose-requests-diverge",
+      "body": {
+        "kind": "diverges"
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "flaky",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": {
+          "what": "request",
+          "index": 0,
+          "recorded": {
+            "kind": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "replayed": {
+            "kind": "integer",
+            "min": 0,
+            "max": 1
+          },
+          "label": "value",
+          "step": null
+        },
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/reports-a-failure-that-passes-on-replay",
+      "body": {
+        "kind": "fails-once"
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "flaky",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 558560502
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "once",
+        "choices": null,
+        "others": null,
+        "divergence": {
+          "what": "verdict",
+          "index": 1,
+          "recorded": "once",
+          "replayed": null,
+          "label": null,
+          "step": null
+        },
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/passes-once-every-input-of-a-small-domain-is-tested",
+      "body": {
+        "draw": {
+          "gen": "one-of",
+          "of": [
+            {
+              "gen": "boolean"
+            },
+            {
+              "gen": "sampled-from",
+              "values": [
+                {
+                  "type": "string",
+                  "value": "a"
+                },
+                {
+                  "type": "string",
+                  "value": "b"
+                },
+                {
+                  "type": "string",
+                  "value": "c"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 5,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/counts-each-input-once",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 30
+        }
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 31,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/enters-every-filter-attempt-into-the-tree-on-four-workers",
+      "body": {
+        "draw": {
+          "gen": "filter",
+          "of": {
+            "gen": "boolean"
+          },
+          "keep": {
+            "kind": "equals",
+            "value": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "workers": 4
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 3,
+        "rejected": 1,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/meets-a-coverage-requirement",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "classify": {
+          "even": {
+            "kind": "divisible-by",
+            "n": 2
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "requirements": [
+          {
+            "label": "even",
+            "share": 0.3
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 400,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/refutes-a-coverage-requirement",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "classify": {
+          "even": {
+            "kind": "divisible-by",
+            "n": 2
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "requirements": [
+          {
+            "label": "even",
+            "share": 0.9
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "coverage-unmet",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": {
+          "label": "even",
+          "share": 0.9,
+          "counted": 45,
+          "valid": 100,
+          "verdict": "refuted"
+        }
+      }
+    },
+    {
+      "id": "behaviour/meets-a-requirement-by-an-exact-share",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "classify": {
+          "small": {
+            "kind": "at-least",
+            "n": 5,
+            "not": true
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "requirements": [
+          {
+            "label": "small",
+            "share": 0.5
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 10,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null
+      }
+    },
+    {
+      "id": "behaviour/fails-a-requirement-by-an-exact-share",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "classify": {
+          "nine": {
+            "kind": "at-least",
+            "n": 9
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "requirements": [
+          {
+            "label": "nine",
+            "share": 0.2
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "coverage-unmet",
+        "cases": 10,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": {
+          "label": "nine",
+          "share": 0.2,
+          "counted": 1,
+          "valid": 10,
+          "verdict": "unmet"
+        }
+      }
+    }
+  ]
+}

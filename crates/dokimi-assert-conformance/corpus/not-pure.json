@@ -1,0 +1,19 @@
+{
+  "assertion": "not-pure",
+  "cases": [
+    {
+      "id": "not-pure/a-subject-that-changes-state-passes",
+      "subject": {
+        "kind": "accumulates"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "not-pure/a-subject-that-changes-nothing-fails",
+      "subject": {
+        "kind": "leaves-state-alone"
+      },
+      "expect": "fail"
+    }
+  ]
+}

@@ -1,0 +1,790 @@
+{
+  "kind": "recording",
+  "cases": [
+    {
+      "id": "recording/records-every-case-of-a-passing-run",
+      "body": {
+        "draw": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 1000
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "cases": 20
+      },
+      "verdict": "pass",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 3,
+          "phase": "prefix",
+          "verdict": "pass"
+        },
+        {
+          "run": 4,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 5,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 6,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 7,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 8,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 9,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 11,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 12,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 13,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 14,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 15,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 16,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 17,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 18,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 19,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 22,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 23,
+          "phase": "random",
+          "verdict": "pass"
+        }
+      ]
+    },
+    {
+      "id": "recording/records-the-replay-shrink-and-explain-runs-of-a-failure",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 10000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 1001
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "verdict": "fail",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "random",
+          "verdict": "fail"
+        },
+        {
+          "run": 3,
+          "phase": "replay",
+          "verdict": "fail"
+        },
+        {
+          "run": 4,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 5,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 6,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 7,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 8,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 9,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 10,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 11,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 12,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 13,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 14,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 15,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 16,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 17,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 18,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 19,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 20,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 21,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 22,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 23,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 24,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 25,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 26,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 27,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 28,
+          "phase": "explain",
+          "verdict": "fail"
+        },
+        {
+          "run": 29,
+          "phase": "explain",
+          "verdict": "pass"
+        },
+        {
+          "run": 30,
+          "phase": "explain",
+          "verdict": "pass"
+        }
+      ]
+    },
+    {
+      "id": "recording/records-on-four-workers-what-it-records-on-one",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 10000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 1001
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "workers": 4
+      },
+      "verdict": "fail",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "random",
+          "verdict": "fail"
+        },
+        {
+          "run": 3,
+          "phase": "replay",
+          "verdict": "fail"
+        },
+        {
+          "run": 4,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 5,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 6,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 7,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 8,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 9,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 10,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 11,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 12,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 13,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 14,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 15,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 16,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 17,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 18,
+          "phase": "shrink",
+          "verdict": "fail"
+        },
+        {
+          "run": 19,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 20,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 21,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 22,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 23,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 24,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 25,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 26,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 27,
+          "phase": "shrink",
+          "verdict": "pass"
+        },
+        {
+          "run": 28,
+          "phase": "explain",
+          "verdict": "fail"
+        },
+        {
+          "run": 29,
+          "phase": "explain",
+          "verdict": "pass"
+        },
+        {
+          "run": 30,
+          "phase": "explain",
+          "verdict": "pass"
+        }
+      ]
+    },
+    {
+      "id": "recording/records-the-coverage-phase-after-the-first-check",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "classify": {
+          "even": {
+            "kind": "divisible-by",
+            "n": 2
+          }
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "cases": 10,
+        "requirements": [
+          {
+            "label": "even",
+            "share": 0.1
+          }
+        ]
+      },
+      "verdict": "pass",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 4,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 5,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 6,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 7,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 8,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 10,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 11,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 12,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 14,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 15,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 16,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 17,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 19,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 20,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 21,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 22,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 24,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 25,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 26,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 27,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 28,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 29,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 30,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 31,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 32,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 33,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 34,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 36,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 37,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 38,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 39,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 40,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 41,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 42,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 45,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 46,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 47,
+          "phase": "coverage",
+          "verdict": "pass"
+        },
+        {
+          "run": 48,
+          "phase": "coverage",
+          "verdict": "pass"
+        }
+      ]
+    },
+    {
+      "id": "recording/records-the-one-case-of-a-replay-token",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 5
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "replay": "prop1:AAc"
+      },
+      "verdict": "fail",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "token",
+          "verdict": "fail"
+        }
+      ]
+    },
+    {
+      "id": "recording/records-the-examples-then-the-stored-cases",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 900
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "examples": [
+          [
+            5
+          ]
+        ],
+        "stored": [
+          [
+            3
+          ],
+          [
+            950
+          ]
+        ],
+        "shrink": 0
+      },
+      "verdict": "fail",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "example",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "stored",
+          "verdict": "pass"
+        },
+        {
+          "run": 3,
+          "phase": "stored",
+          "verdict": "fail"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1156 @@
+{
+  "kind": "inverse",
+  "cases": [
+    {
+      "id": "integer/a-value-is-its-own-choice",
+      "generator": {
+        "gen": "integer",
+        "min": 0,
+        "max": 9
+      },
+      "value": {
+        "type": "int",
+        "value": 7
+      },
+      "choices": [
+        7
+      ],
+      "error": false
+    },
+    {
+      "id": "duration/a-value-is-its-own-choice",
+      "generator": {
+        "gen": "duration",
+        "min": 0,
+        "max": 1000000000
+      },
+      "value": {
+        "type": "int",
+        "value": 1000
+      },
+      "choices": [
+        1000
+      ],
+      "error": false
+    },
+    {
+      "id": "float/a-value-is-its-own-choice",
+      "generator": {
+        "gen": "float",
+        "min": -2,
+        "max": 2
+      },
+      "value": {
+        "type": "float",
+        "value": 1.5
+      },
+      "choices": [
+        {
+          "float": 1.5
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "boolean/true-is-one",
+      "generator": {
+        "gen": "boolean"
+      },
+      "value": {
+        "type": "bool",
+        "value": true
+      },
+      "choices": [
+        1
+      ],
+      "error": false
+    },
+    {
+      "id": "just/makes-no-choice",
+      "generator": {
+        "gen": "just",
+        "value": {
+          "type": "int",
+          "value": 4
+        }
+      },
+      "value": {
+        "type": "int",
+        "value": 4
+      },
+      "choices": [],
+      "error": false
+    },
+    {
+      "id": "sampled-from/the-first-equal-value",
+      "generator": {
+        "gen": "sampled-from",
+        "values": [
+          {
+            "type": "string",
+            "value": "a"
+          },
+          {
+            "type": "string",
+            "value": "b"
+          },
+          {
+            "type": "string",
+            "value": "a"
+          }
+        ]
+      },
+      "value": {
+        "type": "string",
+        "value": "a"
+      },
+      "choices": [
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "one-of/the-first-alternative-that-produces-the-value",
+      "generator": {
+        "gen": "one-of",
+        "of": [
+          {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          {
+            "gen": "integer",
+            "min": 5,
+            "max": 15
+          }
+        ]
+      },
+      "value": {
+        "type": "int",
+        "value": 7
+      },
+      "choices": [
+        0,
+        7
+      ],
+      "error": false
+    },
+    {
+      "id": "optional/absent-at-the-outer-optional",
+      "generator": {
+        "gen": "optional",
+        "of": {
+          "gen": "optional",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          }
+        }
+      },
+      "value": {
+        "type": "null"
+      },
+      "choices": [
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "list/flags-and-elements-in-order",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "max_size": 3
+      },
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          7,
+          3
+        ]
+      },
+      "choices": [
+        1,
+        7,
+        1,
+        3,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "dict/entries-in-shortlex-order",
+      "generator": {
+        "gen": "dict",
+        "keys": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "values": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        }
+      },
+      "value": {
+        "type": "map",
+        "entries": [
+          [
+            {
+              "type": "int",
+              "value": 4
+            },
+            {
+              "type": "int",
+              "value": 0
+            }
+          ],
+          [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 9
+            }
+          ]
+        ]
+      },
+      "choices": [
+        1,
+        1,
+        9,
+        1,
+        4,
+        0,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "string/indices-into-the-alphabet",
+      "generator": {
+        "gen": "string",
+        "max_size": 4
+      },
+      "value": {
+        "type": "string",
+        "value": "a0"
+      },
+      "choices": [
+        {
+          "sequence": [
+            10,
+            0
+          ]
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "string-matching/the-greedy-match",
+      "generator": {
+        "gen": "string-matching",
+        "pattern": "a*a*"
+      },
+      "value": {
+        "type": "string",
+        "value": "aa"
+      },
+      "choices": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "bytes/the-bytes-in-order",
+      "generator": {
+        "gen": "bytes"
+      },
+      "value": {
+        "type": "bytes",
+        "value": "00ff"
+      },
+      "choices": [
+        {
+          "sequence": [
+            0,
+            255
+          ]
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "permutation/the-smallest-index-at-each-swap",
+      "generator": {
+        "gen": "permutation",
+        "values": [
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "int",
+            "value": 2
+          }
+        ]
+      },
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          1,
+          2,
+          1
+        ]
+      },
+      "choices": [
+        0,
+        2
+      ],
+      "error": false
+    },
+    {
+      "id": "recursive/the-base-before-the-extension",
+      "generator": {
+        "gen": "recursive",
+        "base": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          }
+        },
+        "extend": {
+          "gen": "list",
+          "of": {
+            "gen": "self"
+          },
+          "max_size": 3
+        }
+      },
+      "value": {
+        "type": "list",
+        "items": []
+      },
+      "choices": [
+        0,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "filter/through-its-source",
+      "generator": {
+        "gen": "filter",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "keep": {
+          "kind": "divisible-by",
+          "n": 2
+        }
+      },
+      "value": {
+        "type": "int",
+        "value": 4
+      },
+      "choices": [
+        4
+      ],
+      "error": false
+    },
+    {
+      "id": "map/has-no-inverse",
+      "generator": {
+        "gen": "map",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "subject": "identity"
+      },
+      "value": {
+        "type": "int",
+        "value": 4
+      },
+      "choices": null,
+      "error": true
+    },
+    {
+      "id": "bool/true",
+      "shape": {
+        "shape": "bool"
+      },
+      "value": {
+        "type": "bool",
+        "value": true
+      },
+      "choices": [
+        1
+      ],
+      "error": false
+    },
+    {
+      "id": "int/the-two-halves-of-minus-one",
+      "shape": {
+        "shape": "int",
+        "width": 128,
+        "signed": true
+      },
+      "value": {
+        "type": "int",
+        "value": -1
+      },
+      "choices": [
+        -1,
+        "18446744073709551615"
+      ],
+      "error": false
+    },
+    {
+      "id": "float/negative-zero",
+      "shape": {
+        "shape": "float",
+        "width": 64
+      },
+      "value": {
+        "type": "float",
+        "value": -0.0
+      },
+      "choices": [
+        {
+          "float": -0.0
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "char/a-stated-alphabet",
+      "shape": {
+        "shape": "char",
+        "alphabet": "xyz"
+      },
+      "value": {
+        "type": "string",
+        "value": "z"
+      },
+      "choices": [
+        {
+          "sequence": [
+            2
+          ]
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "string/a-pattern",
+      "shape": {
+        "shape": "string",
+        "pattern": "[A-Z]{3}-[0-9]{2}"
+      },
+      "value": {
+        "type": "string",
+        "value": "ABC-12"
+      },
+      "choices": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        2,
+        0,
+        1,
+        1,
+        1,
+        2,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "bytes/two-bytes",
+      "shape": {
+        "shape": "bytes"
+      },
+      "value": {
+        "type": "bytes",
+        "value": "7f01"
+      },
+      "choices": [
+        {
+          "sequence": [
+            127,
+            1
+          ]
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "list/a-list-of-bools",
+      "shape": {
+        "shape": "list",
+        "of": {
+          "shape": "bool"
+        }
+      },
+      "value": {
+        "type": "list",
+        "of": "bool",
+        "value": [
+          true,
+          false
+        ]
+      },
+      "choices": [
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "fixed-list/three-bytes",
+      "shape": {
+        "shape": "fixed-list",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        },
+        "size": 3
+      },
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          1,
+          2,
+          3
+        ]
+      },
+      "choices": [
+        1,
+        1,
+        1,
+        2,
+        1,
+        3,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "set/elements-in-shortlex-order",
+      "shape": {
+        "shape": "set",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        }
+      },
+      "value": {
+        "type": "list",
+        "of": "int",
+        "value": [
+          5,
+          2
+        ]
+      },
+      "choices": [
+        1,
+        2,
+        1,
+        5,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "map/entries-in-shortlex-order",
+      "shape": {
+        "shape": "map",
+        "key": {
+          "shape": "string"
+        },
+        "of": {
+          "shape": "bool"
+        }
+      },
+      "value": {
+        "type": "map",
+        "entries": [
+          [
+            {
+              "type": "string",
+              "value": "b"
+            },
+            {
+              "type": "bool",
+              "value": true
+            }
+          ],
+          [
+            {
+              "type": "string",
+              "value": "a"
+            },
+            {
+              "type": "bool",
+              "value": false
+            }
+          ]
+        ]
+      },
+      "choices": [
+        1,
+        {
+          "sequence": [
+            10
+          ]
+        },
+        0,
+        1,
+        {
+          "sequence": [
+            11
+          ]
+        },
+        1,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "optional/present",
+      "shape": {
+        "shape": "optional",
+        "of": {
+          "shape": "int",
+          "width": 8,
+          "signed": false
+        }
+      },
+      "value": {
+        "type": "int",
+        "value": 9
+      },
+      "choices": [
+        1,
+        9
+      ],
+      "error": false
+    },
+    {
+      "id": "record/fields-in-order",
+      "shape": {
+        "shape": "record",
+        "fields": [
+          [
+            "id",
+            {
+              "shape": "int",
+              "width": 8,
+              "signed": false
+            }
+          ],
+          [
+            "ok",
+            {
+              "shape": "bool"
+            }
+          ]
+        ]
+      },
+      "value": {
+        "type": "record",
+        "fields": [
+          [
+            "id",
+            {
+              "type": "int",
+              "value": 4
+            }
+          ],
+          [
+            "ok",
+            {
+              "type": "bool",
+              "value": true
+            }
+          ]
+        ]
+      },
+      "choices": [
+        4,
+        1
+      ],
+      "error": false
+    },
+    {
+      "id": "enum/a-variant-with-a-payload",
+      "shape": {
+        "shape": "enum",
+        "variants": [
+          [
+            "none",
+            null
+          ],
+          [
+            "some",
+            {
+              "shape": "int",
+              "width": 8,
+              "signed": false
+            }
+          ]
+        ]
+      },
+      "value": {
+        "type": "variant",
+        "name": "some",
+        "payload": {
+          "type": "int",
+          "value": 9
+        }
+      },
+      "choices": [
+        1,
+        9
+      ],
+      "error": false
+    },
+    {
+      "id": "literal/the-first-equal-value",
+      "shape": {
+        "shape": "literal",
+        "values": [
+          {
+            "type": "string",
+            "value": "a"
+          },
+          {
+            "type": "string",
+            "value": "b"
+          },
+          {
+            "type": "string",
+            "value": "a"
+          }
+        ]
+      },
+      "value": {
+        "type": "string",
+        "value": "a"
+      },
+      "choices": [
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "ref/a-tree-of-one-child",
+      "shape": {
+        "shape": "ref",
+        "name": "tree",
+        "definitions": {
+          "tree": {
+            "shape": "record",
+            "fields": [
+              [
+                "value",
+                {
+                  "shape": "int",
+                  "width": 8,
+                  "signed": false
+                }
+              ],
+              [
+                "children",
+                {
+                  "shape": "list",
+                  "of": {
+                    "shape": "ref",
+                    "name": "tree"
+                  }
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "value": {
+        "type": "record",
+        "fields": [
+          [
+            "value",
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          [
+            "children",
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "record",
+                  "fields": [
+                    [
+                      "value",
+                      {
+                        "type": "int",
+                        "value": 4
+                      }
+                    ],
+                    [
+                      "children",
+                      {
+                        "type": "list",
+                        "items": []
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      "choices": [
+        3,
+        1,
+        4,
+        0,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "uuid/sixteen-bytes",
+      "shape": {
+        "shape": "uuid"
+      },
+      "value": {
+        "type": "bytes",
+        "value": "00112233445566778899aabbccddeeff"
+      },
+      "choices": [
+        {
+          "sequence": [
+            0,
+            17,
+            34,
+            51,
+            68,
+            85,
+            102,
+            119,
+            136,
+            153,
+            170,
+            187,
+            204,
+            221,
+            238,
+            255
+          ]
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "ip-address/version-4-of-either",
+      "shape": {
+        "shape": "ip-address"
+      },
+      "value": {
+        "type": "bytes",
+        "value": "7f000001"
+      },
+      "choices": [
+        0,
+        {
+          "sequence": [
+            127,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "error": false
+    },
+    {
+      "id": "decimal/the-unscaled-value",
+      "shape": {
+        "shape": "decimal",
+        "scale": 2
+      },
+      "value": {
+        "type": "int",
+        "value": 1999
+      },
+      "choices": [
+        1999
+      ],
+      "error": false
+    },
+    {
+      "id": "instant/nanoseconds-before-the-epoch",
+      "shape": {
+        "shape": "instant",
+        "unit": "ns"
+      },
+      "value": {
+        "type": "record",
+        "fields": [
+          [
+            "seconds",
+            {
+              "type": "int",
+              "value": -1
+            }
+          ],
+          [
+            "units",
+            {
+              "type": "int",
+              "value": 999999999
+            }
+          ]
+        ]
+      },
+      "choices": [
+        -1,
+        999999999
+      ],
+      "error": false
+    },
+    {
+      "id": "date/the-first-day-of-year-1",
+      "shape": {
+        "shape": "date"
+      },
+      "value": {
+        "type": "int",
+        "value": -719162
+      },
+      "choices": [
+        -719162
+      ],
+      "error": false
+    },
+    {
+      "id": "time-of-day/the-last-millisecond",
+      "shape": {
+        "shape": "time-of-day",
+        "unit": "ms"
+      },
+      "value": {
+        "type": "int",
+        "value": 86399999
+      },
+      "choices": [
+        86399999
+      ],
+      "error": false
+    },
+    {
+      "id": "local-date-time/the-epoch",
+      "shape": {
+        "shape": "local-date-time",
+        "unit": "s"
+      },
+      "value": {
+        "type": "record",
+        "fields": [
+          [
+            "date",
+            {
+              "type": "int",
+              "value": 0
+            }
+          ],
+          [
+            "time-of-day",
+            {
+              "type": "int",
+              "value": 0
+            }
+          ]
+        ]
+      },
+      "choices": [
+        0,
+        0
+      ],
+      "error": false
+    },
+    {
+      "id": "duration/a-negative-duration",
+      "shape": {
+        "shape": "duration",
+        "unit": "ms"
+      },
+      "value": {
+        "type": "int",
+        "value": -5
+      },
+      "choices": [
+        -5
+      ],
+      "error": false
+    },
+    {
+      "id": "offset/a-fractional-offset",
+      "shape": {
+        "shape": "offset"
+      },
+      "value": {
+        "type": "int",
+        "value": 20700
+      },
+      "choices": [
+        20700
+      ],
+      "error": false
+    },
+    {
+      "id": "zone/kathmandu",
+      "shape": {
+        "shape": "zone"
+      },
+      "value": {
+        "type": "string",
+        "value": "Asia/Kathmandu"
+      },
+      "choices": [
+        7
+      ],
+      "error": false
+    },
+    {
+      "id": "zoned-date-time/an-instant-at-a-change-takes-the-whole-range",
+      "shape": {
+        "shape": "zoned-date-time",
+        "unit": "s"
+      },
+      "value": {
+        "type": "record",
+        "fields": [
+          [
+            "instant",
+            {
+              "type": "record",
+              "fields": [
+                [
+                  "seconds",
+                  {
+                    "type": "int",
+                    "value": -1740355200
+                  }
+                ],
+                [
+                  "units",
+                  {
+                    "type": "int",
+                    "value": 0
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "zone",
+            {
+              "type": "string",
+              "value": "Europe/Amsterdam"
+            }
+          ]
+        ]
+      },
+      "choices": [
+        1,
+        0,
+        -1740355200
+      ],
+      "error": false
+    },
+    {
+      "id": "wall-time/utc-makes-no-choice-of-a-change",
+      "shape": {
+        "shape": "wall-time",
+        "unit": "s"
+      },
+      "value": {
+        "type": "record",
+        "fields": [
+          [
+            "local-date-time",
+            {
+              "type": "record",
+              "fields": [
+                [
+                  "date",
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ],
+                [
+                  "time-of-day",
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "zone",
+            {
+              "type": "string",
+              "value": "UTC"
+            }
+          ]
+        ]
+      },
+      "choices": [
+        0,
+        1,
+        2
+      ],
+      "error": false
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "kind": "coverage",
+  "cases": [
+    {
+      "id": "coverage/met-at-27-of-100-for-a-tenth",
+      "counted": 27,
+      "valid": 100,
+      "share": 0.1,
+      "last": false,
+      "exact": false,
+      "verdict": "met"
+    },
+    {
+      "id": "coverage/undecided-at-26-of-100-for-a-tenth",
+      "counted": 26,
+      "valid": 100,
+      "share": 0.1,
+      "last": false,
+      "exact": false,
+      "verdict": "undecided"
+    },
+    {
+      "id": "coverage/refuted-at-19-of-100-for-a-half",
+      "counted": 19,
+      "valid": 100,
+      "share": 0.5,
+      "last": false,
+      "exact": false,
+      "verdict": "refuted"
+    },
+    {
+      "id": "coverage/undecided-at-20-of-100-for-a-half",
+      "counted": 20,
+      "valid": 100,
+      "share": 0.5,
+      "last": false,
+      "exact": false,
+      "verdict": "undecided"
+    },
+    {
+      "id": "coverage/met-at-76-of-100-for-a-half",
+      "counted": 76,
+      "valid": 100,
+      "share": 0.5,
+      "last": false,
+      "exact": false,
+      "verdict": "met"
+    },
+    {
+      "id": "coverage/met-at-the-last-check-by-the-lower-bound",
+      "counted": 122,
+      "valid": 800,
+      "share": 0.1,
+      "last": true,
+      "exact": false,
+      "verdict": "met"
+    },
+    {
+      "id": "coverage/refuted-at-the-last-check-before-the-observed-share-decides",
+      "counted": 28,
+      "valid": 800,
+      "share": 0.1,
+      "last": true,
+      "exact": false,
+      "verdict": "refuted"
+    },
+    {
+      "id": "coverage/met-at-the-last-check-by-the-observed-share",
+      "counted": 73,
+      "valid": 800,
+      "share": 0.1,
+      "last": true,
+      "exact": false,
+      "verdict": "met"
+    },
+    {
+      "id": "coverage/unmet-at-the-last-check-by-the-observed-share",
+      "counted": 68,
+      "valid": 800,
+      "share": 0.1,
+      "last": true,
+      "exact": false,
+      "verdict": "unmet"
+    },
+    {
+      "id": "coverage/unmet-at-72-of-800-where-nine-tenths-of-a-tenth-rounds-up",
+      "counted": 72,
+      "valid": 800,
+      "share": 0.1,
+      "last": true,
+      "exact": false,
+      "verdict": "unmet"
+    },
+    {
+      "id": "coverage/met-by-an-exact-share",
+      "counted": 2,
+      "valid": 6,
+      "share": 0.2,
+      "last": false,
+      "exact": true,
+      "verdict": "met"
+    },
+    {
+      "id": "coverage/unmet-by-an-exact-share",
+      "counted": 1,
+      "valid": 6,
+      "share": 0.2,
+      "last": false,
+      "exact": true,
+      "verdict": "unmet"
+    }
+  ]
+}

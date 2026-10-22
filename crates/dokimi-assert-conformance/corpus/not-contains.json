@@ -1,0 +1,229 @@
+{
+  "assertion": "not-contains",
+  "cases": [
+    {
+      "id": "not-contains/absent-element-passes",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "int",
+          "value": 9
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-contains/present-element-fails",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "haystack": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2
+          ]
+        },
+        "needle": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "not-contains/present-substring-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "hello"
+        },
+        {
+          "type": "string",
+          "value": "ell"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "haystack": {
+          "type": "string",
+          "value": "hello"
+        },
+        "needle": {
+          "type": "string",
+          "value": "ell"
+        }
+      }
+    },
+    {
+      "id": "not-contains/a-nan-is-absent",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "float",
+              "value": "NaN"
+            }
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-contains/a-nan-is-present-under-equate-nans",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "float",
+              "value": "NaN"
+            }
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "not-contains/a-nan-key-is-not-contained",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "expect": "pass",
+      "skip": {
+        "rust": "a std map needs keys that implement Eq and Hash, or Ord, and f64 implements none of them"
+      }
+    },
+    {
+      "id": "not-contains/a-nan-key-is-contained-under-equate-nans",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "not-contains/a-null-key-is-contained",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "null"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "not-contains/an-object-of-an-equal-value-by-identity-passes",
+      "args": [
+        {
+          "type": "list",
+          "items": [
+            {
+              "type": "reference",
+              "id": "a",
+              "value": {
+                "type": "int",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "type": "reference",
+          "id": "b",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "pass"
+    }
+  ]
+}

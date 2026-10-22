@@ -1,0 +1,29 @@
+{
+  "assertion": "associative",
+  "cases": [
+    {
+      "id": "associative/addition-passes",
+      "subject": {
+        "kind": "adds"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "associative/subtraction-fails",
+      "subject": {
+        "kind": "subtracts"
+      },
+      "expect": "fail",
+      "detail": {
+        "first": {
+          "type": "int",
+          "value": -6
+        },
+        "second": {
+          "type": "int",
+          "value": 4
+        }
+      }
+    }
+  ]
+}

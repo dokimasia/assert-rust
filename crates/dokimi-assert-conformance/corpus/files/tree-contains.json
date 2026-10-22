@@ -1,0 +1,212 @@
+{
+  "kind": "tree-contains",
+  "cases": [
+    {
+      "id": "tree-contains/a-stated-subset-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "cache",
+            "directory": true
+          },
+          {
+            "path": "docs/b.md",
+            "text": "# b\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "docs/b.md",
+              "text": "# b\n"
+            }
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "tree-contains/an-entry-below-a-stated-directory-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "cache/x.bin",
+            "bytes": "00ff"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "cache",
+              "directory": true
+            }
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "tree-contains/a-missing-entry-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            },
+            {
+              "path": "b.txt",
+              "text": "b\n"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "b.txt",
+              "text": "b\n"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": []
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-contains/another-content-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "b.txt",
+            "text": "b\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "b\n"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "b\n"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-contains/another-stated-mode-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 420
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 384
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 384
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 420
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

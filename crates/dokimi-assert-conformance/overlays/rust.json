@@ -1,0 +1,103 @@
+{
+  "extends": "spec://assertions@9.0.0",
+  "language": "rust",
+  "diverge": [],
+  "relaxations": [
+    {
+      "id": "equate-empty",
+      "why": "An absent container and an empty one are different types in Rust: Option<Vec<T>> is not Vec<T>. There is no case where a caller has one and means the other, so a relaxation would widen nothing."
+    },
+    {
+      "id": "equate-nans",
+      "why": "Rust's == already says NaN is unequal to itself, which is what the standard states by default. A caller wanting the other answer compares f64::to_bits or names the case, and a relaxation reaching inside a generic T: PartialEq is not expressible without a comparison routine this implementation does not have."
+    },
+    {
+      "id": "by-identity",
+      "why": "Rust's assertions compare through PartialEq, which compares values and has no notion of an object's identity. A caller compares two references with std::ptr::eq. A modifier that compares the references inside a generic T: PartialEq by address is not expressible without a comparison routine this implementation does not have."
+    }
+  ],
+  "limits": [
+    {
+      "id": "bench-max-allocs",
+      "what": "Counts allocations exactly, once CountingAllocator is installed as the test binary's global allocator. Without it the assertion reports that nothing counted rather than passing.",
+      "why": "Rust counts every allocation through the allocator, as Go counts them through its runtime. What it cannot do is install a global allocator on a caller's behalf: a program has one, the program chooses it, and a library that took it would take it from the caller."
+    },
+    {
+      "id": "max-allocs",
+      "what": "Counts the calling thread's allocations exactly, once CountingAllocator is installed as the test binary's global allocator, so a test on another thread does not change the count. Without the allocator the assertion reports that nothing counted rather than passing.",
+      "why": "The allocator that counts for bench-max-allocs counts for this assertion too, and a library cannot install a global allocator on a caller's behalf."
+    },
+    {
+      "id": "prop-max-allocs",
+      "what": "Counts the calling thread's allocations for each generated input exactly, once CountingAllocator is installed as the test binary's global allocator. Without the allocator the form reports that nothing counted rather than passing.",
+      "why": "The form runs max-allocs on each input, so it counts through the allocator that max-allocs counts through."
+    },
+    {
+      "id": "max-allocs-with-setup",
+      "what": "Counts the calling thread's allocations exactly, once CountingAllocator is installed as the test binary's global allocator. Without the allocator the assertion reports that nothing counted rather than passing.",
+      "why": "The allocator that counts for max-allocs counts for this assertion too, and a library cannot install a global allocator on a caller's behalf."
+    },
+    {
+      "id": "prop-max-allocs-with-setup",
+      "what": "Counts the calling thread's allocations for each generated input exactly, once CountingAllocator is installed as the test binary's global allocator. Without the allocator the form reports that nothing counted rather than passing.",
+      "why": "The form runs max-allocs-with-setup on each input, so it counts through the allocator that max-allocs counts through."
+    },
+    {
+      "id": "bench-max-bytes",
+      "what": "Counts bytes requested, once CountingAllocator is installed as the test binary's global allocator. Without it the assertion reports that nothing counted rather than passing.",
+      "why": "The same allocator answers both ceilings, so both stand or fall on it being installed. The count is of bytes asked for rather than bytes resident, which is what makes it stable across runs."
+    },
+    {
+      "id": "no-task-leaks",
+      "what": "Sees tasks spawned on the Tokio runtime the test is running under. A thread started with std::thread is not seen.",
+      "why": "Rust's standard library has no way to enumerate threads: nothing in std::thread lists them, so the synchronous crate cannot answer the question at all. Tokio counts its own live tasks, which is why this assertion ships in the tokio crate rather than the core."
+    },
+    {
+      "id": "history",
+      "what": "Records every invocation and completion through one counter that all clients share, whose increment is sequentially consistent. A subject whose correctness depends on a memory barrier it lacks can pass under the recorder and fail without it.",
+      "why": "Threads run on more than one core at once. Each increment of the counter orders the recording client's memory operations against every other client's, and that order can supply the barrier that the subject lacks."
+    },
+    {
+      "id": "prop.of",
+      "what": "A zone resolves through the time-zone database of jiff, behind the feature jiff of dokimi-assert, so a value in a zone can show another wall time than the definition's tzdata 2026e states.",
+      "why": "Rust's standard library has no time zones, and jiff reads the system's time-zone database or a copy of its own."
+    },
+    {
+      "id": "prop.of-shape",
+      "what": "A zone resolves through the time-zone database of jiff, as the prop.of entry states.",
+      "why": "Rust's standard library has no time zones, and jiff reads the system's time-zone database or a copy of its own."
+    }
+  ],
+  "surface": [
+    {
+      "id": "reporter",
+      "why": "The seat states report and clock itself, with a default, so a seat that supplies neither gets the platform clock and a rendered sentence. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    },
+    {
+      "id": "clocked",
+      "why": "The seat states report and clock itself, with a default, so a seat that supplies neither gets the platform clock and a rendered sentence. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    },
+    {
+      "id": "contract.excluding",
+      "why": "The harness owns the loop here, so setup goes in a second closure, handed to measuring, that the harness runs outside the measurement. Marking the setup in place would need the body to reach the contract it was handed to, and two closures cannot hold one variable mutably, so the fixture would arrive through an Option that every benchmark unwraps."
+    },
+    {
+      "id": "assertion",
+      "why": "equal compares its two operands through PartialEq, as assert_eq! compares them, so a pair of types that does not compare fails to compile. A chain would borrow the subject across every method of the chain, and the function form already makes every check that a chain makes."
+    },
+    {
+      "id": "that",
+      "why": "equal compares its two operands through PartialEq, as assert_eq! compares them, so a pair of types that does not compare fails to compile. A chain would borrow the subject across every method of the chain, and the function form already makes every check that a chain makes."
+    },
+    {
+      "id": "cancellation-of",
+      "why": "The trait Seat gives cancellation() a default, as it gives clock() one, so a helper calls the member on any seat and needs no function to read it."
+    }
+  ],
+  "sections": ["tasks", "threads"],
+  "records": {
+    "artifact": "A file of the library's own beside each test binary that cargo test runs, named after the binary with the suffix .dokimi-assert.jsonl, such as target/debug/deps/it-0a1b2c3d4e5f6a7b.dokimi-assert.jsonl. A run of the binary that records a call writes the file anew. libtest offers no stable channel for data of a test's own, and a doctest's binary is a temporary file whose call records are not kept.",
+    "location": "One line per call record, in the order the calls report their verdicts. The lines of tests that run on parallel threads interleave. Each call record names its test in test, as libtest names the test's thread: the test's path without the crate's name, such as nested::fails. The file's name names the binary.",
+    "status": "The line that libtest prints for each test on the test binary's standard output: test <name> ... ok, test <name> ... FAILED, or test <name> ... ignored."
+  }
+}

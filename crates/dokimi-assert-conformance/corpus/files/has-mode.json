@@ -1,0 +1,171 @@
+{
+  "kind": "has-mode",
+  "cases": [
+    {
+      "id": "has-mode/the-stated-mode-of-a-file-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 384
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "keys/id"
+        },
+        {
+          "type": "int",
+          "value": 384
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-mode/the-stated-mode-of-a-directory-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "keys",
+            "directory": true,
+            "mode": 448
+          },
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 384
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "keys"
+        },
+        {
+          "type": "int",
+          "value": 448
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-mode/another-mode-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 420
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "keys/id"
+        },
+        {
+          "type": "int",
+          "value": 384
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 384
+        },
+        "got": {
+          "type": "int",
+          "value": 420
+        },
+        "kind": {
+          "type": "string",
+          "value": "file"
+        }
+      }
+    },
+    {
+      "id": "has-mode/a-link-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "current",
+            "link": "a.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "current"
+        },
+        {
+          "type": "int",
+          "value": 420
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 420
+        },
+        "got": {
+          "type": "null"
+        },
+        "kind": {
+          "type": "string",
+          "value": "link"
+        }
+      }
+    },
+    {
+      "id": "has-mode/nothing-at-the-path-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "b.txt"
+        },
+        {
+          "type": "int",
+          "value": 420
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 420
+        },
+        "got": {
+          "type": "null"
+        },
+        "kind": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

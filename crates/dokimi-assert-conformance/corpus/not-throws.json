@@ -1,0 +1,19 @@
+{
+  "assertion": "not-throws",
+  "cases": [
+    {
+      "id": "not-throws/a-returning-body-passes",
+      "subject": {
+        "kind": "returns-ok"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "not-throws/a-raising-body-fails",
+      "subject": {
+        "kind": "raises"
+      },
+      "expect": "fail"
+    }
+  ]
+}

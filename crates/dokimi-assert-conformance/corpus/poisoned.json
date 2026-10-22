@@ -1,0 +1,28 @@
+{
+  "assertion": "poisoned",
+  "cases": [
+    {
+      "id": "poisoned/a-subject-that-never-settles-passes",
+      "subject": {
+        "kind": "never-settles"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "poisoned/a-subject-that-settles-fails",
+      "subject": {
+        "kind": "settles-after"
+      },
+      "expect": "fail",
+      "detail": {
+        "index": {
+          "type": "int",
+          "value": 2
+        },
+        "got": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

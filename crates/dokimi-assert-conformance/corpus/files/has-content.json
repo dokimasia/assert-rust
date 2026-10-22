@@ -1,0 +1,196 @@
+{
+  "kind": "has-content",
+  "cases": [
+    {
+      "id": "has-content/equal-text-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "go.mod",
+            "text": "module example.com/a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "go.mod"
+        },
+        {
+          "type": "string",
+          "value": "module example.com/a\n"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-content/equal-bytes-pass",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "logo.png",
+            "bytes": "89504e470d0a1a0a"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "logo.png"
+        },
+        {
+          "type": "bytes",
+          "value": "89504e470d0a1a0a"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "has-content/other-text-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\r\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "a.txt"
+        },
+        {
+          "type": "string",
+          "value": "a\n"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": "a\n"
+        },
+        "got": {
+          "type": "string",
+          "value": "a\r\n"
+        },
+        "kind": {
+          "type": "string",
+          "value": "file"
+        }
+      }
+    },
+    {
+      "id": "has-content/other-bytes-fail",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "logo.png",
+            "bytes": "89504e470d0a1a0a"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "logo.png"
+        },
+        {
+          "type": "bytes",
+          "value": "89504e47"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "bytes",
+          "value": "89504e47"
+        },
+        "got": {
+          "type": "bytes",
+          "value": "89504e470d0a1a0a"
+        },
+        "kind": {
+          "type": "string",
+          "value": "file"
+        }
+      }
+    },
+    {
+      "id": "has-content/a-directory-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "docs/a.md",
+            "text": "# a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "docs"
+        },
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": ""
+        },
+        "got": {
+          "type": "null"
+        },
+        "kind": {
+          "type": "string",
+          "value": "directory"
+        }
+      }
+    },
+    {
+      "id": "has-content/nothing-at-the-path-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "b.txt"
+        },
+        {
+          "type": "string",
+          "value": "b\n"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "string",
+          "value": "b\n"
+        },
+        "got": {
+          "type": "null"
+        },
+        "kind": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

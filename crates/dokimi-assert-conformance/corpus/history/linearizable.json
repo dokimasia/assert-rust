@@ -1,0 +1,3851 @@
+{
+  "kind": "linearizable",
+  "cases": [
+    {
+      "id": "linearizable/concurrent-writes-take-effect-in-the-order-a-read-needs",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 6,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-read-after-a-completed-write-misses-it",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 2,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 2,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/one-of-two-concurrent-compare-and-sets-succeeds",
+      "spec": "cas-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "bool",
+            "value": false
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 4,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/two-concurrent-compare-and-sets-cannot-both-succeed",
+      "spec": "cas-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 5,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 4,
+            "process": 1,
+            "operation": "cas",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              },
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 2
+          }
+        ],
+        "candidates": [
+          {
+            "call": 3,
+            "completion": 5,
+            "process": 2,
+            "operation": "cas",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              },
+              {
+                "type": "int",
+                "value": 3
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/an-append-follows-a-concurrent-put",
+      "spec": "key-value",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "append",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "b"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "string",
+            "value": "ab"
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 3,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/sequential-appends-take-effect-in-their-order",
+      "spec": "key-value",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "append",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "append",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "b"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "string",
+            "value": "ba"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 3,
+        "partition": [
+          {
+            "type": "string",
+            "value": "k"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "append",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              },
+              {
+                "type": "string",
+                "value": "a"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "append",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              },
+              {
+                "type": "string",
+                "value": "b"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "k"
+                },
+                {
+                  "type": "string",
+                  "value": "ab"
+                }
+              ]
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 0,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": "ba"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/concurrent-enqueues-dequeue-in-either-order",
+      "spec": "queue",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "enqueue",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "enqueue",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "dequeue",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "dequeue",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 7,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-queue-dequeues-in-the-order-it-enqueued",
+      "spec": "queue",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "enqueue",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "enqueue",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "dequeue",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 3,
+        "partition": [
+          {
+            "type": "string",
+            "value": "q"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "enqueue",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 0,
+            "operation": "enqueue",
+            "args": [
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              2
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 1,
+            "operation": "dequeue",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 2
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-contains-concurrent-with-an-add-may-miss-it",
+      "spec": "set",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "add",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "contains",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "bool",
+            "value": false
+          }
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "contains",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 5,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-removed-value-is-not-contained",
+      "spec": "set",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "add",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "remove",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "contains",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 3,
+        "partition": [
+          {
+            "type": "string",
+            "value": "s"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "add",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 0,
+            "operation": "remove",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "list",
+            "items": []
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 1,
+            "operation": "contains",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-lossy-write-may-leave-the-old-value",
+      "spec": "lossy-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 3,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-lossy-write-that-a-read-saw-is-not-lost-later",
+      "spec": "lossy-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 4,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 1,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/the-memo-merges-two-orders-of-equal-writes",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 5
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 5,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 2,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 1,
+            "completion": 3,
+            "process": 1,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 0,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 5
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/three-concurrent-compare-and-sets-cannot-all-succeed",
+      "spec": "cas-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 4
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 10,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 4,
+        "concurrency": 3,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 5,
+            "process": 1,
+            "operation": "cas",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              },
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 2
+          }
+        ],
+        "candidates": [
+          {
+            "call": 3,
+            "completion": 6,
+            "process": 2,
+            "operation": "cas",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              },
+              {
+                "type": "int",
+                "value": 3
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          },
+          {
+            "call": 4,
+            "completion": 7,
+            "process": 0,
+            "operation": "cas",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              },
+              {
+                "type": "int",
+                "value": 4
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-get-after-two-appends-misses-them",
+      "spec": "key-value",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "append",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "b"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "append",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "c"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "string",
+            "value": "a"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 7,
+        "partition": [
+          {
+            "type": "string",
+            "value": "k"
+          }
+        ],
+        "calls": 4,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "put",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              },
+              {
+                "type": "string",
+                "value": "a"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 4,
+            "process": 1,
+            "operation": "append",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              },
+              {
+                "type": "string",
+                "value": "b"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 3,
+            "completion": 5,
+            "process": 2,
+            "operation": "append",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              },
+              {
+                "type": "string",
+                "value": "c"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "k"
+                },
+                {
+                  "type": "string",
+                  "value": "abc"
+                }
+              ]
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 6,
+            "completion": 7,
+            "process": 0,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "k"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": "a"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-dequeue-outputs-a-value-nobody-enqueued",
+      "spec": "queue",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "enqueue",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "enqueue",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "dequeue",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "q"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 3
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 6,
+        "partition": [
+          {
+            "type": "string",
+            "value": "q"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 3,
+            "process": 0,
+            "operation": "enqueue",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 1,
+            "completion": 2,
+            "process": 1,
+            "operation": "enqueue",
+            "args": [
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              2
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 1,
+            "operation": "dequeue",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 3
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/the-memo-merges-two-orders-of-adds",
+      "spec": "set",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "add",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "add",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "contains",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "bool",
+            "value": true
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 5,
+        "partition": [
+          {
+            "type": "string",
+            "value": "s"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 2,
+            "process": 0,
+            "operation": "add",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 1,
+            "completion": 3,
+            "process": 1,
+            "operation": "add",
+            "args": [
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              2
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 0,
+            "operation": "contains",
+            "args": [
+              {
+                "type": "int",
+                "value": 3
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": true
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-read-outputs-a-value-no-lossy-write-left",
+      "spec": "lossy-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 3
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 9,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 2,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 1,
+            "completion": 3,
+            "process": 1,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 2
+          },
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 0,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 3
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-failed-write-takes-no-effect",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "fail": 0,
+          "error": "connection refused"
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 1,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 1,
+        "concurrency": 1,
+        "linearized": [],
+        "states": [
+          {
+            "type": "null"
+          }
+        ],
+        "candidates": [
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-write-whose-outcome-is-unknown-takes-effect-later",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "unknown": 1,
+          "error": "timed out"
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 6,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-write-whose-outcome-is-unknown-may-never-take-effect",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 1,
+          "error": "timed out"
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 4,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-pending-write-takes-effect-when-a-later-read-needs-it",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 2,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-compare-and-set-that-refuses-a-matching-value-is-violated",
+      "spec": "cas-register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "cas",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            },
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "bool",
+            "value": false
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 2,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 2,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "cas",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              },
+              {
+                "type": "int",
+                "value": 2
+              }
+            ],
+            "output": {
+              "type": "bool",
+              "value": false
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/partitions-are-searched-in-the-order-of-their-first-invocation",
+      "spec": "key-value",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "1"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "string",
+            "value": "5"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "string",
+            "value": "1"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 2,
+        "steps": 3,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 1,
+        "concurrency": 1,
+        "linearized": [],
+        "states": [
+          {
+            "type": "map",
+            "entries": []
+          }
+        ],
+        "candidates": [
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "x"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": "5"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-call-on-two-keys-joins-their-partitions",
+      "spec": "key-value",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "string",
+            "value": ""
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "2"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "string",
+            "value": "3"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 3,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          },
+          {
+            "type": "string",
+            "value": "y"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "x"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "put",
+            "args": [
+              {
+                "type": "string",
+                "value": "y"
+              },
+              {
+                "type": "string",
+                "value": "2"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "string",
+                  "value": "2"
+                }
+              ]
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 2,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "y"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": "3"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-call-that-declares-no-key-touches-every-key",
+      "spec": "key-value",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "1"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "2"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ],
+          "keys": []
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "string",
+            "value": "3"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 3,
+        "partition": [],
+        "calls": 3,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "put",
+            "args": [
+              {
+                "type": "string",
+                "value": "x"
+              },
+              {
+                "type": "string",
+                "value": "1"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "process": 1,
+            "operation": "put",
+            "args": [
+              {
+                "type": "string",
+                "value": "y"
+              },
+              {
+                "type": "string",
+                "value": "2"
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "string",
+                  "value": "1"
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "string",
+                  "value": "2"
+                }
+              ]
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 2,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "y"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": "3"
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-search-stops-before-a-step-past-its-budget",
+      "spec": "register",
+      "budget": 1,
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "undecided",
+        "partitions": 2,
+        "steps": 1,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 2,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [],
+        "limit": "steps"
+      }
+    },
+    {
+      "id": "linearizable/a-memo-limit-counts-a-bit-per-call-for-each-configuration",
+      "spec": "register",
+      "memo-limit": 3,
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "undecided",
+        "partitions": 2,
+        "steps": 2,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 2,
+        "concurrency": 1,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [],
+        "limit": "memo"
+      }
+    },
+    {
+      "id": "linearizable/a-budget-stops-a-search-between-two-states",
+      "spec": "lossy-register",
+      "budget": 2,
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "undecided",
+        "partitions": 1,
+        "steps": 2,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 2,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 2,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "output": {
+              "type": "null"
+            }
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "candidates": [],
+        "limit": "steps"
+      }
+    },
+    {
+      "id": "linearizable/four-workers-report-what-one-worker-reports",
+      "spec": "key-value",
+      "budget": 2,
+      "workers": 4,
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "a"
+            },
+            {
+              "type": "string",
+              "value": "1"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "a"
+            },
+            {
+              "type": "string",
+              "value": "2"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "a"
+            },
+            {
+              "type": "string",
+              "value": "3"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "b"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "b"
+            }
+          ]
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "string",
+            "value": "9"
+          }
+        },
+        {
+          "invoke": 4,
+          "client": 1,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "c"
+            },
+            {
+              "type": "string",
+              "value": "1"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "c"
+            }
+          ]
+        },
+        {
+          "ok": 4,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 5,
+          "client": 1,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "c"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "c"
+            }
+          ]
+        },
+        {
+          "ok": 5,
+          "output": {
+            "type": "string",
+            "value": "1"
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 3,
+        "steps": 3,
+        "partition": [
+          {
+            "type": "string",
+            "value": "b"
+          }
+        ],
+        "calls": 1,
+        "concurrency": 1,
+        "linearized": [],
+        "states": [
+          {
+            "type": "map",
+            "entries": []
+          }
+        ],
+        "candidates": [
+          {
+            "call": 6,
+            "completion": 7,
+            "process": 0,
+            "operation": "get",
+            "args": [
+              {
+                "type": "string",
+                "value": "b"
+              }
+            ],
+            "output": {
+              "type": "string",
+              "value": "9"
+            }
+          }
+        ],
+        "limit": null
+      }
+    }
+  ]
+}

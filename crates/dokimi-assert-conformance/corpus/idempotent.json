@@ -1,0 +1,29 @@
+{
+  "assertion": "idempotent",
+  "cases": [
+    {
+      "id": "idempotent/a-subject-that-sets-a-value-passes",
+      "subject": {
+        "kind": "sets-value"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "idempotent/a-subject-that-accumulates-fails",
+      "subject": {
+        "kind": "accumulates"
+      },
+      "expect": "fail",
+      "detail": {
+        "first": {
+          "type": "int",
+          "value": 1
+        },
+        "second": {
+          "type": "int",
+          "value": 2
+        }
+      }
+    }
+  ]
+}

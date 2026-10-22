@@ -1,0 +1,366 @@
+{
+  "kind": "golden-match-tree",
+  "cases": [
+    {
+      "id": "golden-match-tree/an-equal-golden-tree-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": false
+        }
+      ],
+      "golden": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "golden-match-tree/a-golden-tree-whose-modes-differ-in-no-execute-bit-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "gen.sh",
+            "text": "#!/bin/sh\n",
+            "executable": true
+          },
+          {
+            "path": "types.go",
+            "text": "package api\n",
+            "mode": 384
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": false
+        }
+      ],
+      "golden": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "gen.sh",
+            "text": "#!/bin/sh\n",
+            "mode": 448
+          },
+          {
+            "path": "types.go",
+            "text": "package api\n",
+            "mode": 420
+          }
+        ]
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "golden-match-tree/a-golden-tree-that-differs-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n\nfunc New() {}\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": false
+        }
+      ],
+      "golden": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "old.go",
+            "text": "package api\n"
+          }
+        ]
+      },
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "api.go",
+              "text": "package api\n"
+            },
+            {
+              "path": "old.go",
+              "text": "package api\n"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "api.go",
+              "text": "package api\n\nfunc New() {}\n"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 2
+        }
+      }
+    },
+    {
+      "id": "golden-match-tree/a-missing-golden-tree-fails-with-want-null",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": false
+        }
+      ],
+      "golden": null,
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "null"
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "api.go",
+              "text": "package api\n"
+            },
+            {
+              "path": "v1",
+              "directory": true
+            },
+            {
+              "path": "v1/types.go",
+              "text": "package v1\n"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 3
+        }
+      }
+    },
+    {
+      "id": "golden-match-tree/update-writes-a-missing-golden-tree",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": true
+        }
+      ],
+      "golden": null,
+      "expect": "pass",
+      "after": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1",
+            "directory": true
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "golden-match-tree/update-rewrites-a-golden-tree-without-its-extra-entries",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n\nfunc New() {}\n"
+          },
+          {
+            "path": "new.go",
+            "text": "package api\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": true
+        }
+      ],
+      "golden": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "latest",
+            "link": "api.go"
+          },
+          {
+            "path": "old/stale.go",
+            "text": "package old\n"
+          }
+        ]
+      },
+      "expect": "pass",
+      "after": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n\nfunc New() {}\n"
+          },
+          {
+            "path": "new.go",
+            "text": "package api\n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "golden-match-tree/update-leaves-an-equal-golden-tree-as-it-is",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "api"
+        },
+        {
+          "type": "bool",
+          "value": true
+        }
+      ],
+      "golden": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      },
+      "expect": "pass",
+      "after": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "api.go",
+            "text": "package api\n"
+          },
+          {
+            "path": "v1",
+            "directory": true
+          },
+          {
+            "path": "v1/types.go",
+            "text": "package v1\n"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "assertion": "round-trip",
+  "cases": [
+    {
+      "id": "round-trip/a-decimal-rendering-passes",
+      "subject": {
+        "kind": "renders-decimal"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "round-trip/a-rendering-that-drops-the-sign-fails",
+      "subject": {
+        "kind": "drops-the-sign"
+      },
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": -42
+        },
+        "got": {
+          "type": "int",
+          "value": 42
+        }
+      }
+    }
+  ]
+}

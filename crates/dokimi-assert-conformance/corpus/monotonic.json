@@ -1,0 +1,33 @@
+{
+  "assertion": "monotonic",
+  "cases": [
+    {
+      "id": "monotonic/a-rising-count-passes",
+      "subject": {
+        "kind": "accumulates"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "monotonic/a-count-that-wraps-around-fails",
+      "subject": {
+        "kind": "wraps-around"
+      },
+      "expect": "fail",
+      "detail": {
+        "index": {
+          "type": "int",
+          "value": 4
+        },
+        "first": {
+          "type": "int",
+          "value": 3
+        },
+        "second": {
+          "type": "int",
+          "value": 0
+        }
+      }
+    }
+  ]
+}

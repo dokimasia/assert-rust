@@ -1,0 +1,1664 @@
+{
+  "kind": "tree-equal",
+  "cases": [
+    {
+      "id": "tree-equal/equal-trees-pass",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "bin/run",
+            "text": "#!/bin/sh\necho ok\n",
+            "executable": true
+          },
+          {
+            "path": "cache",
+            "directory": true
+          },
+          {
+            "path": "current",
+            "link": "bin/run"
+          },
+          {
+            "path": "go.mod",
+            "text": "module example.com/a\n"
+          },
+          {
+            "path": "keys",
+            "directory": true,
+            "mode": 448
+          },
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 384
+          },
+          {
+            "path": "logo.png",
+            "bytes": "89504e470d0a1a0a"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "bin/run",
+              "text": "#!/bin/sh\necho ok\n",
+              "executable": true
+            },
+            {
+              "path": "cache",
+              "directory": true
+            },
+            {
+              "path": "current",
+              "link": "bin/run"
+            },
+            {
+              "path": "go.mod",
+              "text": "module example.com/a\n"
+            },
+            {
+              "path": "keys",
+              "directory": true,
+              "mode": 448
+            },
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 384
+            },
+            {
+              "path": "logo.png",
+              "bytes": "89504e470d0a1a0a"
+            }
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "tree-equal/a-missing-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            },
+            {
+              "path": "b.txt",
+              "text": "b\n"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "b.txt",
+              "text": "b\n"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": []
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/an-extra-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "b.txt",
+            "text": "b\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": []
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "b.txt",
+              "text": "b\n"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/another-content-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "logo.png",
+            "bytes": "89504e47"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "b\n"
+            },
+            {
+              "path": "logo.png",
+              "bytes": "89504e48"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "b\n"
+            },
+            {
+              "path": "logo.png",
+              "bytes": "89504e48"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            },
+            {
+              "path": "logo.png",
+              "bytes": "89504e47"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 2
+        }
+      }
+    },
+    {
+      "id": "tree-equal/another-execute-bit-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "run.sh",
+            "text": "#!/bin/sh\n",
+            "executable": true
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "run.sh",
+              "text": "#!/bin/sh\n"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "run.sh",
+              "text": "#!/bin/sh\n"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "run.sh",
+              "text": "#!/bin/sh\n",
+              "executable": true
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/another-link-target-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "b.txt",
+            "text": "b\n"
+          },
+          {
+            "path": "current",
+            "link": "a.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            },
+            {
+              "path": "b.txt",
+              "text": "b\n"
+            },
+            {
+              "path": "current",
+              "link": "b.txt"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "current",
+              "link": "b.txt"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "current",
+              "link": "a.txt"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/a-file-in-place-of-a-directory-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "cache",
+            "text": ""
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "cache",
+              "directory": true
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "cache",
+              "directory": true
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "cache",
+              "text": ""
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/an-extra-empty-directory-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          },
+          {
+            "path": "cache",
+            "directory": true
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "a.txt",
+              "text": "a\n"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": []
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "cache",
+              "directory": true
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/another-stated-mode-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 420
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 384
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 384
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n",
+              "mode": 420
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "tree-equal/a-stated-directory-that-an-entry-implies-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "src/a.go",
+            "text": "package a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "src",
+              "directory": true
+            },
+            {
+              "path": "src/a.go",
+              "text": "package a\n"
+            }
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "tree-equal/a-read-mode-that-the-wanted-tree-does-not-state-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "keys",
+            "directory": true,
+            "mode": 448
+          },
+          {
+            "path": "keys/id",
+            "text": "secret\n",
+            "mode": 384
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "keys/id",
+              "text": "secret\n"
+            }
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "tree-equal/a-workspace-sets-0644-and-0755-where-a-tree-states-no-mode",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "bin/run",
+            "text": "#!/bin/sh\n",
+            "executable": true
+          },
+          {
+            "path": "notes.txt",
+            "text": "notes\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "bin",
+              "directory": true,
+              "mode": 493
+            },
+            {
+              "path": "bin/run",
+              "text": "#!/bin/sh\n",
+              "mode": 493
+            },
+            {
+              "path": "notes.txt",
+              "text": "notes\n",
+              "mode": 420
+            }
+          ]
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "tree-equal/sixty-five-files-of-other-content-list-the-first-64",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "f00.txt",
+            "text": "a"
+          },
+          {
+            "path": "f01.txt",
+            "text": "a"
+          },
+          {
+            "path": "f02.txt",
+            "text": "a"
+          },
+          {
+            "path": "f03.txt",
+            "text": "a"
+          },
+          {
+            "path": "f04.txt",
+            "text": "a"
+          },
+          {
+            "path": "f05.txt",
+            "text": "a"
+          },
+          {
+            "path": "f06.txt",
+            "text": "a"
+          },
+          {
+            "path": "f07.txt",
+            "text": "a"
+          },
+          {
+            "path": "f08.txt",
+            "text": "a"
+          },
+          {
+            "path": "f09.txt",
+            "text": "a"
+          },
+          {
+            "path": "f10.txt",
+            "text": "a"
+          },
+          {
+            "path": "f11.txt",
+            "text": "a"
+          },
+          {
+            "path": "f12.txt",
+            "text": "a"
+          },
+          {
+            "path": "f13.txt",
+            "text": "a"
+          },
+          {
+            "path": "f14.txt",
+            "text": "a"
+          },
+          {
+            "path": "f15.txt",
+            "text": "a"
+          },
+          {
+            "path": "f16.txt",
+            "text": "a"
+          },
+          {
+            "path": "f17.txt",
+            "text": "a"
+          },
+          {
+            "path": "f18.txt",
+            "text": "a"
+          },
+          {
+            "path": "f19.txt",
+            "text": "a"
+          },
+          {
+            "path": "f20.txt",
+            "text": "a"
+          },
+          {
+            "path": "f21.txt",
+            "text": "a"
+          },
+          {
+            "path": "f22.txt",
+            "text": "a"
+          },
+          {
+            "path": "f23.txt",
+            "text": "a"
+          },
+          {
+            "path": "f24.txt",
+            "text": "a"
+          },
+          {
+            "path": "f25.txt",
+            "text": "a"
+          },
+          {
+            "path": "f26.txt",
+            "text": "a"
+          },
+          {
+            "path": "f27.txt",
+            "text": "a"
+          },
+          {
+            "path": "f28.txt",
+            "text": "a"
+          },
+          {
+            "path": "f29.txt",
+            "text": "a"
+          },
+          {
+            "path": "f30.txt",
+            "text": "a"
+          },
+          {
+            "path": "f31.txt",
+            "text": "a"
+          },
+          {
+            "path": "f32.txt",
+            "text": "a"
+          },
+          {
+            "path": "f33.txt",
+            "text": "a"
+          },
+          {
+            "path": "f34.txt",
+            "text": "a"
+          },
+          {
+            "path": "f35.txt",
+            "text": "a"
+          },
+          {
+            "path": "f36.txt",
+            "text": "a"
+          },
+          {
+            "path": "f37.txt",
+            "text": "a"
+          },
+          {
+            "path": "f38.txt",
+            "text": "a"
+          },
+          {
+            "path": "f39.txt",
+            "text": "a"
+          },
+          {
+            "path": "f40.txt",
+            "text": "a"
+          },
+          {
+            "path": "f41.txt",
+            "text": "a"
+          },
+          {
+            "path": "f42.txt",
+            "text": "a"
+          },
+          {
+            "path": "f43.txt",
+            "text": "a"
+          },
+          {
+            "path": "f44.txt",
+            "text": "a"
+          },
+          {
+            "path": "f45.txt",
+            "text": "a"
+          },
+          {
+            "path": "f46.txt",
+            "text": "a"
+          },
+          {
+            "path": "f47.txt",
+            "text": "a"
+          },
+          {
+            "path": "f48.txt",
+            "text": "a"
+          },
+          {
+            "path": "f49.txt",
+            "text": "a"
+          },
+          {
+            "path": "f50.txt",
+            "text": "a"
+          },
+          {
+            "path": "f51.txt",
+            "text": "a"
+          },
+          {
+            "path": "f52.txt",
+            "text": "a"
+          },
+          {
+            "path": "f53.txt",
+            "text": "a"
+          },
+          {
+            "path": "f54.txt",
+            "text": "a"
+          },
+          {
+            "path": "f55.txt",
+            "text": "a"
+          },
+          {
+            "path": "f56.txt",
+            "text": "a"
+          },
+          {
+            "path": "f57.txt",
+            "text": "a"
+          },
+          {
+            "path": "f58.txt",
+            "text": "a"
+          },
+          {
+            "path": "f59.txt",
+            "text": "a"
+          },
+          {
+            "path": "f60.txt",
+            "text": "a"
+          },
+          {
+            "path": "f61.txt",
+            "text": "a"
+          },
+          {
+            "path": "f62.txt",
+            "text": "a"
+          },
+          {
+            "path": "f63.txt",
+            "text": "a"
+          },
+          {
+            "path": "f64.txt",
+            "text": "a"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "f00.txt",
+              "text": "b"
+            },
+            {
+              "path": "f01.txt",
+              "text": "b"
+            },
+            {
+              "path": "f02.txt",
+              "text": "b"
+            },
+            {
+              "path": "f03.txt",
+              "text": "b"
+            },
+            {
+              "path": "f04.txt",
+              "text": "b"
+            },
+            {
+              "path": "f05.txt",
+              "text": "b"
+            },
+            {
+              "path": "f06.txt",
+              "text": "b"
+            },
+            {
+              "path": "f07.txt",
+              "text": "b"
+            },
+            {
+              "path": "f08.txt",
+              "text": "b"
+            },
+            {
+              "path": "f09.txt",
+              "text": "b"
+            },
+            {
+              "path": "f10.txt",
+              "text": "b"
+            },
+            {
+              "path": "f11.txt",
+              "text": "b"
+            },
+            {
+              "path": "f12.txt",
+              "text": "b"
+            },
+            {
+              "path": "f13.txt",
+              "text": "b"
+            },
+            {
+              "path": "f14.txt",
+              "text": "b"
+            },
+            {
+              "path": "f15.txt",
+              "text": "b"
+            },
+            {
+              "path": "f16.txt",
+              "text": "b"
+            },
+            {
+              "path": "f17.txt",
+              "text": "b"
+            },
+            {
+              "path": "f18.txt",
+              "text": "b"
+            },
+            {
+              "path": "f19.txt",
+              "text": "b"
+            },
+            {
+              "path": "f20.txt",
+              "text": "b"
+            },
+            {
+              "path": "f21.txt",
+              "text": "b"
+            },
+            {
+              "path": "f22.txt",
+              "text": "b"
+            },
+            {
+              "path": "f23.txt",
+              "text": "b"
+            },
+            {
+              "path": "f24.txt",
+              "text": "b"
+            },
+            {
+              "path": "f25.txt",
+              "text": "b"
+            },
+            {
+              "path": "f26.txt",
+              "text": "b"
+            },
+            {
+              "path": "f27.txt",
+              "text": "b"
+            },
+            {
+              "path": "f28.txt",
+              "text": "b"
+            },
+            {
+              "path": "f29.txt",
+              "text": "b"
+            },
+            {
+              "path": "f30.txt",
+              "text": "b"
+            },
+            {
+              "path": "f31.txt",
+              "text": "b"
+            },
+            {
+              "path": "f32.txt",
+              "text": "b"
+            },
+            {
+              "path": "f33.txt",
+              "text": "b"
+            },
+            {
+              "path": "f34.txt",
+              "text": "b"
+            },
+            {
+              "path": "f35.txt",
+              "text": "b"
+            },
+            {
+              "path": "f36.txt",
+              "text": "b"
+            },
+            {
+              "path": "f37.txt",
+              "text": "b"
+            },
+            {
+              "path": "f38.txt",
+              "text": "b"
+            },
+            {
+              "path": "f39.txt",
+              "text": "b"
+            },
+            {
+              "path": "f40.txt",
+              "text": "b"
+            },
+            {
+              "path": "f41.txt",
+              "text": "b"
+            },
+            {
+              "path": "f42.txt",
+              "text": "b"
+            },
+            {
+              "path": "f43.txt",
+              "text": "b"
+            },
+            {
+              "path": "f44.txt",
+              "text": "b"
+            },
+            {
+              "path": "f45.txt",
+              "text": "b"
+            },
+            {
+              "path": "f46.txt",
+              "text": "b"
+            },
+            {
+              "path": "f47.txt",
+              "text": "b"
+            },
+            {
+              "path": "f48.txt",
+              "text": "b"
+            },
+            {
+              "path": "f49.txt",
+              "text": "b"
+            },
+            {
+              "path": "f50.txt",
+              "text": "b"
+            },
+            {
+              "path": "f51.txt",
+              "text": "b"
+            },
+            {
+              "path": "f52.txt",
+              "text": "b"
+            },
+            {
+              "path": "f53.txt",
+              "text": "b"
+            },
+            {
+              "path": "f54.txt",
+              "text": "b"
+            },
+            {
+              "path": "f55.txt",
+              "text": "b"
+            },
+            {
+              "path": "f56.txt",
+              "text": "b"
+            },
+            {
+              "path": "f57.txt",
+              "text": "b"
+            },
+            {
+              "path": "f58.txt",
+              "text": "b"
+            },
+            {
+              "path": "f59.txt",
+              "text": "b"
+            },
+            {
+              "path": "f60.txt",
+              "text": "b"
+            },
+            {
+              "path": "f61.txt",
+              "text": "b"
+            },
+            {
+              "path": "f62.txt",
+              "text": "b"
+            },
+            {
+              "path": "f63.txt",
+              "text": "b"
+            },
+            {
+              "path": "f64.txt",
+              "text": "b"
+            }
+          ]
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "f00.txt",
+              "text": "b"
+            },
+            {
+              "path": "f01.txt",
+              "text": "b"
+            },
+            {
+              "path": "f02.txt",
+              "text": "b"
+            },
+            {
+              "path": "f03.txt",
+              "text": "b"
+            },
+            {
+              "path": "f04.txt",
+              "text": "b"
+            },
+            {
+              "path": "f05.txt",
+              "text": "b"
+            },
+            {
+              "path": "f06.txt",
+              "text": "b"
+            },
+            {
+              "path": "f07.txt",
+              "text": "b"
+            },
+            {
+              "path": "f08.txt",
+              "text": "b"
+            },
+            {
+              "path": "f09.txt",
+              "text": "b"
+            },
+            {
+              "path": "f10.txt",
+              "text": "b"
+            },
+            {
+              "path": "f11.txt",
+              "text": "b"
+            },
+            {
+              "path": "f12.txt",
+              "text": "b"
+            },
+            {
+              "path": "f13.txt",
+              "text": "b"
+            },
+            {
+              "path": "f14.txt",
+              "text": "b"
+            },
+            {
+              "path": "f15.txt",
+              "text": "b"
+            },
+            {
+              "path": "f16.txt",
+              "text": "b"
+            },
+            {
+              "path": "f17.txt",
+              "text": "b"
+            },
+            {
+              "path": "f18.txt",
+              "text": "b"
+            },
+            {
+              "path": "f19.txt",
+              "text": "b"
+            },
+            {
+              "path": "f20.txt",
+              "text": "b"
+            },
+            {
+              "path": "f21.txt",
+              "text": "b"
+            },
+            {
+              "path": "f22.txt",
+              "text": "b"
+            },
+            {
+              "path": "f23.txt",
+              "text": "b"
+            },
+            {
+              "path": "f24.txt",
+              "text": "b"
+            },
+            {
+              "path": "f25.txt",
+              "text": "b"
+            },
+            {
+              "path": "f26.txt",
+              "text": "b"
+            },
+            {
+              "path": "f27.txt",
+              "text": "b"
+            },
+            {
+              "path": "f28.txt",
+              "text": "b"
+            },
+            {
+              "path": "f29.txt",
+              "text": "b"
+            },
+            {
+              "path": "f30.txt",
+              "text": "b"
+            },
+            {
+              "path": "f31.txt",
+              "text": "b"
+            },
+            {
+              "path": "f32.txt",
+              "text": "b"
+            },
+            {
+              "path": "f33.txt",
+              "text": "b"
+            },
+            {
+              "path": "f34.txt",
+              "text": "b"
+            },
+            {
+              "path": "f35.txt",
+              "text": "b"
+            },
+            {
+              "path": "f36.txt",
+              "text": "b"
+            },
+            {
+              "path": "f37.txt",
+              "text": "b"
+            },
+            {
+              "path": "f38.txt",
+              "text": "b"
+            },
+            {
+              "path": "f39.txt",
+              "text": "b"
+            },
+            {
+              "path": "f40.txt",
+              "text": "b"
+            },
+            {
+              "path": "f41.txt",
+              "text": "b"
+            },
+            {
+              "path": "f42.txt",
+              "text": "b"
+            },
+            {
+              "path": "f43.txt",
+              "text": "b"
+            },
+            {
+              "path": "f44.txt",
+              "text": "b"
+            },
+            {
+              "path": "f45.txt",
+              "text": "b"
+            },
+            {
+              "path": "f46.txt",
+              "text": "b"
+            },
+            {
+              "path": "f47.txt",
+              "text": "b"
+            },
+            {
+              "path": "f48.txt",
+              "text": "b"
+            },
+            {
+              "path": "f49.txt",
+              "text": "b"
+            },
+            {
+              "path": "f50.txt",
+              "text": "b"
+            },
+            {
+              "path": "f51.txt",
+              "text": "b"
+            },
+            {
+              "path": "f52.txt",
+              "text": "b"
+            },
+            {
+              "path": "f53.txt",
+              "text": "b"
+            },
+            {
+              "path": "f54.txt",
+              "text": "b"
+            },
+            {
+              "path": "f55.txt",
+              "text": "b"
+            },
+            {
+              "path": "f56.txt",
+              "text": "b"
+            },
+            {
+              "path": "f57.txt",
+              "text": "b"
+            },
+            {
+              "path": "f58.txt",
+              "text": "b"
+            },
+            {
+              "path": "f59.txt",
+              "text": "b"
+            },
+            {
+              "path": "f60.txt",
+              "text": "b"
+            },
+            {
+              "path": "f61.txt",
+              "text": "b"
+            },
+            {
+              "path": "f62.txt",
+              "text": "b"
+            },
+            {
+              "path": "f63.txt",
+              "text": "b"
+            }
+          ]
+        },
+        "got": {
+          "type": "tree",
+          "entries": [
+            {
+              "path": "f00.txt",
+              "text": "a"
+            },
+            {
+              "path": "f01.txt",
+              "text": "a"
+            },
+            {
+              "path": "f02.txt",
+              "text": "a"
+            },
+            {
+              "path": "f03.txt",
+              "text": "a"
+            },
+            {
+              "path": "f04.txt",
+              "text": "a"
+            },
+            {
+              "path": "f05.txt",
+              "text": "a"
+            },
+            {
+              "path": "f06.txt",
+              "text": "a"
+            },
+            {
+              "path": "f07.txt",
+              "text": "a"
+            },
+            {
+              "path": "f08.txt",
+              "text": "a"
+            },
+            {
+              "path": "f09.txt",
+              "text": "a"
+            },
+            {
+              "path": "f10.txt",
+              "text": "a"
+            },
+            {
+              "path": "f11.txt",
+              "text": "a"
+            },
+            {
+              "path": "f12.txt",
+              "text": "a"
+            },
+            {
+              "path": "f13.txt",
+              "text": "a"
+            },
+            {
+              "path": "f14.txt",
+              "text": "a"
+            },
+            {
+              "path": "f15.txt",
+              "text": "a"
+            },
+            {
+              "path": "f16.txt",
+              "text": "a"
+            },
+            {
+              "path": "f17.txt",
+              "text": "a"
+            },
+            {
+              "path": "f18.txt",
+              "text": "a"
+            },
+            {
+              "path": "f19.txt",
+              "text": "a"
+            },
+            {
+              "path": "f20.txt",
+              "text": "a"
+            },
+            {
+              "path": "f21.txt",
+              "text": "a"
+            },
+            {
+              "path": "f22.txt",
+              "text": "a"
+            },
+            {
+              "path": "f23.txt",
+              "text": "a"
+            },
+            {
+              "path": "f24.txt",
+              "text": "a"
+            },
+            {
+              "path": "f25.txt",
+              "text": "a"
+            },
+            {
+              "path": "f26.txt",
+              "text": "a"
+            },
+            {
+              "path": "f27.txt",
+              "text": "a"
+            },
+            {
+              "path": "f28.txt",
+              "text": "a"
+            },
+            {
+              "path": "f29.txt",
+              "text": "a"
+            },
+            {
+              "path": "f30.txt",
+              "text": "a"
+            },
+            {
+              "path": "f31.txt",
+              "text": "a"
+            },
+            {
+              "path": "f32.txt",
+              "text": "a"
+            },
+            {
+              "path": "f33.txt",
+              "text": "a"
+            },
+            {
+              "path": "f34.txt",
+              "text": "a"
+            },
+            {
+              "path": "f35.txt",
+              "text": "a"
+            },
+            {
+              "path": "f36.txt",
+              "text": "a"
+            },
+            {
+              "path": "f37.txt",
+              "text": "a"
+            },
+            {
+              "path": "f38.txt",
+              "text": "a"
+            },
+            {
+              "path": "f39.txt",
+              "text": "a"
+            },
+            {
+              "path": "f40.txt",
+              "text": "a"
+            },
+            {
+              "path": "f41.txt",
+              "text": "a"
+            },
+            {
+              "path": "f42.txt",
+              "text": "a"
+            },
+            {
+              "path": "f43.txt",
+              "text": "a"
+            },
+            {
+              "path": "f44.txt",
+              "text": "a"
+            },
+            {
+              "path": "f45.txt",
+              "text": "a"
+            },
+            {
+              "path": "f46.txt",
+              "text": "a"
+            },
+            {
+              "path": "f47.txt",
+              "text": "a"
+            },
+            {
+              "path": "f48.txt",
+              "text": "a"
+            },
+            {
+              "path": "f49.txt",
+              "text": "a"
+            },
+            {
+              "path": "f50.txt",
+              "text": "a"
+            },
+            {
+              "path": "f51.txt",
+              "text": "a"
+            },
+            {
+              "path": "f52.txt",
+              "text": "a"
+            },
+            {
+              "path": "f53.txt",
+              "text": "a"
+            },
+            {
+              "path": "f54.txt",
+              "text": "a"
+            },
+            {
+              "path": "f55.txt",
+              "text": "a"
+            },
+            {
+              "path": "f56.txt",
+              "text": "a"
+            },
+            {
+              "path": "f57.txt",
+              "text": "a"
+            },
+            {
+              "path": "f58.txt",
+              "text": "a"
+            },
+            {
+              "path": "f59.txt",
+              "text": "a"
+            },
+            {
+              "path": "f60.txt",
+              "text": "a"
+            },
+            {
+              "path": "f61.txt",
+              "text": "a"
+            },
+            {
+              "path": "f62.txt",
+              "text": "a"
+            },
+            {
+              "path": "f63.txt",
+              "text": "a"
+            }
+          ]
+        },
+        "differences": {
+          "type": "int",
+          "value": 65
+        }
+      }
+    }
+  ]
+}

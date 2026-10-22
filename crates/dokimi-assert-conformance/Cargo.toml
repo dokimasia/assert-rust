@@ -1,0 +1,34 @@
+[package]
+name = "dokimi-assert-conformance"
+description = "The definition's corpus and vectors, run against dokimi-assert and dokimi-assert-tokio"
+publish = false
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+# The specs build as one binary, tests/main.rs.
+autotests = false
+
+[lints]
+workspace = true
+
+[dependencies]
+# The fixture types of the definition derive their shapes, and take their
+# dates, times, UUIDs and decimals from jiff, uuid and rust_decimal.
+dokimi-assert = { workspace = true, features = ["derive", "jiff", "rust_decimal", "uuid"] }
+dokimi-assert-tokio.workspace = true
+jiff.workspace = true
+rust_decimal.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+# The subjects of the tokio crate run on a runtime whose clock starts paused,
+# which the feature test-util provides.
+tokio = { workspace = true, features = ["rt", "time", "test-util"] }
+
+# The specs of the drivers. Each source file under src/ has its spec at the
+# same path under tests/.
+[[test]]
+name = "spec"
+path = "tests/main.rs"

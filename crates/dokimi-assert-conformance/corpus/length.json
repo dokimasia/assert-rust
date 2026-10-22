@@ -1,0 +1,200 @@
+{
+  "assertion": "length",
+  "cases": [
+    {
+      "id": "length/list-answers",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "type": "int",
+          "value": 3
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/map-answers",
+      "args": [
+        {
+          "type": "map",
+          "key": "string",
+          "of": "int",
+          "value": {
+            "a": 1
+          }
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/string-answers",
+      "args": [
+        {
+          "type": "string",
+          "value": "abcd"
+        },
+        {
+          "type": "int",
+          "value": 4
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/empty-list-is-zero",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        },
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/wrong-length-reports-both",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1
+          ]
+        },
+        {
+          "type": "int",
+          "value": 3
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 3
+        },
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "length/text-counts-scalar-values",
+      "args": [
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/a-character-outside-the-bmp-is-one-scalar-value",
+      "args": [
+        {
+          "type": "string",
+          "value": "😀"
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/a-combining-mark-is-a-scalar-value-of-its-own",
+      "args": [
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/text-reports-its-scalar-values",
+      "args": [
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 2
+        },
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "length/a-byte-string-counts-bytes",
+      "args": [
+        {
+          "type": "bytes",
+          "value": "c3a9"
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "length/null-has-no-length",
+      "args": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "int",
+          "value": 0
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "want": {
+          "type": "int",
+          "value": 0
+        },
+        "got": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1883 @@
+{
+    "assertions": {
+        "accumulates": {
+            "arity": 4,
+            "detail_fields": [
+                "first",
+                "second"
+            ],
+            "summary": "Each call of a subject with one input changes an observed integer by the same amount, and the first call changes it. first and second are the changes of the first and the second call.\n"
+        },
+        "after-close": {
+            "arity": 4,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "After a subject closes, a call fails with a sentinel, through the chain of wrapped causes. want is the sentinel, and got what the call returned.\n"
+        },
+        "associative": {
+            "arity": 5,
+            "detail_fields": [
+                "first",
+                "second"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "Combining the combination of a and b with c gives what combining a with the combination of b and c gives. first is the former, and second the latter.\n"
+        },
+        "bench-max-allocs": {
+            "arity": 1,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "package": "bench",
+            "summary": "The allocations per iteration stay within a ceiling. The count is the average over the measured iterations, rounded to the nearest whole number, with a half rounded up.\n"
+        },
+        "bench-max-bytes": {
+            "arity": 1,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "package": "bench",
+            "summary": "The bytes allocated per iteration stay within a ceiling.\n"
+        },
+        "bench-max-latency": {
+            "arity": 1,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "package": "bench",
+            "summary": "The p99 latency per iteration stays within a ceiling.\n"
+        },
+        "bench-max-mean": {
+            "arity": 1,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "package": "bench",
+            "summary": "The mean latency per iteration stays within a ceiling.\n"
+        },
+        "close-to": {
+            "arity": 4,
+            "detail_fields": [
+                "got",
+                "want",
+                "tolerance"
+            ],
+            "summary": "A number is within a tolerance of another, by absolute difference. NaN is outside every tolerance, and so are two equal infinities, whose difference is NaN.\n"
+        },
+        "commutative": {
+            "arity": 4,
+            "detail_fields": [
+                "first",
+                "second"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "Combining a and b gives what combining b and a gives. first is the combination of a and b, and second the combination of b and a.\n"
+        },
+        "completes-within": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "A subject finishes before the stated duration. A subject that has not returned when the duration has passed fails then, and the assertion does not wait for it.\n"
+        },
+        "contains": {
+            "arity": 3,
+            "detail_fields": [
+                "haystack",
+                "needle"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "Text contains a substring, a sequence an element, or a map a key. An element or a key compares as equal compares, so an int does not match a float.\n"
+        },
+        "contains-in-order": {
+            "arity": 3,
+            "detail_fields": [
+                "haystack",
+                "needle",
+                "index"
+            ],
+            "summary": "Text holds every needle, each after the previous one's match ends.\n"
+        },
+        "deterministic": {
+            "arity": 3,
+            "detail_fields": [
+                "first",
+                "second"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "32 calls of a subject with one input return equal results. first is the first result, and second the first result that differs.\n"
+        },
+        "empty": {
+            "arity": 2,
+            "detail_fields": [
+                "got",
+                "length"
+            ],
+            "summary": "The container has no items. A null value is no container, and fails. got is the value, and length its number of items, or null for a value that has no length.\n"
+        },
+        "equal": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "Structural equality. A null collection does not equal an empty one, no type coercion, NaN is unequal to itself, floats compare exactly and by value so -0 equals +0, cycles stop, functions compare by identity.\n"
+        },
+        "err-absent": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "No failure value is present.\n"
+        },
+        "err-as": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "A failure of the given type is in the chain. Yields it.\n"
+        },
+        "err-is": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "A failure matches a sentinel, through the chain of wrapped causes.\n"
+        },
+        "err-is-not": {
+            "arity": 3,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "A failure does not match a sentinel.\n"
+        },
+        "err-present": {
+            "arity": 2,
+            "detail_fields": [],
+            "summary": "Some failure value is present.\n"
+        },
+        "eventually": {
+            "arity": 4,
+            "detail_fields": [
+                "attempts",
+                "last"
+            ],
+            "summary": "An assertion body passes within a timeout, retried at an interval. Reports the last failure.\n"
+        },
+        "eventually-true": {
+            "arity": 3,
+            "detail_fields": [
+                "attempts"
+            ],
+            "summary": "A predicate becomes true within a timeout, retried with backoff.\n"
+        },
+        "false": {
+            "arity": 2,
+            "detail_fields": [],
+            "summary": "The condition does not hold.\n"
+        },
+        "golden-match": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "package": "golden",
+            "summary": "Output matches the golden file resolved against the conventional directory.\n"
+        },
+        "golden-match-at": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "package": "golden",
+            "summary": "Output matches the golden file at a given path.\n"
+        },
+        "golden-match-json-field": {
+            "arity": 4,
+            "detail_fields": [
+                "want",
+                "got",
+                "field"
+            ],
+            "package": "golden",
+            "summary": "Output matches one named field of a golden JSON object.\n"
+        },
+        "golden-match-tree": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "differences"
+            ],
+            "package": "golden",
+            "summary": "A tree read from a directory equals the golden tree in the directory that a name resolves to against the conventional directory. The comparison reads no mode of the golden tree, and compares execute bits. Under update, the call makes the golden directory equal the tree and passes.\n"
+        },
+        "has-content": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "kind"
+            ],
+            "package": "files",
+            "summary": "A file whose bytes equal stated text or bytes is at a path. got is the file's content, as text when it is valid UTF-8 and as bytes otherwise, or null when no file is there, and kind is the kind of the entry there.\n"
+        },
+        "has-mode": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "kind"
+            ],
+            "package": "files",
+            "summary": "A file or a directory whose nine permission bits equal a stated mode is at a path. A link has no mode. got is the entry's permission bits, or null when no file or directory is there, and kind is the kind of the entry there.\n"
+        },
+        "has-prefix": {
+            "arity": 3,
+            "detail_fields": [
+                "got",
+                "prefix"
+            ],
+            "summary": "Text starts with the given prefix.\n"
+        },
+        "has-suffix": {
+            "arity": 3,
+            "detail_fields": [
+                "got",
+                "suffix"
+            ],
+            "summary": "Text ends with the given suffix.\n"
+        },
+        "honours-cancellation": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "A subject given a cancelled handle reports a cancellation failure.\n"
+        },
+        "honours-deadline": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "A subject given an expired deadline reports a deadline failure.\n"
+        },
+        "idempotent": {
+            "arity": 4,
+            "detail_fields": [
+                "first",
+                "second"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "Calling a subject twice with one input leaves the observed state that calling it once left. first is the observation after one call, and second after two.\n"
+        },
+        "in-range": {
+            "arity": 4,
+            "detail_fields": [
+                "got",
+                "low",
+                "high"
+            ],
+            "summary": "A number falls in a closed interval. NaN is in no range, and a range with a NaN bound contains no number.\n"
+        },
+        "is-dir": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "package": "files",
+            "summary": "A directory is at a path. A link to a directory is a link. got is the kind of the entry there, or null for none.\n"
+        },
+        "is-file": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "package": "files",
+            "summary": "A file is at a path. A link to a file is a link. got is the kind of the entry there, or null for none.\n"
+        },
+        "length": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "summary": "The container has the stated number of items: the elements of a sequence, the entries of a map, the bytes of a byte string, or the Unicode scalar values of text. A null value has no length, and fails.\n"
+        },
+        "linearizable": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "partitions",
+                "steps",
+                "partition",
+                "calls",
+                "concurrency",
+                "linearized",
+                "states",
+                "candidates",
+                "limit"
+            ],
+            "package": "history",
+            "summary": "The calls of each partition of a recorded history have a linearization: an order that respects their real-time order and that the spec accepts. Two calls that share a key are in one partition. A fixed search decides it within a budget of steps of the spec and a limit on the size of its memo. A search that uses up either is undecided, and an undecided history fails.\n"
+        },
+        "links-to": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "kind"
+            ],
+            "package": "files",
+            "summary": "A symbolic link with a stated target is at a path. The target compares as text. got is the link's target, or null when no link is there, and kind is the kind of the entry there, or null for none.\n"
+        },
+        "matches": {
+            "arity": 3,
+            "detail_fields": [
+                "got",
+                "pattern",
+                "reason"
+            ],
+            "summary": "A pattern of the portable subset that string-matching reads matches anywhere in the text. $ matches at the end of the text only, \\d, \\w and \\s are their ASCII classes, and . matches no line terminator. A pattern outside the subset is a failure, not an error, and reason is the text with which the language's parser of the subset refuses it. reason is null for a pattern inside the subset.\n"
+        },
+        "max-allocs": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "total"
+            ],
+            "summary": "A callable makes at most a stated number of heap allocations per call. A count calls it once to warm it and counts the allocations of the 100 calls after it. A ceiling of 0 admits one allocation in all, and any other ceiling compares with the average per call, rounded to the nearest whole number, with a half rounded up. A count that exceeds the ceiling is taken again, and the assertion fails when three counts exceed it. got is the rounded average and total the allocations of the count with the lowest total.\n"
+        },
+        "max-allocs-with-setup": {
+            "arity": 4,
+            "detail_fields": [
+                "want",
+                "got",
+                "total"
+            ],
+            "summary": "A callable makes at most a stated number of heap allocations per call on an input that a setup builds before each call. The setup is not counted. A count calls the setup and the callable once to warm both and counts the allocations of the 100 calls after them, with the ceilings, the counts, got and total of max-allocs.\n"
+        },
+        "monotonic": {
+            "arity": 4,
+            "detail_fields": [
+                "index",
+                "first",
+                "second"
+            ],
+            "summary": "An observed number never falls and is never NaN while a subject advances a stated number of steps. index is the position of the first reading that falls or is NaN, the reading before the first step at position 0. first is the reading before it, and second that reading.\n"
+        },
+        "nil": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "The value is absent. A typed nil counts as nil.\n"
+        },
+        "nil-context-safe": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "A subject given an absent cancellation handle does not crash.\n"
+        },
+        "no-duplicates": {
+            "arity": 2,
+            "detail_fields": [
+                "got",
+                "index"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "One iteration of a subject yields each element at most once. got is the first element equal to an earlier one, and index its position.\n"
+        },
+        "no-task-leaks": {
+            "arity": 2,
+            "detail_fields": [
+                "leaked"
+            ],
+            "summary": "No concurrent task started in the scope outlives it.\n"
+        },
+        "not-contains": {
+            "arity": 3,
+            "detail_fields": [
+                "haystack",
+                "needle"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "Negation of contains.\n"
+        },
+        "not-empty": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "The container has at least one item. A null value is no container, and fails. got is the value.\n"
+        },
+        "not-equal": {
+            "arity": 3,
+            "detail_fields": [
+                "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "Negation of equal.\n"
+        },
+        "not-nil": {
+            "arity": 2,
+            "detail_fields": [],
+            "summary": "The value is present. A typed nil counts as nil.\n"
+        },
+        "not-pure": {
+            "arity": 3,
+            "detail_fields": [
+                "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "Observed state changes across a call. got is the observation that did not change.\n"
+        },
+        "not-throws": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "summary": "A callable does not raise.\n"
+        },
+        "pairwise": {
+            "arity": 3,
+            "detail_fields": [
+                "index",
+                "first",
+                "second"
+            ],
+            "summary": "Every adjacent pair of a sequence satisfies a predicate. Nought or one item passes.\n"
+        },
+        "path-absent": {
+            "arity": 2,
+            "detail_fields": [
+                "got"
+            ],
+            "package": "files",
+            "summary": "Nothing is at a path: no file, no directory and no link, a link whose target is missing included. got is the kind of the entry there.\n"
+        },
+        "permutation": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "A sequence contains the same elements as another, each as often, in any order. Elements compare as equal compares them.\n"
+        },
+        "poisoned": {
+            "arity": 3,
+            "detail_fields": [
+                "index",
+                "got"
+            ],
+            "summary": "After a failure is induced, 32 readings each report a failure. index is the position of the first reading that does not, and got what it returned.\n"
+        },
+        "prop-accumulates": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "relation",
+                "of": "accumulates"
+            },
+            "package": "prop",
+            "summary": "The property form of accumulates. Each case of a run generates the input, and accumulates runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-associative": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "kind": "relation",
+                "of": "associative"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of associative. Each case of a run generates a, b and c, and associative runs on them as prop-for-all runs a body.\n"
+        },
+        "prop-close-to": {
+            "arity": 4,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "close-to"
+            },
+            "package": "prop",
+            "summary": "The property form of close-to. Each case of a run generates the input, and close-to runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-commutative": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "a",
+                    "b"
+                ],
+                "kind": "relation",
+                "of": "commutative"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of commutative. Each case of a run generates a and b, and commutative runs on them as prop-for-all runs a body.\n"
+        },
+        "prop-contains": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "contains"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "The property form of contains. Each case of a run generates the input, and contains runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-contains-in-order": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "contains-in-order"
+            },
+            "package": "prop",
+            "summary": "The property form of contains-in-order. Each case of a run generates the input, and contains-in-order runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-deterministic": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "relation",
+                "of": "deterministic"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of deterministic. Each case of a run generates the input, and deterministic runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-empty": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "empty"
+            },
+            "package": "prop",
+            "summary": "The property form of empty. Each case of a run generates the input, and empty runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-equal": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "equal"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "The property form of equal. Each case of a run generates the input, and equal runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-err-absent": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "err-absent"
+            },
+            "package": "prop",
+            "summary": "The property form of err-absent. Each case of a run generates the input, and err-absent runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-err-as": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "err-as"
+            },
+            "package": "prop",
+            "summary": "The property form of err-as. Each case of a run generates the input, and err-as runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-err-is": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "err-is"
+            },
+            "package": "prop",
+            "summary": "The property form of err-is. Each case of a run generates the input, and err-is runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-err-is-not": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "err-is-not"
+            },
+            "package": "prop",
+            "summary": "The property form of err-is-not. Each case of a run generates the input, and err-is-not runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-err-present": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "err-present"
+            },
+            "package": "prop",
+            "summary": "The property form of err-present. Each case of a run generates the input, and err-present runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-false": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "false"
+            },
+            "package": "prop",
+            "summary": "The property form of false. Each case of a run generates the input, and false runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-for-all": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "package": "prop",
+            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way.\n"
+        },
+        "prop-has-prefix": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "has-prefix"
+            },
+            "package": "prop",
+            "summary": "The property form of has-prefix. Each case of a run generates the input, and has-prefix runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-has-suffix": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "has-suffix"
+            },
+            "package": "prop",
+            "summary": "The property form of has-suffix. Each case of a run generates the input, and has-suffix runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-honours-cancellation": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "honours-cancellation"
+            },
+            "package": "prop",
+            "summary": "The property form of honours-cancellation. Each case of a run generates the input, and honours-cancellation runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-honours-deadline": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "honours-deadline"
+            },
+            "package": "prop",
+            "summary": "The property form of honours-deadline. Each case of a run generates the input, and honours-deadline runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-idempotent": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "relation",
+                "of": "idempotent"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of idempotent. Each case of a run generates the input, and idempotent runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-in-range": {
+            "arity": 4,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "in-range"
+            },
+            "package": "prop",
+            "summary": "The property form of in-range. Each case of a run generates the input, and in-range runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-length": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "length"
+            },
+            "package": "prop",
+            "summary": "The property form of length. Each case of a run generates the input, and length runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-matches": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "matches"
+            },
+            "package": "prop",
+            "summary": "The property form of matches. Each case of a run generates the input, and matches runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-max-allocs": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "max-allocs"
+            },
+            "package": "prop",
+            "summary": "The property form of max-allocs. Each case of a run generates the input, and max-allocs runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-max-allocs-with-setup": {
+            "arity": 4,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "max-allocs-with-setup"
+            },
+            "package": "prop",
+            "summary": "The property form of max-allocs-with-setup. Each case of a run generates the input, and max-allocs-with-setup runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-nil": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "nil"
+            },
+            "package": "prop",
+            "summary": "The property form of nil. Each case of a run generates the input, and nil runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-nil-context-safe": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "nil-context-safe"
+            },
+            "package": "prop",
+            "summary": "The property form of nil-context-safe. Each case of a run generates the input, and nil-context-safe runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-not-contains": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "not-contains"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "The property form of not-contains. Each case of a run generates the input, and not-contains runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-not-empty": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "not-empty"
+            },
+            "package": "prop",
+            "summary": "The property form of not-empty. Each case of a run generates the input, and not-empty runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-not-equal": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "not-equal"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "The property form of not-equal. Each case of a run generates the input, and not-equal runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-not-nil": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "not-nil"
+            },
+            "package": "prop",
+            "summary": "The property form of not-nil. Each case of a run generates the input, and not-nil runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-not-pure": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "not-pure"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of not-pure. Each case of a run generates the input, and not-pure runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-not-throws": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "not-throws"
+            },
+            "package": "prop",
+            "summary": "The property form of not-throws. Each case of a run generates the input, and not-throws runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-pairwise": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "pairwise"
+            },
+            "package": "prop",
+            "summary": "The property form of pairwise. Each case of a run generates the input, and pairwise runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-permutation": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "permutation"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans",
+                "by-identity"
+            ],
+            "summary": "The property form of permutation. Each case of a run generates the input, and permutation runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-pure": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "pure"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of pure. Each case of a run generates the input, and pure runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-round-trip": {
+            "arity": 3,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "relation",
+                "of": "round-trip"
+            },
+            "package": "prop",
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The property form of round-trip. Each case of a run generates the input, and round-trip runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-throws": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "throws"
+            },
+            "package": "prop",
+            "summary": "The property form of throws. Each case of a run generates the input, and throws runs on it as prop-for-all runs a body.\n"
+        },
+        "prop-true": {
+            "arity": 2,
+            "detail_fields": [
+                "outcome",
+                "cases",
+                "rejected",
+                "seed",
+                "counterexample",
+                "failure",
+                "choices",
+                "others",
+                "divergence",
+                "coverage"
+            ],
+            "form": {
+                "generates": [
+                    "input"
+                ],
+                "kind": "function",
+                "of": "true"
+            },
+            "package": "prop",
+            "summary": "The property form of true. Each case of a run generates the input, and true runs on it as prop-for-all runs a body.\n"
+        },
+        "pure": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "Observed state is unchanged across a call.\n"
+        },
+        "rejects": {
+            "arity": 2,
+            "detail_fields": [],
+            "summary": "A check fails against an implementation it is meant to reject. Yields the failure records of the check, in call order.\n"
+        },
+        "round-trip": {
+            "arity": 4,
+            "detail_fields": [
+                "want",
+                "got"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "The inverse conversion of the forward conversion of an input returns the input. want is the input, and got what came back.\n"
+        },
+        "serializable": {
+            "arity": 2,
+            "detail_fields": [
+                "anomaly",
+                "kinds",
+                "transactions",
+                "cycle",
+                "explanation"
+            ],
+            "package": "history",
+            "summary": "A history of list-append transactions exhibits no anomaly that serializability forbids, among the dependencies its reads reveal: no inconsistent observation, no aborted or intermediate read, and no cycle of write, read and anti-dependencies.\n"
+        },
+        "snapshot-isolation": {
+            "arity": 2,
+            "detail_fields": [
+                "anomaly",
+                "kinds",
+                "transactions",
+                "cycle",
+                "explanation"
+            ],
+            "package": "history",
+            "summary": "A history of list-append transactions exhibits no anomaly that snapshot isolation forbids, among the dependencies its reads reveal: no inconsistent observation, no aborted or intermediate read, and no cycle in which no two anti-dependencies are adjacent.\n"
+        },
+        "stable-order": {
+            "arity": 2,
+            "detail_fields": [
+                "first",
+                "second"
+            ],
+            "relaxations": [
+                "equate-empty",
+                "equate-nans"
+            ],
+            "summary": "32 iterations of a subject yield equal sequences. first is the first sequence, and second the first sequence that differs.\n"
+        },
+        "throws": {
+            "arity": 2,
+            "detail_fields": [],
+            "summary": "A callable raises. Yields what was raised.\n"
+        },
+        "total": {
+            "arity": 3,
+            "detail_fields": [
+                "index",
+                "got"
+            ],
+            "summary": "A call succeeds for every input of a domain, in order. index is the position of the first input for which it fails, and got the failure.\n"
+        },
+        "tree-contains": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "differences"
+            ],
+            "package": "files",
+            "summary": "A tree read from a directory has every entry of a stated tree, each as the stated entry states it. It may have more.\n"
+        },
+        "tree-equal": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "differences"
+            ],
+            "package": "files",
+            "summary": "A tree read from a directory has the entries of a stated tree, no more and no fewer, each as the stated entry states it.\n"
+        },
+        "tree-unchanged": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "differences"
+            ],
+            "package": "files",
+            "summary": "A callable leaves the tree in a directory as it found it: the tree read after the call equals the tree read before it, modes included.\n"
+        },
+        "true": {
+            "arity": 2,
+            "detail_fields": [],
+            "summary": "The condition holds. The failure carries the caller's message alone.\n"
+        }
+    },
+    "forms": {
+        "functions": [
+            "equal",
+            "not-equal",
+            "true",
+            "false",
+            "nil",
+            "not-nil",
+            "length",
+            "empty",
+            "not-empty",
+            "contains",
+            "not-contains",
+            "contains-in-order",
+            "permutation",
+            "has-prefix",
+            "has-suffix",
+            "matches",
+            "close-to",
+            "in-range",
+            "pairwise",
+            "err-absent",
+            "err-present",
+            "err-is",
+            "err-is-not",
+            "err-as",
+            "throws",
+            "not-throws",
+            "pure",
+            "not-pure",
+            "nil-context-safe",
+            "honours-cancellation",
+            "honours-deadline",
+            "max-allocs",
+            "max-allocs-with-setup"
+        ],
+        "relations": {
+            "accumulates": [
+                "input"
+            ],
+            "associative": [
+                "a",
+                "b",
+                "c"
+            ],
+            "commutative": [
+                "a",
+                "b"
+            ],
+            "deterministic": [
+                "input"
+            ],
+            "idempotent": [
+                "input"
+            ],
+            "round-trip": [
+                "input"
+            ]
+        }
+    },
+    "machines": {
+        "correct-counter": {
+            "summary": "The machine of racy-counter over an increment that adds one to the count and returns it without yielding.\n"
+        },
+        "correct-queue": {
+            "summary": "The machine of queue-loses-on-wrap over a queue that writes every value at its write index.\n"
+        },
+        "counter-overflows": {
+            "summary": "A counter, initially 0. increment adds one to the count, sets the count to 0 when the sum is 3, and returns the count. reset sets the count to 0 and returns null. The actions are increment and reset, each of which records its one call with no arguments. The spec is a counter: increment outputs the count plus one and leaves it, and reset leaves 0.\n"
+        },
+        "counter-refuses-every-third": {
+            "summary": "A counter, initially 0, that refuses every third increment, counted over every case of the run. A refused increment completes with fail and the error refused, and leaves the count. Any other increment adds one to the count and returns it, and read returns the count. The actions are increment, enabled while the spec's count is below 3, and read, each of which records its one call with no arguments. The spec is a counter: increment outputs the count plus one and leaves it, and read outputs the count and leaves it. The machine's enabled reads a count that the subject's refusals change, so a case that repeats an earlier case's choices can list other actions.\n"
+        },
+        "queue-loses-on-wrap": {
+            "summary": "A queue in a ring of slots, of a capacity drawn under \"capacity\" as an integer in [1, 8]. put(v) returns false when the queue is full. Otherwise it writes v at the write index, or into the first slot when the write index is at the last slot, moves the index on to the next slot, from the last to the first, and returns true. get() removes and returns the oldest value, or returns null when the queue is empty. The actions are put, whose input is drawn under \"v\" as an integer in [0, 1000], and get, each of which records its one call. The spec is a queue of the capacity: put outputs whether the queue had room and adds v when it had, and get outputs the head and removes it, or outputs null.\n"
+        },
+        "racy-counter": {
+            "summary": "A counter, initially 0, whose increment reads the count, yields to the task scheduler, writes the count plus one and returns it. The action is increment, which records its one call with no arguments. The spec is the counter of counter-overflows.\n"
+        },
+        "store-loses-on-crash": {
+            "summary": "A store of a buffer and a durable map. The actions are put, flush and crash. put's input is a key drawn under \"key\" as an integer in [0, 3] and the next value of a counter that starts at 1. put records a call of put with the key and the value as arguments, sets the key to the value in the buffer, and completes the call with null. flush is a drain action, enabled while the buffer is not empty, that moves the buffer into the durable map and empties it. crash empties the buffer. Neither records a call. The machine has no spec. Its settle check reads the durable value of each key that a put completed for, and fails with the identity lost-write when it is not the last value put under the key.\n"
+        }
+    },
+    "relaxations": {
+        "by-identity": {
+            "summary": "A reference equals another reference only when both refer to the same object, whatever the object's value. A value that is no reference compares as without it. The modifier applies wherever the comparison meets a reference: at the top, in an element of a list, in a value of a map and in a field of a record. What a reference is in each language is stated where the encoding states the reference literal.\n"
+        },
+        "equate-empty": {
+            "summary": "An absent container equals an empty one of the same type. Without it a null map and an empty map are different values, which is what the standard states by default.\n"
+        },
+        "equate-nans": {
+            "summary": "A NaN equals another NaN of the same type. Without it NaN is unequal to itself, which is what IEEE 754 states and what the standard states by default.\n"
+        }
+    },
+    "specs": {
+        "cas-register": {
+            "summary": "The register with cas(from, to). A cas outputs true and leaves to when the value equals from, and outputs false and leaves the value otherwise. A cas whose outcome is unknown takes effect when the value equals from, and leaves the value otherwise.\n"
+        },
+        "key-value": {
+            "summary": "A map from keys to strings, initially empty, that stores no empty string, so a key it does not store reads as empty. put(k, v) leaves v under k. append(k, s) leaves the value under k followed by s. get(k) outputs the value under k. The map lists its keys in the order they were stored, and a key whose value changes keeps its place. A get whose outcome is unknown accepts any map.\n"
+        },
+        "lossy-register": {
+            "summary": "The register whose write may be lost. write(v) leaves v or the value before it, in that order. A read is the register's.\n"
+        },
+        "queue": {
+            "summary": "A list of values, initially empty, head first. enqueue(v) adds v at the tail. dequeue() removes the head and outputs it, or outputs null and leaves an empty queue. A dequeue whose outcome is unknown removes the head when one exists.\n"
+        },
+        "register": {
+            "summary": "One value, initially null. write(v) leaves v. read() outputs the value and leaves it. A read whose outcome is unknown accepts any value.\n"
+        },
+        "set": {
+            "summary": "A set of values, initially empty, listed in the order they were added. Two sets are equal when they contain equal values in any order. add(v) adds v when it is absent. remove(v) outputs whether v is present, and leaves the set without v. contains(v) outputs whether v is present. A remove whose outcome is unknown removes v when it is present, and a contains whose outcome is unknown accepts any set.\n"
+        }
+    },
+    "subjects": {
+        "accumulates": {
+            "summary": "Changes the observed state once per call: a counter that starts at 0 and rises by one per call, whatever the input. As the subject of monotonic, it advances 5 steps.\n"
+        },
+        "adds": {
+            "summary": "Combines two integers by adding them. Its inputs are 2, 3 and 5, as a, b and c.\n"
+        },
+        "ascending": {
+            "summary": "A predicate over two integers, true when the first is not greater than the second.\n"
+        },
+        "counts-calls": {
+            "summary": "Returns the number of times it has been called, starting at 1, whatever its input. Its input is 1.\n"
+        },
+        "dereferences-handle": {
+            "summary": "Reads a handle without checking it is there, so a missing one crashes it.\n"
+        },
+        "drops-the-first": {
+            "summary": "Returns its list without the first element. An empty list stays empty.\n"
+        },
+        "drops-the-sign": {
+            "summary": "Renders the absolute value of an integer as decimal text, and parses decimal text back into the integer. Its input is -42.\n"
+        },
+        "fails-on-negative": {
+            "summary": "Returns a failure of its own for a negative integer input, and success otherwise.\n"
+        },
+        "fails-otherwise": {
+            "summary": "Returns a failure of its own, unrelated to any handle it was given. As the subject of total, its domain is 1, 2 and 3.\n"
+        },
+        "identity": {
+            "summary": "Returns its input.\n"
+        },
+        "ignores-handle": {
+            "summary": "Answers success without reading the handle at all.\n"
+        },
+        "is-non-negative": {
+            "summary": "Returns whether its integer input is 0 or more.\n"
+        },
+        "leaves-files-alone": {
+            "summary": "Reads every file of the workspace, and writes nothing.\n"
+        },
+        "leaves-state-alone": {
+            "summary": "Reads the observed state and changes nothing.\n"
+        },
+        "never-settles": {
+            "summary": "Reports a failure on every attempt. As the subject of poisoned, inducing changes nothing, and every reading reports the failure.\n"
+        },
+        "prepends-zero": {
+            "summary": "Returns its list of integers with 0 before the first element.\n"
+        },
+        "raises": {
+            "summary": "Raises rather than answering.\n"
+        },
+        "raises-on-negative": {
+            "summary": "Raises for a negative integer input, and returns otherwise.\n"
+        },
+        "reads-handle": {
+            "summary": "Reads the cancellation handle and answers the reason it gives, or success when the handle is absent or still running.\n"
+        },
+        "refuses-after-close": {
+            "summary": "A resource whose calls succeed until it closes, and fail with its closed sentinel after it closes.\n"
+        },
+        "renders-decimal": {
+            "summary": "Renders an integer as decimal text, and parses decimal text back into the integer. Its input is -42.\n"
+        },
+        "repeats-an-element": {
+            "summary": "Yields 1, 2, 2 and 3.\n"
+        },
+        "returns-null": {
+            "summary": "Returns null, whatever its input.\n"
+        },
+        "returns-ok": {
+            "summary": "Does the work and returns success, whatever it was handed. As the subject of a member, it returns its input, 1, and its domain is 1, 2 and 3.\n"
+        },
+        "rewrites-files": {
+            "summary": "Writes every file of the workspace again, with the bytes that the file has.\n"
+        },
+        "rotates": {
+            "summary": "Yields the integers 1 to 5, rotated one place further on each iteration: 1 to 5 first, then 2, 3, 4, 5 and 1.\n"
+        },
+        "serves-after-close": {
+            "summary": "A resource whose calls succeed before and after it closes. Its closed sentinel is a failure that no call returns.\n"
+        },
+        "sets-value": {
+            "summary": "A cell that starts at 0. A call sets it to the call's input, 7, and an observation reads it.\n"
+        },
+        "settles-after": {
+            "summary": "Reports a failure twice and succeeds on the third attempt. As the subject of poisoned, inducing changes nothing, and the third reading succeeds.\n"
+        },
+        "sorts": {
+            "summary": "Returns its list of integers in ascending order.\n"
+        },
+        "subtracts": {
+            "summary": "Combines two integers by subtracting the second from the first. Its inputs are 2, 3 and 5, as a, b and c.\n"
+        },
+        "wraps-around": {
+            "summary": "A counter that starts at 0, rises by one per advance and returns to 0 after 3. It advances 5 steps.\n"
+        },
+        "wraps-in-a-and-b": {
+            "summary": "Returns its text with a before it and b after it.\n"
+        },
+        "writes-a-file": {
+            "summary": "Writes the file new.txt, with the text new, at the root of the workspace.\n"
+        },
+        "writes-a-large-file": {
+            "summary": "Writes the file large.bin, 65,537 bytes of the letter a, at the root of the workspace.\n"
+        },
+        "yields-in-order": {
+            "summary": "Yields the integers 1 to 5 in order, on every iteration.\n"
+        },
+        "yields-one-object-twice": {
+            "summary": "Yields one object twice. The object's value is 1.\n"
+        },
+        "yields-two-equal-objects": {
+            "summary": "Yields two objects, and the value of each is 1.\n"
+        }
+    },
+    "version": "9.0.0"
+}

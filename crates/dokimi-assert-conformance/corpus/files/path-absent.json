@@ -1,0 +1,93 @@
+{
+  "kind": "path-absent",
+  "cases": [
+    {
+      "id": "path-absent/nothing-at-the-path-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "b.txt"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "path-absent/a-path-below-a-file-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "a.txt/b"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "path-absent/a-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "a.txt",
+            "text": "a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "a.txt"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "file"
+        }
+      }
+    },
+    {
+      "id": "path-absent/a-link-whose-target-is-missing-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "dangling",
+            "link": "missing.txt"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "dangling"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "link"
+        }
+      }
+    }
+  ]
+}

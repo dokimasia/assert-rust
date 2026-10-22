@@ -1,0 +1,102 @@
+{
+  "kind": "is-dir",
+  "cases": [
+    {
+      "id": "is-dir/a-directory-passes",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "docs/a.md",
+            "text": "# a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "docs"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "is-dir/a-file-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "docs/a.md",
+            "text": "# a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "docs/a.md"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "file"
+        }
+      }
+    },
+    {
+      "id": "is-dir/a-link-to-a-directory-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "docs/a.md",
+            "text": "# a\n"
+          },
+          {
+            "path": "latest",
+            "link": "docs"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "latest"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "link"
+        }
+      }
+    },
+    {
+      "id": "is-dir/nothing-at-the-path-fails",
+      "workspace": {
+        "type": "tree",
+        "entries": [
+          {
+            "path": "docs/a.md",
+            "text": "# a\n"
+          }
+        ]
+      },
+      "args": [
+        {
+          "type": "string",
+          "value": "build"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

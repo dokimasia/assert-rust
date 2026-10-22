@@ -1,0 +1,19 @@
+{
+  "assertion": "throws",
+  "cases": [
+    {
+      "id": "throws/a-raising-body-passes",
+      "subject": {
+        "kind": "raises"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "throws/a-returning-body-fails",
+      "subject": {
+        "kind": "returns-ok"
+      },
+      "expect": "fail"
+    }
+  ]
+}

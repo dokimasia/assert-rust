@@ -1,0 +1,43 @@
+{
+  "assertion": "stable-order",
+  "cases": [
+    {
+      "id": "stable-order/a-fixed-order-passes",
+      "subject": {
+        "kind": "yields-in-order"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "stable-order/a-rotating-order-fails",
+      "subject": {
+        "kind": "rotates"
+      },
+      "expect": "fail",
+      "detail": {
+        "first": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "second": {
+          "type": "list",
+          "of": "int",
+          "value": [
+            2,
+            3,
+            4,
+            5,
+            1
+          ]
+        }
+      }
+    }
+  ]
+}

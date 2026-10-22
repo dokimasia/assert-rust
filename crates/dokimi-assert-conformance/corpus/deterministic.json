@@ -1,0 +1,29 @@
+{
+  "assertion": "deterministic",
+  "cases": [
+    {
+      "id": "deterministic/a-subject-that-returns-its-input-passes",
+      "subject": {
+        "kind": "returns-ok"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "deterministic/a-subject-that-counts-its-calls-fails",
+      "subject": {
+        "kind": "counts-calls"
+      },
+      "expect": "fail",
+      "detail": {
+        "first": {
+          "type": "int",
+          "value": 1
+        },
+        "second": {
+          "type": "int",
+          "value": 2
+        }
+      }
+    }
+  ]
+}

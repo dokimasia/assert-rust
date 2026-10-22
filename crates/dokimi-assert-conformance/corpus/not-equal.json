@@ -1,0 +1,249 @@
+{
+  "assertion": "not-equal",
+  "cases": [
+    {
+      "id": "not-equal/differing-ints",
+      "args": [
+        {
+          "type": "int",
+          "value": 1
+        },
+        {
+          "type": "int",
+          "value": 2
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-equal/identical-ints",
+      "args": [
+        {
+          "type": "int",
+          "value": 1
+        },
+        {
+          "type": "int",
+          "value": 1
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "not-equal/null-against-empty-list",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-equal/negative-zero-against-zero",
+      "args": [
+        {
+          "type": "float",
+          "value": -0.0
+        },
+        {
+          "type": "float",
+          "value": 0.0
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "float",
+          "value": -0.0
+        }
+      }
+    },
+    {
+      "id": "not-equal/nans-under-equate-nans",
+      "args": [
+        {
+          "type": "float",
+          "value": "NaN"
+        },
+        {
+          "type": "float",
+          "value": "NaN"
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "float",
+          "value": "NaN"
+        }
+      }
+    },
+    {
+      "id": "not-equal/an-absent-list-against-an-empty-one-under-equate-empty",
+      "args": [
+        {
+          "type": "list",
+          "of": "int",
+          "value": null
+        },
+        {
+          "type": "list",
+          "of": "int",
+          "value": []
+        }
+      ],
+      "options": [
+        "equate-empty"
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "not-equal/maps-with-a-nan-key-differ",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        }
+      ],
+      "expect": "pass",
+      "skip": {
+        "rust": "a std map needs keys that implement Eq and Hash, or Ord, and f64 implements none of them"
+      }
+    },
+    {
+      "id": "not-equal/maps-with-a-nan-key-are-equal-under-equate-nans",
+      "args": [
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        {
+          "type": "map",
+          "entries": [
+            [
+              {
+                "type": "float",
+                "value": "NaN"
+              },
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          ]
+        }
+      ],
+      "options": [
+        "equate-nans"
+      ],
+      "expect": "fail"
+    },
+    {
+      "id": "not-equal/two-objects-of-equal-values-by-identity-pass",
+      "args": [
+        {
+          "type": "reference",
+          "id": "a",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "type": "reference",
+          "id": "b",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "not-equal/one-object-by-identity-fails",
+      "args": [
+        {
+          "type": "reference",
+          "id": "a",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "type": "reference",
+          "id": "a",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "options": [
+        "by-identity"
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

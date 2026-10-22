@@ -1,0 +1,24 @@
+{
+  "assertion": "after-close",
+  "cases": [
+    {
+      "id": "after-close/a-subject-that-refuses-after-close-passes",
+      "subject": {
+        "kind": "refuses-after-close"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "after-close/a-subject-that-serves-after-close-fails",
+      "subject": {
+        "kind": "serves-after-close"
+      },
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "null"
+        }
+      }
+    }
+  ]
+}

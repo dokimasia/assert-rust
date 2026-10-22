@@ -1,0 +1,3703 @@
+{
+  "kind": "generation",
+  "cases": [
+    {
+      "id": "integer/draws-from-a-signed-range",
+      "generator": {
+        "gen": "integer",
+        "min": -100,
+        "max": 100
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            11
+          ],
+          "value": {
+            "type": "int",
+            "value": 11
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": 0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            76
+          ],
+          "value": {
+            "type": "int",
+            "value": 76
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": 0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            96
+          ],
+          "value": {
+            "type": "int",
+            "value": 96
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            11
+          ],
+          "value": {
+            "type": "int",
+            "value": 11
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "integer/draws-from-the-whole-unsigned-range",
+      "generator": {
+        "gen": "integer",
+        "min": 0,
+        "max": "18446744073709551615"
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            "17930806776211019302"
+          ],
+          "value": {
+            "type": "int",
+            "value": "17930806776211019302"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            35
+          ],
+          "value": {
+            "type": "int",
+            "value": 35
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            37324
+          ],
+          "value": {
+            "type": "int",
+            "value": 37324
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            15
+          ],
+          "value": {
+            "type": "int",
+            "value": 15
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            9
+          ],
+          "value": {
+            "type": "int",
+            "value": 9
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            38313
+          ],
+          "value": {
+            "type": "int",
+            "value": 38313
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "float/draws-from-a-finite-range",
+      "generator": {
+        "gen": "float",
+        "min": -10,
+        "max": 10
+      },
+      "seed": "42",
+      "count": 8,
+      "cases": [
+        {
+          "choices": [
+            {
+              "float": 1.602474125133466e-183
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 1.602474125133466e-183
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": -1.882663670876988e-96
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -1.882663670876988e-96
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": -1.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -1.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 0.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 0.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": -1.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -1.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 2.6041284494948507e-210
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 2.6041284494948507e-210
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": -10.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -10.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 10.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 10.0
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "float/draws-from-every-float-and-nan",
+      "generator": {
+        "gen": "float",
+        "min": "-Inf",
+        "max": "Inf",
+        "allow_nan": true
+      },
+      "seed": "7",
+      "count": 8,
+      "cases": [
+        {
+          "choices": [
+            {
+              "float": -34533.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -34533.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 137.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 137.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": -2.1166818007598891e+43
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -2.1166818007598891e+43
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 9007199254740991.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 9007199254740991.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 205.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 205.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": -108.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": -108.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 5.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 5.0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "float": 0.0
+            }
+          ],
+          "value": {
+            "type": "float",
+            "value": 0.0
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "boolean/draws-with-even-odds",
+      "generator": {
+        "gen": "boolean"
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "boolean/draws-with-stated-odds",
+      "generator": {
+        "gen": "boolean",
+        "p": [
+          1,
+          3
+        ]
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "just/makes-no-choice",
+      "generator": {
+        "gen": "just",
+        "value": {
+          "type": "bytes",
+          "value": "00ff"
+        }
+      },
+      "seed": "42",
+      "count": 2,
+      "cases": [
+        {
+          "choices": [],
+          "value": {
+            "type": "bytes",
+            "value": "00ff"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [],
+          "value": {
+            "type": "bytes",
+            "value": "00ff"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "just/consumes-nothing-between-other-choices",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "just",
+          "value": {
+            "type": "int",
+            "value": 5
+          }
+        },
+        "max_size": 4
+      },
+      "seed": "7",
+      "count": 4,
+      "cases": [
+        {
+          "choices": [
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5,
+              5
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "sampled-from/draws-an-index",
+      "generator": {
+        "gen": "sampled-from",
+        "values": [
+          {
+            "type": "string",
+            "value": "a"
+          },
+          {
+            "type": "string",
+            "value": "b"
+          },
+          {
+            "type": "string",
+            "value": "c"
+          }
+        ]
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "a"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1
+          ],
+          "value": {
+            "type": "string",
+            "value": "b"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            2
+          ],
+          "value": {
+            "type": "string",
+            "value": "c"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "a"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            2
+          ],
+          "value": {
+            "type": "string",
+            "value": "c"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "a"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "sampled-from/consumes-nothing-for-one-value",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "sampled-from",
+          "values": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        "max_size": 4
+      },
+      "seed": "7",
+      "count": 4,
+      "cases": [
+        {
+          "choices": [
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "a"
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "a",
+              "a",
+              "a",
+              "a"
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "a",
+              "a"
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "one-of/draws-an-index-then-the-chosen-generator",
+      "generator": {
+        "gen": "one-of",
+        "of": [
+          {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          {
+            "gen": "boolean"
+          }
+        ]
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0,
+            5
+          ],
+          "value": {
+            "type": "int",
+            "value": 5
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            1
+          ],
+          "value": {
+            "type": "int",
+            "value": 1
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            7
+          ],
+          "value": {
+            "type": "int",
+            "value": 7
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0
+          ],
+          "value": {
+            "type": "bool",
+            "value": false
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "one-of/draws-from-generators-of-different-types",
+      "generator": {
+        "gen": "one-of",
+        "of": [
+          {
+            "gen": "just",
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "gen": "string",
+            "alphabet": "ab",
+            "max_size": 3
+          }
+        ]
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                0,
+                1,
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "abb"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "optional/draws-presence-then-the-value",
+      "generator": {
+        "gen": "optional",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            76
+          ],
+          "value": {
+            "type": "int",
+            "value": 76
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            97
+          ],
+          "value": {
+            "type": "int",
+            "value": 97
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "optional/draws-an-optional-string",
+      "generator": {
+        "gen": "optional",
+        "of": {
+          "gen": "string",
+          "max_size": 2
+        }
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": ""
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                19122,
+                56731
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\u4ab2\ue59b"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "list/draws-a-length-one-element-at-a-time",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "max_size": 10
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            9,
+            1,
+            1,
+            1,
+            1,
+            1,
+            8,
+            1,
+            0,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              1,
+              1,
+              1,
+              9,
+              1,
+              1,
+              8,
+              0,
+              1
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            9,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              9,
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              1,
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            3,
+            1,
+            5,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              3,
+              5,
+              5
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "list/draws-a-unique-list",
+      "generator": {
+        "gen": "list",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 3
+        },
+        "unique": true,
+        "min_size": 1,
+        "max_size": 4
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            3,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              3
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            1,
+            1,
+            3,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              0,
+              1,
+              3
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            2,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              2
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            3,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              3
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            3,
+            1,
+            3,
+            1,
+            0,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              0,
+              3,
+              1
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            2,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              2,
+              0
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "dict/draws-entries-with-distinct-keys",
+      "generator": {
+        "gen": "dict",
+        "keys": {
+          "gen": "integer",
+          "min": 0,
+          "max": 5
+        },
+        "values": {
+          "gen": "boolean"
+        },
+        "max_size": 4
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5,
+            0,
+            1,
+            1,
+            1,
+            1,
+            4,
+            1,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 1
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 5
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 4
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            5,
+            1,
+            1,
+            5,
+            1,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 5
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            2,
+            0,
+            1,
+            5,
+            0,
+            1,
+            5,
+            1,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 1
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 2
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 5
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            0,
+            1,
+            1,
+            5,
+            0,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "int",
+                  "value": 1
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 2
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 0
+                },
+                {
+                  "type": "bool",
+                  "value": true
+                }
+              ],
+              [
+                {
+                  "type": "int",
+                  "value": 5
+                },
+                {
+                  "type": "bool",
+                  "value": false
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "dict/draws-string-keys",
+      "generator": {
+        "gen": "dict",
+        "keys": {
+          "gen": "string",
+          "alphabet": "abc",
+          "max_size": 1
+        },
+        "values": {
+          "gen": "integer",
+          "min": -5,
+          "max": 5
+        }
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            },
+            -4,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            -2,
+            1,
+            {
+              "sequence": []
+            },
+            -2,
+            1,
+            {
+              "sequence": []
+            },
+            -2,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            5,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            -2,
+            1,
+            {
+              "sequence": []
+            },
+            5,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            4,
+            1,
+            {
+              "sequence": []
+            },
+            5,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            0,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": ""
+                },
+                {
+                  "type": "int",
+                  "value": -4
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "b"
+                },
+                {
+                  "type": "int",
+                  "value": -2
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "c"
+                },
+                {
+                  "type": "int",
+                  "value": -2
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            0,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            0,
+            1,
+            {
+              "sequence": []
+            },
+            4,
+            1,
+            {
+              "sequence": []
+            },
+            5,
+            1,
+            {
+              "sequence": []
+            },
+            -4,
+            1,
+            {
+              "sequence": []
+            },
+            -1,
+            1,
+            {
+              "sequence": [
+                0
+              ]
+            },
+            -2,
+            1,
+            {
+              "sequence": []
+            },
+            4,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            -1,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            0,
+            1,
+            {
+              "sequence": []
+            },
+            3,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            5,
+            1,
+            {
+              "sequence": []
+            },
+            5,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            4,
+            1,
+            {
+              "sequence": []
+            },
+            3,
+            1,
+            {
+              "sequence": [
+                0
+              ]
+            },
+            5,
+            1,
+            {
+              "sequence": []
+            },
+            -2
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "c"
+                },
+                {
+                  "type": "int",
+                  "value": 0
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "b"
+                },
+                {
+                  "type": "int",
+                  "value": 0
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": ""
+                },
+                {
+                  "type": "int",
+                  "value": 4
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "a"
+                },
+                {
+                  "type": "int",
+                  "value": -2
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            },
+            -2,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": ""
+                },
+                {
+                  "type": "int",
+                  "value": -2
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            -1,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "b"
+                },
+                {
+                  "type": "int",
+                  "value": -1
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            2,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": "c"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            {
+              "sequence": []
+            },
+            4,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            4,
+            1,
+            {
+              "sequence": []
+            },
+            5,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            5,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            0,
+            1,
+            {
+              "sequence": [
+                1
+              ]
+            },
+            4,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            -3,
+            1,
+            {
+              "sequence": [
+                2
+              ]
+            },
+            4,
+            1,
+            {
+              "sequence": []
+            },
+            5,
+            0
+          ],
+          "value": {
+            "type": "map",
+            "entries": [
+              [
+                {
+                  "type": "string",
+                  "value": ""
+                },
+                {
+                  "type": "int",
+                  "value": 4
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "b"
+                },
+                {
+                  "type": "int",
+                  "value": 4
+                }
+              ],
+              [
+                {
+                  "type": "string",
+                  "value": "c"
+                },
+                {
+                  "type": "int",
+                  "value": 5
+                }
+              ]
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "string/draws-from-the-default-alphabet",
+      "generator": {
+        "gen": "string",
+        "max_size": 8
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                59803,
+                13,
+                1112063,
+                33,
+                88870,
+                19801,
+                143,
+                296685
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\uf19bd\udbff\udfffx\ud818\udf26\u4d59\u008f\ud8e3\udeed"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "1"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1,
+                1112063,
+                1046395,
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "1\udbff\udfff\udbbf\udf7b0"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1112063,
+                10,
+                238724,
+                0,
+                633933,
+                4,
+                10,
+                35704
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\udbff\udfffa\ud8ab\udc840\uda2d\udc4d4a\u8b78"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1,
+                6,
+                758278,
+                255
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "16\udaa6\ude06\u00ff"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                14958,
+                74,
+                13,
+                4
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "\u3a6e,d4"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "string/draws-from-a-stated-alphabet",
+      "generator": {
+        "gen": "string",
+        "alphabet": "ACGT",
+        "min_size": 2,
+        "max_size": 6
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                3,
+                3
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "TT"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                0,
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "AA"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                2,
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "GC"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                3,
+                2
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "TG"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                0,
+                1,
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "ACC"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                2,
+                2,
+                1,
+                2,
+                1,
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "string",
+            "value": "GGCGCC"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "bytes/draws-bytes",
+      "generator": {
+        "gen": "bytes",
+        "max_size": 8
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                233,
+                13,
+                255,
+                33,
+                143,
+                2
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "e90dff218f02"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "01"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1,
+                255,
+                127,
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "01ff7f00"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                255,
+                10,
+                29,
+                0,
+                77,
+                4,
+                10,
+                139
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "ff0a1d004d040a8b"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                1,
+                6,
+                92,
+                255
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "01065cff"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                58,
+                74,
+                13,
+                4
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "3a4a0d04"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "bytes/draws-bytes-of-one-length",
+      "generator": {
+        "gen": "bytes",
+        "min_size": 4,
+        "max_size": 4
+      },
+      "seed": "7",
+      "count": 3,
+      "cases": [
+        {
+          "choices": [
+            {
+              "sequence": [
+                248,
+                219,
+                95,
+                12
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "f8db5f0c"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                35,
+                5,
+                14,
+                255
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "23050eff"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            {
+              "sequence": [
+                145,
+                69,
+                201,
+                0
+              ]
+            }
+          ],
+          "value": {
+            "type": "bytes",
+            "value": "9145c900"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "duration/draws-from-a-range-of-nanoseconds",
+      "generator": {
+        "gen": "duration",
+        "min": 0,
+        "max": 60000000000
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            51
+          ],
+          "value": {
+            "type": "int",
+            "value": 51
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            23677194335
+          ],
+          "value": {
+            "type": "int",
+            "value": 23677194335
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            13
+          ],
+          "value": {
+            "type": "int",
+            "value": 13
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": 0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            8
+          ],
+          "value": {
+            "type": "int",
+            "value": 8
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            40
+          ],
+          "value": {
+            "type": "int",
+            "value": 40
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "duration/draws-from-a-negative-range",
+      "generator": {
+        "gen": "duration",
+        "min": -1000000,
+        "max": -1
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            -545470
+          ],
+          "value": {
+            "type": "int",
+            "value": -545470
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -36
+          ],
+          "value": {
+            "type": "int",
+            "value": -36
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -37325
+          ],
+          "value": {
+            "type": "int",
+            "value": -37325
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -16
+          ],
+          "value": {
+            "type": "int",
+            "value": -16
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -10
+          ],
+          "value": {
+            "type": "int",
+            "value": -10
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            -38314
+          ],
+          "value": {
+            "type": "int",
+            "value": -38314
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "permutation/draws-one-swap-per-position",
+      "generator": {
+        "gen": "permutation",
+        "values": [
+          {
+            "type": "int",
+            "value": 1
+          },
+          {
+            "type": "int",
+            "value": 2
+          },
+          {
+            "type": "int",
+            "value": 3
+          },
+          {
+            "type": "int",
+            "value": 4
+          },
+          {
+            "type": "int",
+            "value": 5
+          }
+        ]
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              2,
+              3,
+              4,
+              5,
+              1
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            2,
+            2,
+            3,
+            3
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              3,
+              1,
+              4,
+              2,
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            4,
+            1,
+            4,
+            4
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5,
+              2,
+              1,
+              3,
+              4
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            4,
+            3,
+            3
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              5,
+              4,
+              3,
+              2
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            4,
+            4,
+            2,
+            4
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5,
+              1,
+              3,
+              2,
+              4
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            2,
+            3,
+            3
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              2,
+              3,
+              4,
+              1,
+              5
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "permutation/makes-no-choice-for-one-value",
+      "generator": {
+        "gen": "permutation",
+        "values": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ]
+      },
+      "seed": "7",
+      "count": 2,
+      "cases": [
+        {
+          "choices": [],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "x"
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [],
+          "value": {
+            "type": "list",
+            "of": "string",
+            "value": [
+              "x"
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "string-matching/draws-classes-and-counted-repetitions",
+      "generator": {
+        "gen": "string-matching",
+        "pattern": "[a-f0-9]{4}-\\d{2}"
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            3,
+            1,
+            5,
+            1,
+            13,
+            1,
+            14,
+            0,
+            1,
+            8,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "35de-85"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            5,
+            1,
+            1,
+            1,
+            12,
+            1,
+            2,
+            0,
+            1,
+            8,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "51c2-81"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            13,
+            1,
+            9,
+            1,
+            3,
+            1,
+            15,
+            0,
+            1,
+            1,
+            1,
+            3,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "d93f-13"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            14,
+            1,
+            5,
+            1,
+            1,
+            0,
+            1,
+            3,
+            1,
+            4,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "0e51-34"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            8,
+            1,
+            12,
+            1,
+            1,
+            1,
+            8,
+            0,
+            1,
+            4,
+            1,
+            8,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "8c18-48"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            2,
+            1,
+            6,
+            1,
+            4,
+            1,
+            4,
+            0,
+            1,
+            0,
+            1,
+            4,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "2644-04"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "string-matching/draws-alternations-and-unbounded-repetitions",
+      "generator": {
+        "gen": "string-matching",
+        "pattern": "(foo|ba[rz])+\\.?"
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "bazfoobazfoobarfoofoobarbazfoo"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "foobazbarbazfoobazbarfoobazfoofoobazbazbarbazfoo."
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "bar"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "baz"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "foofoofoofoobazbazfoobarfoobar."
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "value": {
+            "type": "string",
+            "value": "bazbarbar"
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "recursive/draws-a-tree-of-lists",
+      "generator": {
+        "gen": "recursive",
+        "base": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "extend": {
+          "gen": "list",
+          "of": {
+            "gen": "self"
+          },
+          "max_size": 3
+        },
+        "max_leaves": 10
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0,
+            5
+          ],
+          "value": {
+            "type": "int",
+            "value": 5
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            1
+          ],
+          "value": {
+            "type": "int",
+            "value": 1
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            7
+          ],
+          "value": {
+            "type": "int",
+            "value": 7
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "recursive/draws-optional-and-listed-positions",
+      "generator": {
+        "gen": "recursive",
+        "base": {
+          "gen": "boolean"
+        },
+        "extend": {
+          "gen": "one-of",
+          "of": [
+            {
+              "gen": "list",
+              "of": {
+                "gen": "self"
+              },
+              "max_size": 2
+            },
+            {
+              "gen": "optional",
+              "of": {
+                "gen": "self"
+              }
+            }
+          ]
+        },
+        "max_leaves": 5
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            0,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "null"
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0,
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          "value": {
+            "type": "bool",
+            "value": true
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "filter/draws-until-the-predicate-keeps-a-value",
+      "generator": {
+        "gen": "filter",
+        "of": {
+          "gen": "integer",
+          "min": 0,
+          "max": 9
+        },
+        "keep": {
+          "kind": "divisible-by",
+          "n": 3
+        }
+      },
+      "seed": "42",
+      "count": 8,
+      "cases": [
+        {
+          "choices": [
+            3
+          ],
+          "value": {
+            "type": "int",
+            "value": 3
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            9
+          ],
+          "value": {
+            "type": "int",
+            "value": 9
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "int",
+            "value": 0
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            6
+          ],
+          "value": {
+            "type": "int",
+            "value": 6
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "filter/reuses-no-value-of-a-rejected-attempt",
+      "generator": {
+        "gen": "filter",
+        "of": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "max_size": 4
+        },
+        "keep": {
+          "kind": "sum-above",
+          "n": 10
+        }
+      },
+      "seed": "7",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            1,
+            8,
+            0
+          ],
+          "value": null,
+          "rejected": true
+        },
+        {
+          "choices": [
+            1,
+            0,
+            1,
+            6,
+            1,
+            8,
+            1,
+            8,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              0,
+              6,
+              8,
+              8
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": null,
+          "rejected": true
+        },
+        {
+          "choices": [
+            1,
+            1,
+            0
+          ],
+          "value": null,
+          "rejected": true
+        },
+        {
+          "choices": [
+            1,
+            2,
+            1,
+            2,
+            1,
+            9,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              2,
+              2,
+              9
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            7,
+            1,
+            4,
+            1,
+            0,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              7,
+              4,
+              0,
+              5
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    },
+    {
+      "id": "map/draws-what-its-source-draws",
+      "generator": {
+        "gen": "map",
+        "of": {
+          "gen": "list",
+          "of": {
+            "gen": "integer",
+            "min": 0,
+            "max": 9
+          },
+          "max_size": 4
+        },
+        "subject": "sorts"
+      },
+      "seed": "42",
+      "count": 6,
+      "cases": [
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            0
+          ],
+          "value": {
+            "type": "list",
+            "items": []
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            9,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              5,
+              9
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              1,
+              1,
+              5
+            ]
+          },
+          "rejected": false
+        },
+        {
+          "choices": [
+            1,
+            3,
+            1,
+            5,
+            1,
+            5,
+            0
+          ],
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              3,
+              5,
+              5
+            ]
+          },
+          "rejected": false
+        }
+      ]
+    }
+  ]
+}

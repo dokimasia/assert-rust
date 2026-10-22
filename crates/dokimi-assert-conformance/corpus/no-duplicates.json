@@ -1,0 +1,76 @@
+{
+  "assertion": "no-duplicates",
+  "cases": [
+    {
+      "id": "no-duplicates/distinct-elements-pass",
+      "subject": {
+        "kind": "yields-in-order"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "no-duplicates/a-repeated-element-fails",
+      "subject": {
+        "kind": "repeats-an-element"
+      },
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 2
+        },
+        "index": {
+          "type": "int",
+          "value": 2
+        }
+      }
+    },
+    {
+      "id": "no-duplicates/two-objects-of-equal-values-by-identity-pass",
+      "subject": {
+        "kind": "yields-two-equal-objects"
+      },
+      "options": [
+        "by-identity"
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "no-duplicates/two-objects-of-equal-values-fail",
+      "subject": {
+        "kind": "yields-two-equal-objects"
+      },
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 1
+        },
+        "index": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "no-duplicates/one-object-twice-by-identity-fails",
+      "subject": {
+        "kind": "yields-one-object-twice"
+      },
+      "options": [
+        "by-identity"
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "int",
+          "value": 1
+        },
+        "index": {
+          "type": "int",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

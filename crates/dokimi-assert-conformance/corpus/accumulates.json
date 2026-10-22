@@ -1,0 +1,29 @@
+{
+  "assertion": "accumulates",
+  "cases": [
+    {
+      "id": "accumulates/a-subject-that-accumulates-passes",
+      "subject": {
+        "kind": "accumulates"
+      },
+      "expect": "pass"
+    },
+    {
+      "id": "accumulates/a-subject-that-sets-a-value-fails",
+      "subject": {
+        "kind": "sets-value"
+      },
+      "expect": "fail",
+      "detail": {
+        "first": {
+          "type": "int",
+          "value": 7
+        },
+        "second": {
+          "type": "int",
+          "value": 0
+        }
+      }
+    }
+  ]
+}

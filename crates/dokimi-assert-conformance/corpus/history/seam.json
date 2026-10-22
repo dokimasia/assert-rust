@@ -1,0 +1,1225 @@
+{
+  "kind": "seam",
+  "cases": [
+    {
+      "id": "history/a-client-continues-on-a-new-process-after-unknown",
+      "script": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 0,
+          "error": "the reply was lost"
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "kind": "unknown",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "error": "the reply was lost"
+        },
+        {
+          "index": 2,
+          "kind": "invoke",
+          "call": 2,
+          "client": 0,
+          "process": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "kind": "ok",
+          "call": 2,
+          "client": 0,
+          "process": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/a-completion-names-the-invocation-of-its-call",
+      "script": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "v"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "string",
+            "value": "v"
+          }
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "operation": "put",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            },
+            {
+              "type": "string",
+              "value": "v"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "operation": "get",
+          "args": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "k"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "ok",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "output": {
+            "type": "string",
+            "value": "v"
+          }
+        },
+        {
+          "index": 3,
+          "kind": "ok",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/a-failed-call-keeps-its-process",
+      "script": [
+        {
+          "invoke": 0,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "fail": 0,
+          "error": "connection refused"
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 1,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 0,
+          "process": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "fail",
+          "call": 0,
+          "client": 1,
+          "process": 0,
+          "error": "connection refused"
+        },
+        {
+          "index": 3,
+          "kind": "ok",
+          "call": 1,
+          "client": 0,
+          "process": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "index": 4,
+          "kind": "invoke",
+          "call": 4,
+          "client": 1,
+          "process": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "kind": "ok",
+          "call": 4,
+          "client": 1,
+          "process": 0,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/a-pending-call-has-no-completion",
+      "script": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": []
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 1,
+          "error": "timed out"
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": []
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "unknown",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "error": "timed out"
+        },
+        {
+          "index": 3,
+          "kind": "invoke",
+          "call": 3,
+          "client": 1,
+          "process": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "kind": "ok",
+          "call": 3,
+          "client": 1,
+          "process": 2,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/from-intervals-puts-an-invocation-before-a-completion-at-one-time",
+      "intervals": [
+        {
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 10,
+          "end": 20,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 20,
+          "end": 30,
+          "kind": "ok",
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "ok",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "index": 3,
+          "kind": "ok",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/from-intervals-keeps-the-given-order-at-one-time",
+      "intervals": [
+        {
+          "client": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 5,
+          "end": 9,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 5,
+          "end": 9,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 7
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 0,
+          "end": 9,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 1,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 7
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 2,
+          "process": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "invoke",
+          "call": 2,
+          "client": 0,
+          "process": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "kind": "ok",
+          "call": 1,
+          "client": 2,
+          "process": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "index": 4,
+          "kind": "ok",
+          "call": 2,
+          "client": 0,
+          "process": 2,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "index": 5,
+          "kind": "ok",
+          "call": 0,
+          "client": 1,
+          "process": 0,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/from-intervals-starts-a-new-process-after-an-unknown-entry",
+      "intervals": [
+        {
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 0,
+          "end": 4,
+          "kind": "unknown",
+          "error": "timed out"
+        },
+        {
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 1,
+          "end": 2,
+          "kind": "fail",
+          "error": "connection refused"
+        },
+        {
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 3,
+          "end": 6,
+          "kind": "ok",
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 5,
+          "end": 7,
+          "kind": "ok",
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "fail",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "error": "connection refused"
+        },
+        {
+          "index": 3,
+          "kind": "invoke",
+          "call": 3,
+          "client": 1,
+          "process": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "kind": "unknown",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "error": "timed out"
+        },
+        {
+          "index": 5,
+          "kind": "invoke",
+          "call": 5,
+          "client": 0,
+          "process": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "kind": "ok",
+          "call": 3,
+          "client": 1,
+          "process": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "index": 7,
+          "kind": "ok",
+          "call": 5,
+          "client": 0,
+          "process": 2,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/from-intervals-records-an-entry-without-an-end-as-pending",
+      "intervals": [
+        {
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 2,
+          "end": 3,
+          "kind": "ok",
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [],
+          "start": 1
+        }
+      ],
+      "events": [
+        {
+          "index": 0,
+          "kind": "invoke",
+          "call": 0,
+          "client": 0,
+          "process": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": []
+        },
+        {
+          "index": 1,
+          "kind": "invoke",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "kind": "ok",
+          "call": 1,
+          "client": 1,
+          "process": 1,
+          "output": {
+            "type": "int",
+            "value": 1
+          }
+        }
+      ],
+      "refused": null
+    },
+    {
+      "id": "history/refuses-an-invocation-while-the-clients-call-is-open",
+      "script": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        }
+      ],
+      "events": null,
+      "refused": 3
+    },
+    {
+      "id": "history/refuses-a-second-completion-of-one-call",
+      "script": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 0,
+          "error": "timed out"
+        }
+      ],
+      "events": null,
+      "refused": 3
+    },
+    {
+      "id": "history/from-intervals-refuses-entries-of-one-client-that-share-an-instant",
+      "intervals": [
+        {
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 0,
+          "end": 9,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 3
+        },
+        {
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 0,
+          "end": 3,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "events": null,
+      "refused": 2
+    },
+    {
+      "id": "history/from-intervals-refuses-an-entry-that-ends-before-it-starts",
+      "intervals": [
+        {
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 0,
+          "end": 2,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 5,
+          "end": 3,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ],
+          "start": 1,
+          "end": 3,
+          "kind": "ok",
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "events": null,
+      "refused": 1
+    }
+  ]
+}

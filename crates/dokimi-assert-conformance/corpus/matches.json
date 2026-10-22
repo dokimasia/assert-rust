@@ -1,0 +1,336 @@
+{
+  "assertion": "matches",
+  "cases": [
+    {
+      "id": "matches/anchored-pattern-matches",
+      "args": [
+        {
+          "type": "string",
+          "value": "deadbeef"
+        },
+        {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "matches/unanchored-matches-anywhere",
+      "args": [
+        {
+          "type": "string",
+          "value": "id=deadbeef;"
+        },
+        {
+          "type": "string",
+          "value": "[0-9a-f]{8}"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "matches/non-matching-fails",
+      "args": [
+        {
+          "type": "string",
+          "value": "zzz"
+        },
+        {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "zzz"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        },
+        "reason": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "id": "matches/anchored-rejects-partial",
+      "args": [
+        {
+          "type": "string",
+          "value": "id=deadbeef"
+        },
+        {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "id=deadbeef"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "^[0-9a-f]+$"
+        },
+        "reason": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "id": "matches/a-class-and-a-count-match",
+      "args": [
+        {
+          "type": "string",
+          "value": "id-0042"
+        },
+        {
+          "type": "string",
+          "value": "^id-\\d{4}$"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "matches/dot-matches-a-character-that-ends-no-line",
+      "args": [
+        {
+          "type": "string",
+          "value": "a-b"
+        },
+        {
+          "type": "string",
+          "value": "a.b"
+        }
+      ],
+      "expect": "pass"
+    },
+    {
+      "id": "matches/dollar-matches-at-the-end-of-the-text-only",
+      "args": [
+        {
+          "type": "string",
+          "value": "abc\n"
+        },
+        {
+          "type": "string",
+          "value": "^abc$"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "abc\n"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "^abc$"
+        },
+        "reason": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "id": "matches/a-digit-is-an-ascii-digit",
+      "args": [
+        {
+          "type": "string",
+          "value": "٣"
+        },
+        {
+          "type": "string",
+          "value": "^\\d$"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "٣"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "^\\d$"
+        },
+        "reason": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "id": "matches/dot-matches-no-line-terminator",
+      "args": [
+        {
+          "type": "string",
+          "value": "a\rb"
+        },
+        {
+          "type": "string",
+          "value": "a.b"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "a\rb"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "a.b"
+        },
+        "reason": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "id": "matches/a-backreference-is-outside-the-subset",
+      "args": [
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "(a)\\1"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "aa"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "(a)\\1"
+        }
+      }
+    },
+    {
+      "id": "matches/a-lookahead-is-outside-the-subset",
+      "args": [
+        {
+          "type": "string",
+          "value": "ab"
+        },
+        {
+          "type": "string",
+          "value": "a(?=b)"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "ab"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "a(?=b)"
+        }
+      }
+    },
+    {
+      "id": "matches/a-flag-group-is-outside-the-subset",
+      "args": [
+        {
+          "type": "string",
+          "value": "A"
+        },
+        {
+          "type": "string",
+          "value": "(?i)a"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "A"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "(?i)a"
+        }
+      }
+    },
+    {
+      "id": "matches/a-word-boundary-is-outside-the-subset",
+      "args": [
+        {
+          "type": "string",
+          "value": "a b"
+        },
+        {
+          "type": "string",
+          "value": "\\ba\\b"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "a b"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "\\ba\\b"
+        }
+      }
+    },
+    {
+      "id": "matches/nested-counts-past-1000-are-outside-the-subset",
+      "args": [
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "(a{1000}){2}"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "aa"
+        },
+        "pattern": {
+          "type": "string",
+          "value": "(a{1000}){2}"
+        }
+      }
+    },
+    {
+      "id": "matches/groups-nested-past-100-are-outside-the-subset",
+      "args": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "got": {
+          "type": "string",
+          "value": "a"
+        }
+      }
+    }
+  ]
+}
