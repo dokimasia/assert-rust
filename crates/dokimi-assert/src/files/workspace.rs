@@ -6,6 +6,7 @@ use super::reader::read_path;
 use super::tree::{Fault, Tree};
 use super::writer::{create, overwrite, unlock};
 use crate::seat::Seat;
+use crate::verdict;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -82,7 +83,7 @@ pub fn workspace(seat: &dyn Seat, tree: &Tree) -> Workspace {
             .map_or_else(|_| PathBuf::new(), Clone::clone),
     };
     if let Err(fault) = created.and_then(|dir| create(&dir, tree)) {
-        seat.fail(&format!("files::workspace: {fault}"));
+        verdict::end(seat, format_args!("files::workspace: {fault}"));
     }
     workspace
 }
@@ -134,7 +135,7 @@ fn new_dir() -> io::Result<PathBuf> {
 pub fn write(seat: &dyn Seat, dir: impl AsRef<Path>, tree: &Tree) {
     seat.helper();
     if let Err(fault) = overwrite(dir.as_ref(), tree) {
-        seat.fail(&format!("files::write: {fault}"));
+        verdict::end(seat, format_args!("files::write: {fault}"));
     }
 }
 
@@ -152,7 +153,7 @@ pub fn write(seat: &dyn Seat, dir: impl AsRef<Path>, tree: &Tree) {
 ///
 /// No file at `path`, a link to a file included, a file that cannot be
 /// read, and a file that is no UTF-8 text end the call with a fault. It
-/// returns the empty string then, on a seat whose `fail` returns.
+/// returns the empty string then, on a seat that keeps the fault.
 #[track_caller]
 pub fn read(seat: &dyn Seat, path: impl AsRef<Path>) -> String {
     seat.helper();
@@ -166,7 +167,7 @@ pub fn read(seat: &dyn Seat, path: impl AsRef<Path>) -> String {
         ))),
     });
     read.unwrap_or_else(|fault| {
-        seat.fail(&format!("files::read: {fault}"));
+        verdict::end(seat, format_args!("files::read: {fault}"));
         String::new()
     })
 }

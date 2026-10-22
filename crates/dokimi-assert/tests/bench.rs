@@ -42,11 +42,13 @@ mod check {
     use super::*;
 
     #[test]
-    fn fails_a_contract_that_measured_nothing() {
+    fn ends_a_contract_that_measured_nothing_with_a_fault() {
         let seat = Recorder::new();
         Contract::new(&seat, "a lookup stays quick")
             .max_latency(Duration::from_secs(1))
             .check();
+        let faults: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(faults, ["a lookup stays quick: nothing was measured"]);
         assert_eq!(seat.message(), "a lookup stays quick: nothing was measured");
         assert_eq!(seat.failures(), [] as [Failure; 0]);
         assert_eq!(records(&seat), [] as [serde_json::Value; 0]);

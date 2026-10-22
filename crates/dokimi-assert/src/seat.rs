@@ -1,9 +1,11 @@
-//! The seats that assertions report to.
+//! The seats that assertions report to, and the fault that ends the call of
+//! a helper.
 
 use crate::cancel::Cancel;
 use crate::clock::{Clock, SHARED};
 use crate::failure::{Failure, Where};
 use crate::record::{self, Calls, Switch};
+use std::error::Error;
 use std::fmt::Write as _;
 use std::panic::Location;
 use std::sync::{Arc, LazyLock, Mutex, MutexGuard, PoisonError};
@@ -84,6 +86,23 @@ pub trait Seat: Send + Sync {
         }
     }
 
+    /// Receives a fault: an error that ends the call without a verdict when
+    /// `ending` is `true`, and that the call notes and runs on past when it is
+    /// `false`.
+    ///
+    /// A fault is an argument or an environment that a call refuses, such as
+    /// a pattern that does not compile. The default sends the text of an
+    /// ending fault through [`Seat::fail`], and prints the text of any other
+    /// fault to the standard error. A seat that keeps faults overrides it.
+    #[track_caller]
+    fn report_fault(&self, fault: Arc<dyn Error + Send + Sync>, ending: bool) {
+        if ending {
+            self.fail(&fault.to_string());
+        } else {
+            eprintln!("{fault}");
+        }
+    }
+
     /// Returns the clock that the timed assertions read.
     ///
     /// The default is the platform clock.
@@ -114,6 +133,39 @@ pub trait Seat: Send + Sync {
     fn test(&self) -> Option<String> {
         None
     }
+}
+
+/// Ends the call of a helper with `error`, a fault.
+///
+/// A fault is an argument or an environment that the helper refuses. The
+/// seat receives `error` through [`Seat::report_fault`] with `ending` true:
+/// a [`Recorder`] keeps it, and a [`Collector`] or a [`Standard`] panics with
+/// its text. The faults of this library end their calls the same way. `fault`
+/// does not write a call record, because the call is not a call of an
+/// assertion. A seat that keeps the fault returns, so the helper returns after
+/// `fault`:
+///
+/// ```
+/// use dokimi_assert::{Recorder, Seat, fault};
+/// use std::io;
+///
+/// fn restart(seat: &dyn Seat, restartable: bool) {
+///     if !restartable {
+///         fault(seat, io::Error::other("the service cannot restart"));
+///         return;
+///     }
+///     // …
+/// }
+///
+/// let r = Recorder::new();
+/// restart(&r, false);
+/// assert_eq!(r.faults()[0].to_string(), "the service cannot restart");
+/// assert_eq!(r.message(), "the service cannot restart");
+/// ```
+#[track_caller]
+pub fn fault(seat: &dyn Seat, error: impl Error + Send + Sync + 'static) {
+    seat.helper();
+    seat.report_fault(Arc::new(error), true);
 }
 
 /// Returns the calls of a seat of a test: calls that write each record to the
@@ -182,6 +234,7 @@ struct Reported {
     fatal: Option<String>,
     recorded: Vec<String>,
     failures: Vec<Failure>,
+    faults: Vec<Arc<dyn Error + Send + Sync>>,
     helpers: usize,
 }
 
@@ -276,6 +329,17 @@ impl Recorder {
         locked(&self.reported).failures.clone()
     }
 
+    /// Returns every fault that [`Seat::report_fault`] received, in the order
+    /// of the calls: the faults that ended their calls and the faults that a
+    /// call noted.
+    ///
+    /// A test compares a fault as the error it is, or compares its text. It
+    /// does not search the message of the recorder for it.
+    #[must_use]
+    pub fn faults(&self) -> Vec<Arc<dyn Error + Send + Sync>> {
+        locked(&self.reported).faults.clone()
+    }
+
     /// Returns how many times [`Seat::helper`] was called.
     #[must_use]
     pub fn helper_calls(&self) -> usize {
@@ -323,6 +387,18 @@ impl Seat for Recorder {
             self.fail(&sentence);
         } else {
             self.record(&sentence);
+        }
+    }
+
+    /// Keeps the fault. A fault that ends its call fails the recorder with
+    /// the text of the fault, as [`Seat::fail`] does, and a noted fault does
+    /// not fail it.
+    #[track_caller]
+    fn report_fault(&self, fault: Arc<dyn Error + Send + Sync>, ending: bool) {
+        let text = ending.then(|| fault.to_string());
+        locked(&self.reported).faults.push(fault);
+        if let Some(text) = text {
+            self.fail(&text);
         }
     }
 

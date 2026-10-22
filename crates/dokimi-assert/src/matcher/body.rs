@@ -5,13 +5,15 @@
 //! go under that call. The body reads the clock of the assertion's seat, and
 //! its cancellation handle derives from the handle of the assertion's seat
 //! and stops when the body ends. A failure on `check` ends the body, as it
-//! ends a test.
+//! ends a test. A fault that ends its call ends the body with the text of the
+//! fault, and a fault that a call notes passes to the assertion's seat.
 
 use crate::cancel::Cancel;
 use crate::clock::Clock;
 use crate::failure::Failure;
 use crate::record::Calls;
 use crate::seat::Seat;
+use std::error::Error;
 use std::fmt;
 use std::panic::{AssertUnwindSafe, catch_unwind, resume_unwind};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
@@ -34,6 +36,7 @@ struct State {
     failed: bool,
     first: Option<String>,
     failures: Vec<Failure>,
+    fault: Option<Arc<dyn Error + Send + Sync>>,
 }
 
 impl fmt::Debug for Body<'_> {
@@ -100,6 +103,13 @@ impl<'p> Body<'p> {
         self.locked().failures.clone()
     }
 
+    /// Returns the first fault that ended a call of the body, or `None` when
+    /// no fault did.
+    #[must_use]
+    pub fn fault(&self) -> Option<Arc<dyn Error + Send + Sync>> {
+        self.locked().fault.clone()
+    }
+
     fn note(&self, message: &str) {
         let mut state = self.locked();
         state.failed = true;
@@ -125,6 +135,19 @@ impl Seat for Body<'_> {
         if aborting {
             resume_unwind(Box::new(Ended));
         }
+    }
+
+    /// Ends the body at a fault that ends its call, and keeps the first such
+    /// fault. A noted fault passes to the seat of the assertion, and the body
+    /// continues.
+    fn report_fault(&self, fault: Arc<dyn Error + Send + Sync>, ending: bool) {
+        if !ending {
+            self.parent.report_fault(fault, false);
+            return;
+        }
+        let text = fault.to_string();
+        self.locked().fault.get_or_insert(fault);
+        self.fail(&text);
     }
 
     fn clock(&self) -> &dyn Clock {

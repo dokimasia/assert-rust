@@ -2,17 +2,50 @@
 //!
 //! Each verdict writes the call's record when its seat records calls. A
 //! failure then sends its record to the seat. A fault ends the call through
-//! the seat's `fail` on either surface, because the call checked nothing and
-//! a test that ran on would meet the fault again.
+//! the seat's `report_fault` on either surface, because the call checked
+//! nothing and a test that ran on would meet the fault again.
 
 use crate::failure::{Failure, Where};
 use crate::json::Json;
 use crate::record::{self, Call, Calls, Slot, Switch, Verdict};
 use crate::seat::Seat;
 use crate::value::Value;
-use std::fmt::Display;
+use std::error::Error;
+use std::fmt::{self, Display};
 use std::panic::Location;
 use std::sync::Arc;
+
+/// A fault of this library: the text of an argument or an environment that a
+/// call refuses.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct Fault(String);
+
+impl Fault {
+    /// Returns the fault of `text`.
+    pub(crate) fn new(text: impl Display) -> Self {
+        Self(text.to_string())
+    }
+}
+
+impl Display for Fault {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl Error for Fault {}
+
+/// Ends a call on `seat` with `fault` through [`Seat::report_fault`].
+#[track_caller]
+pub(crate) fn end(seat: &dyn Seat, fault: impl Display) {
+    seat.report_fault(Arc::new(Fault::new(fault)), true);
+}
+
+/// Notes `fault` on `seat` through [`Seat::report_fault`], and runs on.
+#[track_caller]
+pub(crate) fn note(seat: &dyn Seat, fault: impl Display) {
+    seat.report_fault(Arc::new(Fault::new(fault)), false);
+}
 
 /// Whether a failure ends the test or lets it continue.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -33,8 +66,8 @@ pub struct Run<'s> {
     location: Where,
 }
 
-impl std::fmt::Debug for Run<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Debug for Run<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Run")
             .field("location", &self.location)
             .finish_non_exhaustive()
@@ -202,14 +235,26 @@ impl<'s> Run<'s> {
 
     /// Reports that the call ended without a verdict, because `error`
     /// refused an argument or the environment. It ends the call through the
-    /// seat's `fail` on either surface, and may not return.
+    /// seat's `report_fault` on either surface, and may not return.
     #[track_caller]
     pub fn fault(&self, mode: Mode, assertion: &'static str, contract: &str, error: impl Display) {
+        self.fault_with(mode, assertion, contract, Arc::new(Fault::new(error)));
+    }
+
+    /// Reports that `fault` ended the call without a verdict, as
+    /// [`Run::fault`] does, and hands the seat the fault itself.
+    #[track_caller]
+    pub(crate) fn fault_with(
+        &self,
+        mode: Mode,
+        assertion: &'static str,
+        contract: &str,
+        fault: Arc<dyn Error + Send + Sync>,
+    ) {
         self.seat.helper();
         if !self.switched() {
             return;
         }
-        let text = error.to_string();
         self.write(Call {
             assertion,
             contract: contract.to_owned(),
@@ -217,9 +262,9 @@ impl<'s> Run<'s> {
             aborting: mode == Mode::Fatal,
             location: Some(self.location),
             detail: None,
-            error: Some(text.clone()),
+            error: Some(fault.to_string()),
         });
-        self.seat.fail(&text);
+        self.seat.report_fault(fault, true);
     }
 
     /// Returns `true` when the switch of recording states a value. When it
@@ -227,7 +272,7 @@ impl<'s> Run<'s> {
     #[track_caller]
     fn switched(&self) -> bool {
         if let Switch::Fault(text) = record::switch() {
-            self.seat.fail(text);
+            end(self.seat, text);
             return false;
         }
         true

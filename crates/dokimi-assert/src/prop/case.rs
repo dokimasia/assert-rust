@@ -22,6 +22,7 @@ use crate::history::History;
 use crate::record::Calls;
 use crate::seat::Seat;
 use crate::value::Value;
+use std::error::Error;
 use std::fmt::{self, Debug};
 use std::panic::{Location, resume_unwind};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -473,6 +474,22 @@ impl Seat for Case<'_> {
         let failed = self.keep(failed_of(failure));
         if aborting {
             self.end(Stop::Failed(Box::new(failed)));
+        }
+    }
+
+    /// Ends the case at a fault that ends its call, as [`Seat::fail`] ends it
+    /// with the text of the fault. A noted fault passes to the seat of the
+    /// property, and the body runs on. A case of no property prints a noted
+    /// fault to the standard error.
+    #[track_caller]
+    fn report_fault(&self, fault: Arc<dyn Error + Send + Sync>, ending: bool) {
+        if ending {
+            self.fail(&fault.to_string());
+            return;
+        }
+        match self.context {
+            Some(context) => context.parent.report_fault(fault, false),
+            None => eprintln!("{fault}"),
         }
     }
 

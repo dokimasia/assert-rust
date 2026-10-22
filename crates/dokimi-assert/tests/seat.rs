@@ -2,10 +2,17 @@
 
 use crate::helpers::{failure_of, panic_of, records};
 use dokimi_assert::{
-    Cancel, Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, check, soft,
+    Cancel, Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, check, fault, soft,
 };
+use std::error::Error;
+use std::io;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+
+/// Returns a fault of `text`, as the error that a seat receives.
+fn refusal(text: &str) -> Arc<dyn Error + Send + Sync> {
+    Arc::new(io::Error::other(text.to_owned()))
+}
 
 /// A seat that implements the two required members alone.
 #[derive(Default)]
@@ -78,6 +85,55 @@ mod seat {
         let plain = Plain::default();
         plain.helper();
         assert_eq!(plain.received(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn sends_the_text_of_an_ending_fault_through_fail_by_default() {
+        let plain = Plain::default();
+        plain.report_fault(refusal("the pattern does not compile"), true);
+        assert_eq!(plain.received(), ["fail the pattern does not compile"]);
+    }
+
+    #[test]
+    fn does_not_fail_for_a_noted_fault_by_default() {
+        let plain = Plain::default();
+        plain.report_fault(refusal("the store skips a file"), false);
+        assert_eq!(plain.received(), [] as [String; 0]);
+    }
+}
+
+mod fault {
+    use super::*;
+
+    #[test]
+    fn hands_the_error_to_a_seat_that_keeps_it() {
+        let seat = Recorder::new();
+        fault(
+            &seat,
+            io::Error::new(io::ErrorKind::NotFound, "no such service"),
+        );
+        let faults = seat.faults();
+        let kept = faults[0]
+            .downcast_ref::<io::Error>()
+            .expect("the recorder keeps the error itself");
+        assert_eq!(kept.kind(), io::ErrorKind::NotFound);
+        assert_eq!(seat.message(), "no such service");
+        assert_eq!(seat.records(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn panics_with_the_text_on_a_standard_seat() {
+        assert_eq!(
+            panic_of(|| fault(&Standard, io::Error::other("no such service"))).as_deref(),
+            Some("no such service")
+        );
+    }
+
+    #[test]
+    fn marks_the_frame_of_its_caller_as_a_helper() {
+        let seat = Recorder::new();
+        fault(&seat, io::Error::other("no such service"));
+        assert_eq!(seat.helper_calls(), 1);
     }
 }
 
@@ -159,6 +215,30 @@ mod recorder {
         let seat = Recorder::new();
         seat.fail("a message without a record");
         assert_eq!(seat.failures(), [] as [Failure; 0]);
+    }
+
+    #[test]
+    fn keeps_each_fault_in_the_order_of_the_calls() {
+        let seat = Recorder::new();
+        seat.report_fault(refusal("the store skips a file"), false);
+        seat.report_fault(refusal("the seed is no number"), true);
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the store skips a file", "the seed is no number"]);
+    }
+
+    #[test]
+    fn fails_with_the_text_of_a_fault_that_ends_its_call() {
+        let seat = Recorder::new();
+        seat.report_fault(refusal("the seed is no number"), true);
+        assert_eq!(seat.message(), "the seed is no number");
+        assert_eq!(seat.messages(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn does_not_fail_for_a_noted_fault() {
+        let seat = Recorder::new();
+        seat.report_fault(refusal("the store skips a file"), false);
+        assert!(!seat.failed());
     }
 
     #[test]

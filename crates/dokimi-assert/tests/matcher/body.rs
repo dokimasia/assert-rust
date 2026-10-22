@@ -2,8 +2,10 @@
 //! the body that they run.
 
 use crate::helpers::panic_of;
-use dokimi_assert::{Cancel, Clock, Failure, Recorder, Seat, Stop, check, soft};
+use dokimi_assert::{Cancel, Clock, Failure, Recorder, Seat, Stop, check, fault, soft};
 use std::cell::{Cell, RefCell};
+use std::io;
+use std::sync::Arc;
 use std::time::Duration;
 
 mod body {
@@ -61,7 +63,7 @@ mod body {
 
     #[test]
     fn reads_the_clock_of_the_seat_of_its_assertion() {
-        let clock = std::sync::Arc::new(dokimi_assert::Controlled::new());
+        let clock = Arc::new(dokimi_assert::Controlled::new());
         clock.advance(Duration::from_secs(5));
         let seat = Recorder::new().with_clock(clock);
         let now = Cell::new(Duration::ZERO);
@@ -80,9 +82,38 @@ mod body {
         let text = format!("{body:?}");
         assert!(text.starts_with("Body { cancellation: "), "{text}");
         assert!(
-            text.ends_with(r#"state: State { failed: true, first: Some("the first check"), failures: [] }, .. }"#),
+            text.ends_with(r#"state: State { failed: true, first: Some("the first check"), failures: [], fault: None }, .. }"#),
             "{text}"
         );
+    }
+
+    #[test]
+    fn ends_the_body_with_the_text_of_a_fault_that_ends_its_call() {
+        let seat = Recorder::new();
+        let body = dokimi_assert::__private::Body::new(&seat, None);
+        let reached = Cell::new(false);
+        body.run(|s| {
+            fault(s, io::Error::other("the input is refused"));
+            reached.set(true);
+        });
+        assert!(!reached.get());
+        assert_eq!(body.first_message(), "the input is refused");
+        assert_eq!(
+            body.fault().map(|kept| kept.to_string()).as_deref(),
+            Some("the input is refused")
+        );
+        assert!(!seat.failed());
+    }
+
+    #[test]
+    fn passes_a_noted_fault_to_the_seat_of_its_assertion() {
+        let seat = Recorder::new();
+        let body = dokimi_assert::__private::Body::new(&seat, None);
+        body.report_fault(Arc::new(io::Error::other("the store skips a file")), false);
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the store skips a file"]);
+        assert!(!body.failed());
+        assert!(body.fault().is_none());
     }
 
     #[test]
@@ -94,8 +125,7 @@ mod body {
 
     #[test]
     fn states_the_first_failure_of_the_last_attempt() {
-        let seat =
-            Recorder::new().with_clock(std::sync::Arc::new(dokimi_assert::Controlled::new()));
+        let seat = Recorder::new().with_clock(Arc::new(dokimi_assert::Controlled::new()));
         check::eventually(
             &seat,
             Duration::ZERO,

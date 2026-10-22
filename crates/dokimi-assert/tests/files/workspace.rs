@@ -41,6 +41,8 @@ mod workspace {
             seat.message(),
             r#"files::workspace: a//b: the path "a//b" has the name """#
         );
+        let faults: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(faults, [seat.message()]);
         assert_eq!(listing(dir.path()), [] as [String; 0]);
     }
 

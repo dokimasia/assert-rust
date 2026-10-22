@@ -26,6 +26,25 @@ fn switched_calls() -> Vec<String> {
         .collect()
 }
 
+/// The text of the fault of a switch that states `yes`, as the child prints
+/// it in a list.
+const SWITCHED_FAULT: &str = r#""DOKIMI_ASSERT_RECORD: \"yes\" is neither 0 nor 1""#;
+
+/// Runs the child test that prints the faults of a recorder of a call, with
+/// `DOKIMI_ASSERT_RECORD` set to a value that is neither 0 nor 1.
+fn switched_faults() -> Vec<String> {
+    let dir = Scratch::new();
+    let output = in_child(
+        "verdict::child::prints_the_faults_of_a_call",
+        &dir.join(""),
+        &[("DOKIMI_ASSERT_RECORD", "yes")],
+    );
+    String::from_utf8_lossy(&output.stdout)
+        .lines()
+        .filter_map(|line| line.split_once("faults: ").map(|(_, rest)| rest.to_owned()))
+        .collect()
+}
+
 mod child {
     use super::*;
 
@@ -56,6 +75,15 @@ mod child {
                 seat.records().len()
             );
         }
+    }
+
+    #[test]
+    #[ignore = "a spec of the switch runs it in a child process"]
+    fn prints_the_faults_of_a_call() {
+        let seat = Recorder::new();
+        check::is_true(&seat, true, "c");
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        println!("faults: {texts:?}");
     }
 }
 
@@ -194,12 +222,20 @@ mod fault {
     }
 
     #[test]
-    fn ends_the_call_through_fail_without_a_failure_record() {
+    fn hands_the_fault_to_the_seat_without_a_failure_record() {
         let dir = Scratch::new();
         let seat = Recorder::new();
         golden::matches_at(&seat, dir.join(""), "output", false, &[]);
+        let faults: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(faults, [seat.message()]);
         assert!(seat.message().starts_with("golden: "), "{}", seat.message());
         assert_eq!(seat.messages(), [] as [String; 0]);
         assert_eq!(seat.failures(), [] as [Failure; 0]);
+    }
+
+    #[test]
+    fn hands_the_fault_of_a_switch_that_states_no_value_to_the_seat() {
+        let printed = switched_faults();
+        assert_eq!(printed, [format!("[{SWITCHED_FAULT}]")]);
     }
 }

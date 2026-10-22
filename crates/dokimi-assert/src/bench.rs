@@ -31,7 +31,7 @@ use crate::alloc;
 use crate::matcher::behaviour::nanoseconds;
 use crate::seat::Seat;
 use crate::value::Value;
-use crate::verdict::{Mode, Run};
+use crate::verdict::{self, Mode, Run};
 use std::sync::Barrier;
 use std::time::Duration;
 
@@ -272,14 +272,17 @@ impl<'s> Contract<'s> {
     /// for a ceiling that the run crossed, and a pass otherwise.
     ///
     /// A contract that measured nothing, or a run of no iteration, states no
-    /// verdict, and ends the test through the seat's `fail`. An allocation
-    /// ceiling without the counting allocator ends with a fault.
+    /// verdict, and ends the call with a fault through the seat's
+    /// `report_fault`. An allocation ceiling without the counting allocator
+    /// ends with a fault too.
     #[track_caller]
     pub fn check(self) {
         self.seat.helper();
         let Some(run) = self.measured.as_ref().filter(|run| run.iterations > 0) else {
-            self.seat
-                .fail(&format!("{}: nothing was measured", self.msg));
+            verdict::end(
+                self.seat,
+                format_args!("{}: nothing was measured", self.msg),
+            );
             return;
         };
         if let Some(ceiling) = self.max_latency {
@@ -322,13 +325,7 @@ impl<'s> Contract<'s> {
     fn count(&self, assertion: &'static str, ceiling: u64, measured: Option<u64>) {
         let run = Run::of(self.seat);
         let Some(measured) = measured else {
-            run.fault(
-                Mode::Fatal,
-                assertion,
-                &self.msg,
-                "no allocator counts allocations in this process: install \
-                 dokimi_assert::bench::CountingAllocator as the global allocator",
-            );
+            run.fault(Mode::Fatal, assertion, &self.msg, alloc::UNCOUNTED);
             return;
         };
         if measured > ceiling {

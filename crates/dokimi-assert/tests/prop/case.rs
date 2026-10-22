@@ -4,7 +4,8 @@
 use crate::helpers::records;
 use dokimi_assert::prop::engine::harness;
 use dokimi_assert::prop::{self, Case};
-use dokimi_assert::{Cancel, Clock, Controlled, Recorder, Seat, Stop, check, soft};
+use dokimi_assert::{Cancel, Clock, Controlled, Recorder, Seat, Stop, check, fault, soft};
+use std::io;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -272,6 +273,46 @@ mod seat {
             c.record("a record after the end");
         });
         assert_eq!(detail(&seat)["outcome"], "rejected");
+    }
+
+    #[test]
+    fn ends_the_case_with_the_text_of_a_fault_that_ends_its_call() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            fault(c, io::Error::other("the input is refused"));
+        });
+        let case = seat.failures()[0]
+            .case_failure()
+            .cloned()
+            .expect("the run found a counterexample");
+        assert_eq!(case.contract(), "the input is refused");
+    }
+
+    #[test]
+    fn passes_a_noted_fault_to_the_seat_of_the_property() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            c.report_fault(Arc::new(io::Error::other("the store skips a file")), false);
+        });
+        assert!(!seat.failed(), "{}", seat.message());
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(
+            texts.first().map(String::as_str),
+            Some("the store skips a file")
+        );
+        assert!(
+            texts.iter().all(|text| text == "the store skips a file"),
+            "{texts:?}"
+        );
+    }
+
+    #[test]
+    fn runs_on_past_a_noted_fault_without_a_property() {
+        let noting = prop::composite(|c| {
+            c.report_fault(Arc::new(io::Error::other("the store skips a file")), false);
+            1_u8
+        });
+        assert_eq!(harness::decode(&noting, Vec::new()).1, Some(1));
     }
 
     #[test]

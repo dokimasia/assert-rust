@@ -28,6 +28,12 @@
 //! on `soft` that it collected panic when it drops. A test of an assertion
 //! hands it a [`Recorder`] and reads the records.
 //!
+//! A call that refuses an argument or its environment ends with a fault,
+//! which the seat receives through [`Seat::report_fault`]. A helper of a
+//! test ends its own call the same way with [`fault`].
+//! [`allocs_checked`] returns whether the test binary checks allocation
+//! ceilings.
+//!
 //! # The other modules
 //!
 //! - [`prop`] runs a body against generated inputs and shrinks a failure.
@@ -59,13 +65,14 @@ pub mod prop;
 pub mod soft;
 pub mod stateful;
 
+pub use alloc::allocs_checked;
 pub use cancel::{Cancel, Stop, Stopped};
 pub use clock::{Clock, Controlled, System};
 pub use failure::{Failure, Where};
 pub use matcher::containment::Contains;
 pub use matcher::numbers::Number;
 pub use matcher::sizes::Container;
-pub use seat::{Collector, Recorder, Seat, Standard};
+pub use seat::{Collector, Recorder, Seat, Standard, fault};
 pub use value::Value;
 
 /// The items that `dokimi-assert-tokio` builds its assertions from. They are
