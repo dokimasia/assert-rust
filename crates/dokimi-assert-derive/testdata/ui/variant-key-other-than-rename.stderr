@@ -1,0 +1,5 @@
+error: prop: min is no key of a variant, which takes rename alone
+ --> testdata/ui/variant-key-other-than-rename.rs:5:12
+  |
+5 |     #[prop(min = 1)]
+  |            ^^^

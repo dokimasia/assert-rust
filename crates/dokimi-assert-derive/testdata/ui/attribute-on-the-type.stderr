@@ -1,0 +1,5 @@
+error: prop: #[prop(...)] applies to a field or a variant, not to the type
+ --> testdata/ui/attribute-on-the-type.rs:4:1
+  |
+4 | #[prop(rename = "order")]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^

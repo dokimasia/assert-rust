@@ -1,0 +1,41 @@
+[package]
+name = "dokimi-assert-derive"
+description = "#[derive(Arbitrary)] for the property forms of dokimi-assert"
+documentation = "https://docs.rs/dokimi-assert-derive"
+readme = "README.md"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+categories.workspace = true
+keywords.workspace = true
+# The specs stay out of the package.
+include = ["/src", "/LICENSE", "/README.md"]
+# The specs build as one binary, tests/main.rs.
+autotests = false
+
+[lib]
+proc-macro = true
+
+[lints]
+workspace = true
+
+[dependencies]
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true
+
+[dev-dependencies]
+# dokimi-assert depends on this crate, so the specs take it by path alone,
+# which the package leaves out.
+dokimi-assert = { path = "../dokimi-assert", features = ["derive"] }
+serde_json.workspace = true
+trybuild.workspace = true
+
+# The specs of the crate. Each source file under src/ has its spec at the
+# same path under tests/.
+[[test]]
+name = "spec"
+path = "tests/main.rs"

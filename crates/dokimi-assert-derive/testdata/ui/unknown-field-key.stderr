@@ -1,0 +1,5 @@
+error: prop: minimum is no key of a field. The keys are min, max, min_size, max_size, pattern, alphabet, allow_nan, allow_infinity, unit, scale, version and rename
+ --> testdata/ui/unknown-field-key.rs:5:12
+  |
+5 |     #[prop(minimum = 1)]
+  |            ^^^^^^^

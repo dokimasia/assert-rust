@@ -1,0 +1,5 @@
+error: prop: an enum without a variant has no shape, because an enum needs a variant
+ --> testdata/ui/enum-without-a-variant.rs:4:6
+  |
+4 | enum Never {}
+  |      ^^^^^

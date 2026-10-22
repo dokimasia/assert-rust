@@ -1,0 +1,5 @@
+error: expected `=`
+ --> testdata/ui/rename-without-a-name.rs:5:18
+  |
+5 |     #[prop(rename)]
+  |                  ^

@@ -1,0 +1,5 @@
+error: prop: a union has no shape
+ --> testdata/ui/union.rs:4:7
+  |
+4 | union Bits {
+  |       ^^^^
