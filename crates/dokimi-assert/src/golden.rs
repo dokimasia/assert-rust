@@ -172,11 +172,15 @@ impl Call<'_> {
 
     /// Returns the golden file's text, `Ok(None)` for a missing file, and
     /// `Err` after a fault.
+    ///
+    /// Windows reports the read of a directory path that ends in a separator
+    /// as not found. The file counts as missing only when no entry exists at
+    /// the path.
     #[track_caller]
     fn read(&self) -> Result<Option<String>, ()> {
         match std::fs::read_to_string(&self.path) {
             Ok(text) => Ok(Some(text)),
-            Err(error) if error.kind() == ErrorKind::NotFound => Ok(None),
+            Err(error) if error.kind() == ErrorKind::NotFound && !self.path.exists() => Ok(None),
             Err(error) => {
                 self.fault("the golden file cannot be read", error);
                 Err(())
