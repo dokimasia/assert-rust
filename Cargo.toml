@@ -1,8 +1,10 @@
-# One repository, two crates. The core is synchronous and depends on
-# nothing; the tokio crate adds the assertions whose subject is a
-# future, which a synchronous signature cannot accept.
 [workspace]
-members = ["dokimi-assert", "dokimi-assert-tokio"]
+members = [
+    "crates/dokimi-assert",
+    "crates/dokimi-assert-conformance",
+    "crates/dokimi-assert-derive",
+    "crates/dokimi-assert-tokio",
+]
 resolver = "3"
 
 [workspace.package]
@@ -13,24 +15,40 @@ license = "MIT"
 repository = "https://github.com/dokimasia/assert-rust"
 authors = ["Roy Klopper <roy.klopper@stealthscale.io>"]
 categories = ["development-tools::testing"]
-keywords = ["assertions", "testing", "conformance"]
+keywords = ["assertions", "testing", "property-testing", "conformance"]
+
+[workspace.dependencies]
+dokimi-assert = { path = "crates/dokimi-assert", version = "0.1.0" }
+dokimi-assert-derive = { path = "crates/dokimi-assert-derive", version = "0.1.0" }
+dokimi-assert-tokio = { path = "crates/dokimi-assert-tokio", version = "0.1.0" }
+chrono = { version = "0.4.45", default-features = false, features = ["std"] }
+jiff = "0.2.38"
+proc-macro2 = "1.0.107"
+quote = "1.0.47"
+rand_core = "0.10.1"
+regex = "1.11.1"
+rust_decimal = { version = "1.43.0", default-features = false, features = ["std"] }
+syn = "3.0.9"
+time = { version = "0.3.45", default-features = false, features = ["std"] }
+uuid = { version = "1.26.1", default-features = false, features = ["std"] }
+serde_json = { version = "1.0.140", features = ["float_roundtrip"] }
+tokio = "1.54.0"
+# 1.0.119 is the last release that builds on the rust-version of the
+# workspace.
+trybuild = "1.0.119"
 
 [workspace.lints.rust]
 missing_docs = "deny"
-unused_qualifications = "deny"
-unsafe_code = "deny"
 missing_debug_implementations = "deny"
+unreachable_pub = "deny"
+unsafe_code = "deny"
+unused_qualifications = "deny"
 
 [workspace.lints.rustdoc]
-broken_intra_doc_links = "deny"
-private_intra_doc_links = "deny"
-invalid_rust_codeblocks = "deny"
 bare_urls = "deny"
+broken_intra_doc_links = "deny"
+invalid_rust_codeblocks = "deny"
+private_intra_doc_links = "deny"
 
 [workspace.lints.clippy]
 pedantic = { level = "deny", priority = -1 }
-# The assertions take a seat, a subject and a message, and several take
-# a bound as well. Splitting those into structs would hide the shape
-# the standard states.
-too_many_arguments = "allow"
-missing_errors_doc = "allow"

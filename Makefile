@@ -1,5 +1,13 @@
-# Every target runs from the workspace root and covers both crates.
+# Every target runs from the workspace root and covers every crate of the
+# workspace. `make check` runs the stages that CI runs.
 .DEFAULT_GOAL := help
+
+# The oldest Rust that the crates support, as rust-version states it.
+MSRV := 1.85
+
+# The command that runs spec, which vendors the definition of assert-spec
+# into the crate dokimi-assert-conformance, as .spec.yaml declares.
+SPEC ?= spec
 
 .PHONY: help
 help: ## List the targets
@@ -7,50 +15,66 @@ help: ## List the targets
 		| awk 'BEGIN{FS=":.*?## "}{printf "  %-16s %s\n", $$1, $$2}'
 
 .PHONY: fmt
-fmt: ## Format both crates
-	@cargo fmt
+fmt: ## Format every crate
+	@cargo fmt --all
 
-.PHONY: build
-build: ## Compile both crates
-	@cargo build --all-targets
-
-.PHONY: test
-test: ## Run every test, including the doctests
-	@cargo test
+.PHONY: fmt-check
+fmt-check: ## Fail when a file is not formatted
+	@cargo fmt --all --check
 
 .PHONY: lint
-lint: ## Clippy at the workspace's own level, warnings included
-	@cargo clippy --all-targets -- -D warnings
+lint: ## Run clippy over every target and feature, warnings included
+	@cargo clippy --workspace --all-targets --all-features -- -D warnings
 
-.PHONY: lint-fmt
-lint-fmt: ## Fail when anything is unformatted
-	@cargo fmt --check
+.PHONY: test
+test: ## Run every test, the doctests included
+	@cargo test --workspace --all-features
+
+.PHONY: doc
+doc: ## Build the documentation, refusing a warning or a broken link
+	@RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps --all-features
+
+.PHONY: msrv
+msrv: ## Check every crate on the oldest supported Rust
+	@rustup toolchain install $(MSRV) --profile minimal --no-self-update >/dev/null
+	@rustup run $(MSRV) cargo check --workspace --all-targets --all-features
+
+# llvm-cov's line percentage counts a generic function's lines in its best
+# instantiation alone, so the gate counts the lines that did not run in any
+# test. The tests of the conformance crate run, because its vectors call the
+# library, and the report leaves out the crate's own lines. The report also
+# leaves out the source of the standard library, which a toolchain built from
+# source states by its real path.
+.PHONY: coverage
+coverage: ## Fail when a line or a function of a published crate did not run in a test
+	@cargo llvm-cov --workspace --exclude-from-report dokimi-assert-conformance --all-features \
+		--ignore-filename-regex '/rustlib/src/rust/library/' \
+		--fail-uncovered-lines 0 --fail-uncovered-functions 0 --show-missing-lines
+
+.PHONY: deny
+deny: ## Check the licences, advisories and sources of the dependencies
+	@cargo deny check
+
+.PHONY: package
+package: ## Build each published crate from its package
+	@cargo package --workspace
 
 .PHONY: lint-md
 lint-md: ## Lint the markdown
-	@ergon lint md 2>/dev/null || echo "lint-md: ergon not installed, skipped"
+	@ergon lint md
 
-.PHONY: doc
-doc: ## Build the documentation, refusing a broken link
-	@cargo doc --no-deps
-
-.PHONY: msrv
-msrv: ## Check the crate still builds on its stated minimum
-	@rustup toolchain install 1.85 --profile minimal --no-self-update >/dev/null 2>&1 || true
-	@cargo +1.85 check --all-targets
-
-.PHONY: check
-check: lint-fmt lint build test doc ## Everything CI runs
-	@echo "rust: every stage passed"
-
-.PHONY: spec-sync spec-check
-spec-sync: ## Refresh the vendored definition from assert-spec
-	@./tools/spec-sync.sh dokimi-assert/tests/spec rust
-
-.PHONY: clean
-clean: ## Remove build output
-	@cargo clean
+.PHONY: spec-sync
+spec-sync: ## Vendor the definition of assert-spec at the head of its branch main
+	@$(SPEC) sync
 
 .PHONY: spec-check
-spec-check: ## Check the vendored definition is intact and say if it is behind
-	@./tools/spec-check.sh dokimi-assert/tests/spec
+spec-check: ## Check that the vendored definition is intact and comes from a commit of assert-spec
+	@$(SPEC) check
+
+.PHONY: check
+check: fmt-check lint test doc msrv coverage deny package spec-check ## Run every stage that CI runs
+	@echo "rust: every stage passed"
+
+.PHONY: clean
+clean: ## Remove the build output
+	@cargo clean

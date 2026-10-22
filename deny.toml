@@ -1,0 +1,33 @@
+# cargo-deny checks the licences, the security advisories, the duplicate
+# versions and the sources of every dependency of the workspace. CI runs
+# `cargo deny check` on every change, and `make deny` runs it locally.
+
+[graph]
+all-features = true
+
+[advisories]
+version = 2
+yanked = "deny"
+# time 0.3.47 fixes RUSTSEC-2026-0009 and needs Rust 1.88, and the crates
+# support Rust 1.85. The advisory covers the parsing of RFC 2822 text. The
+# library generates values of time's types and does not parse text. A
+# consumer on Rust 1.88 or later resolves time 0.3.47.
+ignore = [
+    { id = "RUSTSEC-2026-0009", reason = "the library does not parse RFC 2822 text, and the fix needs Rust 1.88" },
+]
+
+[licenses]
+version = 2
+# MIT and Apache-2.0 cover the dependencies, and unicode-ident, which syn
+# depends on, adds the Unicode licence for its tables.
+allow = ["MIT", "Apache-2.0", "Unicode-3.0"]
+confidence-threshold = 0.9
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
