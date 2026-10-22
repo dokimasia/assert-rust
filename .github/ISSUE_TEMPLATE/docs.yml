@@ -1,3 +1,6 @@
+# Copyright Dokimasia B.V. 2026
+# SPDX-License-Identifier: MIT
+
 name: Documentation
 description: A doc comment, the README or an RFC is wrong or missing.
 labels: ["docs"]

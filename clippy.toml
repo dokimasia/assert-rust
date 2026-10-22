@@ -1,0 +1,29 @@
+# Managed by ergon init. Add repository settings to .ergon/local/clippy.toml and run ergon init sync.
+#
+# The configuration of clippy for every crate of the repository. Each setting turns off a default
+# that hides findings of a lint that lint-rust denies. clippy reads no lint level from this file:
+# lint-rust sets the levels on the command line.
+
+# Report a lint that would change a public API, as on any other item.
+avoid-breaking-exported-api = false
+
+# Report a format string that mixes inlined and positional arguments.
+allow-mixed-uninlined-format-args = false
+
+# Report every wildcard import, not only the ones from a module other than the parent.
+warn-on-all-wildcard-imports = true
+
+# Report a loop over a reborrow that iter() replaces.
+enforce-iter-loop-reborrow = true
+
+# Report code that a comment keeps instead of a deletion.
+lint-commented-code = true
+
+# Report an acronym in upper case in any name.
+upper-case-acronyms-aggressive = true
+
+# Check the minimum supported Rust version in tests too.
+check-incompatible-msrv-in-tests = true
+
+# Report an unsafe metavariable of a private macro, as of a public one.
+warn-unsafe-macro-metavars-in-private-macros = true

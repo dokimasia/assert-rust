@@ -1,0 +1,246 @@
+# Copyright Dokimasia B.V. 2026
+# SPDX-License-Identifier: MIT
+
+common:
+  # The command that runs ergon in the targets of the Makefile and in the hooks of
+  # .pre-commit-config.yaml, as its words, such as [ergon] for the ergon on the PATH. The repository
+  # of ergon runs ergon from its own source with [go, run, go.dokimi.dev/ergon/cmd/ergon].
+  ergon: [ergon]
+  # The tools of the common files.
+  tools:
+    # The release of commitlint, which checks each commit message in the commit-msg hook of
+    # .pre-commit-config.yaml and in the job commits of ci.yml.
+    commitlint:
+      sha256:
+        darwin/arm64: 35f25a55947031db016177ac0211d479c1fca21ccb87b368b6a429629524436c
+        linux/amd64: bf9666441262bf8d31345a6d29d6f788d0dadea7d47e5b91890c3a651999c118
+        windows/amd64: e8f90d08616ab8cd987b2dbef7ae0ee7fd1cb43c97f5a1ad171e8a56d1bd2f3d
+      version: 0.12.0
+    # The release of rumdl, which lint-common runs on the Markdown files with the rules of
+    # .markdownlint.yml. It skips the files of .markdownlintignore.
+    rumdl:
+      sha256:
+        darwin/arm64: 8c0ecf93a61bf612df5f6c6f22813d066a6f51a5680f3c12da49b93ed892aebb
+        linux/amd64: a85ae77c6880616118e10dda1e36292df59815bcfbf767201736ff6971213cf3
+        windows/amd64: 07d12118c143976fadaaf7d053ac6be328798ce3b59b3f774572ac946b123672
+      version: 0.2.79
+  # The release of github.com/pre-commit/pre-commit-hooks, whose hooks check the hygiene of the
+  # files before each commit.
+  pre-commit-hooks: v6.0.0
+  # The hooks of .pre-commit-config.yaml: the paths that the hooks of file hygiene keep as they are,
+  # and the targets of the Makefile that the hooks run at each stage of git. An empty list of
+  # targets turns the hooks of its stage off.
+  hooks:
+    # A regular expression of the paths whose content the hooks trailing-whitespace,
+    # end-of-file-fixer, mixed-line-ending and check-added-large-files keep as it is, such as
+    # ^models/. pre-commit matches it with the re module of Python. The other hooks still check
+    # those paths. The empty string turns the exclusion off.
+    exclude: ""
+    # The targets that run before each commit, in order: fmt, lint, test, audit or check.
+    pre-commit: [lint, test]
+    # The targets that run before each push, in order: fmt, lint, test, audit or check.
+    pre-push: [check]
+  # The limit in minutes of each job of the common files in ci.yml: docs, commits and changeset. The
+  # jobs run ergon, and they do not run an action of their own.
+  ci:
+    actions: {}
+    timeout: 10
+github:
+  # The runner images of the jobs that run on every runner, each pinned to a version of its system.
+  # The key ci.runners of a section lists a part of them.
+  runners: [ubuntu-26.04, macos-26, windows-2025]
+  # The runner image of the jobs that check text and of the analyses of CodeQL, one of runners.
+  linux: ubuntu-26.04
+  # The release of GNU make that the action setup-make installs from Chocolatey on a Windows runner,
+  # whose image has no make.
+  make: 4.4.1
+  # The tools of the GitHub files.
+  tools:
+    # The release of actionlint, which lint-github runs on the workflows with the configuration of
+    # .github/actionlint.yaml.
+    actionlint:
+      sha256:
+        darwin/arm64: aba9ced2dee8d27fecca3dc7feb1a7f9a52caefa1eb46f3271ea66b6e0e6953f
+        linux/amd64: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+        windows/amd64: 6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9
+      version: 1.7.12
+  # The options of nightly.yml, which runs the steps under the key nightly of each language on a
+  # schedule, each in a job of its own.
+  nightly:
+    # When nightly.yml runs, as a cron expression of five fields in UTC, such as 0 3 * * * for 03:00
+    # each day.
+    schedule: 0 3 * * *
+  # The pins of the actions of the workflows, and the limit in minutes of each job of the GitHub
+  # files.
+  ci:
+    actions:
+      # The action that checks out the repository in every job of every workflow.
+      checkout:
+        uses: actions/checkout
+        commit: 3d3c42e5aac5ba805825da76410c181273ba90b1
+        release: v7.0.1
+      # The actions of CodeQL. init and analyze run the analysis of each language in codeql.yml, and
+      # upload-sarif uploads the results of the Scorecard.
+      codeql:
+        uses: github/codeql-action
+        commit: 2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2
+        release: v4.38.2
+      # The action that reviews the dependencies that a pull request changes, in the job
+      # dependency-review of security.yml.
+      dependency-review:
+        uses: actions/dependency-review-action
+        commit: a1d282b36b6f3519aa1f3fc636f609c47dddb294
+        release: v5.0.0
+      # The action of the OpenSSF Scorecard, in the weekly job scorecard of security.yml.
+      scorecard:
+        uses: ossf/scorecard-action
+        commit: 2d1146689b8cda280b9bc96326124645441f03bc
+        release: v2.4.4
+      # The action that uploads the publish plan of the job select-mode and the artifacts of the job
+      # pack of release.yml.
+      upload-artifact:
+        uses: actions/upload-artifact
+        commit: cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        release: v7.0.2
+      # The action that downloads the publish plan in the job pack, and the artifacts in the job
+      # publish of release.yml.
+      download-artifact:
+        uses: actions/download-artifact
+        commit: 9000827ccba6bdab643e8b6fd33ac0654aef8333
+        release: v8.0.2
+      # The action that restores the tool directory of ergon before the steps of each job of ci.yml
+      # that runs tools, and saves it after a run that succeeds.
+      cache:
+        uses: actions/cache
+        commit: 55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        release: v6.1.0
+      # The action that creates a token of the GitHub App of the variable ERGON_APP_CLIENT_ID and
+      # the secret ERGON_APP_PRIVATE_KEY. version.yml opens the version pull request with the token,
+      # so the checks of the pull request run without an approval. The job homebrew of release.yml
+      # commits the casks of a release to the tap with the token. A job of nightly.yml such as
+      # propose-spec writes its pull requests with the token.
+      create-github-app-token:
+        uses: actions/create-github-app-token
+        commit: bcd2ba49218906704ab6c1aa796996da409d3eb1
+        release: v3.2.0
+      # The action that attests the assets of a release with SLSA build provenance in the job pack
+      # of release.yml, which GitHub stores in its attestation API.
+      attest:
+        uses: actions/attest
+        commit: 1e69f48acb82d1966a394da916b4c1698aa569d6
+        release: v4.2.2
+    timeout: 15
+  # When true, ergon init renders security.yml with the CodeQL analysis of each language, the
+  # dependency review of each pull request and the weekly Scorecard, and codeql.yml. A private
+  # repository needs GitHub Code Security for the analysis and the review, so a private repository
+  # without it sets false. The Scorecard runs in a public repository alone.
+  code-security: true
+license:
+  # The copyright holder of the headers and of the license files. ergon init writes it from --owner,
+  # and ergon init sync --owner changes it.
+  owner: Dokimasia B.V.
+  # The SPDX identifier of the license of the headers and of the license files. ergon init writes it
+  # from --license, and ergon init sync --license changes it.
+  spdx: MIT
+  # The parameters of BUSL-1.1, which LICENSE states before its terms. Every other license ignores
+  # them.
+  parameters:
+    # The Licensed Work of BUSL-1.1, such as the name and the release of the software.
+    licensed-work: ""
+    # The Additional Use Grant of BUSL-1.1, the production use that the Licensor permits, or None.
+    additional-use-grant: ""
+    # The Change Date of BUSL-1.1, on which the Change License applies, such as 2030-01-01.
+    change-date: ""
+    # The Change License of BUSL-1.1, the license that applies on the Change Date, such as
+    # GPL-2.0-or-later.
+    change-license: ""
+  # The directories under a license of their own: the path of each, relative and slash-separated,
+  # its SPDX identifier, and its parameters of BUSL-1.1. A file states the license of the deepest
+  # directory that contains it, and each directory gets its LICENSE, with a NOTICE for Apache-2.0.
+  directories: []
+  # The comment style of the header of each extension, such as .sql, or base name, such as
+  # Dockerfile: a style of skywalking-eyes, such as DoubleSlash, Hashtag or Semicolon, or none for
+  # no header. A key here replaces the style that ergon resolves.
+  styles: {}
+  # The doublestar globs of the paths whose files have no header, such as testdata/**.
+  exclude: ['**/testdata/**']
+  # The limit in minutes of the job license of ci.yml, which runs ergon license check.
+  ci:
+    actions: {}
+    timeout: 10
+spec:
+  # The tools of spec.
+  tools:
+    # The release of spec, which checks the copies of the definitions and the manifest of a
+    # definition.
+    spec:
+      sha256:
+        darwin/amd64: af667806ff4d1b98975dbf25d9994748edc9abc0c8b170ea478365fe86d7ace3
+        darwin/arm64: ab07badc7456450212860080aa8b4c17b490b7bf94578c1f552307b6cfeb287b
+        linux/amd64: 52c6e38ae99491e5cbeaf5e48ffb7aeec7a4ab432a9f925d5f63788cdafdfba6
+        linux/arm64: 533883b706ebb63501d3791f37e74d6b50dfa5707b59e641ce6415dea5af6443
+        windows/amd64: d3ca18f4ec1991867e6bf3ecad3ad963754f1c8deae0cfb42fd46d42552a39f2
+        windows/arm64: fcbeb31e10146308d86f2682016f70fd7eb2a4b76ba2f72a4ced9118e9976c88
+      version: 0.4.0
+  # What the repository is to spec: definition for the repository of a conformance definition, and
+  # implementation for a repository with copies of definitions. Each role needs its section of
+  # .spec.yaml, definition or implements. A repository without a role gets no target or job of spec.
+  roles: [implementation]
+  # The limit in minutes of the job spec of ci.yml and of the job propose-spec of nightly.yml. The
+  # jobs run spec through ergon, and they do not run an action of their own.
+  ci:
+    actions: {}
+    timeout: 10
+rust:
+  # The tools of the targets of Rust, which ergon tool run installs with cargo install --locked, as
+  # <crate>@<version>.
+  tools:
+    # The vulnerability scan of audit-rust, over Cargo.lock.
+    cargo-audit: cargo-audit@0.22.2
+    # The coverage tool that a target of .ergon/local/Makefile runs as $(CARGO_LLVM_COV) llvm-cov.
+    # The gate of Rust does not measure coverage.
+    cargo-llvm-cov: cargo-llvm-cov@0.9.1
+    # The tool of msrv-rust. It checks each published crate on the Rust of its rust-version and
+    # installs that Rust with rustup.
+    cargo-hack: cargo-hack@0.6.45
+  # The steps that check-rust runs, in order: lint, test, msrv, generate or audit. msrv-rust checks
+  # each published crate on the Rust of its rust-version with cargo-hack when a crate of the
+  # workspace sets rust-version. It fails for a published crate without a rust-version.
+  check: [lint, test, msrv, audit]
+  # test-rust runs cargo test with args.
+  test:
+    args: [--workspace, --all-targets, --all-features]
+  # generate-rust runs command with args at the root of the repository. verify-generate-rust, the
+  # step generate of check, runs the same and fails when the run changes a file of the repository.
+  # Without a command Rust has neither target.
+  generate:
+    command: []
+    args: []
+  # audit-rust scans Cargo.lock with cargo-audit, and accepts each advisory of ignore, by its
+  # identifier, such as RUSTSEC-2024-0001.
+  audit:
+    ignore: [RUSTSEC-2026-0009]
+  # The pin of setup-rust-toolchain, the runners and the toolchains of Rust of the job check-rust,
+  # and its limit in minutes. Empty runners select every runner of the section github, and empty
+  # versions the toolchain of rust-toolchain.toml.
+  ci:
+    actions:
+      # The action that installs the toolchain of Rust of rust-toolchain.toml or of the matrix, with
+      # rustfmt and clippy.
+      setup-rust-toolchain:
+        uses: actions-rust-lang/setup-rust-toolchain
+        commit: ecabd13d1c56bd1345c230e542e9144811ad706f
+        release: v2.0.0
+    runners: []
+    versions: []
+    # The steps that each job of the toolchain runs after the setup of the toolchain and before
+    # ergon, such as the installation of a compiler that the tests run. A step has the keys name,
+    # id, if and env, and either uses with its inputs under with, or run. uses is an action as uses,
+    # commit and release, and each input is a string. run is the list of the lines of a command of
+    # bash.
+    steps:
+      - name: Add the LLVM tools of cargo llvm-cov
+        if: runner.os == 'Linux'
+        run:
+          - rustup component add llvm-tools-preview
+    timeout: 30

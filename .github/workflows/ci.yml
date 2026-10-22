@@ -1,138 +1,293 @@
+# Managed by ergon init, with .ergon/local/.github/workflows/ci.yml merged in. Change the repository's settings there and run ergon init sync.
+#
+# The gate of the repository, with the jobs that each producer of ergon init contributes. A check
+# of text runs on the Linux runner of the section github of .ergon.yaml, and every other job on a
+# matrix of runners. A job that sets up a toolchain runs its steps once the repository has the
+# files of the toolchain, and sets the toolchain up before ergon. A job that runs tools keeps the
+# tools of ergon in the cache of GitHub Actions, and removes the tools that the options do not name
+# before the cache saves them. version.yml opens the version pull request after the run of a push
+# to main passes, and release.yml publishes a commit only when a run of the gate passed on its
+# content. A new run of a pull request cancels its earlier run, and every other run has a
+# concurrency group of its own.
+#
+# The job skip runs first. Every other job skips when a passed run already covers the content of
+# the run: a push whose content passed, such as the merge of a pull request whose run passed, and a
+# version commit whose parent passed, which version.yml marks with the status ergon/version. The
+# job result passes when every job passed or skipped, so it is the one check that a branch requires.
+
 name: CI
 on:
   pull_request:
+  merge_group:
   push:
     branches: [main]
-
+permissions: {}
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-
-env:
-  CARGO_TERM_COLOR: always
-
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+# Every command runs in bash, which is Git Bash on Windows.
+defaults:
+  run:
+    shell: bash
 jobs:
-  # Formatting, clippy and the documentation, on the stable toolchain.
-  lint:
-    runs-on: ubuntu-latest
+  skip:
+    name: Skip a tested commit
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+      statuses: read
+    outputs:
+      skip: ${{ steps.skip.outputs.skip }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install the toolchain
-        run: |
-          rustup toolchain install stable --profile minimal --component clippy,rustfmt --no-self-update
-          rustup default stable
-
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-
-      - name: Format
-        run: cargo fmt --all --check
-
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-
-      - name: Document, refusing a warning or a broken link
-        run: cargo doc --workspace --no-deps --all-features
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Find a passed run that covers the content
+        id: skip
         env:
-          RUSTDOCFLAGS: -D warnings
-
-  # The tests, the doctests included, on each system that the crates support.
-  test:
+          GITHUB_TOKEN: ${{ github.token }}
+          COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          ergon release ci skip --commit "$COMMIT"
+  docs:
+    name: Docs
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Keep the tools of ergon
+        id: ergon-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('.ergon.yaml', '.ergon/init.lock') }}"
+          path: "${{ runner.os == 'Windows' && '~/AppData/Local/ergon/tools' || runner.os == 'macOS' && '~/Library/Caches/ergon/tools' || '~/.cache/ergon/tools' }}"
+          restore-keys: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-"
+      - name: Lint the Markdown files
+        run: |
+          make lint-common
+      - name: Prune the tools of ergon
+        if: "steps.ergon-tools.outputs.cache-hit != 'true'"
+        run: |
+          ergon tool prune
+  commits:
+    name: Commits
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true' && (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]')"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Keep the tools of ergon
+        id: ergon-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('.ergon.yaml', '.ergon/init.lock') }}"
+          path: "${{ runner.os == 'Windows' && '~/AppData/Local/ergon/tools' || runner.os == 'macOS' && '~/Library/Caches/ergon/tools' || '~/.cache/ergon/tools' }}"
+          restore-keys: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-"
+      - name: Check the commit messages
+        env:
+          BASE: "${{ github.event.pull_request.base.sha }}"
+          HEAD: "${{ github.event.pull_request.head.sha }}"
+        run: |
+          status=0
+          for commit in $(git rev-list --no-merges "$BASE..$HEAD"); do
+            git log -1 --format=%B "$commit" | ergon tool run common.commitlint -- lint || status=1
+          done
+          exit "$status"
+      - name: Prune the tools of ergon
+        if: "steps.ergon-tools.outputs.cache-hit != 'true'"
+        run: |
+          ergon tool prune
+  changeset:
+    name: Changeset
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true' && (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]' && !(github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == format('ergon-release/{0}', github.base_ref)))"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Check the changesets
+        env:
+          BASE: "${{ github.event.pull_request.base.sha }}"
+        run: |
+          ergon release status --since "$BASE"
+  baseline:
+    name: Baseline
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Check the managed files
+        run: |
+          ergon init check
+  workflows:
+    name: Workflows
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Keep the tools of ergon
+        id: ergon-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('.ergon.yaml', '.ergon/init.lock') }}"
+          path: "${{ runner.os == 'Windows' && '~/AppData/Local/ergon/tools' || runner.os == 'macOS' && '~/Library/Caches/ergon/tools' || '~/.cache/ergon/tools' }}"
+          restore-keys: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-"
+      - name: Lint the workflows
+        run: |
+          make lint-github
+      - name: Prune the tools of ergon
+        if: "steps.ergon-tools.outputs.cache-hit != 'true'"
+        run: |
+          ergon tool prune
+  license:
+    name: License
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Check the license headers
+        run: |
+          ergon license check
+  spec:
+    name: Spec
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-ergon
+      - name: Keep the tools of ergon
+        id: ergon-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('.ergon.yaml', '.ergon/init.lock') }}"
+          path: "${{ runner.os == 'Windows' && '~/AppData/Local/ergon/tools' || runner.os == 'macOS' && '~/Library/Caches/ergon/tools' || '~/.cache/ergon/tools' }}"
+          restore-keys: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-"
+      - name: Check the copies of the definitions
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+        run: |
+          ergon tool run spec.spec -- check --remote
+      - name: Prune the tools of ergon
+        if: "steps.ergon-tools.outputs.cache-hit != 'true'"
+        run: |
+          ergon tool prune
+  check-rust:
+    name: "Rust (${{ matrix.os }})"
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-26.04, macos-26, windows-2025]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install the toolchain
-        run: |
-          rustup toolchain install stable --profile minimal --no-self-update
-          rustup default stable
-
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-
-      - name: Test
-        run: cargo test --workspace --all-features
-
-  # The oldest Rust that rust-version states. The crates support it only
-  # while they build on it.
-  msrv:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install the toolchain
-        run: rustup toolchain install 1.85 --profile minimal --no-self-update
-
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-
-      - name: Check
-        run: rustup run 1.85 cargo check --workspace --all-targets --all-features
-
-  # Every line and every function of the published crates runs in a test.
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install the toolchain
-        run: |
-          rustup toolchain install stable --profile minimal --component llvm-tools-preview --no-self-update
-          rustup default stable
-
-      - uses: taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283 # v2.87.29
         with:
-          tool: cargo-llvm-cov
-
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-
-      - name: Measure the coverage
-        run: make coverage
-
-  # The licences, the security advisories and the sources of the
-  # dependencies, as deny.toml states them.
+          persist-credentials: false
+      - if: "hashFiles('rust-toolchain.toml') != ''"
+        uses: ./.github/actions/setup-make
+      - name: Set up Rust
+        if: "hashFiles('rust-toolchain.toml') != ''"
+        uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          components: "rustfmt, clippy"
+      - name: Add the LLVM tools of cargo llvm-cov
+        if: "hashFiles('rust-toolchain.toml') != '' && (runner.os == 'Linux')"
+        run: |
+          rustup component add llvm-tools-preview
+      - if: "hashFiles('rust-toolchain.toml') != ''"
+        uses: ./.github/actions/setup-ergon
+      - name: Keep the tools of ergon
+        id: ergon-tools
+        if: "hashFiles('rust-toolchain.toml') != ''"
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('.ergon.yaml', '.ergon/init.lock') }}"
+          path: "${{ runner.os == 'Windows' && '~/AppData/Local/ergon/tools' || runner.os == 'macOS' && '~/Library/Caches/ergon/tools' || '~/.cache/ergon/tools' }}"
+          restore-keys: "ergon-tools-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-"
+      - name: Check Rust
+        if: "hashFiles('rust-toolchain.toml') != ''"
+        run: |
+          make check-rust
+      - name: Prune the tools of ergon
+        if: "hashFiles('rust-toolchain.toml') != '' && (steps.ergon-tools.outputs.cache-hit != 'true')"
+        run: |
+          ergon tool prune
+  result:
+    name: Result
+    if: always()
+    needs: [skip, docs, commits, changeset, baseline, workflows, license, spec, check-rust, deny]
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions: {}
+    steps:
+      - name: Require every job to pass or to skip
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
   deny:
-    runs-on: ubuntu-latest
+    name: Dependencies
+    needs: skip
+    if: "needs.skip.outputs.skip != 'true'"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
-
-  # cargo package builds each published crate from the files of its
-  # package, so a file that the package leaves out fails here.
-  package:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install the toolchain
-        run: |
-          rustup toolchain install stable --profile minimal --no-self-update
-          rustup default stable
-
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-
-      - name: Package every published crate
-        run: cargo package --workspace
-
-  # spec check fails for a vendored definition that differs from its
-  # manifest, and for a copy whose commit is not on the branch main of
-  # assert-spec. The workflow spec.yml proposes a newer copy.
-  spec:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - uses: stealth-scale/spec/.github/actions/setup-spec@78d70fd5be63102e43f8dd9628d4594914bb390e # v0.2.0
         with:
-          version: v0.2.0
-
-      - name: Check the vendored definition
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: spec check --remote
+          persist-credentials: false
+      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1

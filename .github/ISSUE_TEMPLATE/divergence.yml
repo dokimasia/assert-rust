@@ -1,3 +1,6 @@
+# Copyright Dokimasia B.V. 2026
+# SPDX-License-Identifier: MIT
+
 name: Divergence report
 description: This library answers a case differently from another implementation.
 labels: ["divergence", "spec"]

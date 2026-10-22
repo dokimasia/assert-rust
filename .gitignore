@@ -1,36 +1,21 @@
-# Build output
-/target/
-**/*.rs.bk
-*.pdb
-
-# Coverage
-*.profraw
-*.profdata
-/lcov.info
+# Managed by ergon init, with .ergon/local/.gitignore merged in. Change the repository's settings there and run ergon init sync.
 
 # Editors and IDEs
 .idea/
-*.iml
 .vscode/
 *.swp
 *.swo
 *~
 
-# Zed: settings.json is the shared config. Nothing else in .zed is.
-.zed/*
-!.zed/settings.json
-
-# Agentic / LLM
+# Agents
 .claude/
 .codex/
 .gemini/
-.topoi/
-superpowers/
 AGENT.md
 CLAUDE.md
 GEMINI.md
 
-# OS
+# Operating systems
 .DS_Store
 Thumbs.db
 
@@ -38,3 +23,15 @@ Thumbs.db
 .env
 *.local
 secrets.json
+
+# ergon release
+# The publish plan of the release workflow, which a build of a release must not see as a change
+/publish-plan.json
+
+# Rust
+target/
+
+# The profiles and the report of cargo llvm-cov
+*.profraw
+*.profdata
+/lcov.info

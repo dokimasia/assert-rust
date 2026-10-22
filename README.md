@@ -1,3 +1,8 @@
+<!--
+  ~ Copyright Dokimasia B.V. 2026
+  ~ SPDX-License-Identifier: MIT
+-->
+
 # dokimi-assert
 
 Test assertions, property-based tests, history checks and state machines for
@@ -27,6 +32,8 @@ of `dokimi-assert` add optional parts:
   `prop::Arbitrary` for the types of those crates.
 - `rand_core` lets the random source of a property's case serve as a
   `rand_core::Rng`.
+
+## Contents
 
 - [Use cases](#use-cases)
 - [Getting started](#getting-started)
@@ -836,10 +843,11 @@ and has the binary's name with the suffix `.dokimi-assert.jsonl`, such as
 
 [assert-spec](https://github.com/dokimasia/assert-spec) defines the
 assertions. The unpublished crate `dokimi-assert-conformance` contains a
-copy of the definition. `make spec-sync` writes the copy from a commit of
-assert-spec, and `make spec-check` verifies it. The crate's tests run the
-definition's cases and vectors through the public API of both crates. They
-compare JSON with `serde_json`, never with the library under test.
+copy of the definition. `ergon tool run spec.spec -- sync` writes the copy
+from a commit of assert-spec, and `make check-spec` verifies it. The
+crate's tests run the definition's cases and vectors through the public API
+of both crates. They compare JSON with `serde_json`, never with the library
+under test.
 
 - 161 of the corpus's 195 cases apply to Rust. Of the other 34, 7 skip
   Rust and 27 use a relaxation that the library declines.
@@ -874,20 +882,25 @@ The design records of the library and their statuses are in
 
 ## Development
 
+ergon manages the Makefile, the workflows and the configuration of the
+tools. `ergon init sync` writes them again from its baseline and from the
+files under `.ergon/local`.
+
 ```sh
-make check      # every stage that CI runs
-make test       # every test, the doctests included
-make lint       # clippy over every target and feature, warnings included
-make doc        # the documentation, refusing a warning or a broken link
-make msrv       # cargo check of every crate on Rust 1.85
+make check      # the gate of the repository
+make test       # every test, then the doctests of the library crates
+make lint       # rustfmt, clippy with the pedantic lints, and the documentation
 make coverage   # fails on a line or a function of a published crate that no test ran
-make spec-sync  # refresh the vendored definition from assert-spec
+make deny       # the licences, advisories and sources of the dependencies
 make help       # list every target
 ```
 
-`make check` runs `fmt-check`, `lint`, `test`, `doc`, `msrv`, `coverage`,
-`deny`, `package` and `spec-check`. CI runs the same stages, and it runs the
-tests on Linux, macOS and Windows.
+`make check` lints the Markdown files with rumdl and the workflows with
+actionlint, and it checks the vendored definition with spec. For Rust, it
+runs rustfmt, clippy, rustdoc, the tests, a check of each crate on Rust
+1.85 and cargo-audit over `Cargo.lock`. On Linux, it also measures the
+coverage and packages each crate. CI runs the gate of Rust on Linux, macOS
+and Windows, and cargo-deny on Linux.
 
 ## Licence
 

@@ -1,3 +1,6 @@
+# Copyright Dokimasia B.V. 2026
+# SPDX-License-Identifier: MIT
+
 # cargo-deny checks the licences, the security advisories, the duplicate
 # versions and the sources of every dependency of the workspace. CI runs
 # `cargo deny check` on every change, and `make deny` runs it locally.
