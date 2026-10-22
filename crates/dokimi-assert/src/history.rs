@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Histories: the calls that concurrent clients make to an object, and the
 //! checks that a recorded history is linearizable, serializable or has
 //! snapshot isolation.

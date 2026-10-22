@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The fuzz bridge: a fuzzer's bytes decoded into the choices of one case.
 //!
 //! The bridge reads each value from the bytes, in request order:

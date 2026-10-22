@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::transaction`, which reads the calls of a history as
 //! list-append transactions.
 

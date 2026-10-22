@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `record`, the call records of a run.
 
 use crate::helpers::{Scratch, definition, in_child, records};

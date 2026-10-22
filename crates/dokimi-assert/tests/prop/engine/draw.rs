@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::draw`, which draws each value of a generated
 //! case from its random source.
 

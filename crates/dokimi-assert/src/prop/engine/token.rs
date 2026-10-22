@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The replay token: the choice values of one case as one printable string.
 //!
 //! A token is `prop1:` followed by the unpadded base64url encoding of the

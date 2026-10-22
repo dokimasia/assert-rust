@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::coverage`, the test whether a label covers a
 //! required share of the valid cases.
 

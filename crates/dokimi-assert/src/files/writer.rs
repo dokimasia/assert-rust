@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Writing a tree into a directory: the directory of a workspace, a
 //! directory that exists, and a golden directory that an update makes equal
 //! a tree.

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher/text`: prefixes, suffixes and patterns of text.
 
 use crate::helpers::{failure_of, passes};

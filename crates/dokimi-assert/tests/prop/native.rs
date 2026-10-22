@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::native`, which turns the values of a shape's generator
 //! into the native values that `Arbitrary` takes, and back.
 //!

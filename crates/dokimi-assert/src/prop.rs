@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Properties: a body run against generated inputs, with failures shrunk.
 //!
 //! [`for_all`] runs a body against generated cases. The body draws its inputs

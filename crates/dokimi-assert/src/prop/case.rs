@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The case: one call of a property's body, and the seat of its assertions.
 //!
 //! A case keeps each failure record in call order, and its first record is

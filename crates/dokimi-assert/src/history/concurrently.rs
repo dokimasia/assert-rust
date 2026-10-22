@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Running the clients of a history together.
 
 use std::panic::{AssertUnwindSafe, catch_unwind, resume_unwind};

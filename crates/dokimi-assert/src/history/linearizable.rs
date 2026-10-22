@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The check that a history is linearizable: that the calls of each of its
 //! partitions have an order that respects their real-time order and that
 //! the spec accepts.

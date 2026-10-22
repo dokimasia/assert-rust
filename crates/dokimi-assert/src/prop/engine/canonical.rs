@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The equality by which uniqueness, examples and the inverse compare
 //! decoded values.
 //!

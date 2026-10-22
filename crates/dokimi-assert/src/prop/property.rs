@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The property run that `for_all`, `fuzz` and every property form use.
 //!
 //! A property takes its settings from its options and from the environment.

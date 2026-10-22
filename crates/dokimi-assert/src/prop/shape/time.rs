@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The time shapes that make more than one choice, and the text forms of
 //! the bounds of every time shape.
 //!

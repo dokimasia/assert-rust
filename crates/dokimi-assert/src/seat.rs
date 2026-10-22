@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The seats that assertions report to, and the fault that ends the call of
 //! a helper.
 

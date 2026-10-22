@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The SHA-256 digest of FIPS 180-4, which a record states for a file whose
 //! content is too long to state in full.
 

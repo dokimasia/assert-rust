@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Failures that a call returns, as the error of a `Result`.
 //!
 //! Matching follows the chain of [`Error::source`], so an error that wraps

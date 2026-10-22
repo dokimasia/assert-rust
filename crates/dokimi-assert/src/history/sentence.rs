@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The sentences of the records of `linearizable`, `serializable` and
 //! `snapshot-isolation`, which a seat without records receives.
 

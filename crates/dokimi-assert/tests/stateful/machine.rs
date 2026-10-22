@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `stateful::machine`, the machine and its actions.
 
 use crate::helpers::{Register, panic_of, read, write};

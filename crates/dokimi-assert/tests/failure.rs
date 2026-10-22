@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `failure`, the record that a failing assertion reports.
 
 use crate::helpers::failure_of;

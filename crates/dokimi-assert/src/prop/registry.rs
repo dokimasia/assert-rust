@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The registry of the shapes and the generators of types, the generator of
 //! a type, and the shape file of a type.
 //!

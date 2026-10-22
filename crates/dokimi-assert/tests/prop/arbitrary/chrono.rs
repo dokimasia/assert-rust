@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::arbitrary::chrono`, the date and time types of chrono.
 
 use super::{converts, generates, refusal, shape};

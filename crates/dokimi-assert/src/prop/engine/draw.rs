@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! How a generated case draws each value from its random source.
 //!
 //! Every draw consumes the source in a fixed order, and the order is part of

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! [`Arbitrary`] for [`Decimal`], behind the feature `rust_decimal`.
 
 use super::{Arbitrary, Definitions, mismatch};

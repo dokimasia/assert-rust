@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::interval`, which builds a history from calls with a
 //! start and an end on one clock.
 

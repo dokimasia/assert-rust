@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The values that a failure's detail and a call record state.
 
 use crate::files::Tree;

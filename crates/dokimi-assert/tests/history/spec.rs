@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::spec`, the sequential specification of an object
 //! and a call as it sees one.
 

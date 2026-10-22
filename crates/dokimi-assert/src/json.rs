@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! JSON text, read strictly and written on one line.
 //!
 //! The library reads and writes JSON for its call records, the entries of a

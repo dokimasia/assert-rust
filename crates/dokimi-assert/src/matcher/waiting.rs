@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Assertions that retry until a condition holds.
 //!
 //! They wait on the seat's clock. On the platform clock they spend real time,

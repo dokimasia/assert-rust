@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher/sizes`: how many items a container has.
 
 use crate::helpers::{failure_of, opaque, passes};

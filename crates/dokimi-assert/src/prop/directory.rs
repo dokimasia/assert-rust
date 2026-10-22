@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The directory of a property's store, and the files in it.
 //!
 //! The store of a test is `testdata/prop/<target>/<test>` below the package

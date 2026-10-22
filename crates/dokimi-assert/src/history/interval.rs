@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! A history built from calls that a log recorded with a start and an end on
 //! one clock.
 

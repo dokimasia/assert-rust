@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Reading a tree from a directory, and the entry at one path.
 //!
 //! A reader follows no link: a link is an entry with its target. It states

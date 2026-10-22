@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The zone list and every offset change of its zones, as the definition's
 //! zone table states them.
 //!

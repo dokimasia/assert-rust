@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The global allocator that counts what a program allocates, and whether a
 //! test binary checks allocation ceilings.
 

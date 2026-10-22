@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The settings of a run of steps: a builder whose methods each state one
 //! setting.
 

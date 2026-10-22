@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! How a subject behaves, rather than what it returns.
 //!
 //! A subject that can be cancelled takes a [`Cancel`], the handle that it

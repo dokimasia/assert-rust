@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `stateful::scheduler`, the task scheduler.
 
 use dokimi_assert::prop::Case;

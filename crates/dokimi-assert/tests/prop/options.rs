@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::options`, the settings of a property.
 
 use crate::helpers::{panic_of, records};

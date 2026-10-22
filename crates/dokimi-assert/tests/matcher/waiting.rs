@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher/waiting`: assertions that retry until a condition
 //! holds.
 

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The comparisons of the tree in a directory with a wanted tree.
 
 use super::entry::{Entry, PERMISSIONS, execute_bit};

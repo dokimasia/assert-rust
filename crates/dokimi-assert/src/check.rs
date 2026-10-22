@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Assertions that end the test at the first failure.
 //!
 //! Every assertion takes the seat first and the contract last, except

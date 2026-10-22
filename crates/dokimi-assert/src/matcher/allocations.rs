@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Allocation ceilings on a call in a test.
 
 use crate::alloc;

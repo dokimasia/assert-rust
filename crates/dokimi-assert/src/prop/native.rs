@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The native form of the values of a shape, which [`Arbitrary`] takes and
 //! returns, and the value that a shape's generator decodes.
 //!

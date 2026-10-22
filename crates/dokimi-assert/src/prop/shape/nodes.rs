@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The generators of the structural shapes that the generator vocabulary
 //! does not state: the root and the refs of a recursive shape, an optional,
 //! a list and a map that can exit, a record, an enum, and an IP address of

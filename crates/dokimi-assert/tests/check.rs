@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `check`, the surface whose failures end the test.
 
 use crate::helpers::{Case, failing_calls, records};

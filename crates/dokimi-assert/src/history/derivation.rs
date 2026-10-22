@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The derivation over one history's transactions: the committed
 //! transactions, the version order of each key, the dependencies between
 //! committed transactions, and the first instance of each anomaly.

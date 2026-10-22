@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::tree`, the case tree of a run, which finds a
 //! repeated case, a body that diverges and an exhausted domain.
 

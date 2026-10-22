@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The calls of a history as a check of linearizability reads them, and
 //! their partitions.
 //!

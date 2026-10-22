@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::recording`, which records the events of a history.
 
 use crate::helpers::panic_of;

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::shape::time`: the time shapes that make more than one
 //! choice, and the text of a time shape's bounds.
 

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The transactions of a history of list appends, which the isolation checks
 //! read.
 //!

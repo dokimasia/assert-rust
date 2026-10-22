@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Traces: a case stated as the draws that it makes and the machine steps
 //! that it takes.
 //!

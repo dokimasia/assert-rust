@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The specs of the matchers, one for each family of assertions.
 
 mod allocations;

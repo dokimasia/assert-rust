@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `files/entry`: the files, directories and links of a tree.
 
 use crate::helpers::panic_of;

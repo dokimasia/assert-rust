@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::arbitrary`: the shapes of the types of the standard
 //! library and the conversions between their values and the native values
 //! of their shapes.

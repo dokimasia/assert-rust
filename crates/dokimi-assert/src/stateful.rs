@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The steps of a machine inside a property's case: the sequential
 //! specification of a subject, actions over it, and the task scheduler that
 //! releases the tasks of a subject in an order that the case decides.

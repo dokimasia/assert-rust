@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Numbers, where exact equality is the wrong question.
 
 use crate::seat::Seat;

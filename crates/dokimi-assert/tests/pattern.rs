@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `pattern`, the parser of the portable pattern subset.
 //!
 //! `check::matches` reads its pattern with the parser, so the spec drives the

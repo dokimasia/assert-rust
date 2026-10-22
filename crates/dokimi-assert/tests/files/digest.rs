@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `files/digest`: the SHA-256 digest that a record states for a
 //! file whose content is longer than 65,536 bytes.
 //!

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The entry points that run the engine on the inputs of the definition's
 //! vectors: a decode from stated choices, from a seed or from a fuzzer's
 //! bytes, the inverse of a generator, and a run of a body.

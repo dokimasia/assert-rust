@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The three kinds of choice that a case is made of.
 //!
 //! A choice is one typed decision within bounds: an integer, a float or a

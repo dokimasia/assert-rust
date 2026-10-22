@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The run of a property form: the draws of its inputs, its examples, and
 //! the record of its assertion.
 //!

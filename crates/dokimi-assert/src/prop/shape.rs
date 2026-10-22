@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Shapes: a language-neutral description of the values of a type, which
 //! the definition maps to one generator.
 //!

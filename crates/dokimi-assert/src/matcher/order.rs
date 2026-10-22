@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! How neighbouring items relate.
 
 use crate::seat::Seat;

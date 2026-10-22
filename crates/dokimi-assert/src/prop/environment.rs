@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The variables that set the defaults of every property of a test run.
 //!
 //! A hermetic run reads none of them, and an unset or empty variable states

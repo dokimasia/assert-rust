@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The steps of a machine in a case.
 
 use super::machine::{Action, Machine, Planned};

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The search of one partition for a linearization, which the definition
 //! fixes: Wing and Gong's scan of the calls, with a memo of the
 //! configurations that it visited.

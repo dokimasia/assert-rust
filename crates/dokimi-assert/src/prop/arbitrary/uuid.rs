@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! [`Arbitrary`] for [`Uuid`], behind the feature `uuid`.
 
 use super::{Arbitrary, Definitions, mismatch};

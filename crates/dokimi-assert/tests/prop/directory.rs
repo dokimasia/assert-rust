@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::directory`: the store of a property of a named test,
 //! and the seed files of a fuzz target.
 //!

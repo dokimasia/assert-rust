@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::shape`: the builder of a type's shape, its refusal, and
 //! the generator of a shape file.
 

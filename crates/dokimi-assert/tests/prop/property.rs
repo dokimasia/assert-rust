@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::property`, the run of a property and its record.
 
 use crate::helpers::{Scratch, panic_of, records};

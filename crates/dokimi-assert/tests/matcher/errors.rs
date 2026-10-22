@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher/errors`: failures that a call returns as the error of
 //! a `Result`.
 

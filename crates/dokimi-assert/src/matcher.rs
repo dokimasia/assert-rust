@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The comparison of each family of assertions.
 //!
 //! Each matcher takes a [`Mode`](crate::verdict::Mode) that states whether a

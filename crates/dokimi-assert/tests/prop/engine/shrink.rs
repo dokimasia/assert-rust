@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::shrink`: the replay of a failing case, the
 //! passes that shrink it, and the explanation of its draws.
 

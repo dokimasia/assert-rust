@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::shape::reader`, the reader of shape files.
 
 use dokimi_assert::Value;

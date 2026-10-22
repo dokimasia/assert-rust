@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The generators that the option `using` gives types in one run, and the
 //! generator of a type that picks from them where it is used.
 //!

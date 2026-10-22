@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Assertions that record a failure and let the test continue.
 //!
 //! The assertions, their signatures and their comparisons are those of

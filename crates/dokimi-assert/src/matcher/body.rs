@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The seat that an assertion makes for a body: an attempt of `eventually`,
 //! or the check of `rejects`.
 //!

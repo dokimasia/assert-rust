@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The assertions of the entry at one path.
 //!
 //! Each assertion reads the entry at a path of the operating system itself,

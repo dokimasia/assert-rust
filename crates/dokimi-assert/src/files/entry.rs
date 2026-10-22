@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The entries of a tree: files, directories and symbolic links.
 
 use super::digest::sha256;

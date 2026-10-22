@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! A campaign: a run that explores for a span of time instead of a number of
 //! cases, and keeps the cases that show new behaviour.
 //!

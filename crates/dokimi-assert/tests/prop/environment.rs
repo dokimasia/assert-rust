@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::environment`, the variables that set the defaults of
 //! every property of a run. Each case runs a property in a child process with
 //! the variables of the case.

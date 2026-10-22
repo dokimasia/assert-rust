@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::bridge`, which decodes a fuzzer's bytes into
 //! the choices of one case.
 

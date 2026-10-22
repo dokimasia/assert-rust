@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Test assertions, properties and history checks, defined by a
 //! language-neutral standard.
 //!

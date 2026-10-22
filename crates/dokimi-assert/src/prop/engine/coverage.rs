@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The coverage test: whether a label covers a required share of the cases.
 //!
 //! A requirement is decided with the Wilson score interval of the label's

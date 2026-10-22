@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The reader of shape files: the JSON of a shape file, read into the
 //! generator that the definition maps its shape to.
 //!

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `files/path`: the assertions of the entry at one path.
 
 use crate::helpers::{records, written};

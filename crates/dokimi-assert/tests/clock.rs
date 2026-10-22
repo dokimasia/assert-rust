@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `clock`, the clocks that the timed assertions read.
 
 use dokimi_assert::{Clock, Controlled, Recorder, Seat, System};

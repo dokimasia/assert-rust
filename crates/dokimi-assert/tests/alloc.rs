@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `alloc`, the global allocator that counts what each thread
 //! allocates.
 

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Comparison against recorded output.
 //!
 //! A golden file contains the output that a test compares with, so a change
@@ -388,8 +391,7 @@ pub fn matches_json_field(
         run: Run::of(seat),
         assertion: "golden-match-json-field",
         contract: format!(
-            "the field {:?} of the golden file {} matches the value, and {UPDATE_ENV}=1 writes it",
-            field,
+            "the field {field:?} of the golden file {} matches the value, and {UPDATE_ENV}=1 writes it",
             path.display()
         ),
         path,

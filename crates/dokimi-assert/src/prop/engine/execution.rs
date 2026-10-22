@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! One call of a body, and how it ended.
 //!
 //! The runner, the shrinker and the explain phase each call the body through

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::campaign`, the run of the campaign profile.
 //!
 //! A campaign runs for its budget on the platform clock, so each case runs a

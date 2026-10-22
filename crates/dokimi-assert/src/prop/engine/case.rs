@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The record of the choices and the spans of one call of a body.
 //!
 //! A generator never reads the random source itself. It asks the case for a

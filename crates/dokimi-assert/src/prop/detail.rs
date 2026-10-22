@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The record of a property's run, its detail and its sentence.
 //!
 //! The detail has the ten fields of `prop-for-all`: outcome, cases, rejected,

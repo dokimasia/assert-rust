@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::store`: the format of a store entry, its name,
 //! and the verdict that a run gives each file that it reads.
 

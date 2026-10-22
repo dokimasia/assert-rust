@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::shape::nodes`: the generators of the structural shapes
 //! and the budget of a recursive shape.
 

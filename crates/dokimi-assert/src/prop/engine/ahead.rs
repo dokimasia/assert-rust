@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The executor of a run's generated cases, on one worker or on more.
 //!
 //! On one worker, each case runs on the thread of the runner when the runner

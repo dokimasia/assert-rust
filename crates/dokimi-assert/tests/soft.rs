@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `soft`, the surface whose failures let the test continue.
 
 use crate::helpers::{Case, failing_calls, panic_of, records};

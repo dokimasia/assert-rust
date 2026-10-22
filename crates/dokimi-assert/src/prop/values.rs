@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The values of a generator for a seed, outside a property.
 //!
 //! A benchmark takes its inputs from a generator, so every run measures the

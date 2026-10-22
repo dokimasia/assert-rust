@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The verdict of every assertion call: a pass, a failure or a fault.
 //!
 //! Each verdict writes the call's record when its seat records calls. A

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The helpers that more than one spec of the binary uses.
 
 use dokimi_assert::files::{self, Tree, Workspace};

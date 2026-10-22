@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Calls that panic.
 //!
 //! A panic is how Rust reports a broken invariant. A failure that a caller

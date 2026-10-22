@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The allocation ceilings in a test binary that installs no counting
 //! allocator. Each ceiling ends its call with a fault that states the
 //! allocator to install.

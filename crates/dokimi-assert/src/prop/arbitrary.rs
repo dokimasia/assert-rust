@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Inputs derived from types: the trait that states the shape of a type, and
 //! its implementations for the types of the standard library.
 //!

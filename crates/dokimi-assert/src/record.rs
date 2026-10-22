@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The call records of a recorded run.
 //!
 //! `DOKIMI_ASSERT_RECORD=1` makes the seat of a test write the call record

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::engine::token`, the replay token of a case.
 
 use dokimi_assert::prop::engine::choice::Choice;

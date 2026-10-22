@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The property forms: an assertion of the root namespace, run on each input
 //! that a property generates.
 //!
@@ -7,19 +10,6 @@
 //! generator. A failing input shrinks as a body's failing case does, and the
 //! failure is one record of the form's id, such as `prop-equal`, whose
 //! detail states the failure of the assertion.
-//!
-//! ```
-//! use dokimi_assert::{Collector, prop};
-//!
-//! let t = Collector::new();
-//! prop::equal(
-//!     &t,
-//!     |xs: &Vec<u8>| xs.iter().rev().rev().copied().collect::<Vec<_>>(),
-//!     |xs: &Vec<u8>| xs.clone(),
-//!     "reversing twice returns the list",
-//!     prop::cases(50),
-//! );
-//! ```
 
 use super::arbitrary::Arbitrary;
 use super::form::{self, Form, INPUT, PAIR, TRIPLE};
@@ -58,6 +48,19 @@ fn error_of<O, E: Error + 'static>(result: &Result<O, E>) -> Option<&(dyn Error 
 /// Runs [`check::equal`](crate::check::equal) on `got(&input)` and
 /// `want(&input)` for each input that the run generates. It is the property
 /// form `prop-equal`.
+///
+/// ```
+/// use dokimi_assert::{Collector, prop};
+///
+/// let t = Collector::new();
+/// prop::equal(
+///     &t,
+///     |xs: &Vec<u8>| xs.iter().rev().rev().copied().collect::<Vec<_>>(),
+///     |xs: &Vec<u8>| xs.clone(),
+///     "reversing twice returns the list",
+///     prop::cases(50),
+/// );
+/// ```
 #[track_caller]
 pub fn equal<T, U, W>(
     seat: &dyn Seat,

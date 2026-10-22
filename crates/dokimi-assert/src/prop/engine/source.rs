@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The random source behind every generated case.
 //!
 //! The source is the 64-bit three-rotate variant of Bob Jenkins's small

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The phases, the counts and the outcome of a run.
 //!
 //! The runner calls a body once per case, in four phases, and stops at the

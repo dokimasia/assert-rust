@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The store: the format of an entry, its name, and what a run does with
 //! one.
 //!

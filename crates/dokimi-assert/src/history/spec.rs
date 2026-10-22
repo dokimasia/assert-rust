@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The sequential specification of an object, against which a check reads a
 //! history, and a call as the specification sees it.
 

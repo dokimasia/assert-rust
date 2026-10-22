@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher/values`: equality, truth and absence.
 
 use crate::helpers::{failure_of, opaque, passes};

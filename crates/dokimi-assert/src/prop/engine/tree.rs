@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The case tree: the choice sequences that a run generated, as a trie.
 //!
 //! A node is one choice request, recorded with its bounds, and an edge is the

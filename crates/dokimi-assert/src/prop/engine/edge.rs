@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The edge phase: four cases, each with every value at one boundary.
 //!
 //! A choice that decides structure takes the edge that its request states,

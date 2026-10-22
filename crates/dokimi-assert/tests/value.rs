@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `value`, the values that a failure and a call record state.
 
 use crate::helpers::{Scratch, records};

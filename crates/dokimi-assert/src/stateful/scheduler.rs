@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The task scheduler: which ready task runs next, decided by the choices of
 //! a case.
 

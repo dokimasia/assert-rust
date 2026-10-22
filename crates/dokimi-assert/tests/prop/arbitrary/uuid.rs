@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::arbitrary::uuid`, the UUIDs of uuid.
 
 use super::{converts, generates, refusal, shape};

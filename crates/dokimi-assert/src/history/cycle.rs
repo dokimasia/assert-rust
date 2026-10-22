@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The searches of the dependency graph of committed transactions: its
 //! strongly connected components, the shortest path within one, and the
 //! reduction of a closed walk to a simple cycle.

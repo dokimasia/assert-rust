@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `files/tree`: a tree of files, its rules and its literal.
 
 use crate::helpers::{Scratch, records, written};

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::form`, the run of a property form: the draws of its
 //! inputs, its examples, and the faults that end its call.
 

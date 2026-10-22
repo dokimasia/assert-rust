@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The relations: properties of a subject that hold across calls, rather than
 //! of one value.
 //!

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The clocks that the timed assertions read.
 
 use std::fmt::Debug;

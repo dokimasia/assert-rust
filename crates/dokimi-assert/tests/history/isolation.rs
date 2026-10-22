@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::isolation`, the checks that list-append
 //! transactions exhibit no anomaly that an isolation level forbids.
 

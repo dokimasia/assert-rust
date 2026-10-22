@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! [`Arbitrary`] for the date and time types of time, behind the feature
 //! `time`.
 //!

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The record that a failing assertion reports, and the call site it names.
 
 use crate::value::Value;

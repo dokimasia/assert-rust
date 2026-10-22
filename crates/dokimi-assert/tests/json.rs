@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `json`, the strict reader and the writer of JSON text.
 //!
 //! The library writes JSON in each call record and in a golden file of JSON,

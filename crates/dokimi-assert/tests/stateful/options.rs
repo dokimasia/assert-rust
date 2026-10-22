@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `stateful::options`, the settings of a run of steps.
 
 use crate::helpers::panic_of;

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The property engine: choices, cases, the runner, the shrinker and the
 //! store.
 //!

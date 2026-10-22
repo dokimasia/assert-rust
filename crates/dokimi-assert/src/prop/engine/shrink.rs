@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Shrinking: the search for the smallest case that fails the same way.
 //!
 //! A case is smaller than another when its choice sequence is shorter, or

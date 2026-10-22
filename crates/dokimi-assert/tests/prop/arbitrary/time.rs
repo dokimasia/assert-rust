@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop::arbitrary::time`, the date and time types of time.
 
 use super::{converts, generates, refusal, shape};

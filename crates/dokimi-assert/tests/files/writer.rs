@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `files/writer`: writing a tree into the directory of a
 //! workspace, into a directory that exists, and into a golden directory.
 //!

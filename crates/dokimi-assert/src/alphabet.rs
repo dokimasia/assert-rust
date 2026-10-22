@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The default alphabet of the string generator, ordered from simplest.
 //!
 //! A string is a sequence of indices into an alphabet, so the order of the

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `cancel`, the handle that tells a subject to stop.
 
 use dokimi_assert::{Cancel, Stop};

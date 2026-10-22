@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Performance ceilings, stated as a contract that a benchmark meets.
 //!
 //! A benchmark that prints numbers states what happened. A ceiling states

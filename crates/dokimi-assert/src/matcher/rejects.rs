@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The assertion that a check fails.
 //!
 //! A check that is meant to refuse a subject proves itself only by failing

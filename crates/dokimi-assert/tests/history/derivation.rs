@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `history::derivation`, which derives the anomalies of the
 //! list-append transactions of a history.
 

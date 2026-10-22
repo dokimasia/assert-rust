@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `verdict`, the pass, the failure or the fault of each call.
 
 use crate::helpers::{Scratch, in_child, records};

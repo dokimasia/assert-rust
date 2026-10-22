@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `seat`, the seats that assertions report to.
 
 use crate::helpers::{failure_of, panic_of, records};

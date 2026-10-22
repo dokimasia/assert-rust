@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Machines: the sequential specification of a subject, and the actions that
 //! the steps of a case take on it.
 

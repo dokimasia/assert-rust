@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `matcher/allocations`: allocation ceilings on a call.
 //!
 //! The binary of the specs installs the counting allocator, so every ceiling

@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The strategies of the task scheduler: how it chooses the ready task to
 //! release.
 

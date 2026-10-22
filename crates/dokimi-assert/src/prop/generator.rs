@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The generator: a domain, and how a case decodes a value of it from its
 //! choices.
 

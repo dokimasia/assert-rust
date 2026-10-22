@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! The spec of `prop/scope`: the generators that `using` gives types in one
 //! run, and the draws of `of` that pick them.
 

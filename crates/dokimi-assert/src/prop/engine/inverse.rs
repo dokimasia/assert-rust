@@ -1,3 +1,6 @@
+// Copyright Dokimasia B.V. 2026
+// SPDX-License-Identifier: MIT
+
 //! Running a generator backwards: the choices that decode to a given value.
 //!
 //! The inverse walks a generator with a value and emits each choice in the
