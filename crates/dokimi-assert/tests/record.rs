@@ -53,7 +53,7 @@ mod recorder {
         assert_eq!(
             *record,
             format!(
-                r#"{{"definition":"9.0.0","seq":1,"assertion":"length","contract":"the code has three characters","verdict":"fail","aborting":true,"where":{{"file":"record.rs","line":{line}}},"detail":{{"want":{{"type":"int","value":3}},"got":{{"type":"int","value":2}}}}}}"#
+                r#"{{"definition":"10.0.0","seq":1,"assertion":"length","contract":"the code has three characters","verdict":"fail","aborting":true,"where":{{"file":"record.rs","line":{line}}},"detail":{{"want":{{"type":"int","value":3}},"got":{{"type":"int","value":2}}}}}}"#
             )
         );
     }

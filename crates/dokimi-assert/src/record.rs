@@ -19,7 +19,7 @@ use std::sync::{Arc, LazyLock, Mutex, MutexGuard, OnceLock, PoisonError};
 
 /// The definition version that the library implements, which every call
 /// record and every store entry states.
-pub(crate) const DEFINITION: &str = "9.0.0";
+pub(crate) const DEFINITION: &str = "10.0.0";
 
 /// The variable that turns recording on.
 pub(crate) const VARIABLE: &str = "DOKIMI_ASSERT_RECORD";

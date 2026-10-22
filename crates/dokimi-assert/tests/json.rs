@@ -38,7 +38,7 @@ mod write {
         check::length(&seat, "ab", 2, "the code has two characters");
         let line = &seat.records()[0];
         assert!(
-            line.starts_with(r#"{"definition":"9.0.0","seq":1,"assertion":"length","#),
+            line.starts_with(r#"{"definition":"10.0.0","seq":1,"assertion":"length","#),
             "{line}"
         );
         assert!(!line.contains('\n'), "{line}");

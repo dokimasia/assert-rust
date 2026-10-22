@@ -930,9 +930,25 @@
     },
     "surface": {
         "helpers": {
+            "allocs-checked": {
+                "go": "AllocsChecked",
+                "java": "Check.allocsChecked",
+                "kotlin": "Check.allocsChecked",
+                "python": "allocs_checked",
+                "rust": "allocs_checked",
+                "typescript": "allocsChecked"
+            },
             "cancellation-of": {
                 "go": "Context",
                 "typescript": "signalOf"
+            },
+            "fault": {
+                "go": "Fault",
+                "java": "Check.fault",
+                "kotlin": "Check.fault",
+                "python": "fault",
+                "rust": "fault",
+                "typescript": "fault"
             },
             "files.bytes": {
                 "go": "files.Bytes",
@@ -1397,6 +1413,14 @@
                 "python": "prop.using",
                 "rust": "prop::using",
                 "typescript": "prop.using"
+            },
+            "prop.values": {
+                "go": "prop.Values",
+                "java": "Prop.values",
+                "kotlin": "Prop.values",
+                "python": "prop.values",
+                "rust": "prop::values",
+                "typescript": "prop.values"
             },
             "prop.workers": {
                 "go": "prop.Workers",
@@ -1921,6 +1945,14 @@
                 "rust": "failures",
                 "typescript": "failures"
             },
+            "recorder-seat.faults": {
+                "go": "Faults",
+                "java": "faults",
+                "kotlin": "faults",
+                "python": "faults",
+                "rust": "faults",
+                "typescript": "faults"
+            },
             "recorder-seat.helper-calls": {
                 "go": "HelperCalls",
                 "java": "helperCalls",
@@ -2020,6 +2052,14 @@
                 "python": "report",
                 "rust": "report",
                 "typescript": "report"
+            },
+            "seat.report-fault": {
+                "go": "ReportFault",
+                "java": "reportFault",
+                "kotlin": "reportFault",
+                "python": "report_fault",
+                "rust": "report_fault",
+                "typescript": "reportFault"
             },
             "spec.equal": {
                 "go": "Equal",
@@ -2137,6 +2177,11 @@
                 "python": "Failure",
                 "rust": "Failure",
                 "typescript": "Failure"
+            },
+            "fault-reporter": {
+                "go": "FaultReporter",
+                "java": "FaultReporter",
+                "kotlin": "FaultReporter"
             },
             "generator": {
                 "go": "prop.Generator",
@@ -2256,5 +2301,5 @@
             }
         }
     },
-    "version": "9.0.0"
+    "version": "10.0.0"
 }

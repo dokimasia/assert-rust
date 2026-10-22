@@ -93,7 +93,8 @@ mod naming_table {
         of_shape as _, one_of as _, optional as _, pairwise as _, panics as _, permutation as _,
         recursive as _, register as _, register_values as _, register_variants as _, replay as _,
         require as _, round_trip as _, sampled_from as _, seed as _, shape_of as _, shrink as _,
-        shrink_time as _, store as _, string as _, string_matching as _, using as _, workers as _,
+        shrink_time as _, store as _, string as _, string_matching as _, using as _, values as _,
+        workers as _,
     };
     use dokimi_assert::soft::{
         accumulates as _, close_to as _, completes_within as _, contains as _,
@@ -114,7 +115,9 @@ mod naming_table {
     };
     use dokimi_assert::{
         Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, System, Value, Where,
+        allocs_checked as _, fault as _,
     };
+    use std::sync::Arc;
     use std::time::Duration;
 
     /// The rows of the table that another crate of the workspace declares:
@@ -153,10 +156,12 @@ mod naming_table {
         seat.fail("c");
         seat.record("c");
         seat.report(failure, true);
+        seat.report_fault(Arc::new(std::io::Error::other("c")), true);
         let _ = (seat.clock(), seat.cancellation());
         let _ = (
             seat.failed(),
             seat.failures(),
+            seat.faults(),
             seat.helper_calls(),
             seat.message(),
             seat.messages(),

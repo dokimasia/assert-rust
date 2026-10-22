@@ -379,7 +379,7 @@
                 "got",
                 "total"
             ],
-            "summary": "A callable makes at most a stated number of heap allocations per call. A count calls it once to warm it and counts the allocations of the 100 calls after it. A ceiling of 0 admits one allocation in all, and any other ceiling compares with the average per call, rounded to the nearest whole number, with a half rounded up. A count that exceeds the ceiling is taken again, and the assertion fails when three counts exceed it. got is the rounded average and total the allocations of the count with the lowest total.\n"
+            "summary": "A callable makes at most a stated number of heap allocations per call. A count calls it once to warm it and counts the allocations of the 100 calls after it. A ceiling of 0 admits one allocation in all, and any other ceiling compares with the average per call, rounded to the nearest whole number, with a half rounded up. A count that exceeds the ceiling is taken again, and the assertion fails when ten counts exceed it. got is the rounded average and total the allocations of the count with the lowest total.\n"
         },
         "max-allocs-with-setup": {
             "arity": 4,
@@ -1550,7 +1550,7 @@
         "rejects": {
             "arity": 2,
             "detail_fields": [],
-            "summary": "A check fails against an implementation it is meant to reject. Yields the failure records of the check, in call order.\n"
+            "summary": "A check fails against an implementation it is meant to reject. Yields the failure records of the check, in call order. A fault that ends the check ends the call with the same fault.\n"
         },
         "round-trip": {
             "arity": 4,
@@ -1879,5 +1879,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "9.0.0"
+    "version": "10.0.0"
 }

@@ -610,7 +610,7 @@ pub fn compare_record(
             Json::from(if case.fails { "fail" } else { "pass" }),
         ),
         ("aborting", Json::from(surface.aborting())),
-        ("definition", Json::from("9.0.0")),
+        ("definition", Json::from("10.0.0")),
     ];
     if let Some((name, _)) = members
         .into_iter()

@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@9.0.0",
+  "extends": "spec://assertions@10.0.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -76,6 +76,10 @@
     {
       "id": "clocked",
       "why": "The seat states report and clock itself, with a default, so a seat that supplies neither gets the platform clock and a rendered sentence. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    },
+    {
+      "id": "fault-reporter",
+      "why": "The trait Seat states report_fault with a default, which sends the text of an ending fault through fail, so a seat that does not override it still ends the call. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
     },
     {
       "id": "contract.excluding",

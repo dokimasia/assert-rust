@@ -154,13 +154,32 @@ depends on the seat:
   failure on `soft` panics there too. A collected failure needs the end of a
   test, and this seat has none.
 - `Recorder` is the seat of a test of an assertion. Nothing that runs on it
-  fails the test. `failed`, `message`, `messages`, `failures` and `records`
-  return what the assertion reported. `Recorder::with_clock` sets the clock
-  that the timed assertions read, and `Recorder::with_cancellation` sets the
-  cancellation handle of the test.
+  fails the test. `failed`, `message`, `messages`, `failures`, `faults` and
+  `records` return what the assertion reported. `Recorder::with_clock` sets
+  the clock that the timed assertions read, and
+  `Recorder::with_cancellation` sets the cancellation handle of the test.
 - A type of your own implements `Seat` with `fail` and `record`. The trait's
   default methods return the platform clock and a cancellation handle that
   never stops, and they render the sentence of each failure.
+
+A fault is an argument or an environment that a call refuses, such as a
+pattern that does not compile. The seat receives the fault as the error it
+is through `Seat::report_fault`. A `Recorder` keeps it, and the default
+method sends its text through `fail`. `dokimi_assert::fault` ends the call
+of a helper of your own the same way:
+
+```rust
+use dokimi_assert::{Seat, fault};
+use std::io;
+
+fn restart(seat: &dyn Seat, restartable: bool) {
+    if !restartable {
+        fault(seat, io::Error::other("the service cannot restart"));
+        return;
+    }
+    // …
+}
+```
 
 ## The assertions
 
@@ -352,11 +371,13 @@ in an ordinary test, not in a benchmark.
   change the count.
 - A ceiling of 0 admits one allocation in all. Any other ceiling admits an
   average per call that rounds to at most the ceiling.
-- A count above the ceiling is taken again, three times at most.
+- A count above the ceiling is taken again, ten times at most.
 - `max_allocs_with_setup` builds the input of each call with `setup`, and
   does not count the allocations of `setup`.
 - Both take their counts from `CountingAllocator`, as the
   [benchmark ceilings](#benchmark-ceilings) do.
+  `dokimi_assert::allocs_checked()` returns the reason when the test binary
+  does not install it.
 
 ```rust
 check::max_allocs(body: impl FnMut(), ceiling: u64)
@@ -365,8 +386,9 @@ check::max_allocs_with_setup<T>(setup: impl FnMut() -> T, body: impl FnMut(T), c
 
 **Testing an assertion.** `rejects` runs a check on a seat of its own and
 returns the check's failures. It ends the test when the check does not fail.
-Only `check` has it, because a check on `soft` does not stop. Its signature
-keeps the message, which comes before the body.
+A fault that ends a call of the check ends the call of `rejects` with the
+same fault. Only `check` has it, because a check on `soft` does not stop.
+Its signature keeps the message, which comes before the body.
 
 ```rust
 check::rejects(msg: &str, body: impl FnOnce(&dyn Seat)) -> Vec<Failure>
@@ -534,6 +556,14 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
 - `prop::around` runs each run of the body inside a wrapper, such as a
   runtime or a frozen clock. A wrapper that does not call `run`, calls it a
   second time or panics ends the call with a fault.
+- `prop::using(&generator)` makes `generator` the generator of its type in
+  one run. A draw of `prop::of::<T>()` of that type decodes with it, and so
+  does each value of that type inside a derived type. Inside `generator`, a
+  draw of its own type decodes without the setting, so a run can narrow a
+  type with `prop::of::<T>().filter(…)`.
+- `prop::values(&generator, seed, n)` returns the values of the first
+  random cases of a seed outside a property. A benchmark then measures the
+  same inputs in every run.
 
 A form takes a type with a derived generator:
 
@@ -804,7 +834,7 @@ and has the binary's name with the suffix `.dokimi-assert.jsonl`, such as
 
 [assert-spec](https://github.com/dokimasia/assert-spec) defines the
 assertions. The unpublished crate `dokimi-assert-conformance` contains a
-copy of definition 9.0.0. `make spec-sync` writes the copy from a commit of
+copy of definition 10.0.0. `make spec-sync` writes the copy from a commit of
 assert-spec, and `make spec-check` verifies it. The crate's tests run the
 definition's cases and vectors through the public API of both crates. They
 compare JSON with `serde_json`, never with the library under test.
@@ -824,11 +854,12 @@ compare JSON with `serde_json`, never with the library under test.
 
 The overlay, `crates/dokimi-assert-conformance/overlays/rust.json`, contains
 the differences between Rust and the definition. Besides the limits and the
-declined relaxations of the earlier sections, these differences include six
-names of the definition's surface that the library replaces:
+declined relaxations of the earlier sections, these differences include
+seven names of the definition's surface that the library replaces:
 
-- `Reporter` and `Clocked`: the `Seat` trait gives `report` and `clock`
-  defaults, so no second trait is needed.
+- `Reporter`, `Clocked` and `FaultReporter`: the `Seat` trait gives
+  `report`, `clock` and `report_fault` defaults, so no second trait is
+  needed.
 - `Contract.excluding`: `Contract::measuring` takes the setup as a closure
   of its own.
 - `assertion` and `that`: the functions make every check that a chain would
