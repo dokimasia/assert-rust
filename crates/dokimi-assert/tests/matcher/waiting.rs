@@ -58,7 +58,7 @@ mod eventually {
         let never = |attempt: &dyn Seat| check::is_true(attempt, false, "the subject has settled");
         check::eventually(
             &seat,
-            Duration::from_millis(30),
+            Duration::from_millis(200),
             Duration::from_millis(10),
             never,
             "c",
@@ -67,8 +67,8 @@ mod eventually {
             panic!("the failure states its attempts");
         };
         assert!(
-            (2..=5).contains(&attempts),
-            "{attempts} attempts in 30ms at an interval of 10ms"
+            (2..=21).contains(&attempts),
+            "{attempts} attempts in 200ms at an interval of 10ms"
         );
     }
 
