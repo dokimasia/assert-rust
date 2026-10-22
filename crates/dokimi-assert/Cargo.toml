@@ -1,0 +1,65 @@
+[package]
+name = "dokimi-assert"
+description = "Test assertions, properties and history checks defined by a language-neutral standard"
+documentation = "https://docs.rs/dokimi-assert"
+readme = "../../README.md"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+categories.workspace = true
+keywords.workspace = true
+# The specs and their data stay out of the package.
+include = ["/src", "/LICENSE"]
+# The specs build as one binary, tests/main.rs, rather than one binary for
+# each file under tests/.
+autotests = false
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lints]
+workspace = true
+
+[features]
+# Re-exports #[derive(Arbitrary)] as prop::Arbitrary.
+derive = ["dep:dokimi-assert-derive"]
+# prop::Arbitrary for the types of these crates. Rust's orphan rule admits an
+# implementation only in the crate of the trait or of the type.
+chrono = ["dep:chrono"]
+jiff = ["dep:jiff"]
+rust_decimal = ["dep:rust_decimal"]
+time = ["dep:time"]
+uuid = ["dep:uuid"]
+# rand_core::TryRng, and with it rand_core::Rng, for the random source of a
+# case.
+rand_core = ["dep:rand_core"]
+
+# regex runs the patterns of matches and of the golden scrubbers. Rust's
+# standard library has no regular expressions.
+[dependencies]
+chrono = { workspace = true, optional = true }
+dokimi-assert-derive = { workspace = true, optional = true }
+jiff = { workspace = true, optional = true }
+rand_core = { workspace = true, optional = true }
+regex.workspace = true
+rust_decimal = { workspace = true, optional = true }
+time = { workspace = true, optional = true }
+uuid = { workspace = true, optional = true }
+
+[dev-dependencies]
+serde_json.workspace = true
+
+# The specs of the crate. Each source file under src/ has its spec at the
+# same path under tests/.
+[[test]]
+name = "spec"
+path = "tests/main.rs"
+
+# The allocation ceilings in a process without the counting allocator, which
+# a process with one global allocator cannot also be.
+[[test]]
+name = "uncounted"
+path = "tests/uncounted.rs"
