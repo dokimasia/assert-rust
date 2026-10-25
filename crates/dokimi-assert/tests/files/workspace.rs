@@ -4,7 +4,7 @@
 //! The spec of `files/workspace`: the workspace of a test, and the helpers
 //! that write and read the files of a directory.
 
-use crate::helpers::{Scratch, in_child, listing, written};
+use crate::helpers::{listing, written};
 use dokimi_assert::Recorder;
 use dokimi_assert::files::{self, Tree};
 use std::path::Path;
@@ -62,6 +62,7 @@ mod workspace {
     #[cfg(unix)]
     #[test]
     fn ends_the_call_with_a_fault_for_a_directory_that_cannot_be_created() {
+        use crate::helpers::{Scratch, in_child};
         let scratch = Scratch::new();
         let missing = scratch.join("missing");
         let output = in_child(

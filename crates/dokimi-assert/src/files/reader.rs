@@ -7,10 +7,13 @@
 //! the permission bits of each file and each directory as the platform
 //! records them.
 
-use super::entry::{Entry, Form, PERMISSIONS, execute_bit};
+use super::entry::{Entry, Form, execute_bit};
 use super::tree::{Fault, Tree};
 use std::fs::{self, Metadata};
 use std::path::{Path, PathBuf};
+
+#[cfg(unix)]
+use super::entry::PERMISSIONS;
 
 /// The permission bits that the file systems of the platform record: all
 /// nine on Unix.

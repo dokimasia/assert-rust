@@ -7,10 +7,13 @@
 //! A spec of an entry that cannot be read or written runs as a user other
 //! than root, because root writes where a mode forbids it.
 
-use crate::helpers::{in_child, listing, records, written};
+use crate::helpers::{in_child, records, written};
 use dokimi_assert::files::{self, Tree, Workspace};
 use dokimi_assert::{Recorder, golden};
 use std::fs;
+
+#[cfg(unix)]
+use crate::helpers::listing;
 
 mod create {
     use super::*;
@@ -308,6 +311,7 @@ mod update {
     }
 
     /// Returns the listing of the golden tree `api` of `dir`.
+    #[cfg(unix)]
     fn golden_tree(dir: &Workspace) -> Vec<String> {
         listing(&dir.path().join("testdata/golden/api"))
     }
@@ -417,10 +421,10 @@ mod update {
     }
 }
 
+#[cfg(unix)]
 mod unlock {
     use super::*;
 
-    #[cfg(unix)]
     #[test]
     fn lets_a_workspace_remove_a_directory_whose_mode_forbids_every_access() {
         let dir = written(&Tree::from([

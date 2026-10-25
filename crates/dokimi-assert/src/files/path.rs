@@ -170,7 +170,7 @@ pub fn has_mode(seat: &dyn Seat, path: impl AsRef<Path>, mode: u32, msg: &str) {
                 "the mode {mode:#o} has a bit beyond the nine permission bits"
             ))
         })
-        .or_else(unrecorded);
+        .or_else(|| UNRECORDED.map(Fault::new));
     let read = refused.map_or_else(|| read_path(path.as_ref(), false), Err);
     report(
         &Run::of(seat),
@@ -193,20 +193,15 @@ pub fn has_mode(seat: &dyn Seat, path: impl AsRef<Path>, mode: u32, msg: &str) {
     );
 }
 
-/// Returns the fault of an assertion that reads a mode, on a platform that
-/// records no permission bits, and `None` on this platform, which records
-/// them.
+/// The reason of the fault of an assertion that reads a mode: `None` on this
+/// platform, whose file systems record the permission bits.
 #[cfg(unix)]
-fn unrecorded() -> Option<Fault> {
-    None
-}
+const UNRECORDED: Option<&str> = None;
 
-/// Returns the fault of an assertion that reads a mode on this platform,
-/// whose file systems record no permission bits.
+/// The reason of the fault of an assertion that reads a mode on this
+/// platform, whose file systems do not record permission bits.
 #[cfg(not(unix))]
-fn unrecorded() -> Option<Fault> {
-    Some(Fault::new("the file system records no permission bits"))
-}
+const UNRECORDED: Option<&str> = Some("the file system records no permission bits");
 
 /// Returns the detail of an assertion that an entry of `kind` is at a path:
 /// `None` for such an entry, and the kind of any other entry as `got`.

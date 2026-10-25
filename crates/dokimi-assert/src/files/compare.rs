@@ -54,7 +54,7 @@ pub(crate) fn differs(want: &Entry, got: Option<&Entry>) -> bool {
         } else {
             execute_bit(&want.form)
         };
-        want.form != got.form || (want.mode ^ got.mode) & compared & RECORDED_BITS != 0
+        want.form != got.form || (RECORDED_BITS != 0 && (want.mode ^ got.mode) & compared != 0)
     })
 }
 

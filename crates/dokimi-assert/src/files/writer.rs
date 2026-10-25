@@ -439,10 +439,8 @@ fn unlock_file(_: &Path, _: &Metadata) {}
 /// Clears the read-only attribute of a file, so that it can be removed.
 #[cfg(not(unix))]
 fn unlock_file(at: &Path, meta: &Metadata) {
-    let mut permissions = meta.permissions();
-    if meta.is_file() && permissions.readonly() {
-        permissions.set_readonly(false);
-        let _ = fs::set_permissions(at, permissions);
+    if meta.is_file() && meta.permissions().readonly() {
+        let _ = set_mode(at, OWNER_WRITE, false);
     }
 }
 
