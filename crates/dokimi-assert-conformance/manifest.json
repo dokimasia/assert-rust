@@ -1,8 +1,8 @@
 {
-    "commit": "f7c438b88dd4793792b5dc9490bcb873468853de",
-    "digest": "sha256:ab1d78c8e4be2888bd2bbe4f157d62c9f0a109c0d0cae1a29b2753e764847f4b",
+    "commit": "1e200ee3ca0081a1a8623a8a28c5b9e450fa9e84",
+    "digest": "sha256:44a2597acc6eeffff861ff08f44db1c8c570d5ab5749596efb8e02cf3deaad5f",
     "files": {
-        "VERSION": "sha256:08bc77bbbe197549458d69ce6f4e89c2b61e4b3a88115d730cae6842baec57b0",
+        "VERSION": "sha256:7bd6bcbe3813e0cd55e0998053d182b7bc8c97dcfd0b85028e9f7f55af4ad61b",
         "corpus/accumulates.json": "sha256:9ac2967d84157a9b57d3fb59ef75378e60495ced35194ba170bf216deb0e3daf",
         "corpus/after-close.json": "sha256:c7df47d3ef812973763b2191caa55180c1d2536710873bb420ff8d4e79da6506",
         "corpus/associative.json": "sha256:41169311a5d852966b84a14702a528a8f99591e82c734d32017fc6586bae56e9",
@@ -50,16 +50,16 @@
         "corpus/not-throws.json": "sha256:8ee7b238c79930fe5321626e78e2ecaee7d3255f4aba66d8b32aac5336fb07da",
         "corpus/permutation.json": "sha256:a4f23e73693f5241d0507c098a5f21fd9398a0e2ccec516ef634893ce62392c1",
         "corpus/poisoned.json": "sha256:52f833723b3575767d95313a19b7b7023ae8fe450f31ac7c0b08352ec89173b9",
-        "corpus/prop/behaviour.json": "sha256:d0337f94f17c147eaaec12cc2f68b7eaa27ba51ee870c82cd187708f6d684512",
+        "corpus/prop/behaviour.json": "sha256:17780fa221f623357f5b293f3f965e99defcf1e653a32c9446dcb117abc35225",
         "corpus/prop/bridge.json": "sha256:583763bb7ab09e7d6f9905ec548f505cd78496f9f61a5f11461d2bae657e3474",
         "corpus/prop/coverage.json": "sha256:6ddea5b6932e1722599d37efcbbfcbfbcf7a72fe82cef8d380c84430b041673e",
         "corpus/prop/decoding.json": "sha256:651e4ba90fee8ac5b67673c815b4d2a32f79054f009659a481b71c92a06c6934",
         "corpus/prop/draws.json": "sha256:d4f266f4969fb56722b2df90e5c608ece04827b9769098a575bbdf7d991a2a3d",
         "corpus/prop/fixtures.json": "sha256:d9b7c57480b102cb649480779a4bdd1f25c933b38c608b35d18c9b5408af7364",
-        "corpus/prop/forms.json": "sha256:55cb12d2d935d346239f857c5f6a980be72953cdca778cbca0c5b18bbc1ef5e0",
+        "corpus/prop/forms.json": "sha256:c2cbc6a1e0d172cafe5acbfe4dbe40aecddbd5a5632eaf032e6742ee8e3257b5",
         "corpus/prop/generation.json": "sha256:790499ef131f4c062d9b4b406052cb9f8f070ca93d9a3a66ed170c7dc411ebe1",
         "corpus/prop/inverse.json": "sha256:82c1a258ebeb5e282deb7e7a6c9d722b50f8eeaec283cd20a2ad49a7ccda08f0",
-        "corpus/prop/recording.json": "sha256:a61347d40b3c0fdfd495f159b38596783ae84d9c8b726cfb67f7ca227841e091",
+        "corpus/prop/recording.json": "sha256:40124ba2970df666ec7dcbdb7d872a6bf6f887e5d58b00115d72003602da8503",
         "corpus/prop/shapes.json": "sha256:7d0eb36916a1e1927f905fafb974405660a608b05eed8e20b7e86000ac1365fd",
         "corpus/prop/shrinking.json": "sha256:bb8195520aa1f5179b53780c2184c24f9338aaf340daaabf1d07a61f283f5027",
         "corpus/prop/store.json": "sha256:9e4f60498961abfb3b255d2957012165058e3736b89527da4ebaacd2424ce65f",
@@ -67,13 +67,13 @@
         "corpus/pure.json": "sha256:ad3dd837179217ed368d298d1f80f9f122758849404ad89bf6df2ef5542b2cd6",
         "corpus/round-trip.json": "sha256:4cf7e3545cb39b5e72c22d80fe257d924a22689004c57194e8524aa6bc72d334",
         "corpus/stable-order.json": "sha256:396b4366b7c118bb9e52c3d38cd2c28c40dbb727520c9a3bb0cac2546275a188",
-        "corpus/stateful/machines.json": "sha256:7b40adcb6dd506eba06716cf1fcbdbc41bc541ba54420640ad636aef02d0bc1c",
+        "corpus/stateful/machines.json": "sha256:16548fef443c4daca2994003b70b1442756c135b417ceb10348cb78bf81bb36c",
         "corpus/throws.json": "sha256:40dd385108c7ada8c0ce236a79c13db2da23e8e142f2fa5947fcce1623e7e365",
         "corpus/total.json": "sha256:ee76e6bd97358d2576dd24dc9d32949cdce5b46484635237a1a4c0e043322cb3",
         "corpus/true.json": "sha256:43e01f045228fd01449d2abad5c07b50b8d700fd6c986e6877a4f192ff86b616",
-        "overlays/rust.json": "sha256:156fb7da8fbfb308091dc440b242af55cc407b83a94f9661d54b698e0d65dc22",
-        "spec/assertions.json": "sha256:9c0b21bda46132f1293bc55afbb6426526ef29d220d694397c41967687ebf106",
-        "spec/naming.json": "sha256:2983ba12daa30ba47c6c17017c5158c0392bb27bf4eab5c022a532e98a70f2b1",
+        "overlays/rust.json": "sha256:2bc395a1266e9250b48cae214747395a436929de3c4cc9697af6177dcfada528",
+        "spec/assertions.json": "sha256:6c9bf6b8f178c8e94a2abcd72eda8d204541648cb4d79a20afea3246104da803",
+        "spec/naming.json": "sha256:cf006da1184a0932b6287de5f55e8f4979740bf786840a5a22fad3e33bb2eb02",
         "spec/zones.json": "sha256:6eb1d994a1e2d727161582e20dee8cd429073fa561c06f8eb7442c20f810f6c6"
     },
     "languages": {
@@ -82,5 +82,5 @@
         ]
     },
     "repo": "dokimasia/assert-spec",
-    "version": "10.1.0"
+    "version": "11.0.0"
 }

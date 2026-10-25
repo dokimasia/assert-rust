@@ -14,7 +14,11 @@
 //! A body can make its case run more than once: the steps of a machine do
 //! when the clients of a concurrent section run on threads, which do not
 //! replay. Each later run replays the choices of the case, and the first run
-//! that fails ends the case.
+//! that fails or skips ends the case.
+//!
+//! A case that skips leaves no leaf in the tree. Before the run finds a
+//! failing case the skip ends the run, and after it the case counts as a case
+//! that does not fail.
 
 use super::case::{Failed, Place, Provider, Record, Replaying, Stop, Where};
 use super::choice::Bounds;
@@ -41,6 +45,8 @@ pub enum Status {
     Repeated,
     /// The body requested other choices after the same values.
     Diverged,
+    /// The case skipped the run of its property.
+    Skipped,
 }
 
 /// One side of a divergence: the bounds of a request, a fingerprint, the
@@ -115,6 +121,8 @@ pub struct Execution {
     pub(crate) stopped: Option<usize>,
     /// Whether the case ran more than once.
     pub(crate) repeated: bool,
+    /// The reason of a case that skipped.
+    pub(crate) reason: Option<String>,
 }
 
 impl Execution {
@@ -152,8 +160,9 @@ pub(crate) type Body<'b, 's> = &'b (dyn Fn(&Case<'s>) + Sync);
 ///
 /// The body and each cleanup run with the panic hook silenced. A panic that
 /// is no signal of the case fails the case at the panic's location. A case
-/// that failed ends as failed, also when it was rejected or passed its cap. A
-/// case that asks to run more than once runs at most `limit` times.
+/// that failed ends as failed, also when it was rejected, skipped or passed its
+/// cap. A case that asks to run more than once runs at most `limit` times, and
+/// the first later run that fails or skips ends it.
 pub(crate) fn execute<'s>(
     body: Body<'_, 's>,
     provider: Box<dyn Provider>,
@@ -173,7 +182,7 @@ pub(crate) fn execute<'s>(
         let replayed = Box::new(Replaying::new(first.record.choices.clone()));
         let later = once(body, Case::new(Record::new(replayed, max_choices), context))?;
         calls.extend(later.calls.iter().cloned());
-        if later.status == Status::Failed {
+        if matches!(later.status, Status::Failed | Status::Skipped) {
             return Ok(Execution {
                 calls,
                 repeated: true,
@@ -219,11 +228,12 @@ fn once<'s>(body: Body<'_, 's>, case: Case<'s>) -> Result<Execution, Fault> {
     let failure = case.failure();
     let calls = case.calls_of();
     let (record, _) = case.into_parts();
-    let (status, overran) = match (&failure, &ended) {
-        (Some(_), _) => (Status::Failed, false),
-        (None, Some(Stop::Overrun)) => (Status::Rejected, true),
-        (None, Some(_)) => (Status::Rejected, false),
-        (None, None) => (Status::Passed, false),
+    let (status, overran, reason) = match (&failure, ended) {
+        (Some(_), _) => (Status::Failed, false, None),
+        (None, Some(Stop::Overrun)) => (Status::Rejected, true, None),
+        (None, Some(Stop::Skipped(reason))) => (Status::Skipped, false, Some(reason)),
+        (None, Some(_)) => (Status::Rejected, false, None),
+        (None, None) => (Status::Passed, false, None),
     };
     Ok(Execution {
         record,
@@ -234,6 +244,7 @@ fn once<'s>(body: Body<'_, 's>, case: Case<'s>) -> Result<Execution, Fault> {
         calls: vec![calls],
         stopped: None,
         repeated: false,
+        reason,
     })
 }
 
@@ -244,7 +255,7 @@ fn once<'s>(body: Body<'_, 's>, case: Case<'s>) -> Result<Execution, Fault> {
 /// that a rewind removed from the record, because a case that walks the tree
 /// as it runs steps them too. A stopped case keeps no later run, because a run
 /// on one worker does not make it. A case that the walk does not stop ends as
-/// its first run did. It has a leaf unless it passed its cap.
+/// its first run did. It has a leaf unless it passed its cap or skipped.
 pub(crate) fn entered(tree: &mut Tree, mut execution: Execution) -> (Execution, usize) {
     let mut walker = Walker::new();
     let steps = execution.record.walk.len();
@@ -280,7 +291,7 @@ pub(crate) fn entered(tree: &mut Tree, mut execution: Execution) -> (Execution, 
             }
         }
     }
-    if !execution.overran {
+    if !execution.overran && execution.status != Status::Skipped {
         let ending = match execution.status {
             Status::Failed if !execution.repeated => Ending::Failed,
             Status::Rejected => Ending::Rejected,

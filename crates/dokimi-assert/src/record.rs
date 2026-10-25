@@ -25,7 +25,7 @@ use std::sync::{Arc, LazyLock, Mutex, MutexGuard, OnceLock, PoisonError};
 /// that the conformance crate vendors. The published crate does not contain
 /// that copy, so the specs compare this constant with the file `VERSION` of
 /// the copy.
-pub(crate) const DEFINITION: &str = "10.1.0";
+pub(crate) const DEFINITION: &str = "11.0.0";
 
 /// The variable that turns recording on.
 pub(crate) const VARIABLE: &str = "DOKIMI_ASSERT_RECORD";
@@ -69,6 +69,7 @@ pub(crate) fn switch() -> &'static Switch {
 pub(crate) enum Verdict {
     Pass,
     Fail,
+    Skip,
     Error,
 }
 
@@ -77,6 +78,7 @@ impl Verdict {
         match self {
             Self::Pass => "pass",
             Self::Fail => "fail",
+            Self::Skip => "skip",
             Self::Error => "error",
         }
     }

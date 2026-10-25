@@ -4,10 +4,10 @@
 //! The case: one call of a property's body, and the seat of its assertions.
 //!
 //! A case keeps each failure record in call order, and its first record is
-//! the failure of the case. A failure on `check` ends the case. `assume`, a
-//! draw past the cap and a draw that the trace of the run refuses end it too.
-//! Every later call of the case ends it again, so a body that catches the
-//! end of its case cannot run past it.
+//! the failure of the case. A failure on `check` ends the case. `assume`,
+//! `skip`, a draw past the cap and a draw that the trace of the run refuses
+//! end it too. Every later call of the case ends it again, so a body that
+//! catches the end of its case cannot run past it.
 //!
 //! However the body ends, the case runs its cleanups, the last registered
 //! first. A failure in a cleanup fails the case as a failure in the body
@@ -298,6 +298,32 @@ impl<'s> Case<'s> {
         if !condition {
             self.end(Stop::Rejected);
         }
+    }
+
+    /// Ends the run of the property as skipped, with `reason`. The case ends
+    /// at the call and runs its cleanups. Once the run has found a failing
+    /// case, a case that skips ends as a case that does not fail, and the run
+    /// goes on.
+    ///
+    /// libtest has no call that skips a running test, so the test of a
+    /// skipped property passes. The call record of the property states the
+    /// verdict `skip` and the reason.
+    ///
+    /// ```
+    /// use dokimi_assert::{Recorder, prop};
+    ///
+    /// let rec = Recorder::new();
+    /// prop::for_all(&rec, "a file system with direct I/O", prop::cases(5), |c| {
+    ///     c.draw(&prop::integer(0..=9), "block");
+    ///     c.skip("the file system refuses direct I/O");
+    /// });
+    /// assert!(!rec.failed());
+    /// ```
+    pub fn skip(&self, reason: &str) -> ! {
+        if let Err(stop) = self.check() {
+            self.end(stop);
+        }
+        self.end(Stop::Skipped(reason.to_owned()))
     }
 
     /// Counts the case under `label`, which a requirement of the run reads. A

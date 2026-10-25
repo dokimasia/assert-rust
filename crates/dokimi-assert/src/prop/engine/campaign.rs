@@ -190,8 +190,10 @@ impl Exploration {
     }
 
     /// Counts an execution, admits a valid case to the pool, concludes a
-    /// failure, and returns the outcome that ends the campaign. `valued`
-    /// states a case of an example of values.
+    /// failure, and returns the outcome that ends the campaign: a skip before
+    /// the first failure, with the draws of the stored cases, or the flaky
+    /// outcome of a failure whose replay differs. `valued` states a case of an
+    /// example of values.
     fn take(
         &mut self,
         run: &mut Run<'_, '_>,
@@ -204,6 +206,13 @@ impl Exploration {
             self.admit(&execution.record);
         }
         match self.tally.take(execution) {
+            Some(mut skipped) if skipped.kind == Kind::Skipped => {
+                if self.found.is_some() {
+                    return Ok(None);
+                }
+                skipped.stored = std::mem::take(&mut self.stored);
+                Ok(Some(skipped))
+            }
             Some(found) => self.fail(run, settings, found, valued, concluded),
             None => Ok(None),
         }
@@ -314,7 +323,9 @@ impl Exploration {
 /// A failing case whose identity no earlier failure had is replayed, shrunk
 /// and explained as a run concludes its failure, `concluded` receives the
 /// outcome, and the campaign goes on. A replay that differs ends the campaign
-/// as flaky.
+/// as flaky. A case that skips before the first failure ends the campaign as
+/// skipped. After the first failure, a case that skips counts as neither a
+/// valid nor a rejected case, and the campaign goes on.
 ///
 /// When the budget has passed, the campaign returns a counterexample of the
 /// first failure that it concluded, with every later one among its others.

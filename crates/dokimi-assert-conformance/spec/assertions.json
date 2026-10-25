@@ -538,7 +538,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -562,7 +563,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -592,7 +594,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -616,7 +619,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -645,7 +649,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -674,7 +679,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -698,7 +704,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -726,7 +733,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -750,7 +758,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -779,7 +788,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -803,7 +813,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -827,7 +838,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -851,7 +863,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -875,7 +888,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -899,7 +913,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -923,10 +938,11 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "package": "prop",
-            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way.\n"
+            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run.\n"
         },
         "prop-has-prefix": {
             "arity": 3,
@@ -940,7 +956,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -964,7 +981,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -988,7 +1006,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1012,7 +1031,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1036,7 +1056,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1064,7 +1085,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1088,7 +1110,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1112,7 +1135,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1136,7 +1160,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1160,7 +1185,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1184,7 +1210,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1208,7 +1235,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1232,7 +1260,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1261,7 +1290,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1285,7 +1315,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1314,7 +1345,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1338,7 +1370,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1366,7 +1399,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1390,7 +1424,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1414,7 +1449,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1443,7 +1479,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1471,7 +1508,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1499,7 +1537,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1523,7 +1562,8 @@
                 "choices",
                 "others",
                 "divergence",
-                "coverage"
+                "coverage",
+                "reason"
             ],
             "form": {
                 "generates": [
@@ -1879,5 +1919,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "10.1.0"
+    "version": "11.0.0"
 }

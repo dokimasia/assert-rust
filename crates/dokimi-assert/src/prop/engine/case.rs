@@ -200,6 +200,8 @@ pub enum Stop {
     Rejected,
     /// The case asked for more choices than its cap allows.
     Overrun,
+    /// The case skipped the run of its property, with the reason.
+    Skipped(String),
     /// The body failed.
     Failed(Box<Failed>),
     /// A draw met an entry of a trace that the body cannot follow.

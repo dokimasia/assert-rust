@@ -57,6 +57,58 @@ mod assume {
     }
 }
 
+mod skip {
+    use super::*;
+
+    #[test]
+    fn ends_the_run_with_the_verdict_skip_and_its_reason() {
+        let seat = run(|c| {
+            let n = c.draw(&prop::integer(0..=9_u8), "n");
+            if n > 4 {
+                c.skip("the case needs a small n");
+            }
+        });
+        assert!(!seat.failed(), "{}", seat.message());
+        let record = &records(&seat)[0];
+        assert_eq!(record["verdict"], "skip", "{record}");
+        assert_eq!(record["detail"]["outcome"], "skipped", "{record}");
+        assert_eq!(
+            record["detail"]["reason"], "the case needs a small n",
+            "{record}"
+        );
+    }
+
+    #[test]
+    fn runs_the_cleanups_of_its_case() {
+        let cleaned = Arc::new(AtomicUsize::new(0));
+        let counted = Arc::clone(&cleaned);
+        let seat = run(move |c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            let counted = Arc::clone(&counted);
+            c.cleanup(move || {
+                counted.fetch_add(1, Ordering::SeqCst);
+            });
+            c.skip("the case skips");
+        });
+        assert_eq!(records(&seat)[0]["verdict"], "skip");
+        assert_eq!(cleaned.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn ends_the_case_as_an_earlier_end_does() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            let rejected = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                c.assume(false);
+            }));
+            assert!(rejected.is_err());
+            c.skip("a skip after the end");
+        });
+        assert_eq!(detail(&seat)["outcome"], "rejected");
+        assert_eq!(detail(&seat)["reason"], serde_json::Value::Null);
+    }
+}
+
 mod classify {
     use super::*;
 

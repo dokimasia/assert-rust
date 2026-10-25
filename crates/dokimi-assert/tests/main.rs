@@ -244,6 +244,8 @@ mod naming_table {
         scheduler.spawn(async |_| {});
         drop(scheduler.yield_now());
         scheduler.run();
+        // A skip ends the case, so it is the last call.
+        case.skip("c");
     }
 
     /// Returns `true` when `source` contains `name` as a whole identifier.

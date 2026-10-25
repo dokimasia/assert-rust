@@ -23,7 +23,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -70,7 +71,8 @@
         "choices": "prop1:AOkH",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -118,7 +120,8 @@
         "choices": "prop1:AOkH",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -163,7 +166,8 @@
         "choices": "prop1:AMpC",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -206,7 +210,8 @@
         "choices": "prop1:AAA",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -260,7 +265,8 @@
         "choices": "prop1:AAEAAAABAAEAAQACAAA",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -313,7 +319,8 @@
         "choices": "prop1:AAc",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -382,7 +389,8 @@
           }
         ],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -429,7 +437,8 @@
         "choices": "prop1:AP___________wE",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -490,7 +499,8 @@
         "choices": "prop1:AAEA9umrigIAAQAAAAA",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -542,7 +552,8 @@
         "choices": "prop1:AIQH",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -587,7 +598,8 @@
         "choices": "prop1:AAc",
         "others": [],
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -622,7 +634,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -650,7 +663,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -680,7 +694,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -718,7 +733,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -739,7 +755,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -775,7 +792,8 @@
           "label": "value",
           "step": null
         },
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -813,7 +831,184 @@
           "label": null,
           "step": null
         },
-        "coverage": null
+        "coverage": null,
+        "reason": null
+      }
+    },
+    {
+      "id": "behaviour/skips-the-run-at-a-case-that-skips",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "skips": [
+          {
+            "reason": "unsupported",
+            "when": {
+              "kind": "always"
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "skipped",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": "unsupported"
+      }
+    },
+    {
+      "id": "behaviour/counts-the-valid-cases-before-a-case-that-skips",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "skips": [
+          {
+            "reason": "unsupported",
+            "when": {
+              "kind": "equals",
+              "value": {
+                "type": "int",
+                "value": 1000
+              }
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "skipped",
+        "cases": 3,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": "unsupported"
+      }
+    },
+    {
+      "id": "behaviour/keeps-a-failure-whose-shrink-tries-a-value-that-skips",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "skips": [
+          {
+            "reason": "unsupported",
+            "when": {
+              "kind": "equals",
+              "value": {
+                "type": "int",
+                "value": 0
+              }
+            }
+          }
+        ],
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 101
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "stored": [
+          [
+            500
+          ]
+        ]
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 101
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 100
+            }
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AGU",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null
+      }
+    },
+    {
+      "id": "behaviour/reports-a-failure-that-skips-on-replay",
+      "body": {
+        "kind": "fails-then-skips"
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "flaky",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 558560502
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "once",
+        "choices": null,
+        "others": null,
+        "divergence": {
+          "what": "verdict",
+          "index": 1,
+          "recorded": "once",
+          "replayed": null,
+          "label": null,
+          "step": null
+        },
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -858,7 +1053,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -883,7 +1079,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -917,7 +1114,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -954,7 +1152,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -997,7 +1196,8 @@
           "counted": 45,
           "valid": 100,
           "verdict": "refuted"
-        }
+        },
+        "reason": null
       }
     },
     {
@@ -1035,7 +1235,8 @@
         "choices": null,
         "others": null,
         "divergence": null,
-        "coverage": null
+        "coverage": null,
+        "reason": null
       }
     },
     {
@@ -1078,7 +1279,8 @@
           "counted": 1,
           "valid": 10,
           "verdict": "unmet"
-        }
+        },
+        "reason": null
       }
     }
   ]

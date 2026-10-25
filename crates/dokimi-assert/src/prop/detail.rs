@@ -3,12 +3,12 @@
 
 //! The record of a property's run, its detail and its sentence.
 //!
-//! The detail has the ten fields of `prop-for-all`: outcome, cases, rejected,
-//! seed, counterexample, failure, choices, others, divergence and coverage. A
-//! field that the outcome does not use is null. The call record of a
-//! property states the same detail as JSON, with each drawn value a typed
-//! literal of its generator's type, or an opaque literal where the type has
-//! none.
+//! The detail has the eleven fields of `prop-for-all`: outcome, cases,
+//! rejected, seed, counterexample, failure, choices, others, divergence,
+//! coverage and reason. A field that the outcome does not use is null. The
+//! call record of a property states the same detail as JSON, with each drawn
+//! value a typed literal of its generator's type, or an opaque literal where
+//! the type has none.
 
 use super::engine::case::{Drawn, Rendered, Step};
 use super::engine::choice::Bounds;
@@ -308,11 +308,15 @@ pub(crate) fn detail_json(outcome: &Outcome) -> Json {
                 ])
             }),
         ),
+        (
+            "reason",
+            outcome.reason.as_deref().map_or(Json::Null, Json::from),
+        ),
     ])
 }
 
-/// The names of the ten fields of the detail, in order.
-const FIELDS: [&str; 10] = [
+/// The names of the eleven fields of the detail, in order.
+const FIELDS: [&str; 11] = [
     "outcome",
     "cases",
     "rejected",
@@ -323,6 +327,7 @@ const FIELDS: [&str; 10] = [
     "others",
     "divergence",
     "coverage",
+    "reason",
 ];
 
 /// Returns the record of a run that did not pass, and its detail in the form
@@ -456,7 +461,7 @@ fn sentence(outcome: &Outcome, contract: &str) -> String {
             Version::Nothing => match divergence.what {
                 "request" => "no request".to_owned(),
                 "fingerprint" => "no fingerprint".to_owned(),
-                _ => "a pass".to_owned(),
+                _ => "no failure".to_owned(),
             },
         };
         let _ = write!(

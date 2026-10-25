@@ -56,9 +56,10 @@ const REJECTIONS_PER_VALUE: usize = 10;
 /// Panics when a setting of `options` other than `using` differs from its
 /// default, because no other setting of a run applies to the call. Panics
 /// when the generator rejects more than ten cases for each of the `n` values.
-/// A case past 8,192 choices counts as rejected. Panics with the reason when
-/// the generator ends its case in another way, such as a check of a composite
-/// that fails on its case.
+/// A case past 8,192 choices counts as rejected. Panics with the reason at a
+/// case that the generator skips, because `values` runs no test that a skip
+/// could skip. Panics with the reason when the generator ends its case in
+/// another way, such as a check of a composite that fails on its case.
 #[must_use]
 pub fn values<T: 'static>(
     generator: &Generator<T>,
@@ -95,6 +96,12 @@ pub fn values<T: 'static>(
                 let reason = record.map_or(identity, |record| record.to_string());
                 panic!(
                     "prop: values(generator, {seed}, {n}): the generator fails its case: {reason}"
+                );
+            }
+            Err(Stop::Skipped(reason)) => {
+                panic!(
+                    "prop: values(generator, {seed}, {n}) stops at a case that the generator \
+                     skips: {reason}"
                 );
             }
             Err(stop) => {

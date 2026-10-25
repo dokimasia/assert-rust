@@ -26,7 +26,7 @@ use super::options::{Options, Wrapper};
 use super::scope::{self, Generators};
 use crate::json::{self, Json};
 use crate::matcher::panics::{message, quietly};
-use crate::record::DEFINITION;
+use crate::record::{DEFINITION, Verdict};
 use crate::seat::{Seat, Standard};
 use crate::value::Value;
 use crate::verdict::{self, Mode, Run};
@@ -572,14 +572,21 @@ impl<'c> Property<'c> {
         }
     }
 
-    /// Reports the outcome as the verdict of the call.
+    /// Reports the outcome as the verdict of the call. A skipped run passes
+    /// the test, and its call record states the verdict `skip`.
     #[track_caller]
     fn report(&self, run: &Run<'_>, outcome: &Outcome) {
-        if outcome.kind == Kind::Passed {
-            run.pass_run(
+        let verdict = match outcome.kind {
+            Kind::Passed => Some(Verdict::Pass),
+            Kind::Skipped => Some(Verdict::Skip),
+            _ => None,
+        };
+        if let Some(verdict) = verdict {
+            run.record_run(
                 Mode::Fatal,
                 self.call.assertion,
                 self.call.contract,
+                verdict,
                 detail_json(outcome),
             );
             return;
@@ -656,6 +663,10 @@ fn wrapped<'s>(wrapper: &Wrapper, case: &Case<'s>, body: &(dyn Fn(&Case<'s>) + S
 /// cases for every valid one, when no case requested an input, or when it
 /// refuted a coverage requirement or left one unmet.
 ///
+/// A case that calls [`Case::skip`] before the run finds a failing case ends
+/// the run as skipped. libtest has no call that skips a running test, so the
+/// test passes. The call record of the property states the verdict `skip`.
+///
 /// The campaign profile, which `DOKIMI_ASSERT_PROP_PROFILE=campaign` selects,
 /// runs a campaign instead of a run. A campaign tries the case of the draws
 /// option and the stored cases. It then explores for as long as
@@ -669,7 +680,7 @@ fn wrapped<'s>(wrapper: &Wrapper, case: &Case<'s>, body: &(dyn Fn(&Case<'s>) + S
 /// run decides over every valid case. A hermetic run and a run in a process
 /// of a mutation run run no campaign.
 ///
-/// The failure is one record of `prop-for-all`, whose detail has the ten
+/// The failure is one record of `prop-for-all`, whose detail has the eleven
 /// fields of the definition, and whose sentence lists the counterexample and
 /// the replay token. The call ends with a fault before a run when a
 /// `DOKIMI_ASSERT_PROP_*` variable states no value of its kind, the replay
@@ -722,8 +733,9 @@ pub fn for_all(
 /// rules of the definition, so every input is a valid case, and runs it as a
 /// call of its own on a [`Standard`] seat. A failing input is replayed,
 /// shrunk, explained and stored, and the target then panics with the sentence
-/// of the record, which contains the replay token. A target of `cargo fuzz`
-/// calls the returned function from `fuzz_target!`.
+/// of the record, which contains the replay token. A stored case or an input
+/// that skips ends its call as skipped, and the call does not fail. A target
+/// of `cargo fuzz` calls the returned function from `fuzz_target!`.
 #[track_caller]
 pub fn fuzz<'a>(
     seat: &'a dyn Seat,

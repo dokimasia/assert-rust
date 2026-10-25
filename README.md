@@ -560,6 +560,10 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   defaults of every property of a run. The profile is `default`, `ci` or
   `campaign`. The option `prop::hermetic()` makes a run ignore the four
   variables.
+- `Case::skip(reason)` ends the run of the property as skipped, for an
+  environment that lacks a capability of the body. libtest has no call that
+  skips a running test, so the test passes. The call record of the property
+  states the verdict `skip`.
 - `prop::around` runs each run of the body inside a wrapper, such as a
   runtime or a frozen clock. A wrapper that does not call `run`, calls it a
   second time or panics ends the call with a fault.
@@ -854,7 +858,7 @@ under test.
 - Each case runs on `check` and `soft` of each crate that has its
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
-- The vectors run too: 57 for files, 80 for histories, 430 for properties
+- The vectors run too: 57 for files, 80 for histories, 435 for properties
   and 14 for machines. A platform that does not record permission bits
   skips the files vectors that state a mode.
 - The crates implement all 110 assertions of the definition.

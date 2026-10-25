@@ -35,6 +35,7 @@ mod kind {
             Kind::Rejected,
             Kind::CoverageUnmet,
             Kind::Vacuous,
+            Kind::Skipped,
         ];
         let names: Vec<&str> = kinds.into_iter().map(Kind::name).collect();
         assert_eq!(
@@ -45,7 +46,8 @@ mod kind {
                 "flaky",
                 "rejected",
                 "coverage-unmet",
-                "vacuous"
+                "vacuous",
+                "skipped"
             ]
         );
         assert_eq!(DEFAULT_CASES, 100);

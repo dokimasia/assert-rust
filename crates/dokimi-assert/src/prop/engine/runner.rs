@@ -28,6 +28,12 @@
 //! anyway when it rejected more than ten times as many cases as were valid,
 //! when no case requested an input, or when a coverage requirement is refuted
 //! or unmet, checked in that order.
+//!
+//! A case that skips before the run finds a failing case ends the run as
+//! skipped, in every phase. Once the run has found a failing case, a case
+//! that skips counts as a case that does not fail: a replay that skips makes
+//! the run flaky, a shrink candidate that skips is not accepted, and an
+//! explain run that skips neither fails the way the failure fails nor passes.
 
 use super::ahead::Executor;
 use super::case::{Drawn, Generating, MAX_CHOICES, Provider, Replaying};
@@ -65,7 +71,8 @@ const MAX_PREFIX_CASES: usize = 50;
 /// choices: one to replay and one to give its target.
 const MIN_PREFIXED_CHOICES: usize = 2;
 
-/// How a run ended. Every kind but `Passed` fails the test.
+/// How a run ended. `Passed` passes the test, `Skipped` skips it where the
+/// test runner can skip a running test, and every other kind fails it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Kind {
     /// No case failed, and every requirement is met.
@@ -80,6 +87,8 @@ pub enum Kind {
     CoverageUnmet,
     /// No case requested an input.
     Vacuous,
+    /// A case skipped the run before the run found a failing case.
+    Skipped,
 }
 
 impl Kind {
@@ -93,6 +102,7 @@ impl Kind {
             Self::Rejected => "rejected",
             Self::CoverageUnmet => "coverage-unmet",
             Self::Vacuous => "vacuous",
+            Self::Skipped => "skipped",
         }
     }
 }
@@ -196,7 +206,8 @@ pub struct Shortfall {
 /// is its replay token. `others` are the minimal cases of the other failures,
 /// in the order that they were found. `runs` counts the runs that shrinking
 /// and explaining spent. `valued` is set for a counterexample that an example
-/// of values found, which has no choices and so no token.
+/// of values found, which has no choices and so no token. `reason` is the
+/// reason of a skipped run.
 #[derive(Debug)]
 pub struct Outcome {
     /// How the run ended.
@@ -223,6 +234,8 @@ pub struct Outcome {
     pub runs: usize,
     /// Whether an example of values found the counterexample.
     pub valued: bool,
+    /// The reason of the case that skipped a skipped run.
+    pub reason: Option<String>,
     /// The draws of each stored case that ran, up to the one that ended the
     /// run.
     pub(crate) stored: Vec<Vec<Drawn>>,
@@ -250,7 +263,8 @@ impl Tally {
     }
 
     /// Counts one execution, and returns it when it ends the run: a failed
-    /// case ends it with a counterexample, and a diverged case as flaky.
+    /// case ends it with a counterexample, a diverged case as flaky, and a
+    /// skipped case as skipped with its reason.
     pub(crate) fn take(&mut self, execution: Execution) -> Option<Outcome> {
         let record = &execution.record;
         self.requested |= !record.draws.is_empty() || !record.choices.is_empty();
@@ -260,6 +274,11 @@ impl Tally {
                 let divergence = execution.divergence.clone();
                 let mut outcome = self.outcome(Kind::Flaky, None);
                 outcome.divergence = divergence;
+                return Some(outcome);
+            }
+            Status::Skipped => {
+                let mut outcome = self.outcome(Kind::Skipped, None);
+                outcome.reason = execution.reason;
                 return Some(outcome);
             }
             Status::Rejected => self.rejected += 1,
@@ -289,6 +308,7 @@ impl Tally {
             token: None,
             runs: 0,
             valued: false,
+            reason: None,
             stored: Vec::new(),
         }
     }

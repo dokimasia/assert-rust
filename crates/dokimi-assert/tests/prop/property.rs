@@ -368,6 +368,30 @@ mod fuzz {
     }
 
     #[test]
+    fn records_the_verdict_skip_for_a_stored_case_that_skips() {
+        let dir = Scratch::new();
+        let store = || prop::hermetic().seed(1).store(dir.join("store"));
+        let first = Recorder::new();
+        prop::for_all(&first, CONTRACT, store(), drawing);
+        let replayed = Recorder::new();
+        std::thread::scope(|scope| {
+            scope.spawn(|| {
+                let target = prop::fuzz(&replayed, CONTRACT, store(), |c| {
+                    let _ = c.draw(&prop::integer(0..=9_u8), "n");
+                    c.skip("the case needs a capability");
+                });
+                target(&[1]);
+            });
+        });
+        let record = &records(&replayed)[0];
+        assert_eq!(record["verdict"], "skip", "{record}");
+        assert_eq!(
+            record["detail"]["reason"], "the case needs a capability",
+            "{record}"
+        );
+    }
+
+    #[test]
     fn panics_with_the_fault_of_an_input() {
         let seat = Recorder::new();
         let target = prop::fuzz(

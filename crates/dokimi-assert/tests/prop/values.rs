@@ -155,6 +155,18 @@ mod values {
     }
 
     #[test]
+    fn panics_with_the_reason_of_a_generator_that_skips_its_case() {
+        let skipping = prop::composite(|c| -> u8 { c.skip("the generator skips") });
+        assert_eq!(
+            panic_of(|| drop(prop::values(&skipping, 1, 1, Options::default()))).as_deref(),
+            Some(
+                "prop: values(generator, 1, 1) stops at a case that the generator skips: \
+                 the generator skips"
+            )
+        );
+    }
+
+    #[test]
     fn panics_with_the_reason_of_a_generator_that_ends_its_case_with_a_fault() {
         let faulting = prop::composite(|c| {
             let tick = Action::new("tick", async |_: &Case<'_>, _: usize| {});

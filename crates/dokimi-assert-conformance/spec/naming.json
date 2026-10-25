@@ -1667,6 +1667,14 @@
                 "rust": "rand",
                 "typescript": "rand"
             },
+            "case.skip": {
+                "go": "Skipf",
+                "java": "skip",
+                "kotlin": "skip",
+                "python": "skip",
+                "rust": "skip",
+                "typescript": "skip"
+            },
             "case.target": {
                 "go": "Target",
                 "java": "target",
@@ -2301,5 +2309,5 @@
             }
         }
     },
-    "version": "10.1.0"
+    "version": "11.0.0"
 }

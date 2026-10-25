@@ -785,6 +785,49 @@
           "verdict": "fail"
         }
       ]
+    },
+    {
+      "id": "recording/records-the-cases-before-a-case-that-skips",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "skips": [
+          {
+            "reason": "unsupported",
+            "when": {
+              "kind": "equals",
+              "value": {
+                "type": "int",
+                "value": 1000
+              }
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "verdict": "skip",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 4,
+          "phase": "random",
+          "verdict": "pass"
+        }
+      ]
     }
   ]
 }

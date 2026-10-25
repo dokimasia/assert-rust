@@ -45,6 +45,22 @@ fn diverging(
     })
 }
 
+mod reason {
+    use super::*;
+
+    #[test]
+    fn states_null_for_a_run_that_does_not_skip() {
+        let seat = run(prop::Options::default(), |c| {
+            let n = c.draw(&prop::integer(0..=9_u8), "n");
+            check::is_true(c, n < 3, "n stays below 3");
+        });
+        assert_eq!(detail(&seat)["reason"], serde_json::Value::Null);
+        let fields = seat.failures()[0].detail().to_vec();
+        assert_eq!(fields.len(), 11, "{fields:?}");
+        assert_eq!(fields[10], ("reason", Value::Null), "{fields:?}");
+    }
+}
+
 mod counterexample {
     use super::*;
 
@@ -264,7 +280,7 @@ mod divergence {
         let seat = diverging(|c| c.fail("the case fails"), |_| {});
         assert_eq!(detail(&seat)["divergence"]["what"], "verdict");
         assert!(
-            seat.message().contains("replayed a pass"),
+            seat.message().contains("replayed no failure"),
             "{}",
             seat.message()
         );

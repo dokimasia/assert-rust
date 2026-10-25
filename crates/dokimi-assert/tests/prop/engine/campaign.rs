@@ -9,7 +9,7 @@
 use crate::helpers::{Scratch, in_child, records};
 use dokimi_assert::prop::{self, Case};
 use dokimi_assert::{Recorder, check};
-use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 
 /// The variables of a campaign of one second.
 const CAMPAIGN: [(&str, &str); 2] = [
@@ -28,20 +28,35 @@ fn print_campaign(options: prop::Options, body: impl Fn(&Case<'_>) + Send + Sync
 /// Runs the child test `test` with the campaign profile, and returns the
 /// record that it printed.
 fn campaign(test: &str) -> serde_json::Value {
+    record_in(&printed(test))
+}
+
+/// Returns the record that a child test printed.
+fn record_in(printed: &str) -> serde_json::Value {
+    line(printed, "record ").map_or_else(
+        || panic!("the child prints its record: {printed}"),
+        |json| serde_json::from_str(json).expect("the record is JSON"),
+    )
+}
+
+/// Runs the child test `test` with the campaign profile, and returns what it
+/// printed.
+fn printed(test: &str) -> String {
     let dir = Scratch::new();
     let output = in_child(
         &format!("prop::engine::campaign::child::{test}"),
         &dir.join(""),
         &CAMPAIGN,
     );
-    let printed = String::from_utf8_lossy(&output.stdout).into_owned();
+    String::from_utf8_lossy(&output.stdout).into_owned()
+}
+
+/// Returns the text after `prefix` on the first line of `printed` that
+/// contains it.
+fn line<'p>(printed: &'p str, prefix: &str) -> Option<&'p str> {
     printed
         .lines()
-        .find_map(|line| line.split_once("record ").map(|(_, json)| json.to_owned()))
-        .map_or_else(
-            || panic!("the child prints its record: {printed}"),
-            |json| serde_json::from_str(&json).expect("the record is JSON"),
-        )
+        .find_map(|line| line.split_once(prefix).map(|(_, rest)| rest))
 }
 
 /// Returns a fingerprint of a text: its length and its first character.
@@ -180,6 +195,51 @@ mod child {
 
     #[test]
     #[ignore = "a spec of the campaign runs it in a child process"]
+    fn ends_at_a_skip_before_the_first_failure() {
+        let entry = r#"{"store": 1, "definition": "11.0.0", "property": "the campaign holds",
+            "identity": {"assertion": "true", "file": "campaign.rs", "line": 1},
+            "choices": "prop1:AAE", "counterexample": [{"label": "n", "value": {"type": "int", "value": 2}}],
+            "found": "2026-01-01"}"#;
+        std::fs::create_dir_all("store").expect("the scratch accepts a directory");
+        std::fs::write("store/entry.json", entry).expect("the store accepts a file");
+        let seat = Recorder::new();
+        prop::for_all(
+            &seat,
+            "the campaign holds",
+            prop::seed(1).store("store"),
+            |c| {
+                let _ = c.draw(&prop::integer(0..=9_u8), "n");
+                c.skip("the environment lacks a capability");
+            },
+        );
+        println!("record {}", records(&seat)[0]);
+        for fault in seat.faults() {
+            println!("fault {fault}");
+        }
+    }
+
+    #[test]
+    #[ignore = "a spec of the campaign runs it in a child process"]
+    fn counts_no_case_that_skips_after_the_first_failure() {
+        let failed = AtomicBool::new(false);
+        let passed = AtomicU64::new(0);
+        print_campaign(prop::Options::default(), |c| {
+            let n = c.draw(&prop::integer(0..=100_u8), "n");
+            if n <= 50 && failed.load(Ordering::SeqCst) {
+                c.skip("the case skips after the failure");
+            }
+            if n > 50 {
+                failed.store(true, Ordering::SeqCst);
+            } else {
+                passed.fetch_add(1, Ordering::SeqCst);
+            }
+            check::is_true(c, n <= 50, "n stays at 50 or below");
+        });
+        println!("passed {}", passed.load(Ordering::SeqCst));
+    }
+
+    #[test]
+    #[ignore = "a spec of the campaign runs it in a child process"]
     fn concludes_a_failure_of_an_example_of_values() {
         let seat = Recorder::new();
         // A generator that map returns has no inverse, so the example keeps its value.
@@ -263,6 +323,38 @@ mod campaign {
         assert_eq!(record["detail"]["outcome"], "vacuous", "{record}");
         let record = campaign("fails_a_requirement_that_the_cases_leave_unmet");
         assert_eq!(record["detail"]["outcome"], "coverage-unmet", "{record}");
+    }
+
+    #[test]
+    fn ends_as_skipped_at_a_skip_before_the_first_failure() {
+        let printed = printed("ends_at_a_skip_before_the_first_failure");
+        let record = record_in(&printed);
+        assert_eq!(record["verdict"], "skip", "{record}");
+        assert_eq!(record["detail"]["outcome"], "skipped", "{record}");
+        assert_eq!(
+            record["detail"]["reason"], "the environment lacks a capability",
+            "{record}"
+        );
+        let fault = line(&printed, "fault ").unwrap_or_default();
+        assert!(
+            fault.ends_with(
+                "the stored case decodes to other values than it records, and the run tested those"
+            ),
+            "{printed}"
+        );
+    }
+
+    #[test]
+    fn counts_neither_a_valid_nor_a_rejected_case_at_a_skip_after_the_first_failure() {
+        let printed = printed("counts_no_case_that_skips_after_the_first_failure");
+        let record = record_in(&printed);
+        let passed: u64 = line(&printed, "passed ")
+            .and_then(|count| count.trim().parse().ok())
+            .unwrap_or_else(|| panic!("the child prints its passes: {printed}"));
+        let detail = &record["detail"];
+        assert_eq!(detail["outcome"], "counterexample", "{record}");
+        assert_eq!(detail["cases"], passed, "{record}");
+        assert_eq!(detail["rejected"], 0, "{record}");
     }
 
     #[test]

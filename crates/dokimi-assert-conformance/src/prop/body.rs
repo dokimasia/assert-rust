@@ -5,18 +5,22 @@
 //!
 //! A body spec draws one value, labelled `value`, from its `draw` generator.
 //! It then classifies the case under each `classify` label whose predicate
-//! is true, and rejects the case when `rejects-when` is true. The identity of
-//! its failure is the identity of the first `fails` entry whose predicate is
-//! true. An [`Ending`] then ends the case with that identity, or with `None`
-//! for a case that does not fail.
+//! is true, rejects the case when `rejects-when` is true, and skips the run
+//! with the reason of the first `skips` entry whose predicate is true. The
+//! identity of its failure is the identity of the first `fails` entry whose
+//! predicate is true. An [`Ending`] then ends the case with that identity, or
+//! with `None` for a case that does not fail.
 //!
-//! Three named bodies state what no predicate can:
+//! Four named bodies state what no predicate can:
 //!
 //! - `draws-nothing` requests no input.
 //! - `diverges` draws an integer in [0, 9] on its first call and a boolean on
 //!   every later call.
 //! - `fails-once` draws an integer in [0, 10^9]. Its case fails with the
 //!   identity `once` the first time that it draws a value above 1,000.
+//! - `fails-then-skips` draws an integer in [0, 10^9]. Its case fails with
+//!   the identity `once` the first time that it draws a value above 1,000.
+//!   Every later call draws its value and then skips with the reason `after`.
 
 use super::generator::{SpecError, build};
 use super::predicate::{Predicate, predicate};
@@ -70,14 +74,25 @@ pub fn body(spec: &Json, end: Ending) -> Result<Body, SpecError> {
         }
         Some("fails-once") => {
             let failed = AtomicBool::new(false);
-            let wide = build(
-                &json!({"gen": "integer", "min": 0, "max": 1_000_000_000}),
-                None,
-            )?;
+            let wide = build(&wide(), None)?;
             Ok(Arc::new(move |c| {
                 let above = matches!(c.draw(&wide, DRAWN), Value::Int(held) if held > 1000);
                 let once = above && !failed.swap(true, Ordering::SeqCst);
                 end(c, once.then_some("once"));
+            }))
+        }
+        Some("fails-then-skips") => {
+            let failed = AtomicBool::new(false);
+            let wide = build(&wide(), None)?;
+            Ok(Arc::new(move |c| {
+                let above = matches!(c.draw(&wide, DRAWN), Value::Int(held) if held > 1000);
+                if failed.load(Ordering::SeqCst) {
+                    c.skip("after");
+                }
+                if above {
+                    failed.store(true, Ordering::SeqCst);
+                }
+                end(c, above.then_some("once"));
             }))
         }
         Some(other) => Err(SpecError(format!("prop: {other:?} names no body"))),
@@ -85,7 +100,13 @@ pub fn body(spec: &Json, end: Ending) -> Result<Body, SpecError> {
     }
 }
 
-/// Returns a body that draws once, then classifies, rejects and ends.
+/// Returns the generator of the integer that `fails-once` and
+/// `fails-then-skips` draw, in [0, 10^9].
+fn wide() -> Json {
+    json!({"gen": "integer", "min": 0, "max": 1_000_000_000})
+}
+
+/// Returns a body that draws once, then classifies, rejects, skips and ends.
 fn drawing(spec: &Json, end: Ending) -> Result<Body, SpecError> {
     let generator = build(&spec["draw"], None)?;
     let mut labels: Vec<(String, Predicate)> = Vec::new();
@@ -98,18 +119,8 @@ fn drawing(spec: &Json, end: Ending) -> Result<Body, SpecError> {
         }
     }
     let rejects = spec.get("rejects-when").map(predicate).transpose()?;
-    let mut fails: Vec<(String, Predicate)> = Vec::new();
-    for entry in spec
-        .get("fails")
-        .and_then(Json::as_array)
-        .map(Vec::as_slice)
-        .unwrap_or_default()
-    {
-        let identity = entry["identity"]
-            .as_str()
-            .ok_or_else(|| SpecError("prop: a fails entry states no identity".to_owned()))?;
-        fails.push((identity.to_owned(), predicate(&entry["when"])?));
-    }
+    let skips = entries(spec, "skips", "reason")?;
+    let fails = entries(spec, "fails", "identity")?;
     Ok(Arc::new(move |c| {
         let value = c.draw(&generator, DRAWN);
         for (label, holds) in &labels {
@@ -120,12 +131,33 @@ fn drawing(spec: &Json, end: Ending) -> Result<Body, SpecError> {
         if let Some(rejects) = &rejects {
             c.assume(!rejects(&value));
         }
+        if let Some((reason, _)) = skips.iter().find(|(_, holds)| holds(&value)) {
+            c.skip(reason);
+        }
         let failure = fails
             .iter()
             .find(|(_, holds)| holds(&value))
             .map(|(identity, _)| identity.as_str());
         end(c, failure);
     }))
+}
+
+/// Returns the entries of the list `key` of a spec, each with its string
+/// under `name` and its predicate under `when`.
+fn entries(spec: &Json, key: &str, name: &str) -> Result<Vec<(String, Predicate)>, SpecError> {
+    let mut read = Vec::new();
+    for entry in spec
+        .get(key)
+        .and_then(Json::as_array)
+        .map(Vec::as_slice)
+        .unwrap_or_default()
+    {
+        let text = entry[name]
+            .as_str()
+            .ok_or_else(|| SpecError(format!("prop: a {key} entry states no {name}")))?;
+        read.push((text.to_owned(), predicate(&entry["when"])?));
+    }
+    Ok(read)
 }
 
 /// Returns a body that draws once from `generator` and fails with the

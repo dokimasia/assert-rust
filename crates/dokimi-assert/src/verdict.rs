@@ -141,13 +141,16 @@ impl<'s> Run<'s> {
         self.slot.is_some()
     }
 
-    /// Reports that a property passed, with the detail of its run, which its
-    /// call record states on a pass too.
-    pub(crate) fn pass_run(
+    /// Reports that a property passed or skipped, with `verdict` and the
+    /// detail of its run, which its call record states. The seat receives
+    /// nothing for a skip either, because libtest has no call that skips a
+    /// running test, so the test passes.
+    pub(crate) fn record_run(
         &self,
         mode: Mode,
         assertion: &'static str,
         contract: &str,
+        verdict: Verdict,
         detail: Json,
     ) {
         if !self.switched() {
@@ -156,7 +159,7 @@ impl<'s> Run<'s> {
         self.write(Call {
             assertion,
             contract: contract.to_owned(),
-            verdict: Verdict::Pass,
+            verdict,
             aborting: mode == Mode::Fatal,
             location: Some(self.location),
             detail: Some(detail),

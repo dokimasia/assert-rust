@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@10.1.0",
+  "extends": "spec://assertions@11.0.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -66,6 +66,11 @@
       "id": "prop.of-shape",
       "what": "A zone resolves through the time-zone database of jiff, as the prop.of entry states.",
       "why": "Rust's standard library has no time zones, and jiff reads the system's time-zone database or a copy of its own."
+    },
+    {
+      "id": "case.skip",
+      "what": "Ends the run of the property as skipped, and the call record states the verdict skip. The test passes.",
+      "why": "libtest marks a test as ignored before it runs, with the attribute ignore, and offers no call that skips a test while it runs."
     }
   ],
   "surface": [

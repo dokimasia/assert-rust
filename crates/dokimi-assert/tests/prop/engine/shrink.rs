@@ -112,6 +112,26 @@ mod confirm {
             "{message}"
         );
     }
+
+    #[test]
+    fn makes_the_run_flaky_when_the_replay_skips() {
+        let failed = AtomicBool::new(false);
+        let (record, message) = record(prop::hermetic(), move |c| {
+            let n = c.draw(&prop::integer(0..=9_u8), "n");
+            if failed.load(Ordering::SeqCst) {
+                c.skip("the case skips after the failure");
+            }
+            if n > 4 {
+                failed.store(true, Ordering::SeqCst);
+            }
+            check::is_true(c, n <= 4, "n stays at 4 or below");
+        });
+        let divergence = &record["detail"]["divergence"];
+        assert_eq!(record["detail"]["outcome"], "flaky", "{record}");
+        assert_eq!(divergence["what"], "verdict", "{record}");
+        assert_eq!(divergence["replayed"], serde_json::Value::Null, "{record}");
+        assert!(message.contains("replayed no failure"), "{message}");
+    }
 }
 
 mod shrinker {
@@ -163,6 +183,20 @@ mod shrinker {
             ],
             "{record}"
         );
+    }
+
+    #[test]
+    fn keeps_the_failure_at_a_candidate_that_skips() {
+        let entries = r#"[{"label": "n", "value": {"type": "int", "value": 500}}]"#;
+        let (record, _) = record(prop::draws(entries), |c| {
+            let n = c.draw(&prop::integer(0..=1000_i64), "n");
+            if n == 0 {
+                c.skip("the case skips at 0");
+            }
+            check::is_true(c, n < 101, "n stays below 101");
+        });
+        assert_eq!(record["detail"]["outcome"], "counterexample", "{record}");
+        assert_eq!(values(&record), [json!(101)], "{record}");
     }
 
     #[test]
@@ -362,6 +396,41 @@ mod explain {
         });
         let entry = &record["detail"]["counterexample"][0];
         assert_eq!(entry["value"]["value"], 4, "{record}");
+        assert_eq!(entry["any-value-fails"], false, "{record}");
+        assert_eq!(
+            entry["nearest-passing"],
+            serde_json::Value::Null,
+            "{record}"
+        );
+    }
+
+    #[test]
+    fn states_that_not_every_value_fails_at_a_filling_that_skips() {
+        let entries = r#"[{"label": "n", "value": {"type": "int", "value": 0}}]"#;
+        let (record, _) = record(prop::draws(entries), |c| {
+            let n = c.draw(&prop::integer(0..=1000_i64), "n");
+            if n % 2 == 1 {
+                c.skip("the case skips at an odd n");
+            }
+            check::is_true(c, false, "no case passes");
+        });
+        let entry = &record["detail"]["counterexample"][0];
+        assert_eq!(entry["value"]["value"], 0, "{record}");
+        assert_eq!(entry["any-value-fails"], false, "{record}");
+    }
+
+    #[test]
+    fn states_no_nearest_value_that_skips() {
+        let entries = r#"[{"label": "n", "value": {"type": "int", "value": 9}}]"#;
+        let (record, _) = record(prop::draws(entries), |c| {
+            let n = c.draw(&prop::integer(0..=9_i64), "n");
+            if n == 4 {
+                c.skip("the case skips at 4");
+            }
+            check::is_true(c, n < 5, "n stays below 5");
+        });
+        let entry = &record["detail"]["counterexample"][0];
+        assert_eq!(entry["value"]["value"], 5, "{record}");
         assert_eq!(entry["any-value-fails"], false, "{record}");
         assert_eq!(
             entry["nearest-passing"],
