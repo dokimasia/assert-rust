@@ -44,6 +44,133 @@ impl Arbitrary for Bounded {
     }
 }
 
+/// A node of a tree. Its own shape generates a plain node, and the stated
+/// generators of a run generate leaves and branches.
+#[derive(Debug, Clone, PartialEq)]
+enum Node {
+    Plain,
+    Leaf,
+    Branch(Vec<Node>),
+}
+
+impl Arbitrary for Node {
+    fn shape(_: &mut Definitions) -> Shape {
+        Shape::boolean()
+    }
+
+    fn from_value(value: Value) -> Result<Self, ShapeError> {
+        match value {
+            Value::Bool(_) => Ok(Node::Plain),
+            Value::List(children) => children
+                .into_iter()
+                .map(Node::from_value)
+                .collect::<Result<_, _>>()
+                .map(Node::Branch),
+            _ => Ok(Node::Leaf),
+        }
+    }
+
+    fn to_value(&self) -> Value {
+        match self {
+            Node::Plain => Value::Bool(false),
+            Node::Leaf => Value::Null,
+            Node::Branch(children) => Value::List(children.iter().map(Node::to_value).collect()),
+        }
+    }
+}
+
+/// A record with a field of a node.
+#[derive(Debug, Clone, PartialEq)]
+struct Fork(Node);
+
+impl Arbitrary for Fork {
+    fn shape(definitions: &mut Definitions) -> Shape {
+        Shape::record([("next", definitions.shape::<Node>())])
+    }
+
+    fn from_value(value: Value) -> Result<Self, ShapeError> {
+        let Value::Record(mut fields) = value else {
+            return Err(ShapeError::new("a fork is a record"));
+        };
+        Node::from_value(fields.remove(0).1).map(Fork)
+    }
+
+    fn to_value(&self) -> Value {
+        Value::Record(vec![("next".to_owned(), self.0.to_value())])
+    }
+}
+
+/// A list of nodes. Its own shape generates a plain forest, and the stated
+/// generators of a run generate groves.
+#[derive(Debug, Clone, PartialEq)]
+enum Forest {
+    Plain,
+    Grove(Vec<Node>),
+}
+
+impl Forest {
+    /// Returns the nodes of the forest.
+    fn nodes(self) -> Vec<Node> {
+        match self {
+            Forest::Plain => Vec::new(),
+            Forest::Grove(nodes) => nodes,
+        }
+    }
+}
+
+impl Arbitrary for Forest {
+    fn shape(_: &mut Definitions) -> Shape {
+        Shape::boolean()
+    }
+
+    fn from_value(value: Value) -> Result<Self, ShapeError> {
+        match value {
+            Value::List(nodes) => nodes
+                .into_iter()
+                .map(Node::from_value)
+                .collect::<Result<_, _>>()
+                .map(Forest::Grove),
+            _ => Ok(Forest::Plain),
+        }
+    }
+
+    fn to_value(&self) -> Value {
+        match self {
+            Forest::Plain => Value::Bool(false),
+            Forest::Grove(nodes) => Value::List(nodes.iter().map(Node::to_value).collect()),
+        }
+    }
+}
+
+/// Returns the generator of a branch whose children a draw of `of` decodes.
+fn branches(_: Generator<Node>) -> Generator<Node> {
+    prop::of::<Vec<Node>>().map(Node::Branch)
+}
+
+/// Returns the values of `of::<Node>()` for the seed 7 in a run that gives
+/// `Node` `generator`.
+fn grown(generator: &Generator<Node>) -> Vec<Node> {
+    prop::values(&prop::of::<Node>(), 7, 100, prop::using(generator))
+}
+
+/// Returns the number of nodes on the longest path down from `node`.
+fn levels(node: &Node) -> usize {
+    match node {
+        Node::Branch(children) => 1 + children.iter().map(levels).max().unwrap_or_default(),
+        _ => 1,
+    }
+}
+
+/// Returns the nodes of `node` in the order that a decode chooses them:
+/// `node`, then the nodes of each child in order.
+fn preorder(node: &Node) -> Vec<&Node> {
+    let mut out = vec![node];
+    if let Node::Branch(children) = node {
+        out.extend(children.iter().flat_map(preorder));
+    }
+    out
+}
+
 /// The debug text of the definitions of the last read of a [`Probe`].
 static PROBED: Mutex<String> = Mutex::new(String::new());
 
@@ -202,6 +329,104 @@ mod using {
             "{probed}"
         );
         assert!(probed.contains(r#"using: Some({"u16"})"#), "{probed}");
+    }
+
+    #[test]
+    fn takes_each_value_of_a_stated_type_in_a_recursive_extension_from_its_position() {
+        let nodes = grown(&prop::recursive(prop::just(Node::Leaf), branches).max_leaves(10));
+        assert!(
+            nodes
+                .iter()
+                .flat_map(preorder)
+                .all(|n| !matches!(n, Node::Plain)),
+            "{nodes:?}"
+        );
+        assert!(nodes.iter().map(levels).max() >= Some(3), "{nodes:?}");
+    }
+
+    #[test]
+    fn takes_the_field_of_a_stated_type_in_a_recursive_extension_from_its_position() {
+        let chains = prop::recursive(prop::just(Node::Leaf), |_| {
+            prop::of::<Fork>().map(|fork| Node::Branch(vec![fork.0]))
+        });
+        let nodes = grown(&chains);
+        assert!(nodes.iter().map(levels).max() >= Some(3), "{nodes:?}");
+    }
+
+    #[test]
+    fn takes_an_optional_stated_type_in_a_recursive_extension_from_its_position() {
+        let chains = prop::recursive(prop::just(Node::Leaf), |_| {
+            prop::of::<Option<Node>>().map(|next| Node::Branch(next.into_iter().collect()))
+        });
+        let nodes = grown(&chains);
+        assert!(nodes.iter().map(levels).max() >= Some(3), "{nodes:?}");
+    }
+
+    #[test]
+    fn takes_the_base_at_every_position_of_a_stated_type_past_the_bound() {
+        let nodes = grown(&prop::recursive(prop::just(Node::Leaf), branches).max_leaves(2));
+        for node in &nodes {
+            let order = preorder(node);
+            let leaves: Vec<usize> = order
+                .iter()
+                .enumerate()
+                .filter(|(_, n)| matches!(n, Node::Leaf))
+                .map(|(at, _)| at)
+                .collect();
+            let past = leaves.get(1).map_or(&[][..], |&at| &order[at..]);
+            assert!(past.iter().all(|n| matches!(n, Node::Leaf)), "{node:?}");
+        }
+        let most = nodes
+            .iter()
+            .map(|node| {
+                preorder(node)
+                    .into_iter()
+                    .filter(|n| matches!(n, Node::Leaf))
+                    .count()
+            })
+            .max();
+        assert!(most > Some(2), "{nodes:?}");
+    }
+
+    #[test]
+    fn draws_a_stated_type_inside_a_recursive_base_without_the_setting() {
+        let inner = prop::composite(|c| c.draw(&prop::of::<Node>(), "inner"));
+        let nodes = grown(&prop::recursive(inner, branches).max_leaves(10));
+        let all: Vec<&Node> = nodes.iter().flat_map(preorder).collect();
+        assert!(all.iter().any(|n| matches!(n, Node::Plain)), "{nodes:?}");
+        assert!(!all.iter().any(|n| matches!(n, Node::Leaf)), "{nodes:?}");
+    }
+
+    #[test]
+    fn draws_a_type_without_a_stated_generator_in_a_recursive_extension_from_its_shape() {
+        let nodes = prop::recursive(prop::just(Node::Leaf), branches).max_leaves(10);
+        let grown = prop::values(&nodes, 7, 100, prop::using(&digits()));
+        assert!(
+            grown
+                .iter()
+                .flat_map(preorder)
+                .any(|n| matches!(n, Node::Plain)),
+            "{grown:?}"
+        );
+    }
+
+    #[test]
+    fn ends_a_cycle_of_two_stated_recursive_generators() {
+        let nodes = prop::recursive(prop::just(Node::Leaf), |_| {
+            prop::composite(|c| Node::Branch(c.draw(&prop::of::<Forest>(), "forest").nodes()))
+        })
+        .max_leaves(10);
+        let forests = prop::recursive(prop::just(Forest::Grove(Vec::new())), |_| {
+            prop::of::<Vec<Node>>().map(Forest::Grove)
+        })
+        .max_leaves(10);
+        let grown = prop::values(
+            &prop::of::<Node>(),
+            7,
+            100,
+            prop::using(&nodes).using(&forests),
+        );
+        assert!(grown.iter().map(levels).max() >= Some(3), "{grown:?}");
     }
 }
 

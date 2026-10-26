@@ -23,6 +23,7 @@ use super::engine::inverse::{
     CannotInvert, Emitted, Planned, collection, distinct, first_branch, planned, shortlex,
 };
 use super::generator::{Composite, Generator, Node};
+use super::scope;
 use crate::alphabet;
 use crate::pattern;
 use crate::value::Value;
@@ -1334,6 +1335,13 @@ type Extend<T> = Arc<dyn Fn(Generator<T>) -> Generator<T> + Send + Sync>;
 /// 100 values from the base, every further position takes the base;
 /// [`Generator::max_leaves`] states another limit.
 ///
+/// Inside the generator of `T` that a run states with
+/// [`using`](crate::prop::using), a draw of [`of`](crate::prop::of) in the
+/// extension takes each `T` from the generator of the position. That applies
+/// to a draw of `T`, to a draw of a type that contains `T`, and to the draws
+/// inside the stated generator of another type. The base takes `T` without
+/// the stated generator, as `using` states.
+///
 /// ```
 /// use dokimi_assert::prop;
 ///
@@ -1368,7 +1376,8 @@ fn build_recursive<T: 'static>(
         let position = Generator::from_node(Position { owner: own.clone() });
         Recursive {
             id: NEXT_RECURSIVE.fetch_add(1, Ordering::Relaxed),
-            extension: extend(position),
+            extension: extend(position.clone()),
+            position,
             base,
             extend,
             max_leaves,
@@ -1384,6 +1393,8 @@ struct Recursive<T> {
     base: Generator<T>,
     extend: Extend<T>,
     extension: Generator<T>,
+    /// The generator of the positions of the extension.
+    position: Generator<T>,
     max_leaves: usize,
 }
 
@@ -1400,6 +1411,7 @@ impl<T: 'static> Recursive<T> {
         let bounds = IntegerBounds::of(0, i128::from(leaves < self.max_leaves));
         let _span = case.span("recursive", None);
         if case.integer(bounds, Some(0), false)? == 1 {
+            let _run = scope::extending(self.id, &self.position);
             return self.extension.decode(case);
         }
         case.with_record(|record| {
@@ -1432,14 +1444,17 @@ impl<T: 'static> Node<T> for Recursive<T> {
     }
 
     fn literal(&self, value: &T) -> Option<Value> {
-        self.base
-            .literal(value)
-            .or_else(|| self.extension.literal(value))
+        self.base.literal(value).or_else(|| {
+            let _run = scope::extending(self.id, &self.position);
+            self.extension.literal(value)
+        })
     }
 
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
+        let base = self.base.emit(value);
+        let _run = scope::extending(self.id, &self.position);
         first_branch(
-            [(0, self.base.emit(value)), (1, self.extension.emit(value))].into_iter(),
+            [(0, base), (1, self.extension.emit(value))].into_iter(),
             IntegerBounds::of(0, 1),
             "neither the base nor the extension produces the value",
         )

@@ -278,6 +278,14 @@ impl<T> Options<T> {
     ///     check::is_true(c, digits.iter().all(|n| *n < 10), "every element is a digit");
     /// });
     /// ```
+    ///
+    /// A [`recursive`](crate::prop::recursive) generator of `U` inside
+    /// `generator` is the exception. Inside its extension, a draw of `of` takes
+    /// each `U` from the generator of the position that the extension
+    /// receives. The draws inside the stated generator of another type do so
+    /// too. Once one value has drawn the base values that
+    /// [`max_leaves`](crate::prop::Generator::max_leaves) allows, each further
+    /// position takes the base, so each value ends.
     pub fn using<U: Arbitrary + Debug>(mut self, generator: &Generator<U>) -> Self {
         self.using.insert(generator);
         self

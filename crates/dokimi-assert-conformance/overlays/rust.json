@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@11.0.0",
+  "extends": "spec://assertions@12.0.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [

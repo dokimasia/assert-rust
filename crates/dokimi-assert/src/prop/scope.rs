@@ -10,7 +10,9 @@
 //! the read of a type that contains a stated type with the stated generators
 //! in place, and the generator of the test process outside a run. A stated
 //! generator decodes under the run's other generators, so a draw of its own
-//! type inside it picks the generator of the test process.
+//! type inside it picks the generator of the test process. Inside the stated
+//! generator of `T`, the extension of a recursive generator of `T` decodes
+//! under the generators with its position as the generator of `T`.
 
 use super::arbitrary::Arbitrary;
 use super::case::Case;
@@ -23,7 +25,7 @@ use super::shape::ShapeError;
 use crate::value::Value;
 use std::any::{Any, TypeId, type_name};
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::{self, Debug};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 
@@ -42,6 +44,10 @@ trait Stated: Send + Sync {
     /// Returns the stated generator as a generator of native values that
     /// decodes under `rest`, the ref that a read of a containing type takes.
     fn external(&self, rest: Arc<Generators>) -> Generator<Value>;
+
+    /// Returns `position`, the generator of the positions of a recursive
+    /// generator of the type, as a stated generator of the type.
+    fn positioned(&self, position: &(dyn Any + Send + Sync)) -> Arc<dyn Stated>;
 }
 
 /// The generator that `using` states for `U`.
@@ -62,6 +68,14 @@ impl<U: Arbitrary + Debug> Stated for StatedOf<U> {
         Generator::from_node(Native {
             of: within(self.generator.clone(), rest),
         })
+    }
+
+    fn positioned(&self, position: &(dyn Any + Send + Sync)) -> Arc<dyn Stated> {
+        let generator = position
+            .downcast_ref::<Generator<U>>()
+            .expect("a position of a recursive generator of the type")
+            .clone();
+        Arc::new(StatedOf { generator })
     }
 }
 
@@ -100,14 +114,27 @@ impl Using {
 }
 
 /// The generators that one run gives types, with the reads that its draws
-/// made. The methods are safe for concurrent use.
+/// made. Inside the stated generator of a type, the draws read the
+/// generators of the run without that type. Inside the extension of a
+/// recursive generator of that type, they read the generator of the
+/// position as the generator of the type. The methods are safe for
+/// concurrent use.
 pub(crate) struct Generators {
+    /// The generators by type. Each is the last generator of its type that
+    /// the run states, or the generator of a position.
     stated: HashMap<TypeId, Arc<dyn Stated>>,
+    /// The types whose stated generators decode around the draws.
+    inside: HashSet<TypeId>,
+    /// The generators that the run states, by type.
+    run: Arc<HashMap<TypeId, Arc<dyn Stated>>>,
     /// The generators that the draws of `of` picked, by type: of `T`, a
     /// `Generator<T>`.
     picked: Mutex<HashMap<TypeId, Box<dyn Any + Send + Sync>>>,
     /// The generators without each stated type, by type.
     without: Mutex<HashMap<TypeId, Arc<Generators>>>,
+    /// The generators inside the extensions of recursive generators, by the
+    /// number of the recursive generator.
+    extended: Mutex<HashMap<usize, Arc<Generators>>>,
 }
 
 impl Debug for Generators {
@@ -118,23 +145,65 @@ impl Debug for Generators {
 
 impl Generators {
     fn new(stated: HashMap<TypeId, Arc<dyn Stated>>) -> Self {
+        let run = Arc::new(stated.clone());
+        Self::under(stated, HashSet::new(), run)
+    }
+
+    /// Returns the generators of `stated` inside the stated generators of
+    /// the types of `inside`, in a run that states `run`.
+    fn under(
+        stated: HashMap<TypeId, Arc<dyn Stated>>,
+        inside: HashSet<TypeId>,
+        run: Arc<HashMap<TypeId, Arc<dyn Stated>>>,
+    ) -> Self {
         Self {
             stated,
+            inside,
+            run,
             picked: Mutex::default(),
             without: Mutex::default(),
+            extended: Mutex::default(),
         }
     }
 
-    /// Returns the generators without the one of the type `id`, once for
-    /// each type.
+    /// Returns the generators inside the stated generator of the type `id`,
+    /// once for each type. They are the generators without the one of `id`.
     fn without(&self, id: TypeId) -> Arc<Self> {
         let mut without = locked(&self.without);
         let rest = without.entry(id).or_insert_with(|| {
             let mut rest = self.stated.clone();
             rest.remove(&id);
-            Arc::new(Self::new(rest))
+            let mut inside = self.inside.clone();
+            inside.insert(id);
+            Arc::new(Self::under(rest, inside, Arc::clone(&self.run)))
         });
         Arc::clone(rest)
+    }
+
+    /// Returns the generators inside the extension of the recursive
+    /// generator numbered `recursive`, whose positions `position` generates.
+    /// Inside the stated generator of `T`, they are these generators with
+    /// `position` as the generator of `T`, and `position` decodes under these
+    /// generators. Anywhere else the result is `None`.
+    fn extending<T: 'static>(
+        self: &Arc<Self>,
+        recursive: usize,
+        position: &Generator<T>,
+    ) -> Option<Arc<Self>> {
+        let id = TypeId::of::<T>();
+        if !self.inside.contains(&id) {
+            return None;
+        }
+        let run = self.run.get(&id)?;
+        let mut extended = locked(&self.extended);
+        let inner = extended.entry(recursive).or_insert_with(|| {
+            let mut generators = self.stated.clone();
+            generators.insert(id, run.positioned(position));
+            let inner = Self::under(generators, self.inside.clone(), Arc::clone(&self.run));
+            locked(&inner.without).insert(id, Arc::clone(self));
+            Arc::new(inner)
+        });
+        Some(Arc::clone(inner))
     }
 
     /// Returns the generator of native values of `T`, a stated type, which a
@@ -238,6 +307,16 @@ pub(crate) fn picking<T: Arbitrary>(default: Generator<T>) -> Generator<T> {
 /// Returns a generator that decodes `of` under `rest`.
 fn within<T: 'static>(of: Generator<T>, rest: Arc<Generators>) -> Generator<T> {
     Generator::from_node(Within { of, rest })
+}
+
+/// Makes the generators of the draws inside the extension of the recursive
+/// generator numbered `recursive` the generators of this thread until the
+/// guard drops. `position` is the generator of the positions of the
+/// extension. Outside the stated generator of `T`, the generators of the
+/// thread do not change, and the result is `None`.
+pub(crate) fn extending<T: 'static>(recursive: usize, position: &Generator<T>) -> Option<Entered> {
+    let inner = current()?.extending(recursive, position)?;
+    Some(enter(Some(inner)))
 }
 
 /// The generator of a type, which picks its generator where it is used.
