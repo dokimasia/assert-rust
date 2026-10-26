@@ -2069,6 +2069,14 @@
                 "rust": "report_fault",
                 "typescript": "reportFault"
             },
+            "seat.skip": {
+                "go": "Skipf",
+                "java": "skip",
+                "kotlin": "skip",
+                "python": "skip",
+                "rust": "skip",
+                "typescript": "skip"
+            },
             "spec.equal": {
                 "go": "Equal",
                 "java": "equal",
@@ -2268,6 +2276,10 @@
                 "rust": "Seat",
                 "typescript": "Seat"
             },
+            "skipper": {
+                "java": "Skipper",
+                "kotlin": "Skipper"
+            },
             "spec": {
                 "go": "history.Spec",
                 "java": "Spec",
@@ -2309,5 +2321,5 @@
             }
         }
     },
-    "version": "12.0.0"
+    "version": "12.1.0"
 }

@@ -5,11 +5,12 @@
 
 use dokimi_assert::files::{self, Tree, Workspace};
 use dokimi_assert::history::{Call, History, Operation, Spec};
-use dokimi_assert::{Collector, Failure, Recorder, Value};
+use dokimi_assert::{Collector, Failure, Recorder, Seat, Value};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Mutex, PoisonError};
 
 /// The spec of a register of integers: a write stores its argument, and a
 /// read returns the stored value, 0 before the first write.
@@ -97,6 +98,39 @@ pub(crate) fn definition() -> String {
         .expect("the conformance crate has the file VERSION")
         .trim()
         .to_owned()
+}
+
+/// A seat that keeps the reason of each skip, as the seat of a runner that
+/// can skip a running test receives it. A failure panics, as it does on the
+/// seat `Standard`.
+#[derive(Default)]
+pub(crate) struct Skipping(Mutex<Vec<String>>);
+
+impl Skipping {
+    /// Returns the reason of each skip, in the order of the calls.
+    pub(crate) fn skips(&self) -> Vec<String> {
+        self.0
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .clone()
+    }
+}
+
+impl Seat for Skipping {
+    fn fail(&self, message: &str) {
+        panic!("{message}");
+    }
+
+    fn record(&self, message: &str) {
+        panic!("{message}");
+    }
+
+    fn skip(&self, reason: &str) {
+        self.0
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .push(reason.to_owned());
+    }
 }
 
 /// Returns the call records of `seat` as JSON values, in the order of their

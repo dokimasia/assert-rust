@@ -9,21 +9,24 @@
 //! its cancellation handle derives from the handle of the assertion's seat
 //! and stops when the body ends. A failure on `check` ends the body, as it
 //! ends a test. A fault that ends its call ends the body with the text of the
-//! fault, and a fault that a call notes passes to the assertion's seat.
+//! fault, and a fault that a call notes passes to the assertion's seat. A
+//! skip ends the check of `rejects`, and an attempt of `eventually` runs on
+//! past it.
 
 use crate::cancel::Cancel;
 use crate::clock::Clock;
 use crate::failure::Failure;
 use crate::record::Calls;
-use crate::seat::Seat;
+use crate::seat::{self, Seat};
 use std::error::Error;
 use std::fmt;
 use std::panic::{AssertUnwindSafe, catch_unwind, resume_unwind};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 
 /// The payload with which the seat of a body ends the body at a failure on
-/// `check`. [`Body::finish`] swallows it, and `resume_unwind` raises it
-/// without the panic hook, so the end prints nothing.
+/// `check` and at a skip of a check. [`Body::finish`] swallows it, and
+/// `resume_unwind` raises it without the panic hook, so the end prints
+/// nothing.
 struct Ended;
 
 /// The seat of one run of a body.
@@ -31,6 +34,8 @@ pub struct Body<'p> {
     parent: &'p dyn Seat,
     cancellation: Cancel,
     calls: Option<Arc<Calls>>,
+    /// Whether the body is the check of `rejects`, which a skip ends.
+    check: bool,
     state: Mutex<State>,
 }
 
@@ -40,6 +45,7 @@ struct State {
     first: Option<String>,
     failures: Vec<Failure>,
     fault: Option<Arc<dyn Error + Send + Sync>>,
+    skip: Option<String>,
 }
 
 impl fmt::Debug for Body<'_> {
@@ -53,12 +59,24 @@ impl fmt::Debug for Body<'_> {
 
 impl<'p> Body<'p> {
     /// Returns the seat of a run of a body of an assertion on `parent`. The
-    /// calls of the body go to `calls`.
+    /// calls of the body go to `calls`. A skip writes its reason as the
+    /// default of [`Seat::skip`] does, and the body runs on.
     pub fn new(parent: &'p dyn Seat, calls: Option<Arc<Calls>>) -> Self {
+        Self::of(parent, calls, false)
+    }
+
+    /// Returns the seat of the check of `rejects`, as [`Body::new`] returns
+    /// the seat of a body. A skip keeps the first reason and ends the check.
+    pub(crate) fn check(parent: &'p dyn Seat, calls: Option<Arc<Calls>>) -> Self {
+        Self::of(parent, calls, true)
+    }
+
+    fn of(parent: &'p dyn Seat, calls: Option<Arc<Calls>>, check: bool) -> Self {
         Self {
             parent,
             cancellation: parent.cancellation().child(),
             calls,
+            check,
             state: Mutex::default(),
         }
     }
@@ -113,6 +131,12 @@ impl<'p> Body<'p> {
         self.locked().fault.clone()
     }
 
+    /// Returns the reason of the first skip of the check, or `None` when the
+    /// check did not skip.
+    pub(crate) fn skipped(&self) -> Option<String> {
+        self.locked().skip.clone()
+    }
+
     fn note(&self, message: &str) {
         let mut state = self.locked();
         state.failed = true;
@@ -151,6 +175,18 @@ impl Seat for Body<'_> {
         let text = fault.to_string();
         self.locked().fault.get_or_insert(fault);
         self.fail(&text);
+    }
+
+    /// Ends the check of `rejects` at a skip, and keeps the first reason. An
+    /// attempt of `eventually` writes the reason as the default does, and
+    /// runs on.
+    fn skip(&self, reason: &str) {
+        if !self.check {
+            seat::write_skip(reason);
+            return;
+        }
+        self.locked().skip.get_or_insert_with(|| reason.to_owned());
+        resume_unwind(Box::new(Ended));
     }
 
     fn clock(&self) -> &dyn Clock {

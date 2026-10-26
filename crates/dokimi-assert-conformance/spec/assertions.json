@@ -1590,7 +1590,7 @@
         "rejects": {
             "arity": 2,
             "detail_fields": [],
-            "summary": "A check fails against an implementation it is meant to reject. Yields the failure records of the check, in call order. A fault that ends the check ends the call with the same fault.\n"
+            "summary": "A check fails against an implementation it is meant to reject. Yields the failure records of the check, in call order. A fault that ends the check ends the call with the same fault. A check that skips before it fails ends the call as skipped, which yields no record and skips the test where its runner can skip a running test.\n"
         },
         "round-trip": {
             "arity": 4,
@@ -1919,5 +1919,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "12.0.0"
+    "version": "12.1.0"
 }

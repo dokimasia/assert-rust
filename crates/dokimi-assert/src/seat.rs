@@ -106,6 +106,17 @@ pub trait Seat: Send + Sync {
         }
     }
 
+    /// Skips the test of the seat with `reason`, where the test runner can
+    /// skip a running test.
+    ///
+    /// The default writes the reason to the standard error and returns,
+    /// because libtest has no call that skips a running test. On the seat
+    /// that `rejects` hands its check, `skip` ends the check. On a case, it
+    /// ends the run of the property. A caller returns after `skip`.
+    fn skip(&self, reason: &str) {
+        write_skip(reason);
+    }
+
     /// Returns the clock that the timed assertions read.
     ///
     /// The default is the platform clock.
@@ -169,6 +180,12 @@ pub trait Seat: Send + Sync {
 pub fn fault(seat: &dyn Seat, error: impl Error + Send + Sync + 'static) {
     seat.helper();
     seat.report_fault(Arc::new(error), true);
+}
+
+/// Writes the reason of a skip to the standard error, as the default of
+/// [`Seat::skip`] does.
+pub(crate) fn write_skip(reason: &str) {
+    eprintln!("skipped: {reason}");
 }
 
 /// Returns the calls of a seat of a test: calls that write each record to the

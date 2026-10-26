@@ -1,7 +1,8 @@
 // Copyright Dokimasia B.V. 2026
 // SPDX-License-Identifier: MIT
 
-//! The spec of `verdict`, the pass, the failure or the fault of each call.
+//! The spec of `verdict`, the pass, the failure, the skip or the fault of
+//! each call.
 
 use crate::helpers::{Scratch, in_child, records};
 use dokimi_assert::{Failure, Recorder, check, golden, prop, soft};
@@ -54,7 +55,7 @@ mod child {
     #[test]
     #[ignore = "a spec of the switch runs it in a child process"]
     fn calls_each_verdict_on_a_recorder() {
-        let calls: [Call; 5] = [
+        let calls: [Call; 6] = [
             ("pass", |seat| check::is_true(seat, true, "c")),
             ("fail", |seat| check::is_true(seat, false, "c")),
             ("fault", |seat| {
@@ -67,6 +68,11 @@ mod child {
             }),
             ("property fail", |seat| {
                 prop::for_all(seat, "c", prop::hermetic(), |_| panic!("the case fails"));
+            }),
+            ("property skip", |seat| {
+                prop::for_all(seat, "c", prop::hermetic(), |c| {
+                    c.skip("the case skips");
+                });
             }),
         ];
         for (name, call) in calls {
@@ -194,6 +200,19 @@ mod fail {
         let seat = Recorder::new();
         soft::is_true(&seat, false, "the flag is set");
         assert_eq!(seat.messages(), ["the flag is set"]);
+    }
+}
+
+mod skip {
+    use super::*;
+
+    #[test]
+    fn ends_the_call_with_the_fault_of_a_switch_that_states_no_value() {
+        let printed = switched_calls();
+        assert!(
+            printed.contains(&format!("property skip: {SWITCHED}")),
+            "{printed:?}"
+        );
     }
 }
 

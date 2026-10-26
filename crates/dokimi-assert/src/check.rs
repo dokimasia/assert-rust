@@ -654,6 +654,11 @@ pub fn max_allocs_with_setup<T>(
 /// assertion exists on this surface alone, because a recording surface does
 /// not stop a check.
 ///
+/// A check that calls [`Seat::skip`] of its seat before it fails ends the
+/// call as skipped. The call record states the verdict `skip` and the
+/// reason. `rejects` passes the skip to the seat through [`Seat::skip`], and
+/// returns no records. A check that fails and then skips passes `rejects`.
+///
 /// ```
 /// use dokimi_assert::{Recorder, check};
 ///

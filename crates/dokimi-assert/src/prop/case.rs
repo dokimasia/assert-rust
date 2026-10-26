@@ -305,9 +305,10 @@ impl<'s> Case<'s> {
     /// case, a case that skips ends as a case that does not fail, and the run
     /// goes on.
     ///
-    /// libtest has no call that skips a running test, so the test of a
-    /// skipped property passes. The call record of the property states the
-    /// verdict `skip` and the reason.
+    /// The seat of the property then receives the skip through
+    /// [`Seat::skip`]. libtest has no call that skips a running test, so a
+    /// test whose seat keeps the default of `skip` passes. The call record of
+    /// the property states the verdict `skip` and the reason.
     ///
     /// ```
     /// use dokimi_assert::{Recorder, prop};
@@ -520,6 +521,11 @@ impl Seat for Case<'_> {
             Some(context) => context.parent.report_fault(fault, false),
             None => eprintln!("{fault}"),
         }
+    }
+
+    /// Ends the run of the property as skipped, as [`Case::skip`] does.
+    fn skip(&self, reason: &str) {
+        Case::skip(self, reason);
     }
 
     fn clock(&self) -> &dyn Clock {

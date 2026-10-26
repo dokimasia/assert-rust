@@ -244,6 +244,7 @@ mod naming_table {
         scheduler.spawn(async |_| {});
         drop(scheduler.yield_now());
         scheduler.run();
+        seat.skip("c");
         // A skip ends the case, so it is the last call.
         case.skip("c");
     }

@@ -331,6 +331,18 @@ mod seat {
     }
 
     #[test]
+    fn ends_the_run_as_skipped_at_a_skip_of_its_seat() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            let case: &dyn Seat = c;
+            case.skip("the case needs a capability");
+        });
+        let record = &records(&seat)[0];
+        assert_eq!(record["verdict"], "skip", "{record}");
+        assert_eq!(record["reason"], "the case needs a capability", "{record}");
+    }
+
+    #[test]
     fn ends_the_case_with_the_text_of_a_fault_that_ends_its_call() {
         let seat = run(|c| {
             let _ = c.draw(&prop::boolean(), "flag");

@@ -394,8 +394,10 @@ check::max_allocs_with_setup<T>(setup: impl FnMut() -> T, body: impl FnMut(T), c
 **Testing an assertion.** `rejects` runs a check on a seat of its own and
 returns the check's failures. It ends the test when the check does not fail.
 A fault that ends a call of the check ends the call of `rejects` with the
-same fault. Only `check` has it, because a check on `soft` does not stop.
-Its signature keeps the message, which comes before the body.
+same fault. A check that calls `Seat::skip` before it fails ends the call
+as skipped, and `rejects` passes the skip to its seat. Only `check` has it,
+because a check on `soft` does not stop. Its signature keeps the message,
+which comes before the body.
 
 ```rust
 check::rejects(msg: &str, body: impl FnOnce(&dyn Seat)) -> Vec<Failure>
@@ -561,9 +563,11 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   `campaign`. The option `prop::hermetic()` makes a run ignore the four
   variables.
 - `Case::skip(reason)` ends the run of the property as skipped, for an
-  environment that lacks a capability of the body. libtest has no call that
-  skips a running test, so the test passes. The call record of the property
-  states the verdict `skip`.
+  environment that lacks a capability of the body. The property passes the
+  skip to its seat through `Seat::skip`, whose default writes the reason to
+  the standard error. libtest has no call that skips a running test, so the
+  test passes. The call record of the property states the verdict `skip`
+  and the reason.
 - `prop::around` runs each run of the body inside a wrapper, such as a
   runtime or a frozen clock. A wrapper that does not call `run`, calls it a
   second time or panics ends the call with a fault.

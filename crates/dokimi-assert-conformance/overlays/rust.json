@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@12.0.0",
+  "extends": "spec://assertions@12.1.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -71,6 +71,11 @@
       "id": "case.skip",
       "what": "Ends the run of the property as skipped, and the call record states the verdict skip. The test passes.",
       "why": "libtest marks a test as ignored before it runs, with the attribute ignore, and offers no call that skips a test while it runs."
+    },
+    {
+      "id": "seat.skip",
+      "what": "The default writes the reason to the standard error and returns, and the caller returns after it. A call of rejects whose check skips states the verdict skip in its call record, and the test passes.",
+      "why": "libtest marks a test as ignored before it runs, with the attribute ignore, and offers no call that skips a test while it runs."
     }
   ],
   "surface": [
@@ -85,6 +90,10 @@
     {
       "id": "fault-reporter",
       "why": "The trait Seat states report_fault with a default, which sends the text of an ending fault through fail, so a seat that does not override it still ends the call. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    },
+    {
+      "id": "skipper",
+      "why": "The trait Seat states skip with a default, which writes the reason and returns, so every seat has the member. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
     },
     {
       "id": "contract.excluding",

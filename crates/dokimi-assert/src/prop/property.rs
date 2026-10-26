@@ -26,7 +26,7 @@ use super::options::{Options, Wrapper};
 use super::scope::{self, Generators};
 use crate::json::{self, Json};
 use crate::matcher::panics::{message, quietly};
-use crate::record::{DEFINITION, Verdict};
+use crate::record::DEFINITION;
 use crate::seat::{Seat, Standard};
 use crate::value::Value;
 use crate::verdict::{self, Mode, Run};
@@ -573,31 +573,26 @@ impl<'c> Property<'c> {
     }
 
     /// Reports the outcome as the verdict of the call. A skipped run passes
-    /// the test, and its call record states the verdict `skip`.
+    /// the skip to the seat through [`Seat::skip`], and its call record
+    /// states the verdict `skip` and the reason.
     #[track_caller]
     fn report(&self, run: &Run<'_>, outcome: &Outcome) {
-        let verdict = match outcome.kind {
-            Kind::Passed => Some(Verdict::Pass),
-            Kind::Skipped => Some(Verdict::Skip),
-            _ => None,
-        };
-        if let Some(verdict) = verdict {
-            run.record_run(
+        let (assertion, contract) = (self.call.assertion, self.call.contract);
+        match outcome.kind {
+            Kind::Passed => run.pass_run(Mode::Fatal, assertion, contract, detail_json(outcome)),
+            Kind::Skipped => run.skip_run(
                 Mode::Fatal,
-                self.call.assertion,
-                self.call.contract,
-                verdict,
-                detail_json(outcome),
-            );
-            return;
+                assertion,
+                contract,
+                Some(detail_json(outcome)),
+                outcome.reason.as_deref().unwrap_or_default(),
+            ),
+            _ => {
+                let (failure, detail) =
+                    record_of(outcome, assertion, contract, Some(run.location()));
+                run.fail_run(Mode::Fatal, &failure, detail);
+            }
         }
-        let (failure, detail) = record_of(
-            outcome,
-            self.call.assertion,
-            self.call.contract,
-            Some(run.location()),
-        );
-        run.fail_run(Mode::Fatal, &failure, detail);
     }
 
     /// Returns the path of the test that the property belongs to.
@@ -664,8 +659,10 @@ fn wrapped<'s>(wrapper: &Wrapper, case: &Case<'s>, body: &(dyn Fn(&Case<'s>) + S
 /// refuted a coverage requirement or left one unmet.
 ///
 /// A case that calls [`Case::skip`] before the run finds a failing case ends
-/// the run as skipped. libtest has no call that skips a running test, so the
-/// test passes. The call record of the property states the verdict `skip`.
+/// the run as skipped. The seat then receives the skip through
+/// [`Seat::skip`]. libtest has no call that skips a running test, so a test
+/// whose seat keeps the default of `skip` passes. The call record of the
+/// property states the verdict `skip` and the reason.
 ///
 /// The campaign profile, which `DOKIMI_ASSERT_PROP_PROFILE=campaign` selects,
 /// runs a campaign instead of a run. A campaign tries the case of the draws

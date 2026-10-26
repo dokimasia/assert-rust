@@ -3,8 +3,9 @@
 
 //! The spec of `matcher/rejects`: the assertion that a check fails.
 
-use crate::helpers::{Scratch, records};
-use dokimi_assert::{Failure, Recorder, Seat, check, fault, golden};
+use crate::helpers::{Scratch, Skipping, records};
+use dokimi_assert::{Failure, Recorder, Seat, check, fault, golden, soft};
+use std::cell::Cell;
 use std::io;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::sync::Arc;
@@ -117,5 +118,65 @@ mod rejects {
         let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
         assert_eq!(texts, ["the store skips a file"]);
         assert!(!seat.failed());
+    }
+
+    #[test]
+    fn ends_as_skipped_for_a_check_that_skips_before_it_fails() {
+        let seat = Recorder::new();
+        let reached = Cell::new(false);
+        let failures = check::rejects(&seat, "a check that skips", |s| {
+            s.skip("the check needs a disk");
+            reached.set(true);
+        });
+        assert!(!reached.get());
+        assert_eq!(failures, [] as [Failure; 0]);
+        assert!(!seat.failed(), "{}", seat.message());
+        let records = records(&seat);
+        assert_eq!(records[0]["verdict"], "skip");
+        assert_eq!(records[0]["reason"], "the check needs a disk");
+        assert_eq!(records[0]["detail"], serde_json::Value::Null);
+    }
+
+    #[test]
+    fn skips_its_seat_with_the_reason_of_the_check() {
+        let seat = Skipping::default();
+        let _ = check::rejects(&seat, "a check that skips", |s| {
+            s.skip("the check needs a disk");
+        });
+        assert_eq!(seat.skips(), ["the check needs a disk"]);
+    }
+
+    #[test]
+    fn keeps_the_reason_of_the_first_skip() {
+        let seat = Recorder::new();
+        let _ = check::rejects(&seat, "a check with two skips", |s| {
+            let _ = catch_unwind(AssertUnwindSafe(|| s.skip("the first reason")));
+            s.skip("the second reason");
+        });
+        assert_eq!(records(&seat)[0]["reason"], "the first reason");
+    }
+
+    #[test]
+    fn passes_a_check_that_fails_and_then_skips() {
+        let seat = Recorder::new();
+        let failures = check::rejects(&seat, "a check that skips late", |s| {
+            soft::is_true(s, false, "it fails first");
+            s.skip("the check needs a disk");
+        });
+        assert_eq!(failures.len(), 1);
+        assert_eq!(records(&seat)[0]["verdict"], "pass");
+    }
+
+    #[test]
+    fn passes_a_noted_fault_of_a_check_that_then_skips_to_its_seat() {
+        let seat = Recorder::new();
+        let failures = check::rejects(&seat, "a check with a note", |s: &dyn Seat| {
+            s.report_fault(Arc::new(io::Error::other("the store skips a file")), false);
+            s.skip("the check needs a disk");
+        });
+        assert_eq!(failures, [] as [Failure; 0]);
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the store skips a file"]);
+        assert_eq!(records(&seat)[0]["verdict"], "skip");
     }
 }

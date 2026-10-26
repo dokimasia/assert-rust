@@ -3,7 +3,7 @@
 
 //! The spec of `prop::property`, the run of a property and its record.
 
-use crate::helpers::{Scratch, panic_of, records};
+use crate::helpers::{Scratch, Skipping, panic_of, records};
 use dokimi_assert::prop::{self, Arbitrary, Case, Definitions, Shape, ShapeError};
 use dokimi_assert::{Recorder, Value, check};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -41,6 +41,12 @@ fn drawing(c: &Case<'_>) {
     let n = c.draw(&prop::integer(0..=9_u8), "n");
     let _ = c.draw(&prop::integer(0..=9_u8), "m");
     check::is_true(c, n < 3, "n stays below 3");
+}
+
+/// Draws `n` and skips the case.
+fn skipping(c: &Case<'_>) {
+    let _ = c.draw(&prop::integer(0..=9_u8), "n");
+    c.skip("the case needs a capability");
 }
 
 mod draws {
@@ -225,6 +231,26 @@ mod for_all {
         let one = run(prop::Options::default(), drawing);
         let four = run(prop::workers(4), drawing);
         assert_eq!(records(&four)[0]["detail"], records(&one)[0]["detail"]);
+    }
+
+    #[test]
+    fn records_the_reason_of_a_run_that_skips() {
+        let seat = run(prop::cases(10), skipping);
+        let record = &records(&seat)[0];
+        assert_eq!(record["verdict"], "skip", "{record}");
+        assert_eq!(record["reason"], "the case needs a capability", "{record}");
+    }
+
+    #[test]
+    fn passes_the_skip_of_a_run_to_its_seat() {
+        let seat = Skipping::default();
+        prop::for_all(
+            &seat,
+            CONTRACT,
+            prop::hermetic().seed(1).store(""),
+            skipping,
+        );
+        assert_eq!(seat.skips(), ["the case needs a capability"]);
     }
 }
 

@@ -507,7 +507,7 @@ fn asserting(c: &Case<'_>, failure: Option<&str>) {
 
 /// Runs the body of a recording vector with `for_all` on a recorder,
 /// compares the calls of `is_true` with the calls of the vector, and returns
-/// the property's verdict.
+/// the property's verdict and the reason of a property that skips.
 ///
 /// A call has the run of the body that made it, the phase of the run and its
 /// verdict. The call at position `k` from 0 has the number `k + 2`, and its
@@ -555,7 +555,7 @@ fn recording(raw: &Json, dir: &Path) -> Result<Json, Disagreement> {
             got,
         });
     }
-    Ok(json!({"verdict": records[0]["verdict"]}))
+    Ok(json!({"verdict": records[0]["verdict"], "reason": records[0]["reason"]}))
 }
 
 /// Reads the shape file of the fixture type that a fixtures vector names,

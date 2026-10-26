@@ -129,6 +129,17 @@ mod run {
     }
 
     #[test]
+    fn disagrees_with_a_recording_of_another_reason() {
+        let mut skips = vector("recording/records-the-cases-before-a-case-that-skips");
+        skips.raw["reason"] = json!("the disk is full");
+        let result = engine::run(&skips, directory().path());
+        assert!(
+            matches!(&result, Err(Disagreement::Output { name, .. }) if name == "reason"),
+            "{result:?}"
+        );
+    }
+
+    #[test]
     fn disagrees_with_a_recording_of_other_calls() {
         let mut replay = vector("recording/records-the-one-case-of-a-replay-token");
         replay.raw["calls"][0]["phase"] = json!("random");

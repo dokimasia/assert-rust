@@ -25,7 +25,7 @@ use std::sync::{Arc, LazyLock, Mutex, MutexGuard, OnceLock, PoisonError};
 /// that the conformance crate vendors. The published crate does not contain
 /// that copy, so the specs compare this constant with the file `VERSION` of
 /// the copy.
-pub(crate) const DEFINITION: &str = "12.0.0";
+pub(crate) const DEFINITION: &str = "12.1.0";
 
 /// The variable that turns recording on.
 pub(crate) const VARIABLE: &str = "DOKIMI_ASSERT_RECORD";
@@ -147,6 +147,8 @@ pub(crate) struct Call {
     pub(crate) detail: Option<Json>,
     /// The text of the fault that ended a call of the verdict `error`.
     pub(crate) error: Option<String>,
+    /// The reason of the skip of a call of the verdict `skip`.
+    pub(crate) reason: Option<String>,
 }
 
 /// Where a numbered call is among the calls of its test.
@@ -192,6 +194,9 @@ fn encode(call: &Call, place: Place, test: Option<&str>) -> String {
     }
     if let Some(error) = &call.error {
         members.push(("error".to_owned(), error.as_str().into()));
+    }
+    if let Some(reason) = &call.reason {
+        members.push(("reason".to_owned(), reason.as_str().into()));
     }
     if let Some(test) = test {
         members.push(("test".to_owned(), test.into()));

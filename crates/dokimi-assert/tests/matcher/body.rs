@@ -85,7 +85,7 @@ mod body {
         let text = format!("{body:?}");
         assert!(text.starts_with("Body { cancellation: "), "{text}");
         assert!(
-            text.ends_with(r#"state: State { failed: true, first: Some("the first check"), failures: [], fault: None }, .. }"#),
+            text.ends_with(r#"state: State { failed: true, first: Some("the first check"), failures: [], fault: None, skip: None }, .. }"#),
             "{text}"
         );
     }
@@ -124,6 +124,24 @@ mod body {
         let seat = Recorder::new();
         let raised = panic_of(|| drop(check::rejects(&seat, "c", |_| panic!("the body broke"))));
         assert_eq!(raised.as_deref(), Some("the body broke"));
+    }
+
+    #[test]
+    fn runs_an_attempt_on_past_its_skip() {
+        let seat = Recorder::new().with_clock(Arc::new(dokimi_assert::Controlled::new()));
+        let reached = Cell::new(false);
+        check::eventually(
+            &seat,
+            Duration::ZERO,
+            Duration::ZERO,
+            |body: &dyn Seat| {
+                body.skip("the attempt needs a disk");
+                reached.set(true);
+            },
+            "the attempt runs on",
+        );
+        assert!(reached.get());
+        assert!(!seat.failed(), "{}", seat.message());
     }
 
     #[test]

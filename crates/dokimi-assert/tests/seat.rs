@@ -103,6 +103,13 @@ mod seat {
         plain.report_fault(refusal("the store skips a file"), false);
         assert_eq!(plain.received(), [] as [String; 0]);
     }
+
+    #[test]
+    fn returns_from_a_skip_without_a_failure_by_default() {
+        let plain = Plain::default();
+        plain.skip("the disk is full");
+        assert_eq!(plain.received(), [] as [String; 0]);
+    }
 }
 
 mod fault {

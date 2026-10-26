@@ -1,12 +1,14 @@
 // Copyright Dokimasia B.V. 2026
 // SPDX-License-Identifier: MIT
 
-//! The verdict of every assertion call: a pass, a failure or a fault.
+//! The verdict of every assertion call: a pass, a failure, a skip or a
+//! fault.
 //!
 //! Each verdict writes the call's record when its seat records calls. A
-//! failure then sends its record to the seat. A fault ends the call through
-//! the seat's `report_fault` on either surface, because the call checked
-//! nothing and a test that ran on would meet the fault again.
+//! failure then sends its record to the seat, and a skip passes its reason to
+//! the seat's `skip`. A fault ends the call through the seat's `report_fault`
+//! on either surface, because the call checked nothing and a test that ran on
+//! would meet the fault again.
 
 use crate::failure::{Failure, Where};
 use crate::json::Json;
@@ -141,16 +143,13 @@ impl<'s> Run<'s> {
         self.slot.is_some()
     }
 
-    /// Reports that a property passed or skipped, with `verdict` and the
-    /// detail of its run, which its call record states. The seat receives
-    /// nothing for a skip either, because libtest has no call that skips a
-    /// running test, so the test passes.
-    pub(crate) fn record_run(
+    /// Reports that a property passed, with the detail of its run, which its
+    /// call record states.
+    pub(crate) fn pass_run(
         &self,
         mode: Mode,
         assertion: &'static str,
         contract: &str,
-        verdict: Verdict,
         detail: Json,
     ) {
         if !self.switched() {
@@ -159,12 +158,41 @@ impl<'s> Run<'s> {
         self.write(Call {
             assertion,
             contract: contract.to_owned(),
-            verdict,
+            verdict: Verdict::Pass,
             aborting: mode == Mode::Fatal,
             location: Some(self.location),
             detail: Some(detail),
             error: None,
+            reason: None,
         });
+    }
+
+    /// Reports that the call ended as skipped with `reason`. A property
+    /// reports the detail of its run, which its call record states, and
+    /// `rejects` reports no detail. The seat then receives the skip through
+    /// [`Seat::skip`], which may not return.
+    pub(crate) fn skip_run(
+        &self,
+        mode: Mode,
+        assertion: &'static str,
+        contract: &str,
+        detail: Option<Json>,
+        reason: &str,
+    ) {
+        if !self.switched() {
+            return;
+        }
+        self.write(Call {
+            assertion,
+            contract: contract.to_owned(),
+            verdict: Verdict::Skip,
+            aborting: mode == Mode::Fatal,
+            location: Some(self.location),
+            detail,
+            error: None,
+            reason: Some(reason.to_owned()),
+        });
+        self.seat.skip(reason);
     }
 
     /// Reports that a property failed with `failure`, whose call record states
@@ -184,6 +212,7 @@ impl<'s> Run<'s> {
             location: Some(self.location),
             detail: Some(detail),
             error: None,
+            reason: None,
         });
         self.seat.report(failure, mode == Mode::Fatal);
     }
@@ -202,6 +231,7 @@ impl<'s> Run<'s> {
             location: Some(self.location),
             detail: None,
             error: None,
+            reason: None,
         });
     }
 
@@ -234,6 +264,7 @@ impl<'s> Run<'s> {
             location: Some(self.location),
             detail: Some(stated),
             error: None,
+            reason: None,
         });
         let failure = Failure::new(assertion, contract, detail, Some(self.location));
         self.seat.report(&failure, mode == Mode::Fatal);
@@ -269,6 +300,7 @@ impl<'s> Run<'s> {
             location: Some(self.location),
             detail: None,
             error: Some(fault.to_string()),
+            reason: None,
         });
         self.seat.report_fault(fault, true);
     }
