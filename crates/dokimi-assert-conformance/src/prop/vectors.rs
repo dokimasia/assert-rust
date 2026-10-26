@@ -75,7 +75,8 @@ pub struct Vector {
     pub raw: Json,
 }
 
-/// Returns every property vector, in the order of its files.
+/// Returns every property vector without a skip for Rust, in the order of
+/// its files.
 ///
 /// # Errors
 ///
@@ -102,6 +103,9 @@ pub fn vectors() -> Result<Vec<Vector>, Error> {
                     what: "a vector has no id",
                 });
             };
+            if raw["skip"].get("rust").is_some() {
+                continue;
+            }
             found.push(Vector {
                 id: id.to_owned(),
                 kind: kind.to_owned(),

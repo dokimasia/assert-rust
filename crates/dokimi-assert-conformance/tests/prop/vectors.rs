@@ -48,7 +48,9 @@ mod vectors {
             stated += vectors["cases"]
                 .as_array()
                 .expect("a file states vectors")
-                .len();
+                .iter()
+                .filter(|case| case["skip"].get("rust").is_none())
+                .count();
         }
         assert_eq!(found.len(), stated);
         assert_eq!(
@@ -59,6 +61,26 @@ mod vectors {
             kinds
         );
         assert!(kinds.contains("recording"), "{kinds:?}");
+    }
+
+    #[test]
+    fn leaves_out_each_vector_that_skips_rust() {
+        let found: BTreeSet<String> = engine::vectors()
+            .expect("the vendored vectors read")
+            .into_iter()
+            .map(|vector| vector.id)
+            .collect();
+        let mut skipped = Vec::new();
+        for file in definition::vector_files("prop").expect("the vectors list") {
+            let vectors = definition::read(&file).expect("a vector file reads");
+            for case in vectors["cases"].as_array().expect("a file states vectors") {
+                if case["skip"].get("rust").is_some() {
+                    skipped.push(case["id"].as_str().expect("a vector has an id").to_owned());
+                }
+            }
+        }
+        assert_ne!(skipped, Vec::<String>::new());
+        assert!(skipped.iter().all(|id| !found.contains(id)), "{skipped:?}");
     }
 }
 

@@ -863,8 +863,9 @@ under test.
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
 - The vectors run too: 57 for files, 80 for histories, 435 for properties
-  and 14 for machines. A platform that does not record permission bits
-  skips the files vectors that state a mode.
+  and 14 for machines. Two more property vectors skip Rust, because its
+  standard library has no complex or rational type. A platform that does
+  not record permission bits skips the files vectors that state a mode.
 - The crates implement all 110 assertions of the definition.
   `dokimi-assert-tokio` has `no_task_leaks`, and `dokimi-assert` has the
   others. The spec of `lib.rs` names every Rust name of the naming table
