@@ -20,7 +20,7 @@
 //! failing case the skip ends the run, and after it the case counts as a case
 //! that does not fail.
 
-use super::case::{Failed, Place, Provider, Record, Replaying, Stop, Where};
+use super::case::{CaseFault, Failed, Place, Provider, Record, Replaying, Stop, Where};
 use super::choice::Bounds;
 use super::trace::TraceError;
 use super::tree::{Ending, Stopped, Tree, Walker};
@@ -143,13 +143,15 @@ impl Execution {
 }
 
 /// What ends a run before its outcome: an entry of a trace that the body
-/// cannot follow, or a fault of the run.
+/// cannot follow, a fault of the run, or a fault of a call of the body.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Fault {
     /// A trace's entry that the body cannot follow.
     Trace(TraceError),
     /// A fault of the run, with its text.
     Run(String),
+    /// A fault that ended a call of the body, in any phase of the run.
+    Case(CaseFault),
 }
 
 /// A body of a property.
@@ -221,6 +223,7 @@ fn once<'s>(body: Body<'_, 's>, case: Case<'s>) -> Result<Execution, Fault> {
     match &ended {
         Some(Stop::Trace(refused)) => return Err(Fault::Trace(refused.clone())),
         Some(Stop::Fault(text)) => return Err(Fault::Run(text.clone())),
+        Some(Stop::Faulted(fault)) => return Err(Fault::Case(fault.clone())),
         _ => {}
     }
     // A case keeps every failure before a stop fails it, so a stop of a

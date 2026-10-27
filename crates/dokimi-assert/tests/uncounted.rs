@@ -65,9 +65,8 @@ mod prop_max_allocs {
     use super::*;
 
     #[test]
-    fn fails_each_case_with_the_fault_at_the_call_site_of_the_form() {
+    fn ends_the_call_with_the_fault_of_its_first_case() {
         let seat = Recorder::new();
-        let line = line!() + 1;
         prop::max_allocs(
             &seat,
             |_: &u8| {},
@@ -75,12 +74,10 @@ mod prop_max_allocs {
             "c",
             prop::hermetic().seed(1).store(""),
         );
-        let case = seat.failures()[0]
-            .case_failure()
-            .cloned()
-            .expect("the run found a counterexample");
-        assert_eq!(case.contract(), UNCOUNTED);
-        assert_eq!(case.location().map(|at| at.line()), Some(line));
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, [UNCOUNTED]);
+        assert!(seat.failures().is_empty(), "no counterexample");
+        assert_eq!(verdict(&seat), "error");
     }
 }
 

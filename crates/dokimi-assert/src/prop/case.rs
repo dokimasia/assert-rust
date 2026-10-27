@@ -14,7 +14,7 @@
 //! does, and the later cleanups still run.
 
 use super::engine::case::{
-    Drawn, Erased, Failed, Mark, Record, Rendered, Request, Signal, Stop, identity_key,
+    CaseFault, Drawn, Erased, Failed, Mark, Record, Rendered, Request, Signal, Stop, identity_key,
 };
 use super::engine::choice::{Choice, IntegerBounds, SequenceBounds, UINT64_MAX};
 use super::generator::Generator;
@@ -402,15 +402,6 @@ impl<'s> Case<'s> {
         locked(&self.reported).identities.first().cloned()
     }
 
-    /// Returns the location of a record that the case's caller makes at
-    /// `at`: the property's call site for a pinned case.
-    fn locate(&self, at: Where) -> Option<Where> {
-        match self.context {
-            Some(context) if context.pinned => context.site,
-            _ => Some(at),
-        }
-    }
-
     /// Keeps a failure, and returns the failure of the case: the first that
     /// it kept.
     pub(crate) fn keep(&self, failed: Failed) -> Failed {
@@ -478,7 +469,7 @@ impl Seat for Case<'_> {
         if let Err(stop) = self.check() {
             self.end(stop);
         }
-        let at = self.locate(Where::from(Location::caller()));
+        let at = Some(Where::from(Location::caller()));
         let failed = self.keep(failed_of(Failure::message(message, at)));
         self.end(Stop::Failed(Box::new(failed)));
     }
@@ -488,7 +479,7 @@ impl Seat for Case<'_> {
         if let Err(stop) = self.check() {
             self.end(stop);
         }
-        let at = self.locate(Where::from(Location::caller()));
+        let at = Some(Where::from(Location::caller()));
         self.keep(failed_of(Failure::message(message, at)));
     }
 
@@ -507,15 +498,20 @@ impl Seat for Case<'_> {
         }
     }
 
-    /// Ends the case at a fault that ends its call, as [`Seat::fail`] ends it
-    /// with the text of the fault. A noted fault passes to the seat of the
+    /// Ends the case at a fault that ends its call, also after a failure. The
+    /// run of the property ends in every phase, and the property ends its
+    /// call with the same fault. A noted fault passes to the seat of the
     /// property, and the body runs on. A case of no property prints a noted
     /// fault to the standard error.
     #[track_caller]
     fn report_fault(&self, fault: Arc<dyn Error + Send + Sync>, ending: bool) {
         if ending {
-            self.fail(&fault.to_string());
-            return;
+            // A stop that ends the run stays the end of the case. A fault
+            // replaces every other stop, because the body did not finish.
+            if let Err(stop @ (Stop::Trace(_) | Stop::Fault(_) | Stop::Faulted(_))) = self.check() {
+                self.end(stop);
+            }
+            self.end(Stop::Faulted(CaseFault(fault)));
         }
         match self.context {
             Some(context) => context.parent.report_fault(fault, false),

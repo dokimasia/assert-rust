@@ -167,6 +167,20 @@ mod values {
     }
 
     #[test]
+    fn panics_with_the_fault_that_ends_a_call_of_a_generator() {
+        let faulting = prop::composite(|c| -> u8 {
+            dokimi_assert::fault(c, std::io::Error::other("the store is gone"));
+            0
+        });
+        assert_eq!(
+            panic_of(|| drop(prop::values(&faulting, 1, 1, Options::default()))).as_deref(),
+            Some(
+                "prop: values(generator, 1, 1) stops at a fault of the generator: the store is gone"
+            )
+        );
+    }
+
+    #[test]
     fn panics_with_the_reason_of_a_generator_that_ends_its_case_with_a_fault() {
         let faulting = prop::composite(|c| {
             let tick = Action::new("tick", async |_: &Case<'_>, _: usize| {});

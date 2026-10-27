@@ -438,7 +438,8 @@ impl<'c> Property<'c> {
 
     /// Runs `work` with the property's body, and returns its outcome, or
     /// `None` after the call ended with a fault: an entry of the draws option
-    /// that the body cannot follow, or a fault of a case.
+    /// that the body cannot follow, or a fault of a case. The call ends with
+    /// the same fault that ended a call of the body.
     ///
     /// The generators that `using` states apply on the thread of the call and
     /// in each run of the body, on any thread.
@@ -482,6 +483,15 @@ impl<'c> Property<'c> {
             }
             Err(Fault::Run(text)) => {
                 self.fault(run, &Refused::new("", text));
+                None
+            }
+            Err(Fault::Case(fault)) => {
+                run.fault_with(
+                    Mode::Fatal,
+                    self.call.assertion,
+                    self.call.contract,
+                    fault.0,
+                );
                 None
             }
         }

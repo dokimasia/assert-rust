@@ -343,16 +343,82 @@ mod seat {
     }
 
     #[test]
-    fn ends_the_case_with_the_text_of_a_fault_that_ends_its_call() {
+    fn ends_the_call_of_the_property_with_a_fault_that_ends_its_call() {
+        let cases = AtomicUsize::new(0);
         let seat = run(|c| {
+            cases.fetch_add(1, Ordering::Relaxed);
             let _ = c.draw(&prop::boolean(), "flag");
             fault(c, io::Error::other("the input is refused"));
         });
-        let case = seat.failures()[0]
-            .case_failure()
-            .cloned()
-            .expect("the run found a counterexample");
-        assert_eq!(case.contract(), "the input is refused");
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the input is refused"]);
+        assert!(seat.failures().is_empty(), "no failure record");
+        assert_eq!(
+            cases.load(Ordering::Relaxed),
+            1,
+            "the run ends at the first case"
+        );
+        let record = &records(&seat)[0];
+        assert_eq!(record["verdict"], "error", "{record}");
+    }
+
+    #[test]
+    fn keeps_the_fault_over_an_earlier_failure() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            c.record("the totals differ");
+            fault(c, io::Error::other("the store is gone"));
+        });
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the store is gone"]);
+        assert!(seat.failures().is_empty(), "no failure record");
+    }
+
+    #[test]
+    fn keeps_the_fault_over_a_failure_that_stopped_the_case() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            let stopped = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                c.fail("the totals differ");
+            }));
+            assert!(stopped.is_err());
+            fault(c, io::Error::other("the store is gone"));
+        });
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the store is gone"]);
+        assert!(seat.failures().is_empty(), "no failure record");
+    }
+
+    #[test]
+    fn keeps_the_first_fault_of_a_case() {
+        let seat = run(|c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            let first = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                fault(c, io::Error::other("first"));
+            }));
+            assert!(first.is_err());
+            fault(c, io::Error::other("second"));
+        });
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["first"]);
+    }
+
+    #[test]
+    fn ends_the_call_with_the_fault_of_a_shrink_candidate() {
+        let failed = AtomicUsize::new(0);
+        let seat = run(|c| {
+            let value = c.draw(&prop::integer(0_u8..=9), "x");
+            if failed.load(Ordering::Relaxed) > 0 && value < 5 {
+                fault(c, io::Error::other("the store is gone"));
+            }
+            if value >= 5 {
+                failed.fetch_add(1, Ordering::Relaxed);
+                c.fail("the digit is 5 or more");
+            }
+        });
+        let texts: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+        assert_eq!(texts, ["the store is gone"]);
+        assert!(seat.failures().is_empty(), "no failure record");
     }
 
     #[test]

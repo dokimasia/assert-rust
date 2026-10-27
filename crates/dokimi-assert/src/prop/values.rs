@@ -58,7 +58,8 @@ const REJECTIONS_PER_VALUE: usize = 10;
 /// when the generator rejects more than ten cases for each of the `n` values.
 /// A case past 8,192 choices counts as rejected. Panics with the reason at a
 /// case that the generator skips, because `values` runs no test that a skip
-/// could skip. Panics with the reason when the generator ends its case in
+/// could skip. Panics with the text of the fault at a fault that ends a call
+/// of the generator. Panics with the reason when the generator ends its case in
 /// another way, such as a check of a composite that fails on its case.
 #[must_use]
 pub fn values<T: 'static>(
@@ -102,6 +103,12 @@ pub fn values<T: 'static>(
                 panic!(
                     "prop: values(generator, {seed}, {n}) stops at a case that the generator \
                      skips: {reason}"
+                );
+            }
+            Err(Stop::Faulted(fault)) => {
+                panic!(
+                    "prop: values(generator, {seed}, {n}) stops at a fault of the generator: {}",
+                    fault.0
                 );
             }
             Err(stop) => {

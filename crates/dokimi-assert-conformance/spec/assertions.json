@@ -942,7 +942,7 @@
                 "reason"
             ],
             "package": "prop",
-            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run.\n"
+            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run. A fault that ends a call in a case ends the run in every phase, and the call ends with the same fault.\n"
         },
         "prop-has-prefix": {
             "arity": 3,
@@ -1919,5 +1919,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "12.2.0"
+    "version": "13.0.0"
 }

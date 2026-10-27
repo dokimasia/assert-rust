@@ -208,6 +208,20 @@ pub enum Stop {
     Trace(TraceError),
     /// A fault that ends the run, with its text.
     Fault(String),
+    /// A fault that ended a call of the body. It ends the run in every phase,
+    /// and the property ends its call with the same fault.
+    Faulted(CaseFault),
+}
+
+/// The fault that ended a call of a body, which [`Stop::Faulted`] carries.
+/// Two of them are equal when they are the same error.
+#[derive(Debug, Clone)]
+pub struct CaseFault(pub Arc<dyn std::error::Error + Send + Sync>);
+
+impl PartialEq for CaseFault {
+    fn eq(&self, other: &Self) -> bool {
+        std::ptr::addr_eq(Arc::as_ptr(&self.0), Arc::as_ptr(&other.0))
+    }
 }
 
 /// The payload with which a case unwinds a body that it ends. The engine

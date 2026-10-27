@@ -45,3 +45,21 @@ mod record {
         assert_eq!(MAX_CHOICES, 8192);
     }
 }
+
+mod case_fault {
+    use dokimi_assert::prop::engine::case::CaseFault;
+    use std::sync::Arc;
+
+    #[test]
+    fn equals_a_fault_of_the_same_error_alone() {
+        let error: Arc<dyn std::error::Error + Send + Sync> =
+            Arc::new(std::io::Error::other("the store is gone"));
+        let other: Arc<dyn std::error::Error + Send + Sync> =
+            Arc::new(std::io::Error::other("the store is gone"));
+        assert_eq!(CaseFault(Arc::clone(&error)), CaseFault(error));
+        assert_ne!(
+            CaseFault(other),
+            CaseFault(Arc::new(std::io::Error::other("the store is gone")))
+        );
+    }
+}

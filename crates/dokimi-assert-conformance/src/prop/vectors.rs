@@ -357,6 +357,7 @@ fn draws(raw: &Json) -> Result<Json, Disagreement> {
             }));
         }
         Err(Fault::Run(text)) => return Err(Disagreement::Fault(text)),
+        Err(Fault::Case(fault)) => return Err(Disagreement::Fault(fault.0.to_string())),
     }
     let mut choices = Vec::new();
     for ((_, generator), (_, value)) in draws.iter().zip(&entries) {
