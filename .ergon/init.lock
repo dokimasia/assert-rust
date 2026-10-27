@@ -1,5 +1,5 @@
 {
-  "ergon": "0.14.3",
+  "ergon": "0.15.0",
   "files": [
     {
       "path": ".commitlint.yaml",
@@ -60,7 +60,7 @@
     {
       "path": ".github/workflows/baseline.yml",
       "producer": "github",
-      "sha256": "05472ecab1e1276cd411dc400fa3ea8282a3aa1b9d94e6edda6014c27f3db066"
+      "sha256": "f78236a5bf27947e6603195add5025efba2850bf85f5654e75f6d3987814c42c"
     },
     {
       "path": ".github/workflows/ci.yml",

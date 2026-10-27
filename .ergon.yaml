@@ -116,9 +116,10 @@ github:
         release: v6.1.0
       # The action that creates a token of the GitHub App of the variable ERGON_APP_CLIENT_ID and
       # the secret ERGON_APP_PRIVATE_KEY. version.yml opens the version pull request with the token,
-      # so the checks of the pull request run without an approval. The job homebrew of release.yml
-      # commits the casks of a release to the tap with the token. A job of nightly.yml such as
-      # propose-spec writes its pull requests with the token.
+      # so the checks of the pull request run without an approval. baseline.yml commits the upgrade
+      # of the managed files with the token, which needs the permission workflows of the App. The
+      # job homebrew of release.yml commits the casks of a release to the tap with the token. A job
+      # of nightly.yml such as propose-spec writes its pull requests with the token.
       create-github-app-token:
         uses: actions/create-github-app-token
         commit: bcd2ba49218906704ab6c1aa796996da409d3eb1
