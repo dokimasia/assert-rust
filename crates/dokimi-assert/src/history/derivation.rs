@@ -12,6 +12,15 @@
 //! committed read is a prefix of the key's final list, so a committed append
 //! that no committed read observed follows the last value of the version
 //! order.
+//!
+//! In a register history, the initial value precedes each installed value,
+//! the value of a committed transaction's last write of a register. A
+//! committed transaction's first read of a register before its write
+//! precedes the value that the transaction installs. Blind writes do not
+//! reveal an order between them, so the derivation orders only these pairs. A
+//! register
+//! read is a read of the list of its one value, so the writer of a value is
+//! its appender.
 
 use super::cycle::{Graph, RELATIONS, Relation, Walk, components, path, simple};
 use super::recording::identity;
@@ -89,7 +98,8 @@ impl Anomaly {
 /// the list that `to` read for wr, and the last value of the list that
 /// `from` read for rw, which is `None` for a read of the empty list. `next`
 /// is the value of `to` that follows `value` in the version order, for ww
-/// and rw.
+/// and rw. An edge of a register history has the values of the register,
+/// and its rw edge from a read of the initial value has no value.
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct Edge {
     pub(crate) from: usize,
@@ -98,10 +108,12 @@ pub(crate) struct Edge {
     pub(crate) key: Value,
     pub(crate) value: Option<Value>,
     pub(crate) next: Option<Value>,
+    pub(crate) register: bool,
 }
 
 /// The evidence of an anomaly that is no cycle: the reads and the appends
-/// that show it.
+/// that show it. The observations of a register history have `register` set,
+/// and their appender is the writer of the value.
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) enum Observation {
     /// A read of `value`, which no transaction appended to `key`.
@@ -110,6 +122,7 @@ pub(crate) enum Observation {
         key: Value,
         read: Vec<Value>,
         value: Value,
+        register: bool,
     },
     /// A read that contains `value` twice.
     DuplicateAppend {
@@ -129,6 +142,18 @@ pub(crate) enum Observation {
         whole: bool,
         future: Option<Value>,
     },
+    /// A register read that contradicts its own transaction: the value that
+    /// it returned, the value that the transaction knew before the read,
+    /// whether it knew one, and the read's value when the transaction writes
+    /// that value to the key later. `None` is the initial value.
+    RegisterInconsistency {
+        call: usize,
+        key: Value,
+        read: Option<Value>,
+        known: Option<Value>,
+        whole: bool,
+        future: Option<Value>,
+    },
     /// Two reads of `key` that are not prefixes of one list.
     IncompatibleOrder {
         calls: [usize; 2],
@@ -141,6 +166,7 @@ pub(crate) enum Observation {
         key: Value,
         value: Value,
         appender: usize,
+        register: bool,
     },
     /// A read that ends in `value`, which `appender` followed with `next`.
     IntermediateRead {
@@ -149,6 +175,7 @@ pub(crate) enum Observation {
         value: Value,
         appender: usize,
         next: Value,
+        register: bool,
     },
 }
 
@@ -304,7 +331,7 @@ fn internal(txn: &Transaction) -> Option<Instance> {
         let key = id(mop.key());
         let (whole, expected) = known.get(&key).cloned().unwrap_or((false, Vec::new()));
         let read = match mop {
-            Mop::Append { value, .. } => {
+            Mop::Append { value, .. } | Mop::Write { value, .. } => {
                 let mut extended = expected;
                 extended.push(value.clone());
                 known.insert(key, (whole, extended));
@@ -330,6 +357,86 @@ fn internal(txn: &Transaction) -> Option<Instance> {
         known.insert(key, (true, read));
     }
     None
+}
+
+/// Returns the first register read of an ok transaction that contradicts
+/// the transaction. After a write or a read of a key, the transaction knows
+/// the key's value. A later read returns that value, and no read returns a
+/// value that the transaction writes to the key after the read.
+fn internal_register(txn: &Transaction) -> Option<Instance> {
+    let mut known: HashMap<Canonical, Option<Value>> = HashMap::new();
+    for (position, mop) in txn.mops.iter().enumerate() {
+        let key = id(mop.key());
+        let read = match mop {
+            Mop::Append { value, .. } | Mop::Write { value, .. } => {
+                known.insert(key, Some(value.clone()));
+                continue;
+            }
+            Mop::Read { list, .. } => list.as_ref().and_then(|list| list.first().cloned()),
+        };
+        let future = read
+            .as_ref()
+            .filter(|value| {
+                txn.mops[position + 1..].iter().any(|later| {
+                    matches!(later, Mop::Write { key: written, value: wrote }
+                        if id(written) == key && id(wrote) == id(value))
+                })
+            })
+            .cloned();
+        let expected = known.get(&key).cloned();
+        let stale = expected
+            .as_ref()
+            .is_some_and(|expected| expected.as_ref().map(id) != read.as_ref().map(id));
+        if future.is_some() || stale {
+            return Some(single(
+                Anomaly::InternalInconsistency,
+                vec![txn.call],
+                Observation::RegisterInconsistency {
+                    call: txn.call,
+                    key: mop.key().clone(),
+                    read,
+                    whole: expected.is_some(),
+                    known: expected.flatten(),
+                    future,
+                },
+            ));
+        }
+        known.insert(key, read);
+    }
+    None
+}
+
+/// Returns the external reads of an ok register transaction by key: the
+/// first read of each key that the transaction reads before it writes the
+/// key. A read of the initial value is `None`.
+fn external_reads(txn: &Transaction) -> HashMap<Canonical, Option<Value>> {
+    let mut touched = HashSet::new();
+    let mut found = HashMap::new();
+    for mop in &txn.mops {
+        let key = id(mop.key());
+        if let Mop::Read {
+            list: Some(list), ..
+        } = mop
+        {
+            if !touched.contains(&key) {
+                found.insert(key.clone(), list.first().cloned());
+            }
+        }
+        touched.insert(key);
+    }
+    found
+}
+
+/// Returns the value of the last write of each key of a register
+/// transaction.
+fn external_writes(txn: &Transaction) -> HashMap<Canonical, Value> {
+    txn.mops
+        .iter()
+        .filter_map(|mop| match mop {
+            Mop::Write { key, value } => Some((id(key), value.clone())),
+            _ => None,
+        })
+        .collect()
 }
 
 /// Returns the longest of a key's reads, or the first two of its distinct
@@ -374,6 +481,8 @@ fn walk_to(
 /// The derivation over one history's transactions.
 pub(crate) struct Analysis<'t> {
     txns: &'t [Transaction],
+    /// `true` for a register history.
+    register: bool,
     /// The call that appended each value to each key.
     appender: HashMap<(Canonical, Canonical), usize>,
     /// The appends to each key, as their calls and values, in the order of
@@ -398,10 +507,12 @@ pub(crate) struct Analysis<'t> {
 impl<'t> Analysis<'t> {
     /// Derives the dependencies between the committed transactions of
     /// `txns`, which are in the order of their invocations, and whose keys
-    /// and values each have a typed literal.
-    pub(crate) fn new(txns: &'t [Transaction]) -> Self {
+    /// and values each have a typed literal. `register` is `true` for a
+    /// register history.
+    pub(crate) fn new(txns: &'t [Transaction], register: bool) -> Self {
         let mut analysis = Self {
             txns,
+            register,
             appender: HashMap::new(),
             appends: HashMap::new(),
             later: HashMap::new(),
@@ -430,7 +541,7 @@ impl<'t> Analysis<'t> {
                         key: key.clone(),
                         list: list.clone().unwrap_or_default(),
                     }),
-                    Mop::Append { .. } => None,
+                    Mop::Append { .. } | Mop::Write { .. } => None,
                 })
             })
             .collect();
@@ -454,8 +565,12 @@ impl<'t> Analysis<'t> {
             }
         }
         analysis.committed = committed;
-        analysis.orders = analysis.version_orders();
-        analysis.derive();
+        if register {
+            analysis.derive_registers();
+        } else {
+            analysis.orders = analysis.version_orders();
+            analysis.derive();
+        }
         analysis
     }
 
@@ -467,7 +582,7 @@ impl<'t> Analysis<'t> {
             if !self.keys.iter().any(|(held, _)| *held == key) {
                 self.keys.push((key.clone(), mop.key().clone()));
             }
-            let Mop::Append { value, .. } = mop else {
+            let (Mop::Append { value, .. } | Mop::Write { value, .. }) = mop else {
                 continue;
             };
             let name = (key.clone(), id(value));
@@ -492,7 +607,11 @@ impl<'t> Analysis<'t> {
                 .txns
                 .iter()
                 .filter(|txn| txn.kind() == Some(Completed::Ok))
-                .find_map(internal),
+                .find_map(if self.register {
+                    internal_register
+                } else {
+                    internal
+                }),
             Anomaly::IncompatibleOrder => self.incompatible.clone(),
             Anomaly::AbortedRead => self.aborted_read(),
             Anomaly::IntermediateRead => self.intermediate_read(),
@@ -521,6 +640,7 @@ impl<'t> Analysis<'t> {
                                 key: key.clone(),
                                 read: read.clone(),
                                 value: value.clone(),
+                                register: self.register,
                             },
                         )
                     })
@@ -575,6 +695,7 @@ impl<'t> Analysis<'t> {
                                 key: key.clone(),
                                 value: value.clone(),
                                 appender,
+                                register: self.register,
                             },
                         )
                     })
@@ -606,6 +727,7 @@ impl<'t> Analysis<'t> {
                         value: value.clone(),
                         appender,
                         next: next.clone(),
+                        register: self.register,
                     },
                 ))
             },
@@ -745,7 +867,104 @@ impl<'t> Analysis<'t> {
             key: key.clone(),
             value,
             next,
+            register: self.register,
         });
+    }
+
+    /// Derives the dependencies between committed transactions, register by
+    /// register. A pair of a value and a later value gives a ww edge from
+    /// the transaction that installed the first value, and an rw edge from
+    /// each transaction whose external read returned it. An external read of
+    /// a value other than the initial value gives a wr edge from the
+    /// transaction that installed the value. A key adds its ww edges in the
+    /// order of the pairs, and then the wr and the rw edges of each read in
+    /// the order of the reading transactions.
+    fn derive_registers(&mut self) {
+        let mut reads: HashMap<Canonical, Vec<(usize, Option<Value>)>> = HashMap::new();
+        let mut installs: HashMap<Canonical, Vec<(usize, Value)>> = HashMap::new();
+        for txn in self.txns {
+            if !self.committed.contains(&txn.call) {
+                continue;
+            }
+            for (key, read) in external_reads(txn) {
+                reads.entry(key).or_default().push((txn.call, read));
+            }
+            for (key, value) in external_writes(txn) {
+                installs.entry(key).or_default().push((txn.call, value));
+            }
+        }
+        for (key, stated) in self.keys.clone() {
+            let reads = reads.remove(&key).unwrap_or_default();
+            let mut pairs = Vec::new();
+            for (call, value) in installs.remove(&key).unwrap_or_default() {
+                pairs.push((None, call, value.clone()));
+                if let Some((_, Some(before))) = reads.iter().find(|(reader, _)| *reader == call) {
+                    pairs.push((Some(before.clone()), call, value));
+                }
+            }
+            self.register_edges(&key, &stated, &pairs, &reads);
+        }
+    }
+
+    /// Derives the edges of the register `key` from its version pairs and its
+    /// external reads. A pair has a value, the transaction that installed a
+    /// later value, and that later value. A read has the reading transaction
+    /// and the value that it read. `None` is the initial value.
+    fn register_edges(
+        &mut self,
+        key: &Canonical,
+        stated: &Value,
+        pairs: &[(Option<Value>, usize, Value)],
+        reads: &[(usize, Option<Value>)],
+    ) {
+        for (before, call, value) in pairs {
+            if let Some(before) = before {
+                let installer = self.installer(key, before);
+                self.edge(
+                    installer,
+                    Some(*call),
+                    Relation::Ww,
+                    stated,
+                    Some(before.clone()),
+                    Some(value.clone()),
+                );
+            }
+        }
+        for (reader, read) in reads {
+            if let Some(read) = read {
+                let installer = self.installer(key, read);
+                self.edge(
+                    installer,
+                    Some(*reader),
+                    Relation::Wr,
+                    stated,
+                    Some(read.clone()),
+                    None,
+                );
+            }
+            for (before, call, value) in pairs {
+                if before.as_ref().map(id) == read.as_ref().map(id) {
+                    self.edge(
+                        Some(*reader),
+                        Some(*call),
+                        Relation::Rw,
+                        stated,
+                        read.clone(),
+                        Some(value.clone()),
+                    );
+                }
+            }
+        }
+    }
+
+    /// Returns the committed transaction that installed `value` on the
+    /// register `key`. A value that its writer wrote again later in the same
+    /// transaction is not installed.
+    fn installer(&self, key: &Canonical, value: &Value) -> Option<usize> {
+        if self.later.contains_key(&(key.clone(), id(value))) {
+            return None;
+        }
+        self.writer(key, value)
     }
 
     /// Returns the evidence of the edge from `a` to `b`.

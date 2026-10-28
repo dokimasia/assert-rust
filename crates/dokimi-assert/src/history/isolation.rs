@@ -1,8 +1,8 @@
 // Copyright Dokimasia B.V. 2026
 // SPDX-License-Identifier: MIT
 
-//! The checks that the list-append transactions of a history exhibit no
-//! anomaly that an isolation level forbids.
+//! The checks that the list-append or register transactions of a history
+//! exhibit no anomaly that an isolation level forbids.
 //!
 //! A check first reads the micro-operations for the six anomalies that need
 //! no dependency graph. It then derives the write-write, write-read and
@@ -49,8 +49,8 @@ pub(crate) struct IsolationDetail {
 /// isolation forbids every kind but G2, so it permits a cycle in which two
 /// read-write dependencies are adjacent, such as a write skew.
 fn check(history: &History, snapshot: bool) -> Result<Option<IsolationDetail>, String> {
-    let txns = transactions(&history.events()).map_err(|refused| refused.0)?;
-    let analysis = Analysis::new(&txns);
+    let (txns, register) = transactions(&history.events()).map_err(|refused| refused.0)?;
+    let analysis = Analysis::new(&txns, register);
     let found: Vec<(Anomaly, Instance)> = ANOMALIES
         .into_iter()
         .filter(|kind| !(snapshot && *kind == Anomaly::G2))
@@ -89,8 +89,50 @@ fn edge_json(edge: &Edge) -> Json {
     Json::Object(members)
 }
 
+/// Returns the typed literal of a register's value, and null for the initial
+/// value.
+fn or_null(value: Option<&Value>) -> Json {
+    value.map_or(Json::Null, Value::to_literal)
+}
+
+/// Returns the typed literal of a list.
+fn list_json(list: &[Value]) -> Json {
+    Value::List(list.to_vec()).to_literal()
+}
+
+/// Returns the fields of an observation of a garbage read or of a duplicate
+/// append.
+fn read_json(call: usize, key: &Value, read: Json, value: &Value) -> Json {
+    object([
+        ("call", call.into()),
+        ("key", key.to_literal()),
+        ("read", read),
+        ("value", value.to_literal()),
+    ])
+}
+
+/// Returns the fields of an observation of an internal inconsistency.
+fn inconsistency_json(
+    call: usize,
+    key: &Value,
+    read: Json,
+    expected: Json,
+    whole: bool,
+    future: Option<&Value>,
+) -> Json {
+    object([
+        ("call", call.into()),
+        ("key", key.to_literal()),
+        ("read", read),
+        ("expected", expected),
+        ("whole", whole.into()),
+        ("future", or_null(future)),
+    ])
+}
+
 /// Returns an observation as the explanation of a record states it: the
-/// fields that its anomaly states.
+/// fields that its anomaly states. A register read states its value in place
+/// of a list.
 fn observation_json(observation: &Observation) -> Json {
     match observation {
         Observation::GarbageRead {
@@ -98,18 +140,36 @@ fn observation_json(observation: &Observation) -> Json {
             key,
             read,
             value,
+            register,
+        } => {
+            let read = if *register {
+                value.to_literal()
+            } else {
+                list_json(read)
+            };
+            read_json(*call, key, read, value)
         }
-        | Observation::DuplicateAppend {
+        Observation::DuplicateAppend {
             call,
             key,
             read,
             value,
-        } => object([
-            ("call", (*call).into()),
-            ("key", key.to_literal()),
-            ("read", Value::List(read.clone()).to_literal()),
-            ("value", value.to_literal()),
-        ]),
+        } => read_json(*call, key, list_json(read), value),
+        Observation::RegisterInconsistency {
+            call,
+            key,
+            read,
+            known,
+            whole,
+            future,
+        } => inconsistency_json(
+            *call,
+            key,
+            or_null(read.as_ref()),
+            or_null(known.as_ref()),
+            *whole,
+            future.as_ref(),
+        ),
         Observation::InternalInconsistency {
             call,
             key,
@@ -117,17 +177,14 @@ fn observation_json(observation: &Observation) -> Json {
             expected,
             whole,
             future,
-        } => object([
-            ("call", (*call).into()),
-            ("key", key.to_literal()),
-            ("read", Value::List(read.clone()).to_literal()),
-            ("expected", Value::List(expected.clone()).to_literal()),
-            ("whole", (*whole).into()),
-            (
-                "future",
-                future.as_ref().map_or(Json::Null, Value::to_literal),
-            ),
-        ]),
+        } => inconsistency_json(
+            *call,
+            key,
+            list_json(read),
+            list_json(expected),
+            *whole,
+            future.as_ref(),
+        ),
         Observation::IncompatibleOrder { calls, key, reads } => object([
             (
                 "calls",
@@ -136,12 +193,7 @@ fn observation_json(observation: &Observation) -> Json {
             ("key", key.to_literal()),
             (
                 "reads",
-                Json::Array(
-                    reads
-                        .iter()
-                        .map(|read| Value::List(read.clone()).to_literal())
-                        .collect(),
-                ),
+                Json::Array(reads.iter().map(|read| list_json(read)).collect()),
             ),
         ]),
         Observation::AbortedRead {
@@ -149,6 +201,7 @@ fn observation_json(observation: &Observation) -> Json {
             key,
             value,
             appender,
+            ..
         } => object([
             ("call", (*call).into()),
             ("key", key.to_literal()),
@@ -161,6 +214,7 @@ fn observation_json(observation: &Observation) -> Json {
             value,
             appender,
             next,
+            ..
         } => object([
             ("call", (*call).into()),
             ("key", key.to_literal()),
@@ -260,31 +314,37 @@ fn isolated(seat: &dyn Seat, history: &History, msg: &str, snapshot: bool) {
     }
 }
 
-/// Fails when the list-append transactions of `history` exhibit an anomaly
-/// that serializability forbids, among the dependencies that their reads
-/// reveal. Serializability forbids every kind of anomaly.
+/// Fails when the list-append or register transactions of `history` exhibit
+/// an anomaly that serializability forbids, among the dependencies that
+/// their reads reveal. Serializability forbids every kind of anomaly.
 ///
 /// A transaction is a call of the operation `txn` whose arguments are its
 /// micro-operations, each a list of three parts: `"append"`, a key and a
-/// value, or `"read"`, a key and null. An ok completion commits the
-/// transaction, and its output is a list that repeats the micro-operations
-/// with each read's list, or null for the empty list. A fail completion
-/// aborts it. A transaction whose outcome is unknown, or that is pending, is
-/// committed when a committed read observed one of its appends. Every value
-/// is appended to its key once. Keys and values compare by their typed
-/// literals.
+/// value, `"write"`, a key and a value, or `"read"`, a key and null. A
+/// history whose micro-operations write is a register history, and every
+/// other history is a list-append history. An ok completion commits the
+/// transaction, and its output is a list that repeats the micro-operations.
+/// Each read of a list-append history states its list, or null for the
+/// empty list. Each read of a register history states its value, or null
+/// for the initial value. A fail completion aborts the transaction. A
+/// transaction whose outcome is unknown, or that is pending, is committed
+/// when a committed read observed one of its appends or writes. Every value
+/// is appended or written to its key once. Keys and values compare by their
+/// typed literals. Blind writes do not reveal an order between them, so a
+/// register history shows fewer anomalies than a list-append history.
 ///
 /// The record's detail states the five fields of the definition: anomaly,
 /// kinds, transactions, cycle and explanation. A history whose calls are no
-/// list-append transactions ends the call with a fault.
+/// list-append or register transactions ends the call with a fault, and so
+/// does a history that both appends and writes.
 #[track_caller]
 pub fn is_serializable(seat: &dyn Seat, history: &History, msg: &str) {
     seat.helper();
     isolated(seat, history, msg, false);
 }
 
-/// Fails when the list-append transactions of `history` exhibit an anomaly
-/// that snapshot isolation forbids. Snapshot isolation forbids every kind of
+/// Fails when the list-append or register transactions of `history` exhibit
+/// an anomaly that snapshot isolation forbids. Snapshot isolation forbids every kind of
 /// anomaly but G2: it permits a cycle in which two read-write dependencies
 /// are adjacent, such as a write skew.
 ///

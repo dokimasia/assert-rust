@@ -6352,6 +6352,4664 @@
           }
         ]
       }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-returns-a-value-that-no-transaction-wrote",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 9
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "garbage-read",
+        "kinds": [
+          "garbage-read"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 9
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "call": 2,
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "read": {
+              "type": "int",
+              "value": 9
+            },
+            "value": {
+              "type": "int",
+              "value": 9
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-differs-from-its-transactions-earlier-write",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "internal-inconsistency",
+        "kinds": [
+          "internal-inconsistency"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "call": 2,
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "read": {
+              "type": "int",
+              "value": 2
+            },
+            "expected": {
+              "type": "int",
+              "value": 1
+            },
+            "whole": true,
+            "future": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-differs-from-its-transactions-earlier-read",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "internal-inconsistency",
+        "kinds": [
+          "internal-inconsistency"
+        ],
+        "transactions": [
+          {
+            "call": 4,
+            "completion": 5,
+            "kind": "ok",
+            "process": 2,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "call": 4,
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "read": {
+              "type": "int",
+              "value": 2
+            },
+            "expected": {
+              "type": "int",
+              "value": 1
+            },
+            "whole": true,
+            "future": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-returns-its-transactions-later-write",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "internal-inconsistency",
+        "kinds": [
+          "internal-inconsistency"
+        ],
+        "transactions": [
+          {
+            "call": 0,
+            "completion": 1,
+            "kind": "ok",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "call": 0,
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "read": {
+              "type": "int",
+              "value": 1
+            },
+            "expected": null,
+            "whole": false,
+            "future": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-observes-an-aborted-write",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "fail": 0,
+          "error": "aborted"
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "aborted-read",
+        "kinds": [
+          "aborted-read"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 0,
+            "completion": 1,
+            "kind": "fail",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "call": 2,
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "appender": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-returns-a-value-its-writer-overwrote",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "intermediate-read",
+        "kinds": [
+          "intermediate-read"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 0,
+            "completion": 1,
+            "kind": "ok",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "call": 2,
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "appender": 0,
+            "next": {
+              "type": "int",
+              "value": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-two-transactions-overwrite-each-others-reads",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 3
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 4
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 4
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "G0",
+        "kinds": [
+          "G0",
+          "G1c"
+        ],
+        "transactions": [
+          {
+            "call": 0,
+            "completion": 2,
+            "kind": "ok",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 1,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 4
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": [
+          {
+            "call": 0,
+            "relations": [
+              "ww"
+            ]
+          },
+          {
+            "call": 1,
+            "relations": [
+              "ww"
+            ]
+          }
+        ],
+        "explanation": [
+          {
+            "from": 0,
+            "to": 1,
+            "relation": "ww",
+            "key": {
+              "type": "string",
+              "value": "y"
+            },
+            "value": {
+              "type": "int",
+              "value": 3
+            },
+            "next": {
+              "type": "int",
+              "value": 4
+            }
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "relation": "ww",
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "next": {
+              "type": "int",
+              "value": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-two-transactions-read-each-others-writes",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "G1c",
+        "kinds": [
+          "G1c"
+        ],
+        "transactions": [
+          {
+            "call": 0,
+            "completion": 2,
+            "kind": "ok",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 1,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": [
+          {
+            "call": 0,
+            "relations": [
+              "wr"
+            ]
+          },
+          {
+            "call": 1,
+            "relations": [
+              "wr"
+            ]
+          }
+        ],
+        "explanation": [
+          {
+            "from": 0,
+            "to": 1,
+            "relation": "wr",
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "relation": "wr",
+            "key": {
+              "type": "string",
+              "value": "y"
+            },
+            "value": {
+              "type": "int",
+              "value": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-read-skew",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "G-single",
+        "kinds": [
+          "G-single"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 5,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 3,
+            "completion": 4,
+            "kind": "ok",
+            "process": 2,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": [
+          {
+            "call": 2,
+            "relations": [
+              "rw"
+            ]
+          },
+          {
+            "call": 3,
+            "relations": [
+              "wr"
+            ]
+          }
+        ],
+        "explanation": [
+          {
+            "from": 2,
+            "to": 3,
+            "relation": "rw",
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "next": {
+              "type": "int",
+              "value": 2
+            }
+          },
+          {
+            "from": 3,
+            "to": 2,
+            "relation": "wr",
+            "key": {
+              "type": "string",
+              "value": "y"
+            },
+            "value": {
+              "type": "int",
+              "value": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-long-fork",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 3,
+          "client": 3,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            },
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 3,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "G-nonadjacent",
+        "kinds": [
+          "G-nonadjacent"
+        ],
+        "transactions": [
+          {
+            "call": 4,
+            "completion": 5,
+            "kind": "ok",
+            "process": 2,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 2,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 6,
+            "completion": 7,
+            "kind": "ok",
+            "process": 3,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 0,
+            "completion": 1,
+            "kind": "ok",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": [
+          {
+            "call": 4,
+            "relations": [
+              "rw"
+            ]
+          },
+          {
+            "call": 2,
+            "relations": [
+              "wr"
+            ]
+          },
+          {
+            "call": 6,
+            "relations": [
+              "rw"
+            ]
+          },
+          {
+            "call": 0,
+            "relations": [
+              "wr"
+            ]
+          }
+        ],
+        "explanation": [
+          {
+            "from": 4,
+            "to": 2,
+            "relation": "rw",
+            "key": {
+              "type": "string",
+              "value": "y"
+            },
+            "value": null,
+            "next": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "from": 2,
+            "to": 6,
+            "relation": "wr",
+            "key": {
+              "type": "string",
+              "value": "y"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "from": 6,
+            "to": 0,
+            "relation": "rw",
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": null,
+            "next": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "from": 0,
+            "to": 4,
+            "relation": "wr",
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-write-skew",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "anomaly": null,
+        "kinds": [],
+        "transactions": null,
+        "cycle": null,
+        "explanation": null
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-lost-update",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 3
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "anomaly": null,
+        "kinds": [],
+        "transactions": null,
+        "cycle": null,
+        "explanation": null
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-a-serial-history-of-read-modify-writes",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "anomaly": null,
+        "kinds": [],
+        "transactions": null,
+        "cycle": null,
+        "explanation": null
+      }
+    },
+    {
+      "id": "snapshot-isolation/registers-an-observed-write-of-unknown-outcome-commits",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "write"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "unknown": 0,
+          "error": "timed out"
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "y"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "G-single",
+        "kinds": [
+          "G-single"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 3,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "y"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 0,
+            "completion": 1,
+            "kind": "unknown",
+            "process": 0,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "y"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "cycle": [
+          {
+            "call": 2,
+            "relations": [
+              "rw"
+            ]
+          },
+          {
+            "call": 0,
+            "relations": [
+              "wr"
+            ]
+          }
+        ],
+        "explanation": [
+          {
+            "from": 2,
+            "to": 0,
+            "relation": "rw",
+            "key": {
+              "type": "string",
+              "value": "y"
+            },
+            "value": null,
+            "next": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "from": 0,
+            "to": 2,
+            "relation": "wr",
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "value": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        ]
+      }
     }
   ]
 }

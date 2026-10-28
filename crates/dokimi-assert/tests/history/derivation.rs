@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 //! The spec of `history::derivation`, which derives the anomalies of the
-//! list-append transactions of a history.
+//! list-append or register transactions of a history.
 
 use crate::helpers::{Op, commit, records, txn};
 use dokimi_assert::Recorder;
@@ -186,5 +186,59 @@ mod cycles {
         commit(&h, 0, &[Op::Read("x", &[]), Op::Append("y", 1)]);
         commit(&h, 1, &[Op::Read("y", &[]), Op::Append("x", 1)]);
         assert_eq!(detail(&h)["anomaly"], "G2");
+    }
+}
+
+mod registers {
+    use super::*;
+
+    #[test]
+    fn states_the_value_of_a_garbage_read_in_place_of_a_list() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Write("x", 1)]);
+        commit(&h, 1, &[Op::Get("x", Some(9))]);
+        assert_eq!(
+            detail(&h)["explanation"][0],
+            json!({"call": 2, "key": text("x"), "read": int(9), "value": int(9)})
+        );
+    }
+
+    #[test]
+    fn states_null_for_a_read_of_the_initial_value_after_a_write() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Write("x", 1), Op::Get("x", None)]);
+        assert_eq!(
+            detail(&h)["explanation"][0],
+            json!({
+                "call": 0,
+                "key": text("x"),
+                "read": null,
+                "expected": int(1),
+                "whole": true,
+                "future": null,
+            })
+        );
+    }
+
+    #[test]
+    fn states_null_for_the_value_of_an_rw_edge_from_the_initial_value() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Get("x", None), Op::Write("y", 1)]);
+        commit(&h, 1, &[Op::Get("y", None), Op::Write("x", 2)]);
+        assert_eq!(
+            detail(&h)["explanation"][0],
+            json!({"from": 0, "to": 2, "relation": "rw", "key": text("x"), "value": null, "next": int(2)})
+        );
+    }
+
+    #[test]
+    fn passes_reads_of_the_last_write_of_each_transaction() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Write("x", 1), Op::Write("x", 2)]);
+        commit(&h, 1, &[Op::Get("x", Some(2)), Op::Write("x", 3)]);
+        commit(&h, 2, &[Op::Get("x", Some(3))]);
+        let seat = Recorder::new();
+        history::is_serializable(&seat, &h, "the transactions are serializable");
+        assert!(!seat.failed());
     }
 }

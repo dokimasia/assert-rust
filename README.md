@@ -685,7 +685,11 @@ the register is linearizable: violated in the partition of "x"
 - `history::spec_from` builds a specification from a factory of the
   subject.
 - `history::is_serializable` and `history::has_snapshot_isolation` check a
-  history of list-append transactions.
+  history of list-append transactions or of register transactions. A
+  history that writes with `["write", key, value]` is a register history.
+  Its reads return the value of the register, or null for the initial
+  value. A register history shows fewer anomalies than a list-append
+  history, because blind writes do not reveal an order between them.
 
 ## Machines
 
@@ -879,7 +883,7 @@ under test.
 - Each case runs on `check` and `soft` of each crate that has its
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
-- The vectors run too: 57 for files, 80 for histories, 435 for properties
+- The vectors run too: 57 for files, 108 for histories, 435 for properties
   and 14 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.

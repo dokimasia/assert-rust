@@ -1623,7 +1623,7 @@
                 "explanation"
             ],
             "package": "history",
-            "summary": "A history of list-append transactions exhibits no anomaly that serializability forbids, among the dependencies its reads reveal: no inconsistent observation, no aborted or intermediate read, and no cycle of write, read and anti-dependencies.\n"
+            "summary": "A history of list-append or read-write register transactions exhibits no anomaly that serializability forbids, among the dependencies its reads reveal: no inconsistent observation, no aborted or intermediate read, and no cycle of write, read and anti-dependencies.\n"
         },
         "snapshot-isolation": {
             "arity": 2,
@@ -1635,7 +1635,7 @@
                 "explanation"
             ],
             "package": "history",
-            "summary": "A history of list-append transactions exhibits no anomaly that snapshot isolation forbids, among the dependencies its reads reveal: no inconsistent observation, no aborted or intermediate read, and no cycle in which no two anti-dependencies are adjacent.\n"
+            "summary": "A history of list-append or read-write register transactions exhibits no anomaly that snapshot isolation forbids, among the dependencies its reads reveal: no inconsistent observation, no aborted or intermediate read, and no cycle in which no two anti-dependencies are adjacent.\n"
         },
         "stable-order": {
             "arity": 2,
@@ -1928,5 +1928,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "13.2.0"
+    "version": "13.3.0"
 }

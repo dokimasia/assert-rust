@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 //! The spec of `history::transaction`, which reads the calls of a history as
-//! list-append transactions.
+//! list-append or register transactions.
 
 use crate::helpers::{Op, commit, records, txn};
 use dokimi_assert::history::{self, History};
@@ -38,7 +38,7 @@ mod transactions {
     fn refuses_an_argument_that_is_no_micro_operation() {
         let tests = [
             Value::from(1),
-            Value::List(vec!["write".into(), "x".into(), 1.into()]),
+            Value::List(vec!["delete".into(), "x".into(), 1.into()]),
             Value::List(vec!["append".into(), "x".into()]),
         ];
         for give in tests {
@@ -46,14 +46,16 @@ mod transactions {
             h.invoke(0, "txn", [give.clone()], []).ok(Value::Null);
             let refused = fault(&h);
             assert!(
-                refused.ends_with("not [append, key, value] or [read, key, null]"),
+                refused.ends_with(
+                    "not [append, key, value], [write, key, value] or [read, key, null]"
+                ),
                 "{refused}"
             );
         }
     }
 
     #[test]
-    fn refuses_a_read_that_states_a_list_before_it_ran() {
+    fn refuses_a_read_that_states_a_value_before_it_ran() {
         let h = History::new();
         h.invoke(
             0,
@@ -64,8 +66,74 @@ mod transactions {
         .ok(Value::Null);
         assert_eq!(
             fault(&h),
-            "history::is_serializable: the read at argument 0 of call 0 states a list before it ran"
+            "history::is_serializable: the read at argument 0 of call 0 states a value before it ran"
         );
+    }
+
+    #[test]
+    fn refuses_a_write_of_null() {
+        let h = History::new();
+        let _pending = h.invoke(0, "txn", [mop("write", "x".into(), Value::Null)], []);
+        assert_eq!(
+            fault(&h),
+            "history::is_serializable: the write at argument 0 of call 0 writes null, the initial value of every key"
+        );
+    }
+
+    #[test]
+    fn refuses_a_value_written_to_a_key_twice() {
+        let tests: [(&[&[Op]], &str); 2] = [
+            (
+                &[&[Op::Write("x", 1), Op::Write("x", 1)]],
+                "call 0 writes 1 to the key \"x\" twice",
+            ),
+            (
+                &[&[Op::Write("x", 1)], &[Op::Write("x", 1)]],
+                "calls 0 and 2 both write 1 to the key \"x\"",
+            ),
+        ];
+        for (give, want) in tests {
+            let h = History::new();
+            for (client, ops) in give.iter().enumerate() {
+                commit(&h, client, ops);
+            }
+            assert_eq!(fault(&h), format!("history::is_serializable: {want}"));
+        }
+    }
+
+    #[test]
+    fn refuses_a_history_that_appends_and_writes() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Read("x", &[])]);
+        commit(&h, 1, &[Op::Write("y", 1)]);
+        commit(&h, 2, &[Op::Append("x", 1)]);
+        assert_eq!(
+            fault(&h),
+            "history::is_serializable: call 4 appends and call 2 writes, and a history is either list-append or registers"
+        );
+    }
+
+    #[test]
+    fn refuses_a_register_read_of_a_value_without_a_typed_literal() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Write("x", 1)]);
+        h.invoke(1, "txn", [mop("read", "x".into(), Value::Null)], [])
+            .ok(Value::List(vec![mop(
+                "read",
+                "x".into(),
+                Value::Opaque("handle".to_owned()),
+            )]));
+        assert!(fault(&h).ends_with("which no typed literal states"));
+    }
+
+    #[test]
+    fn reads_a_register_read_as_its_value() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Write("x", 1)]);
+        commit(&h, 1, &[Op::Get("x", Some(1)), Op::Get("y", None)]);
+        let seat = Recorder::new();
+        history::is_serializable(&seat, &h, "the transactions are serializable");
+        assert!(!seat.failed());
     }
 
     #[test]

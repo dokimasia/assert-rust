@@ -1,16 +1,24 @@
 // Copyright Dokimasia B.V. 2026
 // SPDX-License-Identifier: MIT
 
-//! The transactions of a history of list appends, which the isolation checks
-//! read.
+//! The transactions of a history of list appends or of registers, which the
+//! isolation checks read.
 //!
 //! A transaction is one call whose operation is `txn`. Its arguments are its
-//! micro-operations in the order it ran them: `["append", key, value]` and
-//! `["read", key, null]`. An ok completion commits the transaction, and its
-//! output repeats the micro-operations with each read's list filled in, or
-//! null for an empty list. A fail completion aborts it. Every value is
-//! appended to its key once, so a value names the append that produced it.
-//! Keys and values compare by their typed literals.
+//! micro-operations in the order it ran them: `["append", key, value]`,
+//! `["write", key, value]` and `["read", key, null]`. A history whose
+//! micro-operations write is a register history, and every other history is
+//! a list-append history. An ok completion commits the transaction. Its
+//! output repeats the micro-operations with what each read returned: a list,
+//! or null for an empty list, in a list-append history, and a value, or null
+//! for the initial value, in a register history. A fail completion aborts
+//! it. Every value is appended or written to its key once, so a value
+//! identifies the micro-operation that produced it. Keys and values compare
+//! by their typed literals.
+//!
+//! A read of a register is a read of the list of its one value, or of the
+//! empty list for the initial value, so the checks read both workloads
+//! alike.
 
 use super::recording::{Event, Kind, identity};
 use crate::json::Json;
@@ -24,11 +32,14 @@ const TXN: &str = "txn";
 /// The function of a micro-operation that appends a value to a key.
 const APPEND: &str = "append";
 
-/// The function of a micro-operation that reads a key's list.
+/// The function of a micro-operation that reads a key's list or value.
 const READ: &str = "read";
 
-/// A history that is no history of list-append transactions, with the
-/// reason.
+/// The function of a micro-operation that writes a value to a register.
+const WRITE: &str = "write";
+
+/// A history that is no history of list-append or register transactions,
+/// with the reason.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct TransactionError(pub(crate) String);
 
@@ -37,8 +48,11 @@ pub(crate) struct TransactionError(pub(crate) String);
 pub(crate) enum Mop {
     /// An append of `value` to `key`.
     Append { key: Value, value: Value },
+    /// A write of `value` to the register `key`.
+    Write { key: Value, value: Value },
     /// A read of `key`: the list that it returned, and `None` for a read
-    /// whose transaction did not commit.
+    /// whose transaction did not commit. A register read returned the list
+    /// of its one value, or the empty list for the initial value.
     Read {
         key: Value,
         list: Option<Vec<Value>>,
@@ -49,7 +63,17 @@ impl Mop {
     /// Returns the key of the micro-operation.
     pub(crate) fn key(&self) -> &Value {
         match self {
-            Self::Append { key, .. } | Self::Read { key, .. } => key,
+            Self::Append { key, .. } | Self::Write { key, .. } | Self::Read { key, .. } => key,
+        }
+    }
+
+    /// Returns the function and the value of an append or a write, and
+    /// `None` for a read.
+    fn produced(&self) -> Option<(&'static str, &Value)> {
+        match self {
+            Self::Append { value, .. } => Some((APPEND, value)),
+            Self::Write { value, .. } => Some((WRITE, value)),
+            Self::Read { .. } => None,
         }
     }
 }
@@ -107,19 +131,26 @@ pub(crate) fn identity_in(call: usize, value: &Value) -> Result<Canonical, Trans
 fn invoked(call: usize, position: usize, raw: &Value) -> Result<Mop, TransactionError> {
     let refused = || {
         TransactionError(format!(
-            "argument {position} of call {call} is {raw}, not [append, key, value] or [read, key, null]"
+            "argument {position} of call {call} is {raw}, not [append, key, value], [write, key, value] or [read, key, null]"
         ))
     };
     let Value::List(parts) = raw else {
         return Err(refused());
     };
     match parts.as_slice() {
-        [Value::String(function), key, value] if function == APPEND => {
+        [Value::String(function), _, Value::Null] if function == WRITE => {
+            Err(TransactionError(format!(
+                "the write at argument {position} of call {call} writes null, the initial value of every key"
+            )))
+        }
+        [Value::String(function), key, value] if function == APPEND || function == WRITE => {
             identity_in(call, key)?;
             identity_in(call, value)?;
-            Ok(Mop::Append {
-                key: key.clone(),
-                value: value.clone(),
+            let (key, value) = (key.clone(), value.clone());
+            Ok(if function == APPEND {
+                Mop::Append { key, value }
+            } else {
+                Mop::Write { key, value }
             })
         }
         [Value::String(function), key, Value::Null] if function == READ => {
@@ -130,74 +161,82 @@ fn invoked(call: usize, position: usize, raw: &Value) -> Result<Mop, Transaction
             })
         }
         [Value::String(function), _, _] if function == READ => Err(TransactionError(format!(
-            "the read at argument {position} of call {call} states a list before it ran"
+            "the read at argument {position} of call {call} states a value before it ran"
         ))),
         _ => Err(refused()),
     }
 }
 
-/// Returns one micro-operation of an ok output, which repeats `mop` with a
-/// read's list.
-fn repeated(call: usize, position: usize, mop: &Mop, raw: &Value) -> Result<Mop, TransactionError> {
+/// Checks that one micro-operation of an ok output repeats `mop`. A read may
+/// state what it returned in place of null.
+fn repeated(call: usize, position: usize, mop: &Mop, raw: &Value) -> Result<(), TransactionError> {
+    let (function, value) = mop.produced().unwrap_or((READ, &Value::Null));
     let refused = || {
-        let (function, key, value) = match mop {
-            Mop::Append { key, value } => (APPEND, key, value.clone()),
-            Mop::Read { key, .. } => (READ, key, Value::Null),
-        };
         TransactionError(format!(
-            "micro-operation {position} of the output of call {call} is {raw}, which does not repeat [{function}, {key}, {value}]"
+            "micro-operation {position} of the output of call {call} is {raw}, which does not repeat [{function}, {}, {value}]",
+            mop.key()
         ))
     };
     let Value::List(parts) = raw else {
         return Err(refused());
     };
-    let [Value::String(function), key, value] = parts.as_slice() else {
+    let [Value::String(stated), key, returned] = parts.as_slice() else {
         return Err(refused());
     };
-    let same_key = identity(key) == identity(mop.key());
-    match mop {
-        Mop::Append {
-            value: appended, ..
-        } => {
-            if function != APPEND || !same_key || identity(value) != identity(appended) {
-                return Err(refused());
-            }
-            Ok(mop.clone())
-        }
-        Mop::Read { key: read, .. } => {
-            if function != READ || !same_key {
-                return Err(refused());
-            }
-            let list = match value {
-                Value::Null => Vec::new(),
-                Value::List(items) => items.clone(),
-                other => {
-                    return Err(TransactionError(format!(
-                        "the read at micro-operation {position} of the output of call {call} returned {other}, not a list"
-                    )));
-                }
-            };
-            for element in &list {
-                identity_in(call, element)?;
-            }
-            Ok(Mop::Read {
-                key: read.clone(),
-                list: Some(list),
-            })
-        }
-    }
+    let repeats = stated == function
+        && identity(key) == identity(mop.key())
+        && (function == READ || identity(returned) == identity(value));
+    if repeats { Ok(()) } else { Err(refused()) }
 }
 
-/// Returns the micro-operations of an ok output, which repeat the ones of
-/// the invocation with the lists of the reads.
-fn returned(call: usize, mops: &[Mop], output: &Value) -> Result<Vec<Mop>, TransactionError> {
+/// Returns the list of the read at `position` of call `call`, which returned
+/// `returned`. A register read returned one value, or null for the initial
+/// value, and a list-append read returned a list, or null for the empty
+/// list.
+fn read_list(
+    call: usize,
+    position: usize,
+    returned: &Value,
+    register: bool,
+) -> Result<Vec<Value>, TransactionError> {
+    let list = match returned {
+        Value::Null => Vec::new(),
+        value if register => vec![value.clone()],
+        Value::List(items) => items.clone(),
+        other => {
+            return Err(TransactionError(format!(
+                "the read at micro-operation {position} of the output of call {call} returned {other}, not a list"
+            )));
+        }
+    };
+    for element in &list {
+        identity_in(call, element)?;
+    }
+    Ok(list)
+}
+
+/// Gives each read of an ok transaction the list that its output states.
+fn read_as(txn: &mut Transaction, register: bool) -> Result<(), TransactionError> {
+    let Some(Value::List(output)) = &txn.output else {
+        return Ok(());
+    };
+    for (position, (mop, raw)) in txn.mops.iter_mut().zip(output).enumerate() {
+        let (Mop::Read { list, .. }, Value::List(parts)) = (mop, raw) else {
+            continue;
+        };
+        *list = Some(read_list(txn.call, position, &parts[2], register)?);
+    }
+    Ok(())
+}
+
+/// Checks that an ok output repeats the micro-operations of the invocation.
+fn returned(call: usize, mops: &[Mop], output: &Value) -> Result<(), TransactionError> {
     match output {
         Value::List(items) if items.len() == mops.len() => mops
             .iter()
             .zip(items)
             .enumerate()
-            .map(|(position, (mop, raw))| repeated(call, position, mop, raw))
-            .collect(),
+            .try_for_each(|(position, (mop, raw))| repeated(call, position, mop, raw)),
         _ => Err(TransactionError(format!(
             "the output of call {call} does not repeat the micro-operations of its invocation"
         ))),
@@ -223,16 +262,15 @@ fn transaction_of(
         .enumerate()
         .map(|(position, raw)| invoked(call, position, raw))
         .collect::<Result<Vec<_>, _>>()?;
-    let (completion, output, mops) = match completion {
-        None => (None, None, mops),
+    let (completion, output) = match completion {
+        None => (None, None),
         Some(event) => match &event.kind {
-            Kind::Ok { output } => (
-                Some((event.index, Completed::Ok)),
-                Some(output.clone()),
-                returned(call, &mops, output)?,
-            ),
-            Kind::Fail { .. } => (Some((event.index, Completed::Fail)), None, mops),
-            _ => (Some((event.index, Completed::Unknown)), None, mops),
+            Kind::Ok { output } => {
+                returned(call, &mops, output)?;
+                (Some((event.index, Completed::Ok)), Some(output.clone()))
+            }
+            Kind::Fail { .. } => (Some((event.index, Completed::Fail)), None),
+            _ => (Some((event.index, Completed::Unknown)), None),
         },
     };
     Ok(Transaction {
@@ -245,52 +283,86 @@ fn transaction_of(
     })
 }
 
-/// Records each value that `txn` appends, under its key, and refuses a
-/// second append of one value to one key.
+/// Records each value that `txn` appends or writes, under its key, and
+/// refuses a second one of one value to one key.
 fn register(
     txn: &Transaction,
-    appended: &mut HashMap<(Canonical, Canonical), usize>,
+    produced: &mut HashMap<(Canonical, Canonical), usize>,
 ) -> Result<(), TransactionError> {
     for mop in &txn.mops {
-        let Mop::Append { key, value } = mop else {
+        let Some((function, value)) = mop.produced() else {
             continue;
         };
+        let key = mop.key();
         let name = (identity_in(txn.call, key)?, identity_in(txn.call, value)?);
-        match appended.get(&name) {
+        let verb = if function == APPEND {
+            "append"
+        } else {
+            "write"
+        };
+        match produced.get(&name) {
             Some(&first) if first == txn.call => {
                 return Err(TransactionError(format!(
-                    "call {} appends {value} to the key {key} twice",
+                    "call {} {verb}s {value} to the key {key} twice",
                     txn.call
                 )));
             }
             Some(&first) => {
                 return Err(TransactionError(format!(
-                    "calls {first} and {} both append {value} to the key {key}",
+                    "calls {first} and {} both {verb} {value} to the key {key}",
                     txn.call
                 )));
             }
             None => {
-                appended.insert(name, txn.call);
+                produced.insert(name, txn.call);
             }
         }
     }
     Ok(())
 }
 
-/// Returns a history's transactions in the order of their invocations.
+/// Returns `true` for a register history: a history whose micro-operations
+/// write.
 ///
 /// # Errors
 ///
-/// Returns [`TransactionError`] when a call is no list-append transaction, an
-/// ok output does not repeat the micro-operations of its invocation, a key or
-/// a value has no typed literal, or a value is appended to one key twice.
-pub(crate) fn transactions(events: &[Event]) -> Result<Vec<Transaction>, TransactionError> {
+/// Returns [`TransactionError`] for a history that both appends and writes.
+fn registers(txns: &[Transaction]) -> Result<bool, TransactionError> {
+    let first = |wanted: &str| {
+        txns.iter()
+            .find(|txn| {
+                txn.mops.iter().any(|mop| {
+                    mop.produced()
+                        .is_some_and(|(function, _)| function == wanted)
+                })
+            })
+            .map(|txn| txn.call)
+    };
+    match (first(APPEND), first(WRITE)) {
+        (Some(appends), Some(writes)) => Err(TransactionError(format!(
+            "call {appends} appends and call {writes} writes, and a history is either list-append or registers"
+        ))),
+        (_, writes) => Ok(writes.is_some()),
+    }
+}
+
+/// Returns a history's transactions in the order of their invocations, and
+/// `true` for a register history.
+///
+/// # Errors
+///
+/// Returns [`TransactionError`] when a call is no list-append or register
+/// transaction, an ok output does not repeat the micro-operations of its
+/// invocation, a key or a value has no typed literal, a value is appended or
+/// written to one key twice, the history both appends and writes, or a
+/// list-append read returned no list.
+pub(crate) fn transactions(events: &[Event]) -> Result<(Vec<Transaction>, bool), TransactionError> {
     let completions: HashMap<usize, &Event> = events
         .iter()
         .filter(|event| !matches!(event.kind, Kind::Invoke { .. }))
         .map(|event| (event.call, event))
         .collect();
-    let mut appended = HashMap::new();
+    let mut produced = HashMap::new();
     let mut found = Vec::new();
     for event in events {
         let Kind::Invoke {
@@ -305,10 +377,14 @@ pub(crate) fn transactions(events: &[Event]) -> Result<Vec<Transaction>, Transac
             args,
             completions.get(&event.index).copied(),
         )?;
-        register(&txn, &mut appended)?;
+        register(&txn, &mut produced)?;
         found.push(txn);
     }
-    Ok(found)
+    let register = registers(&found)?;
+    for txn in &mut found {
+        read_as(txn, register)?;
+    }
+    Ok((found, register))
 }
 
 /// Returns a transaction in the history's JSON form: the call, the

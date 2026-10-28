@@ -107,6 +107,9 @@ fn edge_text(edge: &Edge) -> String {
     let (key, null) = (&edge.key, Value::Null);
     let value = edge.value.as_ref().unwrap_or(&null);
     let next = edge.next.as_ref().unwrap_or(&null);
+    if edge.register {
+        return head + &register_edge_text(edge, value, next);
+    }
     let tail = match (edge.relation, &edge.value) {
         (Relation::Ww, _) => format!("call {} appended {next} to {key} after {value}", edge.to),
         (Relation::Wr, _) => format!("call {} read {key} ending in {value}", edge.to),
@@ -122,6 +125,28 @@ fn edge_text(edge: &Edge) -> String {
     head + &tail
 }
 
+/// Returns the values and the calls that prove an edge of a register
+/// history.
+fn register_edge_text(edge: &Edge, value: &Value, next: &Value) -> String {
+    let (from, to, key) = (edge.from, edge.to, &edge.key);
+    match (edge.relation, &edge.value) {
+        (Relation::Ww, _) => format!("call {to} wrote {next} to {key} after {value}"),
+        (Relation::Wr, _) => format!("call {to} read {value} from {key}"),
+        (Relation::Rw, None) => {
+            format!("call {from} read the initial value of {key}, and call {to} wrote {next} to it")
+        }
+        (Relation::Rw, Some(_)) => {
+            format!("call {from} read {value} from {key}, and call {to} wrote {next} after it")
+        }
+    }
+}
+
+/// Returns the text of a register's value, and `the initial value` for
+/// `None`.
+fn register_text(value: Option<&Value>) -> String {
+    value.map_or_else(|| "the initial value".to_owned(), ToString::to_string)
+}
+
 /// Returns the text of the observation of an anomaly that is no cycle: the
 /// reads and the appends that show it.
 fn observation_text(observation: &Observation) -> String {
@@ -131,10 +156,17 @@ fn observation_text(observation: &Observation) -> String {
             key,
             read,
             value,
-        } => format!(
-            "call {call} read {} from {key}, and no transaction appended {value}",
-            list_text(read)
-        ),
+            register,
+        } => {
+            if *register {
+                format!("call {call} read {value} from {key}, and no transaction wrote it")
+            } else {
+                format!(
+                    "call {call} read {} from {key}, and no transaction appended {value}",
+                    list_text(read)
+                )
+            }
+        }
         Observation::DuplicateAppend {
             call,
             key,
@@ -154,23 +186,29 @@ fn observation_text(observation: &Observation) -> String {
             whole,
             future,
         } => {
-            let mut text = format!("call {call} read {} from {key}", list_text(read));
-            if *whole {
-                let _ = write!(text, ", and it knew the list was {}", list_text(expected));
-            } else if !expected.is_empty() {
-                let _ = write!(
-                    text,
-                    ", and it knew the list ended with {}",
-                    list_text(expected)
-                );
-            }
-            if let Some(future) = future {
-                let _ = write!(
-                    text,
-                    ", and {future} is a value that call {call} appends later"
-                );
-            }
-            text
+            let knew = if *whole {
+                Some(format!("the list was {}", list_text(expected)))
+            } else {
+                (!expected.is_empty())
+                    .then(|| format!("the list ended with {}", list_text(expected)))
+            };
+            let read = format!("call {call} read {} from {key}", list_text(read));
+            inconsistency_text(read, knew, future.as_ref(), *call, "appends")
+        }
+        Observation::RegisterInconsistency {
+            call,
+            key,
+            read,
+            known,
+            whole,
+            future,
+        } => {
+            let knew = whole.then(|| format!("the value was {}", register_text(known.as_ref())));
+            let read = format!(
+                "call {call} read {} from {key}",
+                register_text(read.as_ref())
+            );
+            inconsistency_text(read, knew, future.as_ref(), *call, "writes")
         }
         Observation::IncompatibleOrder { calls, key, reads } => format!(
             "calls {} and {} read {} and {} from {key}, and neither is a prefix of the other",
@@ -184,10 +222,10 @@ fn observation_text(observation: &Observation) -> String {
             key,
             value,
             appender,
+            register,
         } => {
-            format!(
-                "call {call} read {value} from {key}, which call {appender} appended and aborted"
-            )
+            let verb = if *register { "wrote" } else { "appended" };
+            format!("call {call} read {value} from {key}, which call {appender} {verb} and aborted")
         }
         Observation::IntermediateRead {
             call,
@@ -195,10 +233,39 @@ fn observation_text(observation: &Observation) -> String {
             value,
             appender,
             next,
-        } => format!(
-            "call {call} read {key} ending in {value}, which call {appender} followed with {next}"
-        ),
+            register,
+        } => {
+            let read = if *register {
+                format!("{value} from {key}")
+            } else {
+                format!("{key} ending in {value}")
+            };
+            format!("call {call} read {read}, which call {appender} followed with {next}")
+        }
     }
+}
+
+/// Returns the text of an internal inconsistency: the read, what the
+/// transaction knew of the key before the read, and the value of the read
+/// that call `call` appends or writes later.
+fn inconsistency_text(
+    read: String,
+    knew: Option<String>,
+    future: Option<&Value>,
+    call: usize,
+    verb: &str,
+) -> String {
+    let mut text = read;
+    if let Some(knew) = knew {
+        let _ = write!(text, ", and it knew {knew}");
+    }
+    if let Some(future) = future {
+        let _ = write!(
+            text,
+            ", and {future} is a value that call {call} {verb} later"
+        );
+    }
+    text
 }
 
 /// Returns the sentence of a failing isolation check: the contract and the

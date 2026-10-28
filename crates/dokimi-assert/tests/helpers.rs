@@ -44,35 +44,47 @@ pub(crate) fn read(history: &History, client: usize, value: i64) {
     history.invoke(client, "read", [], ["x".into()]).ok(value);
 }
 
-/// One micro-operation of a list-append transaction: an append of a value to
-/// a key, or a read of a key with the list that it returned.
+/// One micro-operation of a transaction: an append of a value to a key, a
+/// read of a key with the list that it returned, a write of a value to a
+/// register, or a read of a register with its value, which is `None` for the
+/// initial value.
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum Op {
     Append(&'static str, i64),
     Read(&'static str, &'static [i64]),
+    Write(&'static str, i64),
+    Get(&'static str, Option<i64>),
 }
 
 impl Op {
     /// Returns the micro-operation as an argument of its invocation, with
-    /// null in place of a read's list.
+    /// null in place of what a read returned.
     fn invoked(self) -> Value {
         match self {
             Self::Append(key, value) => {
                 Value::List(vec!["append".into(), key.into(), value.into()])
             }
-            Self::Read(key, _) => Value::List(vec!["read".into(), key.into(), Value::Null]),
+            Self::Write(key, value) => Value::List(vec!["write".into(), key.into(), value.into()]),
+            Self::Read(key, _) | Self::Get(key, _) => {
+                Value::List(vec!["read".into(), key.into(), Value::Null])
+            }
         }
     }
 
-    /// Returns the micro-operation as an ok output repeats it, with a read's
-    /// list.
+    /// Returns the micro-operation as an ok output repeats it, with what a
+    /// read returned.
     fn returned(self) -> Value {
         match self {
-            Self::Append(..) => self.invoked(),
+            Self::Append(..) | Self::Write(..) => self.invoked(),
             Self::Read(key, list) => Value::List(vec![
                 "read".into(),
                 key.into(),
                 Value::List(list.iter().map(|value| Value::from(*value)).collect()),
+            ]),
+            Self::Get(key, value) => Value::List(vec![
+                "read".into(),
+                key.into(),
+                value.map_or(Value::Null, Value::from),
             ]),
         }
     }

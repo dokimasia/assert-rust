@@ -1,7 +1,7 @@
 // Copyright Dokimasia B.V. 2026
 // SPDX-License-Identifier: MIT
 
-//! The spec of `history::isolation`, the checks that list-append
+//! The spec of `history::isolation`, the checks that list-append or register
 //! transactions exhibit no anomaly that an isolation level forbids.
 
 use crate::helpers::{Op, commit, records};
