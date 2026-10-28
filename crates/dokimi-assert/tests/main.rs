@@ -63,8 +63,9 @@ mod naming_table {
         is_idempotent as _, is_monotonic as _, is_none as _, is_not_empty as _, is_not_pure as _,
         is_permutation as _, is_poisoned as _, is_pure as _, is_some as _, is_total as _,
         is_true as _, length as _, matches as _, max_allocs as _, max_allocs_with_setup as _,
-        no_duplicates as _, no_error as _, none_handle_safe as _, not_contains as _,
-        not_equal as _, pairwise as _, panics as _, rejects as _, round_trip as _,
+        max_live_bytes as _, no_duplicates as _, no_error as _, none_handle_safe as _,
+        not_contains as _, not_equal as _, pairwise as _, panics as _, rejects as _,
+        round_trip as _,
     };
     use dokimi_assert::files::{
         self, Entry, Tree, absent as _, bytes as _, contains as _, directory as _, equal as _,
@@ -109,8 +110,8 @@ mod naming_table {
         is_idempotent as _, is_monotonic as _, is_none as _, is_not_empty as _, is_not_pure as _,
         is_permutation as _, is_poisoned as _, is_pure as _, is_some as _, is_total as _,
         is_true as _, length as _, matches as _, max_allocs as _, max_allocs_with_setup as _,
-        no_duplicates as _, no_error as _, none_handle_safe as _, not_contains as _,
-        not_equal as _, pairwise as _, panics as _, round_trip as _,
+        max_live_bytes as _, no_duplicates as _, no_error as _, none_handle_safe as _,
+        not_contains as _, not_equal as _, pairwise as _, panics as _, round_trip as _,
     };
     use dokimi_assert::stateful::{
         self, Action, Machine, Scheduler, clients as _, concurrent as _, max as _, mean as _,

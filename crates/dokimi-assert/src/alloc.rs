@@ -20,13 +20,17 @@ thread_local! {
     /// The allocations and the requested bytes of this thread. A constant
     /// initializer and no destructor keep a read of it from allocating.
     static THREAD: Cell<(u64, u64)> = const { Cell::new((0, 0)) };
+
+    /// The bytes that this thread allocated less the bytes that it freed.
+    static LIVE: Cell<i64> = const { Cell::new(0) };
 }
 
 /// A global allocator that counts the allocations and the requested bytes of
-/// each thread, and hands every request to the system allocator.
+/// each thread, and the bytes that each thread allocated less the bytes that
+/// it freed. It hands every request to the system allocator.
 ///
-/// The allocation ceilings read its counts, so a test binary that states a
-/// ceiling installs it:
+/// The allocation ceilings and `max_live_bytes` read its counts, so a test
+/// binary that states a ceiling installs it:
 ///
 /// ```
 /// use dokimi_assert::bench::CountingAllocator;
@@ -62,29 +66,43 @@ fn count(bytes: usize) {
     });
 }
 
+/// Adds `delta` to the live bytes of the calling thread.
+fn live(delta: i64) {
+    let _ = LIVE.try_with(|held| held.set(held.get().saturating_add(delta)));
+}
+
+/// Returns `size` as a change of the live bytes.
+fn signed(size: usize) -> i64 {
+    i64::try_from(size).unwrap_or(i64::MAX)
+}
+
 // Each method hands the request to the system allocator unchanged and adds
 // a count, so it upholds every rule that System upholds.
 #[expect(unsafe_code, reason = "GlobalAlloc is an unsafe trait")]
 unsafe impl GlobalAlloc for CountingAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         count(layout.size());
+        live(signed(layout.size()));
         // SAFETY: the caller's layout goes to System unchanged.
         unsafe { System.alloc(layout) }
     }
 
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
         count(layout.size());
+        live(signed(layout.size()));
         // SAFETY: the caller's layout goes to System unchanged.
         unsafe { System.alloc_zeroed(layout) }
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        live(-signed(layout.size()));
         // SAFETY: the pointer and its layout come from System.
         unsafe { System.dealloc(ptr, layout) };
     }
 
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
         count(new_size.saturating_sub(layout.size()));
+        live(signed(new_size) - signed(layout.size()));
         // SAFETY: the pointer and its layout come from System.
         unsafe { System.realloc(ptr, layout, new_size) }
     }
@@ -117,6 +135,15 @@ pub fn allocs_checked() -> Result<(), &'static str> {
 /// counting allocator is not the global allocator.
 pub(crate) fn thread_allocations() -> Option<u64> {
     thread_counts().map(|(allocations, _)| allocations)
+}
+
+/// Returns the bytes that the calling thread allocated less the bytes that it
+/// freed, or `None` when the counting allocator is not the global allocator.
+pub(crate) fn thread_live() -> Option<i64> {
+    if !INSTALLED.load(Ordering::Relaxed) {
+        return None;
+    }
+    LIVE.try_with(Cell::get).ok()
 }
 
 /// Returns the allocations and the requested bytes of the calling thread, or

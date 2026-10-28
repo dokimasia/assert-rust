@@ -49,6 +49,20 @@ mod max_allocs {
     }
 }
 
+mod max_live_bytes {
+    use super::*;
+
+    #[test]
+    fn ends_the_call_with_a_fault_without_calling_the_body() {
+        let seat = Recorder::new();
+        let mut calls = 0;
+        check::max_live_bytes(&seat, |_| calls += 1, 0, "c");
+        assert_eq!(seat.message(), UNCOUNTED);
+        assert_eq!(verdict(&seat), "error");
+        assert_eq!(calls, 0);
+    }
+}
+
 mod max_allocs_with_setup {
     use super::*;
 

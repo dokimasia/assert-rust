@@ -390,6 +390,15 @@
             ],
             "summary": "A callable makes at most a stated number of heap allocations per call on an input that a setup builds before each call. The setup is not counted. A count calls the setup and the callable once to warm both and counts the allocations of the 100 calls after them, with the ceilings, the counts, got and total of max-allocs.\n"
         },
+        "max-live-bytes": {
+            "arity": 3,
+            "detail_fields": [
+                "want",
+                "got",
+                "probes"
+            ],
+            "summary": "A callable keeps at most a stated number of bytes of the heap reachable at each call of a probe that the assertion hands it. The assertion calls it once with a probe that reads nothing to warm it. A run then collects and reads the live heap, and calls the callable with a probe that collects and reads the live heap at each call. The excess of a run is its largest reading less the first reading, or 0. A run whose excess exceeds the ceiling is taken again, and the assertion fails when ten runs exceed it. got is the smallest excess and probes the calls of the probe in the run of that excess. A callable that calls the probe in no run ends the call with a fault, and so does a run that cannot read the live heap.\n"
+        },
         "monotonic": {
             "arity": 4,
             "detail_fields": [
@@ -1919,5 +1928,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "13.1.0"
+    "version": "13.2.0"
 }

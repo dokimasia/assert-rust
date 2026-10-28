@@ -29,8 +29,8 @@ use crate::matcher::containment::Contains;
 use crate::matcher::numbers::Number;
 use crate::matcher::sizes::Container;
 use crate::matcher::{
-    allocations, behaviour, containment, errors, numbers, order, panics, rejects, relation, sizes,
-    text, values, waiting,
+    allocations, behaviour, containment, errors, heap, numbers, order, panics, rejects, relation,
+    sizes, text, values, waiting,
 };
 use crate::seat::Seat;
 use crate::verdict::Mode;
@@ -640,6 +640,52 @@ pub fn max_allocs_with_setup<T>(
 ) {
     seat.helper();
     allocations::max_allocs_with_setup(seat, MODE, setup, body, ceiling, msg);
+}
+
+/// Ends the test when `body` keeps more than `ceiling` bytes allocated by its
+/// thread at a call of the probe that it receives.
+///
+/// The assertion calls the body once with a probe that reads nothing to warm
+/// it. A run then reads the bytes that the thread allocated less the bytes
+/// that it freed, and calls the body with a probe that reads them again at
+/// each call. A run whose largest reading exceeds the first by more than the
+/// ceiling is taken again, ten runs at most. The failure states the ceiling
+/// as `want`, the smallest excess as `got` and the calls of the probe in its
+/// run as `probes`.
+///
+/// ```
+/// use dokimi_assert::bench::CountingAllocator;
+/// use dokimi_assert::{Collector, check};
+///
+/// #[global_allocator]
+/// static ALLOCATOR: CountingAllocator = CountingAllocator::new();
+///
+/// fn main() {
+///     let t = Collector::new();
+///     let entries = vec![vec![0_u8; 1024]; 256];
+///     check::max_live_bytes(
+///         &t,
+///         |probe| {
+///             for entry in &entries {
+///                 probe();
+///                 std::hint::black_box(entry.clone());
+///             }
+///         },
+///         64 << 10,
+///         "the filter keeps at most 64 KiB of a prefix",
+///     );
+/// }
+/// ```
+///
+/// A body that calls the probe 0 times in its first run ends the call with a
+/// fault. Memory that the body hands to another thread is counted on that
+/// thread. The test binary installs
+/// [`CountingAllocator`](crate::bench::CountingAllocator), and without it the
+/// call ends with a fault.
+#[track_caller]
+pub fn max_live_bytes(seat: &dyn Seat, body: impl FnMut(&dyn Fn()), ceiling: u64, msg: &str) {
+    seat.helper();
+    heap::max_live_bytes(seat, MODE, body, ceiling, msg);
 }
 
 /// Returns the failures of `body`, a check that runs on a seat of its own,

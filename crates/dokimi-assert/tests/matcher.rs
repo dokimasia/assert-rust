@@ -8,6 +8,7 @@ mod behaviour;
 mod body;
 mod containment;
 mod errors;
+mod heap;
 mod numbers;
 mod order;
 mod panics;

@@ -368,6 +368,14 @@
             "rust": "max_allocs_with_setup",
             "typescript": "maxAllocsWithSetup"
         },
+        "max-live-bytes": {
+            "go": "MaxLiveBytes",
+            "java": "maxLiveBytes",
+            "kotlin": "maxLiveBytes",
+            "python": "max_live_bytes",
+            "rust": "max_live_bytes",
+            "typescript": "maxLiveBytes"
+        },
         "monotonic": {
             "go": "Monotonic",
             "java": "isMonotonic",
@@ -2358,5 +2366,5 @@
             }
         }
     },
-    "version": "13.1.0"
+    "version": "13.2.0"
 }

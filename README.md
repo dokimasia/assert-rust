@@ -393,6 +393,21 @@ check::max_allocs(body: impl FnMut(), ceiling: u64)
 check::max_allocs_with_setup<T>(setup: impl FnMut() -> T, body: impl FnMut(T), ceiling: u64)
 ```
 
+**The live heap.** `max_live_bytes` ends the test when the body keeps more
+bytes allocated than the ceiling at a call of the probe that it receives. A
+buffering filter and a streaming filter allocate the same bytes, and only
+this ceiling tells them apart.
+
+- The assertion reads the bytes that the calling thread allocated less the
+  bytes that it freed, before the call and at each call of the probe.
+- A run above the ceiling is taken again, ten times at most.
+- A body that never calls the probe ends the call with a fault, and so does
+  a test binary without `CountingAllocator`.
+
+```rust
+check::max_live_bytes(body: impl FnMut(&dyn Fn()), ceiling: u64)
+```
+
 **Testing an assertion.** `rejects` runs a check on a seat of its own and
 returns the check's failures. It ends the test when the check does not fail.
 A fault that ends a call of the check ends the call of `rejects` with the
@@ -868,7 +883,7 @@ under test.
   and 14 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.
-- The crates implement all 110 assertions of the definition.
+- The crates implement all 111 assertions of the definition.
   `dokimi-assert-tokio` has `no_task_leaks`, and `dokimi-assert` has the
   others. The spec of `lib.rs` names every Rust name of the naming table
   in code, so the build fails when one is missing.

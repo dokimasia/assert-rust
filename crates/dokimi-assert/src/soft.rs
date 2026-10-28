@@ -25,8 +25,8 @@ use crate::matcher::containment::Contains;
 use crate::matcher::numbers::Number;
 use crate::matcher::sizes::Container;
 use crate::matcher::{
-    allocations, behaviour, containment, errors, numbers, order, panics, relation, sizes, text,
-    values, waiting,
+    allocations, behaviour, containment, errors, heap, numbers, order, panics, relation, sizes,
+    text, values, waiting,
 };
 use crate::seat::Seat;
 use crate::verdict::Mode;
@@ -560,4 +560,13 @@ pub fn max_allocs_with_setup<T>(
 ) {
     seat.helper();
     allocations::max_allocs_with_setup(seat, MODE, setup, body, ceiling, msg);
+}
+
+/// Records a failure when `body` keeps more than `ceiling` bytes allocated by
+/// its thread at a call of the probe that it receives, read as
+/// [`check::max_live_bytes`](crate::check::max_live_bytes) reads them.
+#[track_caller]
+pub fn max_live_bytes(seat: &dyn Seat, body: impl FnMut(&dyn Fn()), ceiling: u64, msg: &str) {
+    seat.helper();
+    heap::max_live_bytes(seat, MODE, body, ceiling, msg);
 }

@@ -13,6 +13,7 @@ pub(crate) mod behaviour;
 pub(crate) mod body;
 pub(crate) mod containment;
 pub(crate) mod errors;
+pub(crate) mod heap;
 pub(crate) mod numbers;
 pub(crate) mod order;
 pub(crate) mod panics;

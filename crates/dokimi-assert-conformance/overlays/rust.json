@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@13.1.0",
+  "extends": "spec://assertions@13.2.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -17,6 +17,11 @@
     }
   ],
   "limits": [
+    {
+      "id": "max-live-bytes",
+      "what": "Reads the bytes that the calling thread allocated less the bytes that it freed, once CountingAllocator is installed as the test binary's global allocator. A test on another thread does not change a reading. Memory that the callable hands to another thread to allocate or to free is counted on that thread and not in the reading. Without the allocator the call ends with a fault.",
+      "why": "Rust has no collector, so the allocator sees every allocation and every free, and a reading needs no collection. A program has one global allocator and chooses it, so the library cannot install the counting allocator on a caller's behalf."
+    },
     {
       "id": "bench-max-allocs",
       "what": "Counts allocations exactly, once CountingAllocator is installed as the test binary's global allocator. Without it the assertion reports that nothing counted rather than passing.",
