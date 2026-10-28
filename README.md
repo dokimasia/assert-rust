@@ -167,7 +167,9 @@ depends on the seat:
   `Recorder::with_cancellation` sets the cancellation handle of the test.
 - A type of your own implements `Seat` with `fail` and `record`. The trait's
   default methods return the platform clock and a cancellation handle that
-  never stops, and they render the sentence of each failure.
+  never stops, and they render the sentence of each failure. A seat that
+  overrides `observe_call` receives each assertion call, a passing one
+  included.
 
 A fault is an argument or an environment that a call refuses, such as a
 pattern that does not compile. The seat receives the fault as the error it
@@ -874,11 +876,11 @@ under test.
 The overlay, `crates/dokimi-assert-conformance/overlays/rust.json`, contains
 the differences between Rust and the definition. Besides the limits and the
 declined relaxations of the earlier sections, these differences include
-seven names of the definition's surface that the library replaces:
+nine names of the definition's surface that the library replaces:
 
-- `Reporter`, `Clocked` and `FaultReporter`: the `Seat` trait gives
-  `report`, `clock` and `report_fault` defaults, so no second trait is
-  needed.
+- `Reporter`, `Clocked`, `FaultReporter`, `Skipper` and `Observer`: the
+  `Seat` trait gives `report`, `clock`, `report_fault`, `skip` and
+  `observe_call` defaults, so no second trait is needed.
 - `Contract.excluding`: `Contract::measuring` takes the setup as a closure
   of its own.
 - `assertion` and `that`: the functions make every check that a chain would

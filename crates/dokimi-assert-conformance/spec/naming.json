@@ -1573,6 +1573,22 @@
                 "rust": "weight",
                 "typescript": "weight"
             },
+            "assertion-call.assertion": {
+                "go": "Assertion",
+                "java": "assertion",
+                "kotlin": "assertion",
+                "python": "assertion",
+                "rust": "assertion",
+                "typescript": "assertion"
+            },
+            "assertion-call.contract": {
+                "go": "Contract",
+                "java": "contract",
+                "kotlin": "contract",
+                "python": "contract",
+                "rust": "contract",
+                "typescript": "contract"
+            },
             "call.fail": {
                 "go": "Fail",
                 "java": "fail",
@@ -2045,6 +2061,14 @@
                 "rust": "helper",
                 "typescript": "helper"
             },
+            "seat.observe-call": {
+                "go": "ObserveCall",
+                "java": "observeCall",
+                "kotlin": "observeCall",
+                "python": "observe_call",
+                "rust": "observe_call",
+                "typescript": "observeCall"
+            },
             "seat.record": {
                 "go": "Errorf",
                 "java": "record",
@@ -2116,6 +2140,14 @@
                 "java": "Assertion",
                 "kotlin": "Assertion",
                 "typescript": "Assertion"
+            },
+            "assertion-call": {
+                "go": "Call",
+                "java": "AssertionCall",
+                "kotlin": "AssertionCall",
+                "python": "Call",
+                "rust": "Call",
+                "typescript": "Call"
             },
             "call": {
                 "go": "history.Call",
@@ -2223,6 +2255,11 @@
                 "rust": "stateful::Machine",
                 "typescript": "stateful.Machine"
             },
+            "observer": {
+                "go": "Observer",
+                "java": "Observer",
+                "kotlin": "Observer"
+            },
             "operation": {
                 "go": "history.Operation",
                 "java": "Operation",
@@ -2321,5 +2358,5 @@
             }
         }
     },
-    "version": "13.0.0"
+    "version": "13.1.0"
 }

@@ -13,6 +13,10 @@
 //! the calls of its body. Each run of the body records into calls of its
 //! own, and the call that ran it moves them to its own calls when the run
 //! ends, each with the call as its parent.
+//!
+//! A seat observes the same calls through `Seat::observe_call`. A seat that
+//! keeps no record has calls that drop each record, so a call on it that
+//! runs a body still takes the calls of the body in order.
 
 use crate::failure::Where;
 use crate::json::Json;
@@ -25,7 +29,7 @@ use std::sync::{Arc, LazyLock, Mutex, MutexGuard, OnceLock, PoisonError};
 /// that the conformance crate vendors. The published crate does not contain
 /// that copy, so the specs compare this constant with the file `VERSION` of
 /// the copy.
-pub(crate) const DEFINITION: &str = "13.0.0";
+pub(crate) const DEFINITION: &str = "13.1.0";
 
 /// The variable that turns recording on.
 pub(crate) const VARIABLE: &str = "DOKIMI_ASSERT_RECORD";
@@ -230,6 +234,8 @@ enum Mode {
     /// One run of a body: the records stay unnumbered until the call that
     /// ran the body takes them.
     Running(Option<Position>),
+    /// The calls of a seat that keeps no record: each record is dropped.
+    Dropping,
 }
 
 /// The calls of one seat.
@@ -296,6 +302,12 @@ impl Calls {
         Self::with(Mode::Running(position))
     }
 
+    /// Returns the calls of a seat that keeps no record, so that a call on
+    /// the seat that runs a body takes the calls of the body all the same.
+    pub(crate) fn dropping() -> Arc<Self> {
+        Self::with(Mode::Dropping)
+    }
+
     /// Adds the record of a call that ran no body.
     pub(crate) fn add(self: &Arc<Self>, call: Call) {
         let _order = ordered();
@@ -318,6 +330,7 @@ impl Calls {
                 state.entries.push(Arc::clone(entry));
                 return;
             }
+            Mode::Dropping => return,
             Mode::Keeping => {
                 state.next += 1;
                 let seq = state.next;
@@ -361,8 +374,8 @@ impl Calls {
                 }
                 state.kept[at] = Some(line);
             }
-            // A run keeps entries and emits none.
-            Mode::Running(_) => {}
+            // A run keeps its entries, and dropping calls keep none.
+            Mode::Running(_) | Mode::Dropping => {}
         }
     }
 
@@ -425,29 +438,38 @@ impl Slot {
     /// Takes the next run of the slot's body, whose calls `body` keeps, and
     /// moves them to the calls that keep the slot: each with the slot's call
     /// as its parent, the run's number and its phase. A call of a body inside
-    /// the run keeps its own parent. `body` is empty afterwards.
-    pub(crate) fn take(&self, body: &Calls, phase: Option<Phase>) {
-        let _order = ordered();
-        let entries = std::mem::take(&mut locked(&body.state).entries);
-        let run = {
-            let mut runs = locked(&self.runs);
-            *runs += 1;
-            *runs
-        };
-        let home = locked(&self.entry)
-            .home
-            .clone()
-            .expect("a slot is among the calls that it began among, or that took it since");
-        for entry in entries {
-            {
-                let mut held = locked(&entry);
-                if held.parent.is_none() {
-                    held.parent = Some(Arc::clone(&self.entry));
-                    held.run = run;
-                    held.phase = phase;
+    /// the run keeps its own parent. `body` is empty afterwards. `observe`
+    /// then receives each call that the run made, in the order of the calls.
+    pub(crate) fn take(&self, body: &Calls, phase: Option<Phase>, observe: impl Fn(&Call)) {
+        let entries = {
+            let _order = ordered();
+            let entries = std::mem::take(&mut locked(&body.state).entries);
+            let run = {
+                let mut runs = locked(&self.runs);
+                *runs += 1;
+                *runs
+            };
+            let home = locked(&self.entry)
+                .home
+                .clone()
+                .expect("a slot is among the calls that it began among, or that took it since");
+            for entry in &entries {
+                {
+                    let mut held = locked(entry);
+                    if held.parent.is_none() {
+                        held.parent = Some(Arc::clone(&self.entry));
+                        held.run = run;
+                        held.phase = phase;
+                    }
                 }
+                home.put(entry);
             }
-            home.put(&entry);
+            entries
+        };
+        for entry in &entries {
+            if let Some(call) = &locked(entry).call {
+                observe(call);
+            }
         }
     }
 

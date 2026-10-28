@@ -160,6 +160,12 @@ mod naming_table {
         seat.record("c");
         seat.report(failure, true);
         seat.report_fault(Arc::new(std::io::Error::other("c")), true);
+        // The call of an assertion is `dokimi_assert::Call`, and `Call` here
+        // is the call of a history.
+        seat.observe_call(&dokimi_assert::Call {
+            assertion: "true",
+            contract: "c",
+        });
         let _ = (seat.clock(), seat.cancellation());
         let _ = (
             seat.failed(),

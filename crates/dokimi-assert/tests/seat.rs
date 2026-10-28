@@ -5,7 +5,8 @@
 
 use crate::helpers::{failure_of, panic_of, records};
 use dokimi_assert::{
-    Cancel, Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, check, fault, soft,
+    Call, Cancel, Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, check, fault,
+    prop, soft,
 };
 use std::error::Error;
 use std::io;
@@ -40,6 +41,38 @@ impl Seat for Plain {
             .lock()
             .expect("the lock is free")
             .push(format!("record {message}"));
+    }
+}
+
+/// A seat that observes each call, and keeps what it receives in order.
+#[derive(Default)]
+struct Watching(Mutex<Vec<String>>);
+
+impl Watching {
+    fn received(&self) -> Vec<String> {
+        self.0.lock().expect("the lock is free").clone()
+    }
+
+    fn keep(&self, line: String) {
+        self.0.lock().expect("the lock is free").push(line);
+    }
+}
+
+impl Seat for Watching {
+    fn fail(&self, message: &str) {
+        self.keep(format!("fail {message}"));
+    }
+
+    fn record(&self, message: &str) {
+        self.keep(format!("record {message}"));
+    }
+
+    fn skip(&self, reason: &str) {
+        self.keep(format!("skip {reason}"));
+    }
+
+    fn observe_call(&self, call: &Call<'_>) {
+        self.keep(format!("observe {} {}", call.assertion, call.contract));
     }
 }
 
@@ -109,6 +142,97 @@ mod seat {
         let plain = Plain::default();
         plain.skip("the disk is full");
         assert_eq!(plain.received(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn observes_nothing_by_default() {
+        let plain = Plain::default();
+        plain.observe_call(&Call {
+            assertion: "true",
+            contract: "the flag is set",
+        });
+        assert_eq!(plain.received(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn observes_a_passing_call() {
+        let seat = Watching::default();
+        check::is_true(&seat, true, "the flag is set");
+        assert_eq!(seat.received(), ["observe true the flag is set"]);
+    }
+
+    #[test]
+    fn observes_a_failing_call_before_its_failure() {
+        let seat = Watching::default();
+        soft::is_true(&seat, false, "the flag is set");
+        assert_eq!(
+            seat.received(),
+            ["observe true the flag is set", "record the flag is set"]
+        );
+    }
+
+    #[test]
+    fn observes_a_call_that_ends_with_a_fault_before_the_fault() {
+        let seat = Watching::default();
+        check::matches(&seat, "abc", "(", "the code is a word");
+        let received = seat.received();
+        assert_eq!(received[0], "observe matches the code is a word");
+        assert!(received[1].starts_with("fail "), "{received:?}");
+        assert_eq!(received.len(), 2);
+    }
+
+    #[test]
+    fn does_not_observe_the_call_of_fault() {
+        let seat = Watching::default();
+        fault(&seat, io::Error::other("no such service"));
+        assert_eq!(seat.received(), ["fail no such service"]);
+    }
+
+    #[test]
+    fn observes_the_calls_of_a_body_before_the_call_that_ran_it() {
+        let seat = Watching::default();
+        check::rejects(&seat, "the check refuses false", |t| {
+            check::is_true(t, false, "the flag is set");
+        });
+        assert_eq!(
+            seat.received(),
+            [
+                "observe true the flag is set",
+                "observe rejects the check refuses false"
+            ]
+        );
+    }
+
+    #[test]
+    fn observes_the_calls_of_the_cases_of_a_property_before_the_property() {
+        let seat = Watching::default();
+        prop::for_all(&seat, "every x is small", prop::cases(5).workers(4), |c| {
+            let x = c.draw(&prop::integer(0..=9_u8), "x");
+            check::is_true(c, x < 10, "x is small");
+        });
+        let received = seat.received();
+        let (last, cases) = received.split_last().expect("the seat observed calls");
+        assert_eq!(last, "observe prop-for-all every x is small");
+        assert_ne!(cases, [] as [String; 0]);
+        assert!(
+            cases.iter().all(|line| line == "observe true x is small"),
+            "{received:?}"
+        );
+    }
+
+    #[test]
+    fn observes_a_skip_before_the_skip() {
+        let seat = Watching::default();
+        prop::for_all(&seat, "every disk has room", prop::cases(1), |c| {
+            c.skip("the disk is full");
+        });
+        assert_eq!(
+            seat.received(),
+            [
+                "observe prop-for-all every disk has room",
+                "skip the disk is full"
+            ]
+        );
     }
 }
 

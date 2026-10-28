@@ -112,6 +112,16 @@ mod run {
             )
         );
     }
+
+    #[test]
+    fn takes_no_body_for_a_call_that_runs_no_body() {
+        let seat = Recorder::new();
+        let run = dokimi_assert::__private::Run::of(&seat);
+        let body = run.body_calls();
+        run.take(body.as_ref());
+        assert!(body.is_none());
+        assert_eq!(records(&seat), [] as [serde_json::Value; 0]);
+    }
 }
 
 mod pass {

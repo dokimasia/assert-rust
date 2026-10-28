@@ -117,6 +117,18 @@ pub trait Seat: Send + Sync {
         write_skip(reason);
     }
 
+    /// Observes one assertion call, a passing one included.
+    ///
+    /// The seat receives each call that a recorded run records, whatever
+    /// `DOKIMI_ASSERT_RECORD` states. It receives each call once, before the
+    /// failure, the fault or the skip of that call. It receives the calls of a
+    /// body when the call that ran the body takes them, so the calls of the
+    /// cases of a property arrive in the order of a run on one worker. The
+    /// default does nothing.
+    fn observe_call(&self, call: &Call<'_>) {
+        let _ = call;
+    }
+
     /// Returns the clock that the timed assertions read.
     ///
     /// The default is the platform clock.
@@ -147,6 +159,41 @@ pub trait Seat: Send + Sync {
     fn test(&self) -> Option<String> {
         None
     }
+}
+
+/// An assertion call, with the id of the assertion and the contract.
+///
+/// [`Seat::observe_call`] receives one for each call:
+///
+/// ```
+/// use dokimi_assert::{Call, Seat, check};
+/// use std::sync::Mutex;
+///
+/// #[derive(Default)]
+/// struct Handle(Mutex<Vec<String>>);
+///
+/// impl Seat for Handle {
+///     fn fail(&self, message: &str) {
+///         panic!("{message}");
+///     }
+///     fn record(&self, message: &str) {
+///         panic!("{message}");
+///     }
+///     fn observe_call(&self, call: &Call<'_>) {
+///         self.0.lock().unwrap().push(call.contract.to_owned());
+///     }
+/// }
+///
+/// let handle = Handle::default();
+/// check::is_true(&handle, true, "the flag is set");
+/// assert_eq!(*handle.0.lock().unwrap(), ["the flag is set"]);
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Call<'c> {
+    /// The id of the assertion, as the definition names it.
+    pub assertion: &'static str,
+    /// The message of the caller, unchanged.
+    pub contract: &'c str,
 }
 
 /// Ends the call of a helper with `error`, a fault.

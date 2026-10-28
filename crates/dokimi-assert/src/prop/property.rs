@@ -401,7 +401,7 @@ impl<'c> Property<'c> {
             parent: seat,
             site: Some(run.location()),
             pinned: self.call.pinned,
-            recorded: run.recorded(),
+            kept: run.takes_body(),
         }
     }
 

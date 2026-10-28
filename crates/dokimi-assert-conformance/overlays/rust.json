@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@13.0.0",
+  "extends": "spec://assertions@13.1.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -92,6 +92,10 @@
       "why": "The trait Seat states report_fault with a default, which sends the text of an ending fault through fail, so a seat that does not override it still ends the call. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
     },
     {
+      "id": "observer",
+      "why": "The trait Seat states observe_call with a default that does nothing, so a seat observes the calls by overriding it. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
+    },
+    {
       "id": "skipper",
       "why": "The trait Seat states skip with a default, which writes the reason and returns, so every seat has the member. Only a language whose interfaces carry no defaults needs a second interface to say the same thing."
     },
@@ -115,7 +119,8 @@
   "sections": ["tasks", "threads"],
   "records": {
     "artifact": "A file of the library's own beside each test binary that cargo test runs, named after the binary with the suffix .dokimi-assert.jsonl, such as target/debug/deps/it-0a1b2c3d4e5f6a7b.dokimi-assert.jsonl. A run of the binary that records a call writes the file anew. libtest offers no stable channel for data of a test's own, and a doctest's binary is a temporary file whose call records are not kept.",
-    "location": "One line per call record, in the order the calls report their verdicts. The lines of tests that run on parallel threads interleave. Each call record names its test in test, as libtest names the test's thread: the test's path without the crate's name, such as nested::fails. The file's name names the binary.",
-    "status": "The line that libtest prints for each test on the test binary's standard output: test <name> ... ok, test <name> ... FAILED, or test <name> ... ignored."
+    "location": "One line per record, in the order the records are made, in the file whose suffix is the record's kind with each dot replaced by a dash, followed by .jsonl: .dokimi-assert.jsonl for a call record and .dokimi-suite.jsonl for a suite record. The lines of tests that run on parallel threads interleave. Each call record names its test in test, as libtest names the test's thread: the test's path without the crate's name, such as nested::fails. The file's name names the binary.",
+    "status": "The line that libtest prints for each test on the test binary's standard output: test <name> ... ok, test <name> ... FAILED, or test <name> ... ignored.",
+    "kinds": ["dokimi.assert", "dokimi.suite"]
   }
 }

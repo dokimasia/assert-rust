@@ -44,9 +44,9 @@ pub(crate) struct Context<'s> {
     /// Whether every record of a case is at the call site of the property:
     /// a property form calls its assertion from inside the library.
     pub(crate) pinned: bool,
-    /// Whether the call of the property is recorded, so that each case
-    /// records the calls of its body.
-    pub(crate) recorded: bool,
+    /// Whether the call of the property takes the calls of its cases, so that
+    /// each case keeps the calls of its body.
+    pub(crate) kept: bool,
 }
 
 /// What a case has been told.
@@ -116,7 +116,7 @@ impl<'s> Case<'s> {
         let steps = Arc::new(AtomicUsize::new(0));
         let position = Arc::clone(&steps);
         let calls = context
-            .filter(|context| context.recorded)
+            .filter(|context| context.kept)
             .map(|_| Calls::running(Some(Arc::new(move || position.load(Ordering::Relaxed)))));
         Self {
             record: Mutex::new(record),
@@ -143,7 +143,7 @@ impl<'s> Case<'s> {
         (record, self.calls)
     }
 
-    /// Returns the calls of the case's body, for a recorded property.
+    /// Returns the calls of the case's body, for a property that takes them.
     pub(crate) fn calls_of(&self) -> Option<Arc<Calls>> {
         self.calls.clone()
     }

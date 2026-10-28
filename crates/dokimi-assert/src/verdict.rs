@@ -13,7 +13,7 @@
 use crate::failure::{Failure, Where};
 use crate::json::Json;
 use crate::record::{self, Call, Calls, Slot, Switch, Verdict};
-use crate::seat::Seat;
+use crate::seat::{self, Seat};
 use crate::value::Value;
 use std::error::Error;
 use std::fmt::{self, Display};
@@ -90,8 +90,9 @@ impl<'s> Run<'s> {
         }
     }
 
-    /// Starts a call on `seat` that runs a body. A recorded call takes its
-    /// number now, before the calls of its body.
+    /// Starts a call on `seat` that runs a body. The call takes its number
+    /// now, before the calls of its body. A seat that keeps no record drops
+    /// the number, and observes the calls of the body all the same.
     #[track_caller]
     pub fn begin(seat: &'s dyn Seat) -> Self {
         Self::begin_at(seat, Where::from(Location::caller()))
@@ -99,10 +100,8 @@ impl<'s> Run<'s> {
 
     /// Starts a call on `seat` that runs a body, at the call site `location`.
     pub(crate) fn begin_at(seat: &'s dyn Seat, location: Where) -> Self {
-        let slot = switched_on()
-            .then(|| seat.calls())
-            .flatten()
-            .map(|calls| Slot::begin(&calls));
+        let slot =
+            switched_on().then(|| Slot::begin(&seat.calls().unwrap_or_else(Calls::dropping)));
         Self {
             seat,
             slot,
@@ -111,8 +110,8 @@ impl<'s> Run<'s> {
     }
 
     /// Returns the calls of one run of the call's body: calls whose records
-    /// the call takes when the run ends, and `None` for a call that is not
-    /// recorded.
+    /// the call takes when the run ends, and `None` when the switch of
+    /// recording states a fault.
     #[must_use]
     pub fn body_calls(&self) -> Option<Arc<Calls>> {
         self.slot.as_ref().map(|_| Calls::running(None))
@@ -128,8 +127,16 @@ impl<'s> Run<'s> {
     /// with `phase`, the kind of a property's case that the run ran.
     pub(crate) fn take_in_phase(&self, body: Option<&Arc<Calls>>, phase: Option<record::Phase>) {
         if let (Some(slot), Some(body)) = (&self.slot, body) {
-            slot.take(body, phase);
+            slot.take(body, phase, |call| self.observe(call));
         }
+    }
+
+    /// Passes `call` to the seat's [`Seat::observe_call`].
+    fn observe(&self, call: &Call) {
+        self.seat.observe_call(&seat::Call {
+            assertion: call.assertion,
+            contract: &call.contract,
+        });
     }
 
     /// Returns the call site of the call.
@@ -137,9 +144,9 @@ impl<'s> Run<'s> {
         self.location
     }
 
-    /// Returns `true` when the call is recorded, so that its body records its
-    /// calls.
-    pub(crate) fn recorded(&self) -> bool {
+    /// Returns `true` when the call takes the calls of its body: always,
+    /// unless the switch of recording states a fault.
+    pub(crate) fn takes_body(&self) -> bool {
         self.slot.is_some()
     }
 
@@ -316,9 +323,11 @@ impl<'s> Run<'s> {
         true
     }
 
-    /// Writes the call's record into its slot, for a call that runs a body,
-    /// and into the calls of the seat for any other call.
+    /// Passes the call to the seat's [`Seat::observe_call`], then writes its
+    /// record into its slot, for a call that runs a body, and into the calls
+    /// of the seat for any other call.
     fn write(&self, call: Call) {
+        self.observe(&call);
         if let Some(slot) = &self.slot {
             slot.write(call);
             return;
