@@ -4,11 +4,11 @@
 //! The spec of `matcher/body`: the seat that `eventually` and `rejects` hand
 //! the body that they run.
 
-use crate::helpers::panic_of;
+use crate::helpers::{Trace, panic_of};
 use dokimi_assert::{Cancel, Clock, Failure, Recorder, Seat, Stop, check, fault, soft};
 use std::cell::{Cell, RefCell};
 use std::io;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex, PoisonError};
 use std::time::Duration;
 
 mod body {
@@ -142,6 +142,94 @@ mod body {
         );
         assert!(reached.get());
         assert!(!seat.failed(), "{}", seat.message());
+    }
+
+    #[test]
+    fn runs_its_cleanups_before_rejects_returns() {
+        let trace = Trace::default();
+        let _ = check::rejects(&Recorder::new(), "c", |body| {
+            body.cleanup(trace.cleanup("first"));
+            body.cleanup(trace.cleanup("second"));
+            body.fail("stop");
+        });
+        trace.push("returned");
+        assert_eq!(trace.ran(), ["second", "first", "returned"]);
+    }
+
+    #[test]
+    fn cancels_its_handle_before_its_first_cleanup() {
+        let reason = Arc::new(Mutex::new(None));
+        let _ = check::rejects(&Recorder::new(), "c", |body| {
+            let handle = body.cancellation().clone();
+            let seen = Arc::clone(&reason);
+            body.cleanup(Box::new(move || {
+                *seen.lock().unwrap_or_else(PoisonError::into_inner) = handle.reason();
+            }));
+            body.fail("stop");
+        });
+        assert_eq!(
+            *reason.lock().unwrap_or_else(PoisonError::into_inner),
+            Some(Stop::Cancelled)
+        );
+    }
+
+    #[test]
+    fn runs_its_cleanups_before_another_panic_of_the_body_passes() {
+        let trace = Trace::default();
+        let raised = panic_of(|| {
+            drop(check::rejects(&Recorder::new(), "c", |body| {
+                body.cleanup(trace.cleanup("cleaned"));
+                panic!("the body broke");
+            }));
+        });
+        assert_eq!(raised.as_deref(), Some("the body broke"));
+        assert_eq!(trace.ran(), ["cleaned"]);
+    }
+
+    #[test]
+    fn panics_with_the_panic_of_a_cleanup_after_the_later_cleanups() {
+        let trace = Trace::default();
+        let raised = panic_of(|| {
+            drop(check::rejects(&Recorder::new(), "c", |body| {
+                body.cleanup(trace.cleanup("later"));
+                body.cleanup(Box::new(|| panic!("the port is busy")));
+                body.fail("stop");
+            }));
+        });
+        assert_eq!(raised.as_deref(), Some("the port is busy"));
+        assert_eq!(trace.ran(), ["later"]);
+    }
+
+    #[test]
+    fn panics_with_the_panic_of_the_body_over_the_panic_of_a_cleanup() {
+        let raised = panic_of(|| {
+            drop(check::rejects(&Recorder::new(), "c", |body| {
+                body.cleanup(Box::new(|| panic!("the port is busy")));
+                panic!("the body broke");
+            }));
+        });
+        assert_eq!(raised.as_deref(), Some("the body broke"));
+    }
+
+    #[test]
+    fn runs_the_cleanups_of_an_attempt_before_the_next_attempt() {
+        let seat = Recorder::new().with_clock(Arc::new(dokimi_assert::Controlled::new()));
+        let trace = Trace::default();
+        let attempts = Cell::new(0);
+        check::eventually(
+            &seat,
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |body: &dyn Seat| {
+                trace.push("attempt");
+                body.cleanup(trace.cleanup("cleanup"));
+                attempts.set(attempts.get() + 1);
+                check::is_true(body, attempts.get() > 1, "the second attempt passes");
+            },
+            "the attempts clean up",
+        );
+        assert!(!seat.failed(), "{}", seat.message());
+        assert_eq!(trace.ran(), ["attempt", "cleanup", "attempt", "cleanup"]);
     }
 
     #[test]

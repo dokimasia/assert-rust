@@ -190,6 +190,29 @@ fn restart(seat: &dyn Seat, restartable: bool) {
 }
 ```
 
+`Seat::cleanup` registers a function that releases what a helper starts. A
+`Collector` runs it when the collector drops, also while the test panics.
+The check of `rejects` and each attempt of `eventually` run theirs when the
+body ends, before the assertion returns. A `Recorder` keeps them until
+`Recorder::run_cleanups`, and its drop runs the ones that remain. The default
+method of the trait ends the call with a fault, and the function does not
+run:
+
+```rust
+use dokimi_assert::Seat;
+use std::process::Command;
+
+fn witness(seat: &dyn Seat) -> u32 {
+    let mut child = Command::new("witness").spawn().expect("the witness starts");
+    let id = child.id();
+    seat.cleanup(Box::new(move || {
+        let _ = child.kill();
+        let _ = child.wait();
+    }));
+    id
+}
+```
+
 ## The assertions
 
 `check` has 49 assertions, and `soft` has the same names without `rejects`.

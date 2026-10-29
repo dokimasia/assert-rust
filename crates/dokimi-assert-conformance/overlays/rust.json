@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@13.3.0",
+  "extends": "spec://assertions@13.4.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -119,6 +119,10 @@
     {
       "id": "cancellation-of",
       "why": "The trait Seat gives cancellation() a default, as it gives clock() one, so a helper calls the member on any seat and needs no function to read it."
+    },
+    {
+      "id": "cleanup",
+      "why": "The trait Seat gives cleanup() a default that ends the call with a fault, so a helper calls the member on any seat and needs no function to register a cleanup."
     }
   ],
   "sections": ["tasks", "threads"],

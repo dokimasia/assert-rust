@@ -10,7 +10,7 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::{Mutex, PoisonError};
+use std::sync::{Arc, Mutex, PoisonError};
 
 /// The spec of a register of integers: a write stores its argument, and a
 /// read returns the stored value, 0 before the first write.
@@ -142,6 +142,35 @@ impl Seat for Skipping {
             .lock()
             .unwrap_or_else(PoisonError::into_inner)
             .push(reason.to_owned());
+    }
+}
+
+/// The names of the steps of a test, in the order in which they ran. A clone
+/// appends to the same list.
+#[derive(Clone, Default)]
+pub(crate) struct Trace(Arc<Mutex<Vec<&'static str>>>);
+
+impl Trace {
+    /// Appends `name`.
+    pub(crate) fn push(&self, name: &'static str) {
+        self.0
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .push(name);
+    }
+
+    /// Returns a cleanup that appends `name`.
+    pub(crate) fn cleanup(&self, name: &'static str) -> Box<dyn FnOnce() + Send> {
+        let trace = self.clone();
+        Box::new(move || trace.push(name))
+    }
+
+    /// Returns the names in the order in which they ran.
+    pub(crate) fn ran(&self) -> Vec<&'static str> {
+        self.0
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .clone()
     }
 }
 

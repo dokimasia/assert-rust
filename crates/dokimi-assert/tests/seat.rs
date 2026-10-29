@@ -3,7 +3,7 @@
 
 //! The spec of `seat`, the seats that assertions report to.
 
-use crate::helpers::{failure_of, panic_of, records};
+use crate::helpers::{Scratch, Trace, failure_of, in_child, panic_of, records};
 use dokimi_assert::{
     Call, Cancel, Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, check, fault,
     prop, soft,
@@ -142,6 +142,18 @@ mod seat {
         let plain = Plain::default();
         plain.skip("the disk is full");
         assert_eq!(plain.received(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn ends_the_call_with_a_fault_at_a_cleanup_by_default() {
+        let plain = Plain::default();
+        let trace = Trace::default();
+        plain.cleanup(trace.cleanup("cleaned"));
+        assert_eq!(
+            plain.received(),
+            ["fail Seat::cleanup: the seat does not run cleanups"]
+        );
+        assert_eq!(trace.ran(), [] as [&str; 0]);
     }
 
     #[test]
@@ -405,6 +417,77 @@ mod recorder {
         check::is_true(&seat, true, "c");
         assert_eq!(records(&seat).len(), 1);
     }
+
+    #[test]
+    fn keeps_a_cleanup_until_run_cleanups() {
+        let seat = Recorder::new();
+        let trace = Trace::default();
+        seat.cleanup(trace.cleanup("cleaned"));
+        assert_eq!(trace.ran(), [] as [&str; 0]);
+        seat.run_cleanups();
+        assert_eq!(trace.ran(), ["cleaned"]);
+    }
+
+    #[test]
+    fn runs_the_last_registered_cleanup_first() {
+        let seat = Recorder::new();
+        let trace = Trace::default();
+        seat.cleanup(trace.cleanup("first"));
+        seat.cleanup(trace.cleanup("second"));
+        seat.run_cleanups();
+        assert_eq!(trace.ran(), ["second", "first"]);
+    }
+
+    #[test]
+    fn runs_a_cleanup_that_a_cleanup_registers_in_the_same_pass() {
+        let seat = Arc::new(Recorder::new());
+        let trace = Trace::default();
+        let registering = Arc::clone(&seat);
+        let registered = trace.cleanup("registered");
+        seat.cleanup(Box::new(move || registering.cleanup(registered)));
+        seat.run_cleanups();
+        assert_eq!(trace.ran(), ["registered"]);
+    }
+
+    #[test]
+    fn leaves_a_cleanup_that_arrives_after_run_cleanups_to_the_next_call() {
+        let seat = Recorder::new();
+        let trace = Trace::default();
+        seat.cleanup(trace.cleanup("first run"));
+        seat.run_cleanups();
+        seat.cleanup(trace.cleanup("second run"));
+        assert_eq!(trace.ran(), ["first run"]);
+        seat.run_cleanups();
+        assert_eq!(trace.ran(), ["first run", "second run"]);
+    }
+
+    #[test]
+    fn keeps_the_panic_of_a_cleanup_as_a_failure() {
+        let seat = Recorder::new();
+        let trace = Trace::default();
+        seat.cleanup(trace.cleanup("later"));
+        seat.cleanup(Box::new(|| panic!("the port is busy")));
+        seat.run_cleanups();
+        assert_eq!(trace.ran(), ["later"]);
+        assert_eq!(seat.messages(), ["a cleanup failed: the port is busy"]);
+    }
+
+    #[test]
+    fn runs_the_remaining_cleanups_when_it_drops() {
+        let seat = Recorder::new();
+        let trace = Trace::default();
+        seat.cleanup(trace.cleanup("cleaned"));
+        drop(seat);
+        assert_eq!(trace.ran(), ["cleaned"]);
+    }
+
+    #[test]
+    fn states_its_cleanups_in_its_debug_text() {
+        let seat = Recorder::new();
+        seat.cleanup(Box::new(|| {}));
+        let text = format!("{seat:?}");
+        assert!(text.contains("cleanups: Cleanups(1)"), "{text}");
+    }
 }
 
 mod collector {
@@ -472,5 +555,86 @@ mod collector {
             panic!("the test failed first");
         });
         assert_eq!(report.as_deref(), Some("the test failed first"));
+    }
+
+    #[test]
+    fn runs_its_cleanups_when_it_drops() {
+        let trace = Trace::default();
+        let seat = Collector::new();
+        seat.cleanup(trace.cleanup("first"));
+        seat.cleanup(trace.cleanup("second"));
+        drop(seat);
+        assert_eq!(trace.ran(), ["second", "first"]);
+    }
+
+    #[test]
+    fn runs_its_cleanups_before_it_panics_with_the_collected_failures() {
+        let trace = Trace::default();
+        let report = panic_of(|| {
+            let seat = Collector::new();
+            seat.cleanup(trace.cleanup("cleaned"));
+            seat.record("collected");
+        });
+        assert_eq!(trace.ran(), ["cleaned"]);
+        assert!(report.is_some_and(|report| report.starts_with("collected")));
+    }
+
+    #[test]
+    fn panics_with_the_panic_of_a_cleanup_at_its_line_when_it_drops() {
+        let trace = Trace::default();
+        let line = line!() + 4;
+        let report = panic_of(|| {
+            let seat = Collector::new();
+            seat.cleanup(trace.cleanup("later"));
+            seat.cleanup(Box::new(|| panic!("the port is busy")));
+        });
+        assert_eq!(trace.ran(), ["later"]);
+        let report = report.expect("the drop panics");
+        assert!(
+            report.starts_with("a cleanup failed: the port is busy\n  at "),
+            "{report}"
+        );
+        assert!(report.ends_with(&format!("seat.rs:{line}")), "{report}");
+    }
+
+    #[test]
+    fn runs_its_cleanups_while_its_thread_unwinds() {
+        let trace = Trace::default();
+        let report = panic_of(|| {
+            let seat = Collector::new();
+            seat.cleanup(trace.cleanup("later"));
+            seat.cleanup(Box::new(|| panic!("the port is busy")));
+            panic!("the test failed first");
+        });
+        assert_eq!(report.as_deref(), Some("the test failed first"));
+        assert_eq!(trace.ran(), ["later"]);
+    }
+
+    #[test]
+    fn writes_the_panic_of_a_cleanup_to_the_standard_error_while_its_thread_unwinds() {
+        let dir = Scratch::new();
+        let output = in_child(
+            "seat::child::unwinds_past_a_cleanup_that_panics",
+            &dir.join(""),
+            &[],
+        );
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            stderr.contains("a cleanup failed: the port is busy\n"),
+            "{stderr}"
+        );
+        assert!(!output.status.success(), "{stderr}");
+    }
+}
+
+mod child {
+    use super::*;
+
+    #[test]
+    #[ignore = "a spec of the collector runs it in a child process"]
+    fn unwinds_past_a_cleanup_that_panics() {
+        let seat = Collector::new();
+        seat.cleanup(Box::new(|| panic!("the port is busy")));
+        panic!("the test failed first");
     }
 }

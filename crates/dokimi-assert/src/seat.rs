@@ -7,9 +7,11 @@
 use crate::cancel::Cancel;
 use crate::clock::{Clock, SHARED};
 use crate::failure::{Failure, Where};
+use crate::matcher::panics::{last_location, message, quietly};
 use crate::record::{self, Calls, Switch};
+use crate::verdict::Fault;
 use std::error::Error;
-use std::fmt::Write as _;
+use std::fmt::{self, Write as _};
 use std::panic::Location;
 use std::sync::{Arc, LazyLock, Mutex, MutexGuard, PoisonError};
 
@@ -33,8 +35,8 @@ static NEVER: LazyLock<Cancel> = LazyLock::new(Cancel::new);
 /// thread that the test started, and one test hands one seat to many calls.
 ///
 /// A seat that implements `fail` and `record` alone gets the platform clock,
-/// a cancellation handle that never stops, and the rendered sentence of each
-/// failure:
+/// a cancellation handle that never stops, the rendered sentence of each
+/// failure, and a `cleanup` that ends the call with a fault:
 ///
 /// ```
 /// use dokimi_assert::{Seat, check};
@@ -127,6 +129,42 @@ pub trait Seat: Send + Sync {
     /// default does nothing.
     fn observe_call(&self, call: &Call<'_>) {
         let _ = call;
+    }
+
+    /// Registers `f` to run when the test, the case or the body of the seat
+    /// ends.
+    ///
+    /// A seat runs its cleanups the last registered first, however the test
+    /// or the body ended. A [`Collector`] runs them when it drops, a
+    /// [`Recorder`] at [`Recorder::run_cleanups`], a case when the case ends,
+    /// and the seat that `rejects` or `eventually` hands a body when the body
+    /// ends. A case and the seat of a body stop their cancellation handle
+    /// before the first cleanup runs.
+    ///
+    /// The default ends the call with a fault, and `f` does not run.
+    ///
+    /// ```
+    /// use dokimi_assert::{Recorder, Seat};
+    /// use std::sync::Arc;
+    /// use std::sync::atomic::{AtomicBool, Ordering};
+    ///
+    /// fn served(seat: &dyn Seat) -> Arc<AtomicBool> {
+    ///     let running = Arc::new(AtomicBool::new(true));
+    ///     let server = Arc::clone(&running);
+    ///     seat.cleanup(Box::new(move || server.store(false, Ordering::SeqCst)));
+    ///     running
+    /// }
+    ///
+    /// let rec = Recorder::new();
+    /// let running = served(&rec);
+    /// rec.run_cleanups();
+    /// assert!(!running.load(Ordering::SeqCst));
+    /// ```
+    #[track_caller]
+    fn cleanup(&self, f: Box<dyn FnOnce() + Send>) {
+        drop(f);
+        let fault = Fault::new("Seat::cleanup: the seat does not run cleanups");
+        self.report_fault(Arc::new(fault), true);
     }
 
     /// Returns the clock that the timed assertions read.
@@ -257,6 +295,40 @@ fn locked<T>(lock: &Mutex<T>) -> MutexGuard<'_, T> {
     lock.lock().unwrap_or_else(PoisonError::into_inner)
 }
 
+/// A function that a seat runs when its test, its case or its body ends.
+pub(crate) type Cleanup = Box<dyn FnOnce() + Send>;
+
+/// The cleanups that a seat keeps until its test, its case or its body ends.
+#[derive(Default)]
+pub(crate) struct Cleanups(Mutex<Vec<Cleanup>>);
+
+impl fmt::Debug for Cleanups {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("Cleanups")
+            .field(&locked(&self.0).len())
+            .finish()
+    }
+}
+
+impl Cleanups {
+    /// Keeps `cleanup` until the next run.
+    pub(crate) fn add(&self, cleanup: Cleanup) {
+        locked(&self.0).push(cleanup);
+    }
+
+    /// Passes each kept cleanup to `each`, the last kept first, and forgets
+    /// it. A cleanup that a cleanup keeps runs in the same pass.
+    pub(crate) fn run(&self, mut each: impl FnMut(Cleanup)) {
+        loop {
+            let next = locked(&self.0).pop();
+            let Some(cleanup) = next else {
+                return;
+            };
+            each(cleanup);
+        }
+    }
+}
+
 /// A seat that panics on every failure.
 ///
 /// The panic is how libtest reads a failure, so this is the seat for code
@@ -311,6 +383,11 @@ struct Reported {
 /// assertion reported, rather than being stopped by it. Nothing that runs on
 /// a recorder fails the test.
 ///
+/// A recorder keeps the cleanups that [`Seat::cleanup`] registers until
+/// [`Recorder::run_cleanups`] runs them, so a test of a helper can check what
+/// the cleanup of the helper does. The drop of the recorder runs the cleanups
+/// that remain.
+///
 /// ```
 /// use dokimi_assert::{Recorder, check};
 ///
@@ -326,6 +403,7 @@ pub struct Recorder {
     clock: Option<Arc<dyn Clock>>,
     cancellation: Cancel,
     calls: Option<Arc<Calls>>,
+    cleanups: Cleanups,
 }
 
 impl Default for Recorder {
@@ -343,6 +421,7 @@ impl Recorder {
             clock: None,
             cancellation: Cancel::new(),
             calls: Some(Calls::keeping()),
+            cleanups: Cleanups::default(),
         }
     }
 
@@ -426,6 +505,27 @@ impl Recorder {
             .map(|calls| calls.lines())
             .unwrap_or_default()
     }
+
+    /// Runs the cleanups that the recorder keeps, the last registered first,
+    /// and forgets them.
+    ///
+    /// A cleanup that a cleanup registers runs before the call returns, and a
+    /// cleanup that arrives after the call waits for the next call. A cleanup
+    /// that panics fails the recorder with the failure `a cleanup failed: `
+    /// and the text of the panic. The later cleanups still run.
+    pub fn run_cleanups(&self) {
+        self.cleanups.run(|cleanup| {
+            if let Err(raised) = quietly(cleanup) {
+                self.record(&format!("a cleanup failed: {}", message(&*raised)));
+            }
+        });
+    }
+}
+
+impl Drop for Recorder {
+    fn drop(&mut self) {
+        self.run_cleanups();
+    }
 }
 
 impl Seat for Recorder {
@@ -469,6 +569,12 @@ impl Seat for Recorder {
         }
     }
 
+    /// Keeps `f` until [`Recorder::run_cleanups`] or the drop of the
+    /// recorder.
+    fn cleanup(&self, f: Box<dyn FnOnce() + Send>) {
+        self.cleanups.add(f);
+    }
+
     fn clock(&self) -> &dyn Clock {
         match &self.clock {
             Some(clock) => clock.as_ref(),
@@ -502,13 +608,21 @@ impl Seat for Recorder {
 /// // The drop panics with "2 failures: …".
 /// ```
 ///
+/// The drop runs the cleanups that [`Seat::cleanup`] registered, the last
+/// registered first, before it panics. A cleanup that panics adds the failure
+/// `a cleanup failed: ` with the text of the panic, and the later cleanups
+/// still run.
+///
 /// A collector that drops while its thread unwinds from another panic panics
-/// with nothing, because a second panic would abort the process.
+/// with nothing, because a second panic would abort the process. It still runs
+/// its cleanups, and it writes the failure of a cleanup that panics to the
+/// standard error.
 #[derive(Debug)]
 pub struct Collector {
     collected: Mutex<Vec<(String, Where)>>,
     calls: Option<Arc<Calls>>,
     test: String,
+    cleanups: Cleanups,
 }
 
 impl Default for Collector {
@@ -527,6 +641,7 @@ impl Collector {
             collected: Mutex::default(),
             calls: test_calls(Some(test.clone())),
             test,
+            cleanups: Cleanups::default(),
         }
     }
 
@@ -585,6 +700,11 @@ impl Seat for Collector {
         locked(&self.collected).push((message.to_owned(), Where::from(Location::caller())));
     }
 
+    /// Keeps `f` until the drop of the collector.
+    fn cleanup(&self, f: Box<dyn FnOnce() + Send>) {
+        self.cleanups.add(f);
+    }
+
     fn calls(&self) -> Option<Arc<Calls>> {
         self.calls.clone()
     }
@@ -596,9 +716,21 @@ impl Seat for Collector {
 
 impl Drop for Collector {
     fn drop(&mut self) {
-        if std::thread::panicking() {
-            return;
+        let unwinding = std::thread::panicking();
+        self.cleanups.run(|cleanup| {
+            let Err(raised) = quietly(cleanup) else {
+                return;
+            };
+            let failure = format!("a cleanup failed: {}", message(&*raised));
+            if unwinding {
+                eprintln!("{failure}");
+                return;
+            }
+            let at = last_location().unwrap_or(Where::from(Location::caller()));
+            locked(&self.collected).push((failure, at));
+        });
+        if !unwinding {
+            self.flush();
         }
-        self.flush();
     }
 }

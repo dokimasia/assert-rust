@@ -11,13 +11,14 @@
 //! ends a test. A fault that ends its call ends the body with the text of the
 //! fault, and a fault that a call notes passes to the assertion's seat. A
 //! skip ends the check of `rejects`, and an attempt of `eventually` runs on
-//! past it.
+//! past it. When the body ends, the seat stops its handle and then runs the
+//! cleanups of the body, the last registered first.
 
 use crate::cancel::Cancel;
 use crate::clock::Clock;
 use crate::failure::Failure;
 use crate::record::Calls;
-use crate::seat::{self, Seat};
+use crate::seat::{self, Cleanups, Seat};
 use std::error::Error;
 use std::fmt;
 use std::panic::{AssertUnwindSafe, catch_unwind, resume_unwind};
@@ -37,6 +38,7 @@ pub struct Body<'p> {
     /// Whether the body is the check of `rejects`, which a skip ends.
     check: bool,
     state: Mutex<State>,
+    cleanups: Cleanups,
 }
 
 #[derive(Debug, Default)]
@@ -78,6 +80,7 @@ impl<'p> Body<'p> {
             calls,
             check,
             state: Mutex::default(),
+            cleanups: Cleanups::default(),
         }
     }
 
@@ -90,18 +93,25 @@ impl<'p> Body<'p> {
         self.finish(catch_unwind(AssertUnwindSafe(|| body(self))));
     }
 
-    /// Ends a run of a body whose unwinding `outcome` states, and stops the
-    /// seat's handle.
+    /// Ends a run of a body whose unwinding `outcome` states. It stops the
+    /// seat's handle, and then runs the cleanups of the body, the last
+    /// registered first.
     ///
     /// A failure on `check` ends the body without a panic of the assertion.
     /// Any other panic of the body is no failure of the body, so it panics
-    /// again past the assertion.
+    /// again past the assertion once the cleanups have run. The first panic
+    /// of a cleanup does the same when the body did not panic, and the later
+    /// cleanups still run.
     pub fn finish(&self, outcome: std::thread::Result<()>) {
         self.cancellation.cancel();
-        if let Err(payload) = outcome {
-            if !payload.is::<Ended>() {
-                resume_unwind(payload);
+        let mut raised = outcome.err().filter(|payload| !payload.is::<Ended>());
+        self.cleanups.run(|cleanup| {
+            if let Err(payload) = catch_unwind(AssertUnwindSafe(cleanup)) {
+                raised.get_or_insert(payload);
             }
+        });
+        if let Some(payload) = raised {
+            resume_unwind(payload);
         }
     }
 
@@ -187,6 +197,11 @@ impl Seat for Body<'_> {
         }
         self.locked().skip.get_or_insert_with(|| reason.to_owned());
         resume_unwind(Box::new(Ended));
+    }
+
+    /// Keeps `f` until the body ends.
+    fn cleanup(&self, f: Box<dyn FnOnce() + Send>) {
+        self.cleanups.add(f);
     }
 
     fn clock(&self) -> &dyn Clock {

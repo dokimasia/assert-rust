@@ -950,6 +950,11 @@
                 "go": "Context",
                 "typescript": "signalOf"
             },
+            "cleanup": {
+                "go": "Cleanup",
+                "python": "cleanup",
+                "typescript": "cleanup"
+            },
             "fault": {
                 "go": "Fault",
                 "java": "Check.fault",
@@ -2017,6 +2022,14 @@
                 "rust": "records",
                 "typescript": "records"
             },
+            "recorder-seat.run-cleanups": {
+                "go": "RunCleanups",
+                "java": "close",
+                "kotlin": "close",
+                "python": "run_cleanups",
+                "rust": "run_cleanups",
+                "typescript": "runCleanups"
+            },
             "scheduler.run": {
                 "go": "Run",
                 "java": "run",
@@ -2044,6 +2057,14 @@
                 "java": "cancelled",
                 "rust": "cancellation",
                 "typescript": "signal"
+            },
+            "seat.cleanup": {
+                "go": "Cleanup",
+                "java": "cleanup",
+                "kotlin": "cleanup",
+                "python": "cleanup",
+                "rust": "cleanup",
+                "typescript": "cleanup"
             },
             "seat.clock": {
                 "go": "Clock",
@@ -2366,5 +2387,5 @@
             }
         }
     },
-    "version": "13.3.0"
+    "version": "13.4.0"
 }

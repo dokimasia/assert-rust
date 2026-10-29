@@ -82,7 +82,8 @@ pub fn completes_within<'a>(
 /// `interval` on tokio's clock.
 ///
 /// Each attempt runs on a seat of its own, so a failure ends the attempt and
-/// not the test. The body runs at least once, and the wait between two
+/// not the test. The seat of an attempt runs its cleanups before the next
+/// attempt starts. The body runs at least once, and the wait between two
 /// attempts is at least a millisecond. The failure states the number of
 /// attempts and the first failure of the last attempt.
 #[track_caller]

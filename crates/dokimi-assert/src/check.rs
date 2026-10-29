@@ -580,7 +580,8 @@ pub fn is_poisoned<E: Debug>(
 /// `interval`.
 ///
 /// Each attempt runs on a seat of its own, so a failure ends the attempt and
-/// not the test. The body runs at least once. The failure states the number
+/// not the test. The seat of an attempt runs its cleanups before the next
+/// attempt starts. The body runs at least once. The failure states the number
 /// of attempts and the first failure of the last attempt. On the seat's
 /// [`Controlled`](crate::Controlled) clock the assertion advances the clock
 /// between attempts and does not spend real time.
@@ -704,6 +705,10 @@ pub fn max_live_bytes(seat: &dyn Seat, body: impl FnMut(&dyn Fn()), ceiling: u64
 /// call as skipped. The call record states the verdict `skip` and the
 /// reason. `rejects` passes the skip to the seat through [`Seat::skip`], and
 /// returns no records. A check that fails and then skips passes `rejects`.
+///
+/// The seat of the check runs its cleanups when the check ends, before
+/// `rejects` returns. A cleanup that panics panics past `rejects`, once the
+/// later cleanups have run.
 ///
 /// ```
 /// use dokimi_assert::{Recorder, check};

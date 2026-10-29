@@ -9,9 +9,9 @@
 //! end it too. Every later call of the case ends it again, so a body that
 //! catches the end of its case cannot run past it.
 //!
-//! However the body ends, the case runs its cleanups, the last registered
-//! first. A failure in a cleanup fails the case as a failure in the body
-//! does, and the later cleanups still run.
+//! However the body ends, the case stops its cancellation handle and then
+//! runs its cleanups, the last registered first. A failure in a cleanup fails
+//! the case as a failure in the body does, and the later cleanups still run.
 
 use super::engine::case::{
     CaseFault, Drawn, Erased, Failed, Mark, Record, Rendered, Request, Signal, Stop, identity_key,
@@ -23,7 +23,7 @@ use crate::clock::Clock;
 use crate::failure::{Failure, Where};
 use crate::history::History;
 use crate::record::Calls;
-use crate::seat::Seat;
+use crate::seat::{Cleanup, Cleanups, Seat};
 use crate::value::Value;
 use std::error::Error;
 use std::fmt::{self, Debug};
@@ -54,7 +54,6 @@ pub(crate) struct Context<'s> {
 struct Reported {
     identities: Vec<Failed>,
     stopped: Option<Stop>,
-    cleanups: Vec<Box<dyn FnOnce() + Send>>,
 }
 
 /// One call of a property's body.
@@ -80,6 +79,7 @@ pub struct Case<'s> {
     cancellation: Cancel,
     calls: Option<Arc<Calls>>,
     reported: Mutex<Reported>,
+    cleanups: Cleanups,
     /// The steps of the case's walk so far, which each call of the body
     /// records, so a walk that stops the case cuts the later calls.
     steps: Arc<AtomicUsize>,
@@ -124,6 +124,7 @@ impl<'s> Case<'s> {
             cancellation,
             calls,
             reported: Mutex::default(),
+            cleanups: Cleanups::default(),
             steps,
             history: History::new(),
         }
@@ -356,9 +357,10 @@ impl<'s> Case<'s> {
     }
 
     /// Registers `f` to run when the case ends, after the body, however it
-    /// ends. The last registered cleanup runs first.
+    /// ends. The case stops its cancellation handle before the first cleanup,
+    /// and the last registered cleanup runs first.
     pub fn cleanup(&self, f: impl FnOnce() + Send + 'static) {
-        locked(&self.reported).cleanups.push(Box::new(f));
+        self.cleanups.add(Box::new(f));
     }
 
     /// Returns a source of random values whose every value is a choice of the
@@ -384,11 +386,10 @@ impl<'s> Case<'s> {
         }
     }
 
-    /// Takes the cleanups that have not run, the last registered first.
-    pub(crate) fn take_cleanups(&self) -> Vec<Box<dyn FnOnce() + Send>> {
-        let mut cleanups = std::mem::take(&mut locked(&self.reported).cleanups);
-        cleanups.reverse();
-        cleanups
+    /// Passes each cleanup that has not run to `each`, the last registered
+    /// first.
+    pub(crate) fn run_cleanups(&self, each: impl FnMut(Cleanup)) {
+        self.cleanups.run(each);
     }
 
     /// Stops the case's cancellation handle, as the end of the case does.
@@ -522,6 +523,11 @@ impl Seat for Case<'_> {
     /// Ends the run of the property as skipped, as [`Case::skip`] does.
     fn skip(&self, reason: &str) {
         Case::skip(self, reason);
+    }
+
+    /// Registers `f` to run when the case ends, as [`Case::cleanup`] does.
+    fn cleanup(&self, f: Box<dyn FnOnce() + Send>) {
+        self.cleanups.add(f);
     }
 
     fn clock(&self) -> &dyn Clock {

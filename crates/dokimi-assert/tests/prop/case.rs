@@ -4,7 +4,7 @@
 //! The spec of `prop::case`, one call of a property's body and the seat of
 //! its assertions.
 
-use crate::helpers::records;
+use crate::helpers::{Trace, records};
 use dokimi_assert::prop::engine::harness;
 use dokimi_assert::prop::{self, Case};
 use dokimi_assert::{Cancel, Clock, Controlled, Recorder, Seat, Stop, check, fault, soft};
@@ -202,6 +202,48 @@ mod cleanup {
         );
         let order = order.lock().expect("no cleanup panicked").clone();
         assert_eq!(&order[..2], ["second", "first"]);
+    }
+
+    #[test]
+    fn cancels_the_handle_of_the_case_before_its_first_cleanup() {
+        let reasons = Arc::new(Mutex::new(Vec::new()));
+        let seen = Arc::clone(&reasons);
+        let seat = Recorder::new();
+        prop::for_all(
+            &seat,
+            "the cleanups run",
+            prop::hermetic().seed(1).cases(1).store(""),
+            move |c| {
+                let _ = c.draw(&prop::boolean(), "flag");
+                let handle = c.cancellation().clone();
+                let seen = Arc::clone(&seen);
+                c.cleanup(move || {
+                    seen.lock()
+                        .expect("no cleanup panicked")
+                        .push(handle.reason());
+                });
+            },
+        );
+        let reasons = reasons.lock().expect("no cleanup panicked").clone();
+        assert_eq!(reasons[0], Some(Stop::Cancelled));
+    }
+
+    #[test]
+    fn runs_a_cleanup_that_its_seat_registers() {
+        let trace = Trace::default();
+        let seat = Recorder::new();
+        let registering = trace.clone();
+        prop::for_all(
+            &seat,
+            "the cleanups run",
+            prop::hermetic().seed(1).cases(1).store(""),
+            move |c| {
+                let _ = c.draw(&prop::boolean(), "flag");
+                let case: &dyn Seat = c;
+                case.cleanup(registering.cleanup("cleaned"));
+            },
+        );
+        assert_eq!(trace.ran()[0], "cleaned");
     }
 
     #[test]

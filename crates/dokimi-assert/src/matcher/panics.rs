@@ -45,8 +45,15 @@ pub(crate) fn intern(file: &str) -> &'static str {
 /// The hook belongs to the process and libtest runs tests on parallel
 /// threads, so a hook that an assertion swapped in for its own call would
 /// also silence another test's panic. The installed hook asks the thread.
+///
+/// The hook cannot change while the thread unwinds, so the call returns at
+/// once there. A drop that runs a cleanup during the unwinding keeps the hook
+/// of the process.
 fn install() {
     static INSTALLED: Once = Once::new();
+    if std::thread::panicking() {
+        return;
+    }
     INSTALLED.call_once(|| {
         let previous = std::panic::take_hook();
         std::panic::set_hook(Box::new(move |info| {

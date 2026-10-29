@@ -216,10 +216,8 @@ fn once<'s>(body: Body<'_, 's>, case: Case<'s>) -> Result<Execution, Fault> {
         }
     };
     settle(quietly(|| body(&case)));
-    for cleanup in case.take_cleanups() {
-        settle(quietly(cleanup));
-    }
     case.finish();
+    case.run_cleanups(|cleanup| settle(quietly(cleanup)));
     match &ended {
         Some(Stop::Trace(refused)) => return Err(Fault::Trace(refused.clone())),
         Some(Stop::Fault(text)) => return Err(Fault::Run(text.clone())),

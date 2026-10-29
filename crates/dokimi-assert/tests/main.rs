@@ -167,6 +167,8 @@ mod naming_table {
             assertion: "true",
             contract: "c",
         });
+        seat.cleanup(Box::new(|| {}));
+        seat.run_cleanups();
         let _ = (seat.clock(), seat.cancellation());
         let _ = (
             seat.failed(),

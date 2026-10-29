@@ -1,8 +1,8 @@
 {
-    "commit": "f4960ece4bb7831c6c0353f4a283151d31f2ba59",
-    "digest": "sha256:61ca8a09719e2e35bbd0b201f8a359c5b471af2fbe57955bfcf44c87d37a9ea5",
+    "commit": "046bf8bb09aee40c7a1a44c40a849f5d6c162d02",
+    "digest": "sha256:13b4ee6d24283e16a2f18a0c4820f59f5512630e043d80d93eb7ad251ab1b066",
     "files": {
-        "VERSION": "sha256:bb6aade8c4ca40cae9cb1be8abe12377f651fccd82954af74ec61703b6608fc5",
+        "VERSION": "sha256:e33b1aa60ace4e0de3252aefaa5a12c01bae8c0370658705b2cebdfb2b257844",
         "corpus/accumulates.json": "sha256:9ac2967d84157a9b57d3fb59ef75378e60495ced35194ba170bf216deb0e3daf",
         "corpus/after-close.json": "sha256:c7df47d3ef812973763b2191caa55180c1d2536710873bb420ff8d4e79da6506",
         "corpus/associative.json": "sha256:41169311a5d852966b84a14702a528a8f99591e82c734d32017fc6586bae56e9",
@@ -71,9 +71,9 @@
         "corpus/throws.json": "sha256:40dd385108c7ada8c0ce236a79c13db2da23e8e142f2fa5947fcce1623e7e365",
         "corpus/total.json": "sha256:ee76e6bd97358d2576dd24dc9d32949cdce5b46484635237a1a4c0e043322cb3",
         "corpus/true.json": "sha256:43e01f045228fd01449d2abad5c07b50b8d700fd6c986e6877a4f192ff86b616",
-        "overlays/rust.json": "sha256:f449f75ab7bdc8d66d83aef478aa12aef245c9ca200d67f6617a25d0725658d0",
-        "spec/assertions.json": "sha256:8e4cdb24259cff54e288aebfc72889855a6331751e63be815c8c272e88e08459",
-        "spec/naming.json": "sha256:1bd37558166ec04f6cfeef408ce4f5ce501e12bc6633c5345ee1fa64c91791ac",
+        "overlays/rust.json": "sha256:64ce248f5e2f4b156423e305f86b22d8ecffc7fb5a745a0feb86ffc11db91617",
+        "spec/assertions.json": "sha256:240283cf31d77c9b64b82f707adddf123e93d123b7c774ae911ec9141c028540",
+        "spec/naming.json": "sha256:46a2e4adfb60b4648090f9659a3761836cb3cf0ec85c9998153df8bd492b2fba",
         "spec/zones.json": "sha256:6eb1d994a1e2d727161582e20dee8cd429073fa561c06f8eb7442c20f810f6c6"
     },
     "languages": {
@@ -82,5 +82,5 @@
         ]
     },
     "repo": "dokimasia/assert-spec",
-    "version": "13.3.0"
+    "version": "13.4.0"
 }
