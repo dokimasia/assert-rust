@@ -1,5 +1,5 @@
 {
-  "ergon": "0.16.0",
+  "ergon": "0.17.0",
   "files": [
     {
       "path": ".commitlint.yaml",
@@ -60,7 +60,7 @@
     {
       "path": ".github/workflows/baseline.yml",
       "producer": "github",
-      "sha256": "f78236a5bf27947e6603195add5025efba2850bf85f5654e75f6d3987814c42c"
+      "sha256": "ed9bddd96e5f913127d61535451cea1550d0ca0994c7f3ca411974bb67f01d15"
     },
     {
       "path": ".github/workflows/ci.yml",
@@ -71,12 +71,12 @@
     {
       "path": ".github/workflows/codeql.yml",
       "producer": "github",
-      "sha256": "44bf7e0dd658b827245ecb414e0d08cea163da8b970ac18b4f5052ccd2da2b19"
+      "sha256": "e67384326c9ba0c296dbda490c4a18ef6cb3fc685490ee155eb8c5950afe685e"
     },
     {
       "path": ".github/workflows/nightly.yml",
       "producer": "github",
-      "sha256": "0e8789278515e3cdb3dc43db680f662c708e0082ec51756556a299e03e92e937"
+      "sha256": "c9b6249e77ef9bfcd5c8e5d064d5417464d71c48c56f45e9eeca1f63011790d6"
     },
     {
       "path": ".github/workflows/release.yml",
@@ -86,12 +86,12 @@
     {
       "path": ".github/workflows/security.yml",
       "producer": "github",
-      "sha256": "165a7086bb19fc3057c15e1dc464df53f9fb6ca703ff20220864a13ae1de81c7"
+      "sha256": "2ebb0f3b9af37a95d158bd69091d3b0c8be18e1a24b41ebcdeea0bb904d72e4c"
     },
     {
       "path": ".github/workflows/version.yml",
       "producer": "github",
-      "sha256": "88bc144f2397b42e02b9b011a9b90c8594182e7d71358a2e58ae522933e3b9e6"
+      "sha256": "3f128b4e6721302c13d09fdc86e5507459e3d64d8b51a001cb86180a05cb27ad"
     },
     {
       "path": ".gitignore",
@@ -157,11 +157,11 @@
     },
     "common.tools.commitlint.version": "0.12.0",
     "common.tools.rumdl.sha256": {
-      "darwin/arm64": "8c0ecf93a61bf612df5f6c6f22813d066a6f51a5680f3c12da49b93ed892aebb",
-      "linux/amd64": "a85ae77c6880616118e10dda1e36292df59815bcfbf767201736ff6971213cf3",
-      "windows/amd64": "07d12118c143976fadaaf7d053ac6be328798ce3b59b3f774572ac946b123672"
+      "darwin/arm64": "bc62f4176dd9257547c939fa152b535b6f393365acd352fcfd94e5e19a792bb4",
+      "linux/amd64": "6c90c398f04c11a09dcbd2da08bdaa6d53d9b14393e3cd32dbdf4da5620eec5c",
+      "windows/amd64": "72ed0bd3912560758cfc66cb439a2804755a858573e605cd3d1e65e8aa79d2a1"
     },
-    "common.tools.rumdl.version": "0.2.79",
+    "common.tools.rumdl.version": "0.3.0",
     "github.ci.actions.attest.commit": "1e69f48acb82d1966a394da916b4c1698aa569d6",
     "github.ci.actions.attest.release": "v4.2.2",
     "github.ci.actions.attest.uses": "actions/attest",
@@ -171,11 +171,11 @@
     "github.ci.actions.checkout.commit": "3d3c42e5aac5ba805825da76410c181273ba90b1",
     "github.ci.actions.checkout.release": "v7.0.1",
     "github.ci.actions.checkout.uses": "actions/checkout",
-    "github.ci.actions.codeql.commit": "2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2",
-    "github.ci.actions.codeql.release": "v4.38.2",
+    "github.ci.actions.codeql.commit": "9b3254085494b55a0f7c4c2b3d2d52cc712ce370",
+    "github.ci.actions.codeql.release": "v4.39.1",
     "github.ci.actions.codeql.uses": "github/codeql-action",
-    "github.ci.actions.create-github-app-token.commit": "bcd2ba49218906704ab6c1aa796996da409d3eb1",
-    "github.ci.actions.create-github-app-token.release": "v3.2.0",
+    "github.ci.actions.create-github-app-token.commit": "64ab729a6294000f5aa4a4bc0b73d1f32bc45510",
+    "github.ci.actions.create-github-app-token.release": "v3.3.0",
     "github.ci.actions.create-github-app-token.uses": "actions/create-github-app-token",
     "github.ci.actions.dependency-review.commit": "a1d282b36b6f3519aa1f3fc636f609c47dddb294",
     "github.ci.actions.dependency-review.release": "v5.0.0",
@@ -183,8 +183,8 @@
     "github.ci.actions.download-artifact.commit": "9000827ccba6bdab643e8b6fd33ac0654aef8333",
     "github.ci.actions.download-artifact.release": "v8.0.2",
     "github.ci.actions.download-artifact.uses": "actions/download-artifact",
-    "github.ci.actions.scorecard.commit": "2d1146689b8cda280b9bc96326124645441f03bc",
-    "github.ci.actions.scorecard.release": "v2.4.4",
+    "github.ci.actions.scorecard.commit": "fa7117db83c52d787ae5a89f350999701505d78e",
+    "github.ci.actions.scorecard.release": "v2.5.0",
     "github.ci.actions.scorecard.uses": "ossf/scorecard-action",
     "github.ci.actions.upload-artifact.commit": "cf430e030ddbb5b0abf93d22962f4752f3646cd9",
     "github.ci.actions.upload-artifact.release": "v7.0.2",
