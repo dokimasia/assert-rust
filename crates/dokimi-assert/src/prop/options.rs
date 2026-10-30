@@ -9,6 +9,7 @@ use super::engine::case::MAX_CHOICES;
 use super::engine::runner::{DEFAULT_CASES, Requirement};
 use super::engine::shrink::DEFAULT_BUDGET;
 use super::generator::Generator;
+use super::result::RunResult;
 use super::scope::Using;
 use std::fmt::{self, Debug};
 use std::path::{Path, PathBuf};
@@ -21,6 +22,9 @@ const DEFAULT_SHRINK_TIME: Duration = Duration::from_secs(30);
 /// A wrapper of each run of a property's body: it calls the run once, inside
 /// an environment that it chooses, and returns after the run returns.
 pub(crate) type Wrapper = Arc<dyn Fn(&mut dyn FnMut()) + Send + Sync>;
+
+/// A function that receives the result of each run of a property.
+pub(crate) type OnResult = Arc<dyn Fn(&RunResult) + Send + Sync>;
 
 /// The settings of a property over inputs of type `T`.
 ///
@@ -55,6 +59,7 @@ pub struct Options<T = ()> {
     pub(crate) workers: usize,
     pub(crate) hermetic: bool,
     pub(crate) around: Option<Wrapper>,
+    pub(crate) on_result: Option<OnResult>,
     pub(crate) draws: Option<String>,
     pub(crate) using: Using,
     pub(crate) examples: Vec<Vec<T>>,
@@ -75,6 +80,7 @@ impl<T: Clone> Clone for Options<T> {
             workers: self.workers,
             hermetic: self.hermetic,
             around: self.around.clone(),
+            on_result: self.on_result.clone(),
             draws: self.draws.clone(),
             using: self.using.clone(),
             examples: self.examples.clone(),
@@ -118,6 +124,7 @@ impl<T> Default for Options<T> {
             workers: 1,
             hermetic: false,
             around: None,
+            on_result: None,
             draws: None,
             using: Using::default(),
             examples: Vec::new(),
@@ -243,6 +250,23 @@ impl<T> Options<T> {
         self
     }
 
+    /// Hands the result of each run to `f`, after the run ends and before the
+    /// call reports its verdict.
+    ///
+    /// A call of [`for_all`](crate::prop::for_all) or of a property form calls
+    /// `f` once, and so does each call that [`fuzz`](crate::prop::fuzz) makes,
+    /// such as the call of an input. `f` runs on the thread of the call,
+    /// whatever the number of workers. The seat receives the failure of a
+    /// failing run after `f` returns, so `f` also receives the result of a run
+    /// that fails the test. A run that a fault ends does not call `f`, and
+    /// neither does a call that a fault ends before its run. A panic of `f`
+    /// passes through the call, and the call then does not report a verdict. A
+    /// second `on_result` replaces the first.
+    pub fn on_result(mut self, f: impl Fn(&RunResult) + Send + Sync + 'static) -> Self {
+        self.on_result = Some(Arc::new(f));
+        self
+    }
+
     /// States the draws and the machine steps of a case that runs first, as
     /// a JSON array of entries: `{"label": …, "value": …}` with a typed
     /// literal for a draw, and `{"step": …}` for a step.
@@ -306,6 +330,7 @@ impl<T> Options<T> {
             && self.workers == 1
             && !self.hermetic
             && self.around.is_none()
+            && self.on_result.is_none()
             && self.draws.is_none()
             && self.examples.is_empty()
     }
@@ -400,6 +425,11 @@ pub fn hermetic<T>() -> Options<T> {
 /// Returns the settings with a wrapper of each run of the body.
 pub fn around<T>(wrapper: impl Fn(&mut dyn FnMut()) + Send + Sync + 'static) -> Options<T> {
     Options::default().around(wrapper)
+}
+
+/// Returns the settings with a function that receives the result of each run.
+pub fn on_result<T>(f: impl Fn(&RunResult) + Send + Sync + 'static) -> Options<T> {
+    Options::default().on_result(f)
 }
 
 /// Returns the settings with the draws and steps of a case that runs first.

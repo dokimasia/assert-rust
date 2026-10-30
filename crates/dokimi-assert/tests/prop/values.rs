@@ -112,10 +112,13 @@ mod values {
     #[test]
     fn panics_for_a_setting_other_than_using() {
         let digits = prop::integer(0..=9_u8);
-        assert_eq!(
-            panic_of(|| drop(prop::values(&digits, 42, 3, prop::seed(1)))).as_deref(),
-            Some("prop: values(generator, 42, 3) states a setting other than using")
-        );
+        let tests: [Options; 2] = [prop::seed(1), prop::on_result(|_| {})];
+        for tt in tests {
+            assert_eq!(
+                panic_of(|| drop(prop::values(&digits, 42, 3, tt))).as_deref(),
+                Some("prop: values(generator, 42, 3) states a setting other than using")
+            );
+        }
     }
 
     #[test]

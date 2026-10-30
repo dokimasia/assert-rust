@@ -83,22 +83,22 @@ mod naming_table {
         is_serializable as _, memo_limit as _, spec_from as _, time_limit as _, workers as _,
     };
     use dokimi_assert::prop::{
-        self, Case, Generator, accumulates as _, around as _, boolean as _, bytes as _, cases as _,
-        close_to as _, composite as _, contains as _, contains_in_order as _, dict as _,
-        does_not_panic as _, draws as _, duration as _, equal as _, error_as as _, error_is as _,
-        error_is_not as _, example as _, examples as _, explain as _, float as _, for_all as _,
-        fuzz as _, has_error as _, has_prefix as _, has_suffix as _, hermetic as _,
+        self, Case, Generator, RunResult, accumulates as _, around as _, boolean as _, bytes as _,
+        cases as _, close_to as _, composite as _, contains as _, contains_in_order as _,
+        dict as _, does_not_panic as _, draws as _, duration as _, equal as _, error_as as _,
+        error_is as _, error_is_not as _, example as _, examples as _, explain as _, float as _,
+        for_all as _, fuzz as _, has_error as _, has_prefix as _, has_suffix as _, hermetic as _,
         honours_cancellation as _, honours_deadline as _, in_range as _, integer as _,
         is_associative as _, is_commutative as _, is_deterministic as _, is_empty as _,
         is_false as _, is_idempotent as _, is_none as _, is_not_empty as _, is_not_pure as _,
         is_permutation as _, is_pure as _, is_some as _, is_true as _, just as _, length as _,
         list as _, matches as _, max_allocs as _, max_allocs_with_setup as _, max_choices as _,
         no_error as _, none_handle_safe as _, not_contains as _, not_equal as _, of as _,
-        of_shape as _, one_of as _, optional as _, pairwise as _, panics as _, permutation as _,
-        recursive as _, register as _, register_values as _, register_variants as _, replay as _,
-        require as _, round_trip as _, run_seed as _, sampled_from as _, seed as _, shape_of as _,
-        shrink as _, shrink_time as _, store as _, string as _, string_matching as _, using as _,
-        values as _, workers as _,
+        of_shape as _, on_result as _, one_of as _, optional as _, pairwise as _, panics as _,
+        permutation as _, recursive as _, register as _, register_values as _,
+        register_variants as _, replay as _, require as _, round_trip as _, run_seed as _,
+        sampled_from as _, seed as _, shape_of as _, shrink as _, shrink_time as _, store as _,
+        string as _, string_matching as _, using as _, values as _, workers as _,
     };
     use dokimi_assert::soft::{
         accumulates as _, close_to as _, completes_within as _, contains as _,
@@ -155,6 +155,7 @@ mod naming_table {
         clock: &Controlled,
         failure: &Failure,
         case: &Case<'_>,
+        result: &RunResult,
     ) {
         seat.helper();
         seat.fail("c");
@@ -191,6 +192,10 @@ mod naming_table {
             failure.detail(),
         );
         let _ = (failure.want(), failure.got());
+        let _ = (result.outcome, result.cases, result.rejected, result.seed);
+        let _ = (&result.counterexample, &result.failure, &result.choices);
+        let _ = (&result.others, &result.divergence, &result.coverage);
+        let _ = &result.reason;
         // The loop of a contract is `run`.
         let contract = Contract::new(seat, "c")
             .warmup(1)

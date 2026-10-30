@@ -627,6 +627,13 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   `ci` derive from the contract, or a new random seed. A tool that runs
   many properties under one seed passes the result to `prop::seed` in each
   run.
+- `prop::on_result(f)` hands the `prop::RunResult` of each run to `f`. The
+  call runs `f` after the run ends and before it reports its verdict, so `f`
+  also receives the result of a run that fails the test. The result has the
+  eleven fields of the detail of the run, such as the outcome, the counts of
+  valid and rejected cases, the seed and the counterexample of a failing
+  case. A tool that runs many properties writes them into a record of its
+  own.
 
 A form takes a type with a derived generator:
 

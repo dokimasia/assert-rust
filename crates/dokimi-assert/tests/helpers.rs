@@ -5,6 +5,7 @@
 
 use dokimi_assert::files::{self, Tree, Workspace};
 use dokimi_assert::history::{Call, History, Operation, Spec};
+use dokimi_assert::prop::RunResult;
 use dokimi_assert::{Collector, Failure, Recorder, Seat, Value};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
@@ -167,6 +168,34 @@ impl Trace {
 
     /// Returns the names in the order in which they ran.
     pub(crate) fn ran(&self) -> Vec<&'static str> {
+        self.0
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .clone()
+    }
+}
+
+/// The results that the functions of `prop::on_result` received, in the
+/// order of the runs. A clone keeps its results in the same list.
+#[derive(Clone, Default)]
+pub(crate) struct Results(Arc<Mutex<Vec<RunResult>>>);
+
+impl Results {
+    /// Returns a function for `prop::on_result` that keeps each result that
+    /// it receives.
+    pub(crate) fn keep(&self) -> impl Fn(&RunResult) + Send + Sync + 'static {
+        let results = self.clone();
+        move |result| {
+            results
+                .0
+                .lock()
+                .unwrap_or_else(PoisonError::into_inner)
+                .push(result.clone());
+        }
+    }
+
+    /// Returns the results in the order in which the runs ended.
+    pub(crate) fn kept(&self) -> Vec<RunResult> {
         self.0
             .lock()
             .unwrap_or_else(PoisonError::into_inner)

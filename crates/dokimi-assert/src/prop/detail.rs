@@ -330,25 +330,25 @@ const FIELDS: [&str; 11] = [
     "reason",
 ];
 
-/// Returns the record of a run that did not pass, and its detail in the form
-/// of a call record.
+/// Returns the record of a run that did not pass, from the detail that
+/// [`detail_json`] returns for the outcome.
 pub(crate) fn record_of(
     outcome: &Outcome,
+    detail: &Json,
     assertion: &'static str,
     contract: &str,
     at: Option<crate::Where>,
-) -> (Failure, Json) {
-    let json = detail_json(outcome);
-    let detail = FIELDS
+) -> Failure {
+    let fields = FIELDS
         .iter()
         .map(|name| {
             (
                 *name,
-                json.get(name).map_or(Value::Null, Value::from_detail),
+                detail.get(name).map_or(Value::Null, Value::from_detail),
             )
         })
         .collect();
-    let mut failure = Failure::new(assertion, contract, detail, at);
+    let mut failure = Failure::new(assertion, contract, fields, at);
     if let Some(record) = outcome
         .failing
         .as_ref()
@@ -358,7 +358,7 @@ pub(crate) fn record_of(
         failure = failure.with_case(record.clone());
     }
     let sentence = sentence(outcome, contract);
-    (failure.with_sentence(sentence), json)
+    failure.with_sentence(sentence)
 }
 
 /// Returns the line of the record of a failed case.

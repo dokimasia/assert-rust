@@ -1283,6 +1283,14 @@
                 "rust": "prop::of_shape",
                 "typescript": "prop.ofShape"
             },
+            "prop.on-result": {
+                "go": "prop.OnResult",
+                "java": "Prop.onResult",
+                "kotlin": "Prop.onResult",
+                "python": "prop.on_result",
+                "rust": "prop::on_result",
+                "typescript": "prop.onResult"
+            },
             "prop.one-of": {
                 "go": "prop.OneOf",
                 "java": "Prop.oneOf",
@@ -2046,6 +2054,94 @@
                 "rust": "run_cleanups",
                 "typescript": "runCleanups"
             },
+            "run-result.cases": {
+                "go": "Cases",
+                "java": "cases",
+                "kotlin": "cases",
+                "python": "cases",
+                "rust": "cases",
+                "typescript": "cases"
+            },
+            "run-result.choices": {
+                "go": "Choices",
+                "java": "choices",
+                "kotlin": "choices",
+                "python": "choices",
+                "rust": "choices",
+                "typescript": "choices"
+            },
+            "run-result.counterexample": {
+                "go": "Counterexample",
+                "java": "counterexample",
+                "kotlin": "counterexample",
+                "python": "counterexample",
+                "rust": "counterexample",
+                "typescript": "counterexample"
+            },
+            "run-result.coverage": {
+                "go": "Coverage",
+                "java": "coverage",
+                "kotlin": "coverage",
+                "python": "coverage",
+                "rust": "coverage",
+                "typescript": "coverage"
+            },
+            "run-result.divergence": {
+                "go": "Divergence",
+                "java": "divergence",
+                "kotlin": "divergence",
+                "python": "divergence",
+                "rust": "divergence",
+                "typescript": "divergence"
+            },
+            "run-result.failure": {
+                "go": "Failure",
+                "java": "failure",
+                "kotlin": "failure",
+                "python": "failure",
+                "rust": "failure",
+                "typescript": "failure"
+            },
+            "run-result.others": {
+                "go": "Others",
+                "java": "others",
+                "kotlin": "others",
+                "python": "others",
+                "rust": "others",
+                "typescript": "others"
+            },
+            "run-result.outcome": {
+                "go": "Outcome",
+                "java": "outcome",
+                "kotlin": "outcome",
+                "python": "outcome",
+                "rust": "outcome",
+                "typescript": "outcome"
+            },
+            "run-result.reason": {
+                "go": "Reason",
+                "java": "reason",
+                "kotlin": "reason",
+                "python": "reason",
+                "rust": "reason",
+                "typescript": "reason"
+            },
+            "run-result.rejected": {
+                "go": "Rejected",
+                "java": "rejected",
+                "kotlin": "rejected",
+                "python": "rejected",
+                "rust": "rejected",
+                "typescript": "rejected"
+            },
+            "run-result.seed": {
+                "go": "Seed",
+                "java": "seed",
+                "kotlin": "seed",
+                "python": "seed",
+                "rust": "seed",
+                "typescript": "seed"
+            },
             "scheduler.run": {
                 "go": "Run",
                 "java": "run",
@@ -2334,6 +2430,14 @@
                 "java": "Reporter",
                 "kotlin": "Reporter"
             },
+            "run-result": {
+                "go": "prop.Result",
+                "java": "RunResult",
+                "kotlin": "RunResult",
+                "python": "prop.Result",
+                "rust": "prop::RunResult",
+                "typescript": "prop.Result"
+            },
             "scheduler": {
                 "go": "stateful.Scheduler",
                 "java": "Scheduler",
@@ -2403,5 +2507,5 @@
             }
         }
     },
-    "version": "13.5.0"
+    "version": "13.6.0"
 }

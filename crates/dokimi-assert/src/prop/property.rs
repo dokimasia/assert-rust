@@ -22,7 +22,8 @@ use super::engine::store::{self, MAX_DEPTH};
 use super::engine::token;
 use super::engine::trace::{Entry, Refusal, TraceError};
 use super::environment;
-use super::options::{Options, Wrapper};
+use super::options::{OnResult, Options, Wrapper};
+use super::result::result_of;
 use super::scope::{self, Generators};
 use crate::json::{self, Json};
 use crate::matcher::panics::{message, quietly};
@@ -205,6 +206,7 @@ pub(crate) struct Property<'c> {
     replay: Option<Vec<Choice>>,
     directory: Option<PathBuf>,
     around: Option<Wrapper>,
+    on_result: Option<OnResult>,
     /// The generators that `using` gives types in the runs, or `None` for
     /// runs that state none.
     using: Option<Arc<Generators>>,
@@ -244,6 +246,7 @@ impl<'c> Property<'c> {
             replay,
             directory: directory::store_of(test.as_deref(), options.store.as_deref()),
             around: options.around,
+            on_result: options.on_result,
             using: options.using.generators(),
             test,
         })
@@ -582,24 +585,29 @@ impl<'c> Property<'c> {
         }
     }
 
-    /// Reports the outcome as the verdict of the call. A skipped run passes
-    /// the skip to the seat through [`Seat::skip`], and its call record
-    /// states the verdict `skip` and the reason.
+    /// Reports the outcome as the verdict of the call, after the function of
+    /// `on_result` receives the result of the run. A skipped run passes the
+    /// skip to the seat through [`Seat::skip`], and its call record states the
+    /// verdict `skip` and the reason.
     #[track_caller]
     fn report(&self, run: &Run<'_>, outcome: &Outcome) {
         let (assertion, contract) = (self.call.assertion, self.call.contract);
+        let detail = detail_json(outcome);
+        if let Some(on_result) = &self.on_result {
+            on_result(&result_of(outcome, &detail));
+        }
         match outcome.kind {
-            Kind::Passed => run.pass_run(Mode::Fatal, assertion, contract, detail_json(outcome)),
+            Kind::Passed => run.pass_run(Mode::Fatal, assertion, contract, detail),
             Kind::Skipped => run.skip_run(
                 Mode::Fatal,
                 assertion,
                 contract,
-                Some(detail_json(outcome)),
+                Some(detail),
                 outcome.reason.as_deref().unwrap_or_default(),
             ),
             _ => {
-                let (failure, detail) =
-                    record_of(outcome, assertion, contract, Some(run.location()));
+                let failure =
+                    record_of(outcome, &detail, assertion, contract, Some(run.location()));
                 run.fail_run(Mode::Fatal, &failure, detail);
             }
         }

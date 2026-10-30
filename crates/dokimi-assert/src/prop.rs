@@ -39,7 +39,9 @@
 //! The settings of a run are an [`Options`] builder. A free function of the
 //! name of each setting, such as [`cases`] or [`seed`], starts the builder,
 //! and its methods of the same names extend it. [`using`] gives a type
-//! another generator in one run.
+//! another generator in one run. [`on_result`] hands the [`RunResult`] of
+//! each run to a function, so a tool reads the counts, the seed and the
+//! counterexample of each run.
 //!
 //! # Values outside a property
 //!
@@ -70,6 +72,7 @@ mod native;
 pub(crate) mod options;
 pub(crate) mod property;
 pub(crate) mod registry;
+mod result;
 pub(crate) mod scope;
 mod shape;
 mod values;
@@ -93,10 +96,11 @@ pub use generators::{
     one_of, optional, permutation, recursive, sampled_from, string, string_matching,
 };
 pub use options::{
-    Options, around, cases, draws, example, examples, explain, hermetic, max_choices, replay,
-    require, seed, shrink, shrink_time, store, using, workers,
+    Options, around, cases, draws, example, examples, explain, hermetic, max_choices, on_result,
+    replay, require, seed, shrink, shrink_time, store, using, workers,
 };
 pub use property::{for_all, fuzz};
 pub use registry::{Variant, of, register, register_values, register_variants, shape_of};
+pub use result::RunResult;
 pub use shape::{Shape, ShapeError, of_shape};
 pub use values::values;
