@@ -96,9 +96,9 @@ mod naming_table {
         no_error as _, none_handle_safe as _, not_contains as _, not_equal as _, of as _,
         of_shape as _, one_of as _, optional as _, pairwise as _, panics as _, permutation as _,
         recursive as _, register as _, register_values as _, register_variants as _, replay as _,
-        require as _, round_trip as _, sampled_from as _, seed as _, shape_of as _, shrink as _,
-        shrink_time as _, store as _, string as _, string_matching as _, using as _, values as _,
-        workers as _,
+        require as _, round_trip as _, run_seed as _, sampled_from as _, seed as _, shape_of as _,
+        shrink as _, shrink_time as _, store as _, string as _, string_matching as _, using as _,
+        values as _, workers as _,
     };
     use dokimi_assert::soft::{
         accumulates as _, close_to as _, completes_within as _, contains as _,
@@ -119,7 +119,7 @@ mod naming_table {
     };
     use dokimi_assert::{
         Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, System, Value, Where,
-        allocs_checked as _, fault as _,
+        allocs_checked as _, fault as _, write_record as _,
     };
     use std::sync::Arc;
     use std::time::Duration;

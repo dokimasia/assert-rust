@@ -1355,6 +1355,14 @@
                 "rust": "prop::require",
                 "typescript": "prop.require"
             },
+            "prop.run-seed": {
+                "go": "prop.RunSeed",
+                "java": "Prop.runSeed",
+                "kotlin": "Prop.runSeed",
+                "python": "prop.run_seed",
+                "rust": "prop::run_seed",
+                "typescript": "prop.runSeed"
+            },
             "prop.sampled-from": {
                 "go": "prop.SampledFrom",
                 "java": "Prop.sampledFrom",
@@ -1535,6 +1543,14 @@
                 "java": "Check.that",
                 "kotlin": "Check.that",
                 "typescript": "expect"
+            },
+            "write-record": {
+                "go": "WriteRecord",
+                "java": "Check.writeRecord",
+                "kotlin": "Check.writeRecord",
+                "python": "write_record",
+                "rust": "write_record",
+                "typescript": "writeRecord"
             }
         },
         "members": {
@@ -2387,5 +2403,5 @@
             }
         }
     },
-    "version": "13.4.0"
+    "version": "13.5.0"
 }

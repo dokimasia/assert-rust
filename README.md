@@ -621,6 +621,12 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   measures the same inputs in every run. `options` takes `using` alone, so
   the benchmark and a run of the property draw from one domain. A call
   without it passes `Options::default()`.
+- `prop::run_seed(&seat, contract)` returns the seed that a run of
+  `contract` takes without `prop::seed`: the value of
+  `DOKIMI_ASSERT_PROP_SEED`, the seed that a mutation run and the profile
+  `ci` derive from the contract, or a new random seed. A tool that runs
+  many properties under one seed passes the result to `prop::seed` in each
+  run.
 
 A form takes a type with a derived generator:
 
@@ -890,6 +896,30 @@ and has the binary's name with the suffix `.dokimi-assert.jsonl`, such as
   with a fault.
 - A `Recorder` keeps its records whatever the variable states, and
   `Recorder::records` returns them.
+
+A tool of dokimasia writes its own records beside the call records with
+`write_record`. The records of a kind are the lines of a file beside the
+test binary, named after the binary with the kind in place of
+`dokimi-assert`, such as `api-0a1b2c3d4e5f6a7b.dokimi-suite.jsonl`. The kind
+matches `dokimi\.[a-z][a-z0-9-]*`, and the tool writes the name of the test
+into a field of its record:
+
+```rust
+use dokimi_assert::{Collector, write_record};
+
+#[test]
+fn ledger_suite() {
+    let t = Collector::new();
+    write_record(&t, "dokimi.suite", r#"{"test":"ledger_suite","seed":"7"}"#);
+}
+```
+
+- A `Collector` and a `Standard` write the record in a test. A `Recorder`
+  does not write it.
+- `write_record` ignores `DOKIMI_ASSERT_RECORD`, and replaces each line
+  break of a record with a space.
+- A kind outside the pattern, the kind `dokimi.assert` of the call records
+  and a record that is not one JSON object end the call with a fault.
 
 ## The standard
 

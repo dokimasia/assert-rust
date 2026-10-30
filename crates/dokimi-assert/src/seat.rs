@@ -7,9 +7,10 @@
 use crate::cancel::Cancel;
 use crate::clock::{Clock, SHARED};
 use crate::failure::{Failure, Where};
+use crate::json::{self, Json};
 use crate::matcher::panics::{last_location, message, quietly};
 use crate::record::{self, Calls, Switch};
-use crate::verdict::Fault;
+use crate::verdict::{self, Fault};
 use std::error::Error;
 use std::fmt::{self, Write as _};
 use std::panic::Location;
@@ -265,6 +266,83 @@ pub struct Call<'c> {
 pub fn fault(seat: &dyn Seat, error: impl Error + Send + Sync + 'static) {
     seat.helper();
     seat.report_fault(Arc::new(error), true);
+}
+
+/// The deepest nesting of a record that [`write_record`] accepts.
+const RECORD_DEPTH: usize = 512;
+
+/// Writes `record`, the JSON text of one record of `kind`, to the artifact of
+/// the test of `seat`.
+///
+/// The artifact of a kind is a file beside the test binary. Its name is the
+/// name of the binary, the kind with each dot replaced by a dash, and
+/// `.jsonl`, so the records of `dokimi.suite` are in
+/// `<binary>.dokimi-suite.jsonl`. The first record of a kind in a run of the
+/// binary creates the file anew. Each record is one line of the file, so
+/// `write_record` replaces each line break of `record` with a space. The JSON
+/// value of the record stays the same. A tool of dokimasia writes its own
+/// records beside the call records this way, and writes the name of the test
+/// into a field of its record:
+///
+/// ```
+/// use dokimi_assert::{Collector, write_record};
+///
+/// let t = Collector::new();
+/// write_record(&t, "dokimi.suite", r#"{"test":"ledger::suite","seed":"7"}"#);
+/// ```
+///
+/// A [`Collector`] and a [`Standard`] write the record in a test that libtest
+/// runs. A [`Recorder`], the case of a property, the seat that `rejects` or
+/// `eventually` hands a body and a seat outside a test do not write it.
+/// `write_record` ignores `DOKIMI_ASSERT_RECORD`.
+///
+/// `write_record` ends the call with a fault, as [`fault`] ends one, and does
+/// not write the record in these cases:
+///
+/// - `kind` does not match `dokimi\.[a-z][a-z0-9-]*`.
+/// - `kind` is `dokimi.assert`, the kind of the call records of this crate.
+/// - `record` is not the JSON text of one object. The JSON reader of this
+///   crate also refuses a name that repeats within an object, and a nesting
+///   deeper than 512 levels.
+#[track_caller]
+pub fn write_record(seat: &dyn Seat, kind: &str, record: &str) {
+    seat.helper();
+    if let Some(refused) = refusal(kind, record) {
+        verdict::end(seat, format_args!("write_record: {refused}"));
+        return;
+    }
+    if seat.test().is_some() {
+        record::artifact::write(kind, &record.replace(['\r', '\n'], " "));
+    }
+}
+
+/// Returns the fault of a kind or a record that [`write_record`] refuses, and
+/// `None` for a kind and a record that it writes.
+fn refusal(kind: &str, record: &str) -> Option<String> {
+    if !is_kind(kind) {
+        return Some(format!(
+            r"kind: {kind:?} does not match dokimi\.[a-z][a-z0-9-]*"
+        ));
+    }
+    if kind == record::CALL_KIND {
+        return Some(format!(
+            "kind: {kind} is the kind of the call records of assert"
+        ));
+    }
+    match json::parse(record, RECORD_DEPTH) {
+        Ok(Json::Object(_)) => None,
+        _ => Some("record: the record is not one JSON object".to_owned()),
+    }
+}
+
+/// Returns `true` when `kind` matches `dokimi\.[a-z][a-z0-9-]*`.
+fn is_kind(kind: &str) -> bool {
+    let Some(rest) = kind.strip_prefix("dokimi.") else {
+        return false;
+    };
+    let mut bytes = rest.bytes();
+    bytes.next().is_some_and(|first| first.is_ascii_lowercase())
+        && bytes.all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
 }
 
 /// Writes the reason of a skip to the standard error, as the default of

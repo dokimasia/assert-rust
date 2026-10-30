@@ -17,6 +17,9 @@
 //! A seat observes the same calls through `Seat::observe_call`. A seat that
 //! keeps no record has calls that drop each record, so a call on it that
 //! runs a body still takes the calls of the body in order.
+//!
+//! A record of another kind, which `write_record` writes, is a line of the
+//! artifact of its kind beside the same binary.
 
 use crate::failure::Where;
 use crate::json::Json;
@@ -29,13 +32,13 @@ use std::sync::{Arc, LazyLock, Mutex, MutexGuard, OnceLock, PoisonError};
 /// that the conformance crate vendors. The published crate does not contain
 /// that copy, so the specs compare this constant with the file `VERSION` of
 /// the copy.
-pub(crate) const DEFINITION: &str = "13.4.0";
+pub(crate) const DEFINITION: &str = "13.5.0";
 
 /// The variable that turns recording on.
 pub(crate) const VARIABLE: &str = "DOKIMI_ASSERT_RECORD";
 
-/// The suffix of the artifact's file name.
-pub(crate) const ARTIFACT_SUFFIX: &str = ".dokimi-assert.jsonl";
+/// The kind of the call records.
+pub(crate) const CALL_KIND: &str = "dokimi.assert";
 
 /// What the variable states.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -364,7 +367,7 @@ impl Calls {
         match &state.mode {
             Mode::Writing(_) => {
                 let line = encode(call, place, held.test.as_deref());
-                artifact::write(&line);
+                artifact::write(CALL_KIND, &line);
             }
             Mode::Keeping => {
                 let line = encode(call, place, None);
@@ -488,47 +491,46 @@ impl Slot {
     }
 }
 
-/// The artifact of the test binary.
+/// The artifacts of the test binary, one file for each kind of record.
 pub(crate) mod artifact {
-    use super::{ARTIFACT_SUFFIX, Mutex, PoisonError};
+    use super::{HashMap, LazyLock, Mutex, PoisonError};
     use std::fs::File;
     use std::io::Write as _;
     use std::path::PathBuf;
 
-    /// The state of the artifact's file in this process.
+    /// The state of the file of one kind in this process.
     enum Artifact {
-        /// No record has been written yet.
-        Unopened,
-        /// The file that the first record created anew.
+        /// The file that the first record of the kind created anew.
         Open(File),
         /// The file could not be created, which the standard error states.
         Refused,
     }
 
-    static FILE: Mutex<Artifact> = Mutex::new(Artifact::Unopened);
+    /// The file of each kind that the process wrote a record of.
+    static FILES: LazyLock<Mutex<HashMap<String, Artifact>>> = LazyLock::new(Mutex::default);
 
-    /// Returns the path of the artifact: the path of the test binary with the
-    /// suffix of the artifact.
-    pub(crate) fn path() -> Option<PathBuf> {
+    /// Returns the path of the artifact of `kind` beside the test binary, such
+    /// as `<binary>.dokimi-suite.jsonl` for the kind `dokimi.suite`.
+    pub(crate) fn path(kind: &str) -> Option<PathBuf> {
         let binary = std::env::current_exe().ok()?;
         let mut name = binary.file_name()?.to_os_string();
-        name.push(ARTIFACT_SUFFIX);
+        name.push(format!(".{}.jsonl", kind.replace('.', "-")));
         Some(binary.with_file_name(name))
     }
 
-    /// Writes one line to the artifact. A run whose artifact cannot be
-    /// created states it once on the standard error and keeps running.
-    pub(crate) fn write(line: &str) {
-        let mut file = FILE.lock().unwrap_or_else(PoisonError::into_inner);
-        if let Artifact::Unopened = *file {
-            *file = if let Some(Ok(created)) = path().map(File::create) {
+    /// Writes one line to the artifact of `kind`. A run whose artifact cannot
+    /// be created states it once on the standard error and keeps running.
+    pub(crate) fn write(kind: &str, line: &str) {
+        let mut files = FILES.lock().unwrap_or_else(PoisonError::into_inner);
+        let file = files.entry(kind.to_owned()).or_insert_with(|| {
+            if let Some(Ok(created)) = path(kind).map(File::create) {
                 Artifact::Open(created)
             } else {
-                eprintln!("dokimi-assert: the artifact of the call records cannot be created");
+                eprintln!("dokimi-assert: the artifact of the records of {kind} cannot be created");
                 Artifact::Refused
-            };
-        }
-        if let Artifact::Open(open) = &mut *file {
+            }
+        });
+        if let Artifact::Open(open) = file {
             let _ = writeln!(open, "{line}");
         }
     }

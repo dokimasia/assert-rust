@@ -52,6 +52,8 @@
 //! `DOKIMI_ASSERT_PROP_BUDGET` and `DOKIMI_ASSERT_PROP_REPLAY` set the
 //! defaults of every property of a run. The profile is `default`, `ci` or
 //! `campaign`. [`hermetic`] makes a run ignore the four variables.
+//! [`run_seed`] returns the seed that a run takes without the option
+//! [`seed`], so a tool can run many properties under one seed.
 
 mod arbitrary;
 pub(crate) mod case;
@@ -76,6 +78,7 @@ pub use arbitrary::{Arbitrary, Definitions};
 pub use case::{Case, Rand};
 #[cfg(feature = "derive")]
 pub use dokimi_assert_derive::Arbitrary;
+pub use environment::run_seed;
 pub use forms::{
     accumulates, close_to, contains, contains_in_order, does_not_panic, equal, error_as, error_is,
     error_is_not, has_error, has_prefix, has_suffix, honours_cancellation, honours_deadline,

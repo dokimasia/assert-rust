@@ -75,7 +75,7 @@ pub use failure::{Failure, Where};
 pub use matcher::containment::Contains;
 pub use matcher::numbers::Number;
 pub use matcher::sizes::Container;
-pub use seat::{Call, Collector, Recorder, Seat, Standard, fault};
+pub use seat::{Call, Collector, Recorder, Seat, Standard, fault, write_record};
 pub use value::Value;
 
 /// The items that `dokimi-assert-tokio` builds its assertions from. They are

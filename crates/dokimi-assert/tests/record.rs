@@ -262,7 +262,9 @@ mod artifact {
         );
         let stderr = String::from_utf8_lossy(&output.stderr);
         assert!(
-            stderr.contains("dokimi-assert: the artifact of the call records cannot be created"),
+            stderr.contains(
+                "dokimi-assert: the artifact of the records of dokimi.assert cannot be created"
+            ),
             "{stderr}"
         );
     }

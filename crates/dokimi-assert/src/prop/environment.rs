@@ -21,6 +21,8 @@
 //! campaign and writes no store entry.
 
 use super::engine::source::mix;
+use crate::seat::Seat;
+use crate::verdict;
 use std::collections::hash_map::RandomState;
 use std::hash::{BuildHasher, Hasher};
 
@@ -117,6 +119,42 @@ pub(crate) fn seed(contract: &str, given: Option<u64>, hermetic: bool) -> Result
         return Ok(mix(contract.as_bytes()));
     }
     Ok(random_seed())
+}
+
+/// Returns the seed that a run of `contract` takes without the option
+/// [`seed`](super::seed).
+///
+/// The run is not hermetic. `run_seed` returns the value of
+/// `DOKIMI_ASSERT_PROP_SEED` when the variable is set. In a process of a
+/// mutation run, and under the `ci` profile, it returns the seed that a run
+/// derives from the contract. Otherwise each call returns a new random seed.
+/// A caller that passes the result to `seed` in each of its runs gives every
+/// run the seed that its first run would take:
+///
+/// ```
+/// use dokimi_assert::{Collector, check, prop};
+///
+/// let t = Collector::new();
+/// let seed = prop::run_seed(&t, "the suite of the ledger");
+/// prop::for_all(&t, "a digit is below 10", prop::seed(seed), |c| {
+///     let n = c.draw(&prop::integer(0..=9_u8), "n");
+///     check::is_true(c, n < 10, "the digit is below 10");
+/// });
+/// ```
+///
+/// A malformed `DOKIMI_ASSERT_PROP_SEED` and a profile other than `default`,
+/// `ci` and `campaign` end the call with a fault of `prop::run_seed`, as
+/// [`fault`](crate::fault) ends one. `run_seed` then returns 0.
+#[track_caller]
+pub fn run_seed(seat: &dyn Seat, contract: &str) -> u64 {
+    seat.helper();
+    seed(contract, None, false).unwrap_or_else(|refused| {
+        verdict::end(
+            seat,
+            format_args!("prop::run_seed: {}: {}", refused.at, refused.reason),
+        );
+        0
+    })
 }
 
 /// Returns a seed that differs from run to run: the random keys of the

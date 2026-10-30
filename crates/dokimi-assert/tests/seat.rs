@@ -6,7 +6,7 @@
 use crate::helpers::{Scratch, Trace, failure_of, in_child, panic_of, records};
 use dokimi_assert::{
     Call, Cancel, Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, check, fault,
-    prop, soft,
+    prop, soft, write_record,
 };
 use std::error::Error;
 use std::io;
@@ -279,6 +279,149 @@ mod fault {
     fn marks_the_frame_of_its_caller_as_a_helper() {
         let seat = Recorder::new();
         fault(&seat, io::Error::other("no such service"));
+        assert_eq!(seat.helper_calls(), 1);
+    }
+}
+
+mod write_record {
+    use super::*;
+    use std::path::PathBuf;
+
+    /// The test whose child process writes records of the kind `dokimi.suite`.
+    const CHILD: &str = "seat::write_record::writes_records_on_four_seats";
+
+    /// Returns the path of the artifact of the kind `dokimi.suite` of this
+    /// binary.
+    fn path() -> PathBuf {
+        let binary = std::env::current_exe().expect("the test binary has a path");
+        let mut name = binary
+            .file_name()
+            .expect("the test binary has a name")
+            .to_os_string();
+        name.push(".dokimi-suite.jsonl");
+        binary.with_file_name(name)
+    }
+
+    #[test]
+    #[ignore = "the test of the artifact runs it in a child process"]
+    fn writes_records_on_four_seats() {
+        write_record(&Collector::new(), "dokimi.suite", r#"{"seed":"7"}"#);
+        write_record(&Standard, "dokimi.suite", r#"{"seed":"8"}"#);
+        write_record(&Recorder::new(), "dokimi.suite", r#"{"seed":"9"}"#);
+        write_record(&Collector::new(), "dokimi.suite", "{\r\n\"seed\":\"10\"\n}");
+    }
+
+    #[test]
+    fn writes_each_record_of_a_test_as_a_line_of_the_artifact_of_its_kind() {
+        let _ = std::fs::remove_file(path());
+        let output = in_child(
+            CHILD,
+            &Scratch::new().join(""),
+            &[("DOKIMI_ASSERT_RECORD", "0")],
+        );
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stdout)
+        );
+        let text = std::fs::read_to_string(path()).expect("the child writes the artifact");
+        std::fs::remove_file(path()).expect("the artifact exists");
+        assert_eq!(
+            text,
+            "{\"seed\":\"7\"}\n{\"seed\":\"8\"}\n{  \"seed\":\"10\" }\n"
+        );
+    }
+
+    #[test]
+    fn ends_the_call_with_a_fault_for_a_refused_kind_or_record() {
+        let kind = r"does not match dokimi\.[a-z][a-z0-9-]*";
+        let object = "write_record: record: the record is not one JSON object";
+        let tests = [
+            (
+                "suite",
+                "{}",
+                format!(r#"write_record: kind: "suite" {kind}"#),
+            ),
+            (
+                "dokimi.",
+                "{}",
+                format!(r#"write_record: kind: "dokimi." {kind}"#),
+            ),
+            (
+                "dokimi.1suite",
+                "{}",
+                format!(r#"write_record: kind: "dokimi.1suite" {kind}"#),
+            ),
+            (
+                "dokimi.{suite",
+                "{}",
+                format!(r#"write_record: kind: "dokimi.{{suite" {kind}"#),
+            ),
+            (
+                "dokimi.su{te",
+                "{}",
+                format!(r#"write_record: kind: "dokimi.su{{te" {kind}"#),
+            ),
+            (
+                "dokimi.suIte",
+                "{}",
+                format!(r#"write_record: kind: "dokimi.suIte" {kind}"#),
+            ),
+            (
+                "dokimi.suite.x",
+                "{}",
+                format!(r#"write_record: kind: "dokimi.suite.x" {kind}"#),
+            ),
+            (
+                "dokimi.assert",
+                "{}",
+                "write_record: kind: dokimi.assert is the kind of the call records of assert"
+                    .to_owned(),
+            ),
+            ("dokimi.suite", "[{}]", object.to_owned()),
+            ("dokimi.suite", r#"{"seed":"#, object.to_owned()),
+            ("dokimi.suite", "{} {}", object.to_owned()),
+            (
+                "dokimi.suite",
+                r#"{"seed":"7","seed":"8"}"#,
+                object.to_owned(),
+            ),
+        ];
+        for (give_kind, give_record, want) in tests {
+            let seat = Recorder::new();
+            write_record(&seat, give_kind, give_record);
+            let faults: Vec<String> = seat.faults().iter().map(ToString::to_string).collect();
+            assert_eq!(faults, [want], "{give_kind} {give_record}");
+        }
+    }
+
+    #[test]
+    fn accepts_a_kind_with_each_boundary_character_of_the_pattern() {
+        let seat = Recorder::new();
+        write_record(&seat, "dokimi.zaz-09", "{}");
+        assert_eq!(seat.faults().len(), 0);
+    }
+
+    #[test]
+    fn does_not_write_on_a_recorder() {
+        let seat = Recorder::new();
+        write_record(&seat, "dokimi.suite", r#"{"seed":"7"}"#);
+        assert!(!seat.failed());
+        assert_eq!(seat.records(), [] as [String; 0]);
+    }
+
+    #[test]
+    fn panics_with_the_fault_on_a_standard_seat() {
+        assert_eq!(
+            panic_of(|| write_record(&Standard, "dokimi.assert", "{}")).as_deref(),
+            Some("write_record: kind: dokimi.assert is the kind of the call records of assert")
+        );
+    }
+
+    #[test]
+    fn marks_the_frame_of_its_caller_as_a_helper() {
+        let seat = Recorder::new();
+        write_record(&seat, "dokimi.suite", "{}");
         assert_eq!(seat.helper_calls(), 1);
     }
 }

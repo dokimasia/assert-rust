@@ -14,22 +14,35 @@ const PROPERTY: &str = "prop::environment::child::prints_the_record_of_a_propert
 /// The test of the child process, which runs a hermetic property.
 const HERMETIC: &str = "prop::environment::child::prints_the_record_of_a_hermetic_property";
 
+/// The test of the child process, which prints two seeds of `run_seed`, the
+/// fault of the first call, and the record of a property under the first
+/// seed.
+const RUN_SEED: &str = "prop::environment::child::prints_two_run_seeds_and_a_property_under_one";
+
+/// Runs `test` in a child process with `vars`, and returns what it printed.
+fn printed(test: &str, vars: &[(&str, &str)]) -> String {
+    let dir = Scratch::new();
+    let output = in_child(test, &dir.join(""), vars);
+    String::from_utf8_lossy(&output.stdout).into_owned()
+}
+
+/// Returns the text after `label` on the first line of `printed` that
+/// contains it.
+fn after(printed: &str, label: &str) -> Option<String> {
+    printed
+        .lines()
+        .find_map(|line| line.split_once(label).map(|(_, rest)| rest.to_owned()))
+}
+
 /// Runs `test` in a child process with `vars`, and returns the call record
 /// and the message that it printed.
 fn child(test: &str, vars: &[(&str, &str)]) -> (serde_json::Value, String) {
-    let dir = Scratch::new();
-    let output = in_child(test, &dir.join(""), vars);
-    let printed = String::from_utf8_lossy(&output.stdout).into_owned();
-    let after = |label: &str| {
-        printed
-            .lines()
-            .find_map(|line| line.split_once(label).map(|(_, rest)| rest.to_owned()))
-    };
-    let record = after("record ").map_or_else(
+    let printed = printed(test, vars);
+    let record = after(&printed, "record ").map_or_else(
         || panic!("the child prints its record: {printed}"),
         |json| serde_json::from_str(&json).expect("the record is JSON"),
     );
-    (record, after("message ").unwrap_or_default())
+    (record, after(&printed, "message ").unwrap_or_default())
 }
 
 /// Runs a property on a recorder with `options` and prints its record and
@@ -62,6 +75,104 @@ mod child {
     #[ignore = "a spec of the environment runs it in a child process"]
     fn prints_the_record_of_a_hermetic_property() {
         print_run(prop::hermetic().seed(5));
+    }
+
+    #[test]
+    #[ignore = "a spec of the environment runs it in a child process"]
+    fn prints_two_run_seeds_and_a_property_under_one() {
+        let seat = Recorder::new();
+        let first = prop::run_seed(&seat, "the property of the environment");
+        let second = prop::run_seed(&seat, "the property of the environment");
+        println!("seeds {first} {second}");
+        println!("fault {}", seat.message());
+        print_run(prop::seed(first));
+    }
+}
+
+mod run_seed {
+    use super::*;
+
+    #[test]
+    fn returns_the_seed_of_the_variable_under_any_profile() {
+        let vars = [
+            ("DOKIMI_ASSERT_PROP_SEED", "42"),
+            ("DOKIMI_ASSERT_PROP_PROFILE", "ci"),
+        ];
+        assert_eq!(
+            after(&printed(RUN_SEED, &vars), "seeds ").as_deref(),
+            Some("42 42")
+        );
+    }
+
+    #[test]
+    fn derives_the_seed_from_the_contract_under_the_ci_profile_and_in_a_mutation_run() {
+        let ci = [
+            ("DOKIMI_ASSERT_PROP_SEED", ""),
+            ("DOKIMI_ASSERT_PROP_PROFILE", "ci"),
+        ];
+        let mutated = [
+            ("DOKIMI_ASSERT_PROP_SEED", ""),
+            ("DOKIMI_ASSERT_PROP_PROFILE", ""),
+            ("DOKIMI_MUTATE_MUTANT", "1"),
+        ];
+        let (record, _) = child(PROPERTY, &ci);
+        let seed = record["detail"]["seed"]
+            .as_str()
+            .expect("the record states its seed");
+        let want = format!("{seed} {seed}");
+        assert_eq!(after(&printed(RUN_SEED, &ci), "seeds "), Some(want.clone()));
+        assert_eq!(after(&printed(RUN_SEED, &mutated), "seeds "), Some(want));
+    }
+
+    #[test]
+    fn draws_a_new_random_seed_for_each_call() {
+        let vars = [
+            ("DOKIMI_ASSERT_PROP_SEED", ""),
+            ("DOKIMI_ASSERT_PROP_PROFILE", ""),
+        ];
+        let seeds = after(&printed(RUN_SEED, &vars), "seeds ").expect("the child prints the seeds");
+        let (first, second) = seeds.split_once(' ').expect("the child prints two seeds");
+        assert_ne!(first, second);
+    }
+
+    #[test]
+    fn ends_the_call_with_a_fault_and_returns_0() {
+        let tests = [
+            (
+                ("x", ""),
+                r#"prop::run_seed: DOKIMI_ASSERT_PROP_SEED: "x" is not a decimal number below 2^64"#,
+            ),
+            (
+                ("", "nightly"),
+                r#"prop::run_seed: DOKIMI_ASSERT_PROP_PROFILE: "nightly" is not one of the profiles default, ci and campaign"#,
+            ),
+        ];
+        for ((give_seed, give_profile), want) in tests {
+            let vars = [
+                ("DOKIMI_ASSERT_PROP_SEED", give_seed),
+                ("DOKIMI_ASSERT_PROP_PROFILE", give_profile),
+            ];
+            let printed = printed(RUN_SEED, &vars);
+            assert_eq!(after(&printed, "seeds ").as_deref(), Some("0 0"), "{want}");
+            assert_eq!(after(&printed, "fault ").as_deref(), Some(want));
+        }
+    }
+
+    #[test]
+    fn gives_a_run_the_seed_of_a_run_without_a_seed_option() {
+        let tests = [("42", ""), ("", "ci")];
+        for (give_seed, give_profile) in tests {
+            let vars = [
+                ("DOKIMI_ASSERT_PROP_SEED", give_seed),
+                ("DOKIMI_ASSERT_PROP_PROFILE", give_profile),
+            ];
+            let (without, _) = child(PROPERTY, &vars);
+            let (under, _) = child(RUN_SEED, &vars);
+            assert_eq!(
+                under["detail"]["seed"], without["detail"]["seed"],
+                "{give_seed} {give_profile}"
+            );
+        }
     }
 }
 
