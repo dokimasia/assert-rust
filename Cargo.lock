@@ -128,7 +128,7 @@ dependencies = [
 
 [[package]]
 name = "dokimi-assert"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "dokimi-assert-derive",
@@ -143,7 +143,7 @@ dependencies = [
 
 [[package]]
 name = "dokimi-assert-conformance"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "dokimi-assert",
  "dokimi-assert-tokio",
@@ -156,7 +156,7 @@ dependencies = [
 
 [[package]]
 name = "dokimi-assert-derive"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "dokimi-assert",
  "proc-macro2",
@@ -168,7 +168,7 @@ dependencies = [
 
 [[package]]
 name = "dokimi-assert-tokio"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "dokimi-assert",
  "serde_json",
