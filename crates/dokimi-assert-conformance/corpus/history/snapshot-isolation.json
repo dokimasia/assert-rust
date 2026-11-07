@@ -1755,6 +1755,443 @@
       }
     },
     {
+      "id": "snapshot-isolation/two-transactions-append-to-the-list-that-both-read",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "append"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "append"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "append"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 2
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "txn",
+          "args": [
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "read"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "type": "string",
+                  "value": "append"
+                },
+                {
+                  "type": "string",
+                  "value": "x"
+                },
+                {
+                  "type": "int",
+                  "value": 3
+                }
+              ]
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "list",
+                    "of": "int",
+                    "value": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "append"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "list",
+            "items": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "list",
+                    "of": "int",
+                    "value": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "append"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "anomaly": "lost-update",
+        "kinds": [
+          "lost-update"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 4,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "append"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "list",
+                      "of": "int",
+                      "value": [
+                        1
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "append"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 3,
+            "completion": 5,
+            "kind": "ok",
+            "process": 2,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "append"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "list",
+                      "of": "int",
+                      "value": [
+                        1
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "append"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "cycle": null,
+        "explanation": [
+          {
+            "calls": [
+              2,
+              3
+            ],
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "read": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                1
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "snapshot-isolation/two-transactions-append-to-two-keys-in-opposite-orders",
       "history": [
         {
@@ -10438,13 +10875,191 @@
           }
         }
       ],
-      "expect": "pass",
+      "expect": "fail",
       "detail": {
-        "anomaly": null,
-        "kinds": [],
-        "transactions": null,
+        "anomaly": "lost-update",
+        "kinds": [
+          "lost-update"
+        ],
+        "transactions": [
+          {
+            "call": 2,
+            "completion": 4,
+            "kind": "ok",
+            "process": 1,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "call": 3,
+            "completion": 5,
+            "kind": "ok",
+            "process": 2,
+            "args": [
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "read"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "items": [
+                  {
+                    "type": "string",
+                    "value": "write"
+                  },
+                  {
+                    "type": "string",
+                    "value": "x"
+                  },
+                  {
+                    "type": "int",
+                    "value": 3
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "type": "list",
+              "items": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "read"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "type": "string",
+                      "value": "write"
+                    },
+                    {
+                      "type": "string",
+                      "value": "x"
+                    },
+                    {
+                      "type": "int",
+                      "value": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
         "cycle": null,
-        "explanation": null
+        "explanation": [
+          {
+            "calls": [
+              2,
+              3
+            ],
+            "key": {
+              "type": "string",
+              "value": "x"
+            },
+            "read": {
+              "type": "int",
+              "value": 1
+            }
+          }
+        ]
       }
     },
     {
