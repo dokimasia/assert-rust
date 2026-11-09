@@ -108,8 +108,10 @@ github:
         uses: actions/download-artifact
         commit: 9000827ccba6bdab643e8b6fd33ac0654aef8333
         release: v8.0.2
-      # The action that restores the tool directory of ergon before the steps of each job of ci.yml
-      # that runs tools, and saves it after a run that succeeds.
+      # The action that restores the tool directory of ergon and the caches of a job of ci.yml or
+      # nightly.yml before the steps of the job, and saves them after a run that succeeds. Its
+      # actions restore and save keep a cache that the job saves after every run, also after a run
+      # that fails.
       cache:
         uses: actions/cache
         commit: 55cc8345863c7cc4c66a329aec7e433d2d1c52a9
