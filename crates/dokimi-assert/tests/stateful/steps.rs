@@ -72,6 +72,51 @@ fn logged(log: &Mutex<Vec<String>>) -> Machine<'_, i64> {
     ])
 }
 
+/// Returns a machine of `actions`, in order, each a name and whether the
+/// action has keep set. A step of an action logs its name into `log`, and a
+/// check whether the action is enabled logs its name after "enabled ".
+fn swarmed<'l>(log: &'l Mutex<Vec<String>>, actions: &[(&'static str, bool)]) -> Machine<'l, i64> {
+    Machine::new(actions.iter().map(|&(name, keep)| {
+        let action = Action::new(name, async move |_: &Case<'_>, _: usize| {
+            locked(log).push(name.to_owned());
+        })
+        .enabled(move |_| {
+            locked(log).push(format!("enabled {name}"));
+            true
+        });
+        if keep { action.keep() } else { action }
+    }))
+}
+
+/// Returns the log of the first case of a run of the steps of
+/// [`swarmed`]`(actions)` under `options` and `steps`.
+fn first_log(
+    options: Options,
+    actions: &[(&'static str, bool)],
+    steps: stateful::Options<'static>,
+) -> Vec<String> {
+    let first = Mutex::new(None);
+    let seat = run(options, |c| {
+        let log = Mutex::new(Vec::new());
+        stateful::steps(c, &swarmed(&log, actions), steps);
+        locked(&first).get_or_insert_with(|| locked(&log).clone());
+    });
+    assert!(!seat.failed(), "{}", seat.message());
+    first
+        .into_inner()
+        .unwrap_or_else(PoisonError::into_inner)
+        .unwrap_or_default()
+}
+
+/// Returns the steps of `log`, without its checks whether an action is
+/// enabled.
+fn taken(log: &[String]) -> Vec<&str> {
+    log.iter()
+        .map(String::as_str)
+        .filter(|entry| !entry.starts_with("enabled "))
+        .collect()
+}
+
 /// Returns the fault that ends the run of `machine`'s steps under `steps`
 /// after the trace `draws`.
 fn refusal(draws: &str, steps: stateful::Options<'static>) -> String {
@@ -347,6 +392,42 @@ mod steps {
             Some(&Value::from("rejected"))
         );
     }
+
+    #[test]
+    fn keeps_an_action_with_keep_set_in_every_case() {
+        let (cases, kept) = (AtomicUsize::new(0), AtomicUsize::new(0));
+        let seat = run(Options::default(), |c| {
+            let log = Mutex::new(Vec::new());
+            let machine = swarmed(&log, &[("tick", true), ("tock", false)]);
+            stateful::steps(c, &machine, stateful::max(3));
+            cases.fetch_add(1, Ordering::SeqCst);
+            if locked(&log).iter().any(|entry| entry == "enabled tick") {
+                kept.fetch_add(1, Ordering::SeqCst);
+            }
+        });
+        assert!(!seat.failed(), "{}", seat.message());
+        assert_eq!(kept.load(Ordering::SeqCst), cases.load(Ordering::SeqCst));
+    }
+
+    #[test]
+    fn makes_no_swarm_choice_for_an_action_with_keep_set() {
+        let log = first_log(
+            prop::replay("prop1:AAAAAAABAAAAAA"),
+            &[("a", true), ("b", false), ("c", false)],
+            stateful::max(1),
+        );
+        assert_eq!(taken(&log), ["a"]);
+    }
+
+    #[test]
+    fn makes_no_swarm_choice_for_a_machine_whose_actions_all_have_keep_set() {
+        let log = first_log(
+            prop::replay("prop1:AAEAAQAA"),
+            &[("a", true), ("b", true)],
+            stateful::Options::default(),
+        );
+        assert_eq!(taken(&log), ["b"]);
+    }
 }
 
 mod traces {
@@ -451,6 +532,17 @@ mod traces {
         assert!(!seat.failed(), "{}", seat.message());
         let taken = first.into_inner().unwrap_or_else(PoisonError::into_inner);
         assert_eq!(taken, Some(vec!["increment on 1".to_owned()]));
+    }
+
+    #[test]
+    fn keeps_an_action_with_keep_set_that_no_step_entry_names() {
+        let log = first_log(
+            prop::draws(r#"[{"step": "b"}]"#),
+            &[("a", true), ("b", false), ("c", false)],
+            stateful::max(5),
+        );
+        assert!(log.iter().any(|entry| entry == "enabled a"), "{log:?}");
+        assert_eq!(taken(&log), ["b"]);
     }
 
     #[test]

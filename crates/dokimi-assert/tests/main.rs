@@ -244,10 +244,24 @@ mod naming_table {
             )
         });
         let _ = operation.map(|op| (Count.initial(), Count.next(&0, op), Count.equal(&0, &0)));
+        machines(case);
+        seat.skip("c");
+        // A skip ends the case, so it is the last call.
+        case.skip("c");
+    }
+
+    /// Calls each member of a machine, its actions and its scheduler that the
+    /// table names. Nothing runs the calls.
+    #[expect(
+        dead_code,
+        reason = "the calls name the members, and nothing runs them"
+    )]
+    fn machines(case: &Case<'_>) {
         // An action takes its run in `new`, and its input in `with_input`.
         let put = Action::new("put", async |_, _| {})
             .weight(2)
             .drain()
+            .keep()
             .enabled(|_: &u8| true);
         let _ = put.name();
         let get = Action::with_input("get", |_, _: &u8| 0_u8, async |_, _, _| {});
@@ -262,9 +276,6 @@ mod naming_table {
         let _ = scheduler.clock().now();
         scheduler.run();
         scheduler.advance(Duration::ZERO);
-        seat.skip("c");
-        // A skip ends the case, so it is the last call.
-        case.skip("c");
     }
 
     /// Returns `true` when `source` contains `name` as a whole identifier.

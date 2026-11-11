@@ -110,12 +110,30 @@ fn setup_of(stated: &Json) -> Result<Setup, Disagreement> {
     if let Some(limit) = stated.get("max-releases") {
         strategy = strategy.max_releases(count(limit, "setup.max-releases")?);
     }
+    let keep = match stated.get("keep") {
+        Some(names) => names_of(names)?,
+        None => Vec::new(),
+    };
     Ok(Setup {
         steps,
         clients,
         concurrent,
         strategy,
+        keep,
     })
+}
+
+/// Returns the names of the actions that a setup keeps in every case.
+fn names_of(stated: &Json) -> Result<Vec<String>, Disagreement> {
+    stated
+        .as_array()
+        .and_then(|names| {
+            names
+                .iter()
+                .map(|name| name.as_str().map(str::to_owned))
+                .collect::<Option<Vec<String>>>()
+        })
+        .ok_or_else(|| Disagreement::new("setup.keep", format!("{stated} is no list of names")))
 }
 
 /// Returns the options of the run that a vector's settings state: its seed

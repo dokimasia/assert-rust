@@ -16,6 +16,7 @@ fn setup(steps: Options<'static>) -> Setup {
         clients: 2,
         concurrent: None,
         strategy: stateful::uniform(),
+        keep: Vec::new(),
     }
 }
 

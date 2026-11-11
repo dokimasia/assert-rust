@@ -264,6 +264,74 @@
       "error": null
     },
     {
+      "id": "queue-loses-on-wrap/a-kept-put-takes-no-swarm-choice",
+      "subject": "queue-loses-on-wrap",
+      "setup": {
+        "keep": [
+          "put"
+        ]
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 7,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "label": "capacity",
+            "value": {
+              "type": "int",
+              "value": 2
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "get"
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAIAAQABAAAAAAABAAAAAQABAAE",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
+      },
+      "error": null
+    },
+    {
       "id": "racy-counter/two-increments-on-two-clients-both-return-1",
       "subject": "racy-counter",
       "settings": {

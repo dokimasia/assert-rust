@@ -782,6 +782,9 @@ fn the_register_keeps_its_last_write() {
 - `stateful::steps` takes the steps of a case and makes each decision a
   choice of the case. A failing case then shrinks to the steps that the
   failure needs, and it replays from its token.
+- The swarm of a case keeps each action with odds of 1 in 2.
+  `Action::keep` keeps an action in every case without a choice, such as
+  an action that delivers a message or advances a clock to a due timer.
 - The clients of a concurrent section run on threads by default. A case
   then runs up to `repeat` times, because threads do not replay.
 - A concurrent section averages 5 steps under the default maximum of 16.
@@ -980,7 +983,7 @@ under test.
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
 - The vectors run too: 57 for files, 112 for histories, 443 for properties
-  and 21 for machines. Two more property vectors skip Rust, because its
+  and 22 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.
 - The crates implement all 111 assertions of the definition.

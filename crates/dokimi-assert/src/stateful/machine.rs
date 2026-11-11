@@ -69,6 +69,7 @@ pub struct Action<'a, S> {
     pub(crate) name: String,
     pub(crate) weight: u64,
     pub(crate) drain: bool,
+    pub(crate) keep: bool,
     pub(crate) enabled: Option<Enabled<'a, S>>,
     plan: Box<dyn Plan<S> + 'a>,
 }
@@ -79,6 +80,7 @@ impl<S> fmt::Debug for Action<'_, S> {
             .field("name", &self.name)
             .field("weight", &self.weight)
             .field("drain", &self.drain)
+            .field("keep", &self.keep)
             .field("enabled", &self.enabled.is_some())
             .finish_non_exhaustive()
     }
@@ -92,6 +94,7 @@ impl<'a, S: 'a> Action<'a, S> {
             name: name.to_owned(),
             weight: 1,
             drain: false,
+            keep: false,
             enabled: None,
             plan: Box::new(Plain { run }),
         }
@@ -111,6 +114,7 @@ impl<'a, S: 'a> Action<'a, S> {
             name: name.to_owned(),
             weight: 1,
             drain: false,
+            keep: false,
             enabled: None,
             plan: Box::new(Typed { input, run }),
         }
@@ -129,6 +133,15 @@ impl<'a, S: 'a> Action<'a, S> {
     #[must_use]
     pub fn drain(mut self) -> Self {
         self.drain = true;
+        self
+    }
+
+    /// Makes every case keep the action without a choice of the swarm. An
+    /// action that delivers a message or advances a clock to a due timer
+    /// keeps its subject moving this way.
+    #[must_use]
+    pub fn keep(mut self) -> Self {
+        self.keep = true;
         self
     }
 

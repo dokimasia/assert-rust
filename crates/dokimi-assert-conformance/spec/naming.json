@@ -1632,6 +1632,14 @@
                 "rust": "input",
                 "typescript": "input"
             },
+            "action.keep": {
+                "go": "Keep",
+                "java": "keep",
+                "kotlin": "keep",
+                "python": "keep",
+                "rust": "keep",
+                "typescript": "keep"
+            },
             "action.name": {
                 "go": "Name",
                 "java": "name",
@@ -2591,5 +2599,5 @@
             }
         }
     },
-    "version": "16.1.0"
+    "version": "16.2.0"
 }

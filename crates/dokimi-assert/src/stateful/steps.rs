@@ -83,8 +83,9 @@ struct Run<'r, 'a, S> {
 /// Runs the steps of `machine` in the case `case`, in six parts, and records
 /// every decision as a choice of the case:
 ///
-/// 1. Swarm: one choice per action, in order, whether the case keeps it,
-///    with odds of 1 in 2 conditioned on keeping one. A case keeps every
+/// 1. Swarm: one choice per action without keep, in order, whether the case
+///    keeps it, with odds of 1 in 2 conditioned on keeping one. The case
+///    keeps an action with keep set without a choice. A case keeps every
 ///    action under `swarm(false)`.
 /// 2. Setup: the check of the history, and the invariant.
 /// 3. Sequential steps on client 0. Before each step, the kept actions that
@@ -116,8 +117,8 @@ struct Run<'r, 'a, S> {
 /// contract states that the history of the machine's steps is linearizable.
 ///
 /// The case of `prop::draws` follows its trace: the swarm keeps the actions
-/// that its step entries name, and each step entry becomes the choices of
-/// one step. `steps` refuses a step entry that it cannot take at its
+/// that its step entries name and every action with keep set, and each step
+/// entry becomes the choices of one step. `steps` refuses a step entry that it cannot take at its
 /// position, which ends the run with a fault at the entry: an action that
 /// the step's list lacks, a step past its part's most steps, a client outside
 /// the clients, a concurrent step of a machine with one client, and a drain
@@ -239,8 +240,11 @@ where
         }
     }
 
-    /// Returns the actions that the case keeps, in order. A case that follows
-    /// a trace keeps the actions that its step entries name.
+    /// Returns the actions that the case keeps, in order. The case keeps an
+    /// action with keep set without a choice, and such an action counts as
+    /// kept before the first choice. The remaining actions of each choice
+    /// are then the actions without keep. A case that follows a trace keeps
+    /// the actions that its step entries name.
     fn swarm(&self) -> Vec<&'r Action<'a, S>> {
         let actions = &self.machine.actions;
         if !self.options.swarm {
@@ -253,8 +257,14 @@ where
                 .map(|tracing| tracing.actions())
                 .unwrap_or_default()
         });
+        let marked = actions.iter().any(|action| action.keep);
+        let mut remaining = actions.iter().filter(|action| !action.keep).count();
         let mut kept = Vec::new();
         for (position, action) in actions.iter().enumerate() {
+            if action.keep {
+                kept.push(action);
+                continue;
+            }
             self.at("swarm", Some(position), Some(&action.name));
             if self.traced {
                 let prepared = i128::from(named.contains(&action.name));
@@ -263,8 +273,7 @@ where
                     Ok(())
                 });
             }
-            let earlier = !kept.is_empty();
-            let remaining = actions.len() - position;
+            let earlier = marked || !kept.is_empty();
             let lo = i128::from(!earlier && remaining == 1);
             let request = Request {
                 bounds: Bounds::Integer(IntegerBounds::of(lo, 1)),
@@ -279,6 +288,7 @@ where
             if self.choose(request) == 1 {
                 kept.push(action);
             }
+            remaining -= 1;
         }
         kept
     }

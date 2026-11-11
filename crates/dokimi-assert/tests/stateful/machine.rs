@@ -30,11 +30,12 @@ mod action {
         let action = Action::<i64>::new("reset", async |_, _| {})
             .weight(3)
             .drain()
+            .keep()
             .enabled(|_| true);
         assert_eq!(action.name(), "reset");
         assert_eq!(
             format!("{action:?}"),
-            r#"Action { name: "reset", weight: 3, drain: true, enabled: true, .. }"#
+            r#"Action { name: "reset", weight: 3, drain: true, keep: true, enabled: true, .. }"#
         );
     }
 
@@ -43,7 +44,7 @@ mod action {
         let action = Action::<i64>::with_input("put", |_, _| 1, async |_, _, _: i32| {}).weight(0);
         assert_eq!(
             format!("{action:?}"),
-            r#"Action { name: "put", weight: 1, drain: false, enabled: false, .. }"#
+            r#"Action { name: "put", weight: 1, drain: false, keep: false, enabled: false, .. }"#
         );
     }
 
@@ -77,7 +78,7 @@ mod machine {
             .settle(|_, _| {});
         assert_eq!(
             format!("{machine:?}"),
-            r#"Machine { actions: [Action { name: "read", weight: 1, drain: false, enabled: false, .. }], spec: true, invariant: false, settle: true }"#
+            r#"Machine { actions: [Action { name: "read", weight: 1, drain: false, keep: false, enabled: false, .. }], spec: true, invariant: false, settle: true }"#
         );
     }
 

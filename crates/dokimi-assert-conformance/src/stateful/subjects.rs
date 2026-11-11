@@ -100,9 +100,9 @@ const DURABLE: &str = "the store keeps every acknowledged put";
 const PERIOD: u64 = 4;
 const TICKS: u64 = 4;
 
-/// The options of a subject's steps, those of a concurrent section, and the
-/// strategy of a subject's scheduler.
-#[derive(Debug, Clone, Copy)]
+/// The options of a subject's steps, those of a concurrent section, the
+/// strategy of a subject's scheduler, and the actions that every case keeps.
+#[derive(Debug, Clone)]
 pub struct Setup {
     /// The options that every subject takes: mean, max, swarm and the mean
     /// steps of a concurrent section.
@@ -112,8 +112,10 @@ pub struct Setup {
     /// The most steps of a concurrent section, when the setup states it.
     pub concurrent: Option<usize>,
     /// The strategy of the scheduler that a subject with a concurrent section
-    /// makes in each case.
+    /// or with tasks of its own makes in each case.
     pub strategy: Strategy,
+    /// The names of the actions of the subject that every case keeps.
+    pub keep: Vec<String>,
 }
 
 /// A subject: it builds its subject and runs its machine in a case.
@@ -314,6 +316,20 @@ impl Spec for Ticked {
     }
 }
 
+/// Returns `actions` with keep set on each action that `setup` names.
+fn marked<'a, S: 'a, const N: usize>(
+    setup: &Setup,
+    actions: [Action<'a, S>; N],
+) -> [Action<'a, S>; N] {
+    actions.map(|action| {
+        if setup.keep.iter().any(|name| name == action.name()) {
+            action.keep()
+        } else {
+            action
+        }
+    })
+}
+
 /// Returns the options of a subject whose clients of the concurrent section
 /// run as tasks of `scheduler`.
 fn on_tasks<'s>(setup: &Setup, scheduler: &'s Scheduler<'_>) -> Options<'s> {
@@ -328,20 +344,23 @@ fn on_tasks<'s>(setup: &Setup, scheduler: &'s Scheduler<'_>) -> Options<'s> {
 fn queue(c: &Case<'_>, setup: &Setup, loses_on_wrap: bool) {
     let capacity = c.draw(&prop::integer(1..=8_usize), "capacity");
     let ring = Mutex::new(Ring::new(capacity, loses_on_wrap));
-    let machine = Machine::new([
-        Action::with_input(
-            "put",
-            |c: &Case<'_>, _: &Vec<i64>| c.draw(&prop::integer(0..=1000_i64), "v"),
-            async |c: &Case<'_>, client: usize, value: i64| {
-                let call = c.history().invoke(client, "put", [Value::from(value)], []);
-                call.ok(locked(&ring).put(value));
-            },
-        ),
-        Action::new("get", async |c: &Case<'_>, client: usize| {
-            let call = c.history().invoke(client, "get", [], []);
-            call.ok(locked(&ring).get().map_or(Value::Null, Value::from));
-        }),
-    ])
+    let machine = Machine::new(marked(
+        setup,
+        [
+            Action::with_input(
+                "put",
+                |c: &Case<'_>, _: &Vec<i64>| c.draw(&prop::integer(0..=1000_i64), "v"),
+                async |c: &Case<'_>, client: usize, value: i64| {
+                    let call = c.history().invoke(client, "put", [Value::from(value)], []);
+                    call.ok(locked(&ring).put(value));
+                },
+            ),
+            Action::new("get", async |c: &Case<'_>, client: usize| {
+                let call = c.history().invoke(client, "get", [], []);
+                call.ok(locked(&ring).get().map_or(Value::Null, Value::from));
+            }),
+        ],
+    ))
     .spec(BoundedQueue { capacity });
     stateful::steps(c, &machine, setup.steps);
 }
@@ -349,19 +368,22 @@ fn queue(c: &Case<'_>, setup: &Setup, loses_on_wrap: bool) {
 /// Runs the counter machine over a counter that overflows at [`OVERFLOW`].
 fn counter_overflows(c: &Case<'_>, setup: &Setup) {
     let count = AtomicI64::new(0);
-    let machine = Machine::new([
-        Action::new("increment", async |c: &Case<'_>, client: usize| {
-            let call = c.history().invoke(client, "increment", [], []);
-            let after = (count.load(Ordering::SeqCst) + 1) % OVERFLOW;
-            count.store(after, Ordering::SeqCst);
-            call.ok(after);
-        }),
-        Action::new("reset", async |c: &Case<'_>, client: usize| {
-            let call = c.history().invoke(client, "reset", [], []);
-            count.store(0, Ordering::SeqCst);
-            call.ok(Value::Null);
-        }),
-    ])
+    let machine = Machine::new(marked(
+        setup,
+        [
+            Action::new("increment", async |c: &Case<'_>, client: usize| {
+                let call = c.history().invoke(client, "increment", [], []);
+                let after = (count.load(Ordering::SeqCst) + 1) % OVERFLOW;
+                count.store(after, Ordering::SeqCst);
+                call.ok(after);
+            }),
+            Action::new("reset", async |c: &Case<'_>, client: usize| {
+                let call = c.history().invoke(client, "reset", [], []);
+                count.store(0, Ordering::SeqCst);
+                call.ok(Value::Null);
+            }),
+        ],
+    ))
     .spec(Counter);
     stateful::steps(c, &machine, setup.steps);
 }
@@ -372,32 +394,38 @@ fn store_loses_on_crash(c: &Case<'_>, setup: &Setup) {
     let buffer: Mutex<BTreeMap<i64, i64>> = Mutex::default();
     let acknowledged: Mutex<BTreeMap<i64, i64>> = Mutex::default();
     let written = AtomicI64::new(0);
-    let machine = Machine::new([
-        Action::with_input(
-            "put",
-            |c: &Case<'_>, (): &()| {
-                let key = c.draw(&prop::integer(0..=3_i64), "key");
-                (key, written.fetch_add(1, Ordering::SeqCst) + 1)
-            },
-            async |c: &Case<'_>, client: usize, (key, stored): (i64, i64)| {
-                let call =
-                    c.history()
-                        .invoke(client, "put", [Value::from(key), Value::from(stored)], []);
-                locked(&buffer).insert(key, stored);
-                call.ok(Value::Null);
-                locked(&acknowledged).insert(key, stored);
-            },
-        ),
-        Action::new("flush", async |_: &Case<'_>, _: usize| {
-            let flushed = std::mem::take(&mut *locked(&buffer));
-            locked(&durable).extend(flushed);
-        })
-        .enabled(|(): &()| !locked(&buffer).is_empty())
-        .drain(),
-        Action::new("crash", async |_: &Case<'_>, _: usize| {
-            locked(&buffer).clear();
-        }),
-    ])
+    let machine = Machine::new(marked(
+        setup,
+        [
+            Action::with_input(
+                "put",
+                |c: &Case<'_>, (): &()| {
+                    let key = c.draw(&prop::integer(0..=3_i64), "key");
+                    (key, written.fetch_add(1, Ordering::SeqCst) + 1)
+                },
+                async |c: &Case<'_>, client: usize, (key, stored): (i64, i64)| {
+                    let call = c.history().invoke(
+                        client,
+                        "put",
+                        [Value::from(key), Value::from(stored)],
+                        [],
+                    );
+                    locked(&buffer).insert(key, stored);
+                    call.ok(Value::Null);
+                    locked(&acknowledged).insert(key, stored);
+                },
+            ),
+            Action::new("flush", async |_: &Case<'_>, _: usize| {
+                let flushed = std::mem::take(&mut *locked(&buffer));
+                locked(&durable).extend(flushed);
+            })
+            .enabled(|(): &()| !locked(&buffer).is_empty())
+            .drain(),
+            Action::new("crash", async |_: &Case<'_>, _: usize| {
+                locked(&buffer).clear();
+            }),
+        ],
+    ))
     .settle(|c: &Case<'_>, (): &()| {
         let kept = locked(&durable).clone();
         let lost = locked(&acknowledged)
@@ -420,18 +448,21 @@ fn store_loses_on_crash(c: &Case<'_>, setup: &Setup) {
 fn shared_counter(c: &Case<'_>, setup: &Setup, racy: bool) {
     let scheduler = Scheduler::new(c, setup.strategy);
     let count = AtomicI64::new(0);
-    let machine = Machine::new([Action::new(
-        "increment",
-        async |c: &Case<'_>, client: usize| {
-            let call = c.history().invoke(client, "increment", [], []);
-            let read = count.load(Ordering::SeqCst);
-            if racy {
-                scheduler.yield_now().await;
-            }
-            count.store(read + 1, Ordering::SeqCst);
-            call.ok(read + 1);
-        },
-    )])
+    let machine = Machine::new(marked(
+        setup,
+        [Action::new(
+            "increment",
+            async |c: &Case<'_>, client: usize| {
+                let call = c.history().invoke(client, "increment", [], []);
+                let read = count.load(Ordering::SeqCst);
+                if racy {
+                    scheduler.yield_now().await;
+                }
+                count.store(read + 1, Ordering::SeqCst);
+                call.ok(read + 1);
+            },
+        )],
+    ))
     .spec(Counter);
     stateful::steps(c, &machine, on_tasks(setup, &scheduler));
 }
@@ -453,24 +484,27 @@ fn flushed_register(c: &Case<'_>, setup: &Setup, in_two_parts: bool) {
             locked(flushed).1 = taken;
         }
     });
-    let machine = Machine::new([
-        Action::with_input(
-            "write",
-            |c: &Case<'_>, _: &Option<i64>| c.draw(&prop::integer(0..=1000_i64), "v"),
-            async |c: &Case<'_>, client: usize, value: i64| {
-                let call = c
-                    .history()
-                    .invoke(client, "write", [Value::from(value)], []);
-                locked(&register).0 = Some(value);
-                call.ok(Value::Null);
-            },
-        ),
-        Action::new("read", async |c: &Case<'_>, client: usize| {
-            let call = c.history().invoke(client, "read", [], []);
-            let (buffer, durable) = *locked(&register);
-            call.ok(buffer.or(durable).map_or(Value::Null, Value::from));
-        }),
-    ])
+    let machine = Machine::new(marked(
+        setup,
+        [
+            Action::with_input(
+                "write",
+                |c: &Case<'_>, _: &Option<i64>| c.draw(&prop::integer(0..=1000_i64), "v"),
+                async |c: &Case<'_>, client: usize, value: i64| {
+                    let call = c
+                        .history()
+                        .invoke(client, "write", [Value::from(value)], []);
+                    locked(&register).0 = Some(value);
+                    call.ok(Value::Null);
+                },
+            ),
+            Action::new("read", async |c: &Case<'_>, client: usize| {
+                let call = c.history().invoke(client, "read", [], []);
+                let (buffer, durable) = *locked(&register);
+                call.ok(buffer.or(durable).map_or(Value::Null, Value::from));
+            }),
+        ],
+    ))
     .spec(Register);
     stateful::steps(c, &machine, on_tasks(setup, &scheduler));
 }
@@ -490,22 +524,25 @@ fn ticker(c: &Case<'_>, setup: &Setup, skips_first: bool) {
             }
         }
     });
-    let machine = Machine::new([
-        Action::with_input(
-            "advance",
-            |c: &Case<'_>, _: &u64| c.draw(&prop::integer(0..=10_u64), "ms"),
-            async |c: &Case<'_>, client: usize, ms: u64| {
-                let call = c.history().invoke(client, "advance", [Value::from(ms)], []);
-                scheduler.advance(Duration::from_millis(ms));
-                call.ok(Value::Null);
-            },
-        ),
-        Action::new("read", async |c: &Case<'_>, client: usize| {
-            c.history()
-                .invoke(client, "read", [], [])
-                .ok(count.load(Ordering::SeqCst));
-        }),
-    ])
+    let machine = Machine::new(marked(
+        setup,
+        [
+            Action::with_input(
+                "advance",
+                |c: &Case<'_>, _: &u64| c.draw(&prop::integer(0..=10_u64), "ms"),
+                async |c: &Case<'_>, client: usize, ms: u64| {
+                    let call = c.history().invoke(client, "advance", [Value::from(ms)], []);
+                    scheduler.advance(Duration::from_millis(ms));
+                    call.ok(Value::Null);
+                },
+            ),
+            Action::new("read", async |c: &Case<'_>, client: usize| {
+                c.history()
+                    .invoke(client, "read", [], [])
+                    .ok(count.load(Ordering::SeqCst));
+            }),
+        ],
+    ))
     .spec(Ticked);
     stateful::steps(c, &machine, setup.steps);
 }
@@ -516,14 +553,15 @@ fn spinner(c: &Case<'_>, setup: &Setup) {
     let flag = AtomicBool::new(false);
     let scheduler = Scheduler::new(c, setup.strategy);
     let set = &flag;
-    let machine = Machine::<()>::new([Action::new("spin", async |_: &Case<'_>, _: usize| {
+    let spin = Action::new("spin", async |_: &Case<'_>, _: usize| {
         scheduler.spawn(move |s| async move {
             while !set.load(Ordering::SeqCst) {
                 s.yield_now().await;
             }
         });
         scheduler.run();
-    })]);
+    });
+    let machine = Machine::<()>::new(marked(setup, [spin]));
     stateful::steps(c, &machine, setup.steps);
 }
 
@@ -532,22 +570,25 @@ fn refusing_counter() -> Subject {
     let increments = AtomicU64::new(0);
     Box::new(move |c: &Case<'_>, setup: &Setup| {
         let count = AtomicI64::new(0);
-        let machine = Machine::new([
-            Action::new("increment", async |c: &Case<'_>, client: usize| {
-                let call = c.history().invoke(client, "increment", [], []);
-                if (increments.fetch_add(1, Ordering::SeqCst) + 1) % REFUSAL == 0 {
-                    call.fail(REFUSED);
-                    return;
-                }
-                call.ok(count.fetch_add(1, Ordering::SeqCst) + 1);
-            })
-            .enabled(|state: &i64| *state < LIMIT),
-            Action::new("read", async |c: &Case<'_>, client: usize| {
-                c.history()
-                    .invoke(client, "read", [], [])
-                    .ok(count.load(Ordering::SeqCst));
-            }),
-        ])
+        let machine = Machine::new(marked(
+            setup,
+            [
+                Action::new("increment", async |c: &Case<'_>, client: usize| {
+                    let call = c.history().invoke(client, "increment", [], []);
+                    if (increments.fetch_add(1, Ordering::SeqCst) + 1) % REFUSAL == 0 {
+                        call.fail(REFUSED);
+                        return;
+                    }
+                    call.ok(count.fetch_add(1, Ordering::SeqCst) + 1);
+                })
+                .enabled(|state: &i64| *state < LIMIT),
+                Action::new("read", async |c: &Case<'_>, client: usize| {
+                    c.history()
+                        .invoke(client, "read", [], [])
+                        .ok(count.load(Ordering::SeqCst));
+                }),
+            ],
+        ))
         .spec(Counter);
         stateful::steps(c, &machine, setup.steps);
     })

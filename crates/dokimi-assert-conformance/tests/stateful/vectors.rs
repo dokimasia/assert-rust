@@ -94,6 +94,8 @@ mod run {
             ("concurrent", json!(-1), "setup.concurrent"),
             ("strategy", json!({"pct": 0}), "setup.strategy"),
             ("max-releases", json!(0), "setup.max-releases"),
+            ("keep", json!("put"), "setup.keep"),
+            ("keep", json!(["put", 1]), "setup.keep"),
         ];
         for (give_member, give_value, want_at) in tests {
             let mut stated = vector("correct-queue/passes-with-swarm");
