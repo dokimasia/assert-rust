@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@13.6.0",
+  "extends": "spec://assertions@16.4.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -14,6 +14,10 @@
     {
       "id": "by-identity",
       "why": "Rust's assertions compare through PartialEq, which compares values and has no notion of an object's identity. A caller compares two references with std::ptr::eq. A modifier that compares the references inside a generic T: PartialEq by address is not expressible without a comparison routine this implementation does not have."
+    },
+    {
+      "id": "equate-by",
+      "why": "Rust's assertions compare through PartialEq, and a type states its own equality there: a prost message derives PartialEq over its fields. A modifier that applies a transform to the values of one type inside a generic T: PartialEq is not expressible without a comparison routine this implementation does not have."
     }
   ],
   "limits": [
@@ -123,6 +127,10 @@
     {
       "id": "cleanup",
       "why": "The trait Seat gives cleanup() a default that ends the call with a fault, so a helper calls the member on any seat and needs no function to register a cleanup."
+    },
+    {
+      "id": "skip",
+      "why": "The trait Seat gives skip() a default that writes the reason and returns, as the seat.skip entry of limits states, so a helper calls the member on any seat and needs no function to skip."
     }
   ],
   "sections": ["tasks", "threads"],

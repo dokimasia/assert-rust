@@ -2730,6 +2730,411 @@
       }
     },
     {
+      "id": "linearizable/unknown-writes-that-no-read-needs-pass-within-the-budget",
+      "spec": "register",
+      "budget": 10000,
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 0,
+          "error": "crashed"
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 1,
+          "error": "crashed"
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 2,
+          "error": "crashed"
+        },
+        {
+          "invoke": 3,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 3,
+          "error": "crashed"
+        },
+        {
+          "invoke": 4,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 4,
+          "error": "crashed"
+        },
+        {
+          "invoke": 5,
+          "client": 2,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 5,
+          "error": "crashed"
+        },
+        {
+          "invoke": 6,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 6,
+          "error": "crashed"
+        },
+        {
+          "invoke": 7,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 7,
+          "error": "crashed"
+        },
+        {
+          "invoke": 8,
+          "client": 2,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 8,
+          "error": "crashed"
+        },
+        {
+          "invoke": 9,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 9,
+          "error": "crashed"
+        },
+        {
+          "invoke": 10,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 10,
+          "error": "crashed"
+        },
+        {
+          "invoke": 11,
+          "client": 2,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 11,
+          "error": "crashed"
+        },
+        {
+          "invoke": 12,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 12,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "expect": "pass",
+      "detail": {
+        "outcome": "passed",
+        "partitions": 1,
+        "steps": 1325,
+        "partition": null,
+        "calls": null,
+        "concurrency": null,
+        "linearized": null,
+        "states": null,
+        "candidates": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "linearizable/a-covered-configuration-is-no-frontier",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 0,
+          "error": "crashed"
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "unknown": 1,
+          "error": "crashed"
+        },
+        {
+          "invoke": 2,
+          "client": 2,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 7
+          }
+        }
+      ],
+      "expect": "fail",
+      "detail": {
+        "outcome": "violated",
+        "partitions": 1,
+        "steps": 7,
+        "partition": [
+          {
+            "type": "string",
+            "value": "x"
+          }
+        ],
+        "calls": 3,
+        "concurrency": 3,
+        "linearized": [
+          {
+            "call": 0,
+            "completion": 1,
+            "process": 0,
+            "operation": "write",
+            "args": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "states": [
+          {
+            "type": "int",
+            "value": 1
+          }
+        ],
+        "candidates": [
+          {
+            "call": 4,
+            "completion": 5,
+            "process": 2,
+            "operation": "read",
+            "args": [],
+            "output": {
+              "type": "int",
+              "value": 7
+            }
+          }
+        ],
+        "limit": null
+      }
+    },
+    {
       "id": "linearizable/a-compare-and-set-that-refuses-a-matching-value-is-violated",
       "spec": "cas-register",
       "history": [

@@ -24,7 +24,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Combining the combination of a and b with c gives what combining a with the combination of b and c gives. first is the former, and second the latter.\n"
         },
@@ -81,7 +82,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Combining a and b gives what combining b and a gives. first is the combination of a and b, and second the combination of b and a.\n"
         },
@@ -102,7 +104,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Text contains a substring, a sequence an element, or a map a key. An element or a key compares as equal compares, so an int does not match a float.\n"
         },
@@ -123,7 +126,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "32 calls of a subject with one input return equal results. first is the first result, and second the first result that differs.\n"
         },
@@ -144,7 +148,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Structural equality. A null collection does not equal an empty one, no type coercion, NaN is unequal to itself, floats compare exactly and by value so -0 equals +0, cycles stop, functions compare by identity.\n"
         },
@@ -299,7 +304,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Calling a subject twice with one input leaves the observed state that calling it once left. first is the observation after one call, and second after two.\n"
         },
@@ -431,7 +437,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "One iteration of a subject yields each element at most once. got is the first element equal to an earlier one, and index its position.\n"
         },
@@ -451,7 +458,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Negation of contains.\n"
         },
@@ -470,7 +478,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Negation of equal.\n"
         },
@@ -486,7 +495,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Observed state changes across a call. got is the observation that did not change.\n"
         },
@@ -523,7 +533,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "A sequence contains the same elements as another, each as often, in any order. Elements compare as equal compares them.\n"
         },
@@ -548,7 +559,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -573,7 +586,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -587,7 +602,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of associative. Each case of a run generates a, b and c, and associative runs on them as prop-for-all runs a body.\n"
         },
@@ -604,7 +620,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -629,7 +647,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -642,7 +662,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of commutative. Each case of a run generates a and b, and commutative runs on them as prop-for-all runs a body.\n"
         },
@@ -659,7 +680,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -672,7 +695,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of contains. Each case of a run generates the input, and contains runs on it as prop-for-all runs a body.\n"
         },
@@ -689,7 +713,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -714,7 +740,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -726,7 +754,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of deterministic. Each case of a run generates the input, and deterministic runs on it as prop-for-all runs a body.\n"
         },
@@ -743,7 +772,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -768,7 +799,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -781,7 +814,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of equal. Each case of a run generates the input, and equal runs on it as prop-for-all runs a body.\n"
         },
@@ -798,7 +832,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -823,7 +859,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -848,7 +886,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -873,7 +913,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -898,7 +940,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -923,7 +967,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -948,10 +994,12 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "package": "prop",
-            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run. A fault that ends a call in a case ends the run in every phase, and the call ends with the same fault.\n"
+            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A run replays a failing case as often as its option replays states, and shrinks the case when one or more of the replays reproduce the failure. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run. A fault that ends a call in a case ends the run in every phase, and the call ends with the same fault.\n"
         },
         "prop-has-prefix": {
             "arity": 3,
@@ -966,7 +1014,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -991,7 +1041,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1016,7 +1068,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1041,7 +1095,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1066,7 +1122,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1078,7 +1136,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of idempotent. Each case of a run generates the input, and idempotent runs on it as prop-for-all runs a body.\n"
         },
@@ -1095,7 +1154,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1120,7 +1181,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1145,7 +1208,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1170,7 +1235,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1195,7 +1262,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1220,7 +1289,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1245,7 +1316,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1270,7 +1343,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1283,7 +1358,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of not-contains. Each case of a run generates the input, and not-contains runs on it as prop-for-all runs a body.\n"
         },
@@ -1300,7 +1376,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1325,7 +1403,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1338,7 +1418,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of not-equal. Each case of a run generates the input, and not-equal runs on it as prop-for-all runs a body.\n"
         },
@@ -1355,7 +1436,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1380,7 +1463,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1392,7 +1477,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of not-pure. Each case of a run generates the input, and not-pure runs on it as prop-for-all runs a body.\n"
         },
@@ -1409,7 +1495,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1434,7 +1522,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1459,7 +1549,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1472,7 +1564,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of permutation. Each case of a run generates the input, and permutation runs on it as prop-for-all runs a body.\n"
         },
@@ -1489,7 +1582,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1501,7 +1596,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of pure. Each case of a run generates the input, and pure runs on it as prop-for-all runs a body.\n"
         },
@@ -1518,7 +1614,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1530,7 +1628,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of round-trip. Each case of a run generates the input, and round-trip runs on it as prop-for-all runs a body.\n"
         },
@@ -1547,7 +1646,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1572,7 +1673,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1592,7 +1695,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Observed state is unchanged across a call.\n"
         },
@@ -1609,7 +1713,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The inverse conversion of the forward conversion of an input returns the input. want is the input, and got what came back.\n"
         },
@@ -1645,7 +1750,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "32 iterations of a subject yield equal sequences. first is the first sequence, and second the first sequence that differs.\n"
         },
@@ -1771,19 +1877,40 @@
         "counter-refuses-every-third": {
             "summary": "A counter, initially 0, that refuses every third increment, counted over every case of the run. A refused increment completes with fail and the error refused, and leaves the count. Any other increment adds one to the count and returns it, and read returns the count. The actions are increment, enabled while the spec's count is below 3, and read, each of which records its one call with no arguments. The spec is a counter: increment outputs the count plus one and leaves it, and read outputs the count and leaves it. The machine's enabled reads a count that the subject's refusals change, so a case that repeats an earlier case's choices can list other actions.\n"
         },
+        "pair-fails-at-7-and-3": {
+            "summary": "A machine without a spec. The actions are noop, which does nothing, and put, whose input is a composite drawn under \"pair\". The composite draws an integer in [0, 9] under \"a\" and then one under \"b\", and returns the list of the two. put fails with the identity pair for the list [7, 3]. Neither action records a call.\n"
+        },
         "queue-loses-on-wrap": {
             "summary": "A queue in a ring of slots, of a capacity drawn under \"capacity\" as an integer in [1, 8]. put(v) returns false when the queue is full. Otherwise it writes v at the write index, or into the first slot when the write index is at the last slot, moves the index on to the next slot, from the last to the first, and returns true. get() removes and returns the oldest value, or returns null when the queue is empty. The actions are put, whose input is drawn under \"v\" as an integer in [0, 1000], and get, each of which records its one call. The spec is a queue of the capacity: put outputs whether the queue had room and adds v when it had, and get outputs the head and removes it, or outputs null.\n"
         },
         "racy-counter": {
             "summary": "A counter, initially 0, whose increment reads the count, yields to the task scheduler, writes the count plus one and returns it. The action is increment, which records its one call with no arguments. The spec is the counter of counter-overflows.\n"
         },
+        "register-flushes": {
+            "summary": "The machine of register-flushes-in-two-parts over a flusher that sets the durable value to the buffer and then sets the buffer to null, without a yield between.\n"
+        },
+        "register-flushes-in-two-parts": {
+            "summary": "A register of a buffer and a durable value, both initially null. write(v) sets the buffer to v and returns null. read returns the buffer when it is set, and the durable value otherwise. A flusher task, which the subject spawns before the steps, waits until the buffer is set, takes the value and sets the buffer to null, yields to the task scheduler, sets the durable value to the value it took, and waits again. The actions are write, whose input is drawn under \"v\" as an integer in [0, 1000], and read, each of which records its one call. The spec is a register: write leaves v, and read outputs the value and leaves it, initially null.\n"
+        },
+        "spins-until-a-flag": {
+            "summary": "A flag, initially false, that no action sets. The action is spin, which spawns a task that yields until the flag is set, runs the scheduler, and records no call. The machine has no spec, so a spin fails its case at the limit of releases of the scheduler, with the identity max-releases.\n"
+        },
         "store-loses-on-crash": {
             "summary": "A store of a buffer and a durable map. The actions are put, flush and crash. put's input is a key drawn under \"key\" as an integer in [0, 3] and the next value of a counter that starts at 1. put records a call of put with the key and the value as arguments, sets the key to the value in the buffer, and completes the call with null. flush is a drain action, enabled while the buffer is not empty, that moves the buffer into the durable map and empties it. crash empties the buffer. Neither records a call. The machine has no spec. Its settle check reads the durable value of each key that a put completed for, and fails with the identity lost-write when it is not the last value put under the key.\n"
+        },
+        "ticker": {
+            "summary": "The machine of ticker-skips-its-first-tick over a ticker that adds one at each of its four ticks.\n"
+        },
+        "ticker-skips-its-first-tick": {
+            "summary": "A ticker task, which the subject spawns before the steps, sleeps 4 ms on the clock of its scheduler and then adds one to its count, four times, and it skips the addition of its first tick. advance(ms) advances the scheduler by ms milliseconds and returns null, and read returns the count. The actions are advance, whose input is drawn under \"ms\" as an integer in [0, 10], and read, each of which records its one call. The spec counts the milliseconds of the advances: advance(ms) adds ms, and read outputs the milliseconds divided by 4, rounded down and at most 4.\n"
         }
     },
     "relaxations": {
         "by-identity": {
             "summary": "A reference equals another reference only when both refer to the same object, whatever the object's value. A value that is no reference compares as without it. The modifier applies wherever the comparison meets a reference: at the top, in an element of a list, in a value of a map and in a field of a record. What a reference is in each language is stated where the encoding states the reference literal.\n"
+        },
+        "equate-by": {
+            "summary": "A value of the type of the transform's argument compares by the transform's result, under the comparison and the other modifiers of the call. The modifier applies wherever the comparison meets such a value: at the top, in an element of a list, in a key and a value of a map and in a field of a record. At one place at most one transform applies: the result compares as it is, and its parts compare under the transforms again. The last transform of a call whose type matches a value applies. The record of equal and of not-equal states the result in place of got and want when the transform matches them.\n"
         },
         "equate-empty": {
             "summary": "An absent container equals an empty one of the same type. Without it a null map and an empty map are different values, which is what the standard states by default.\n"
@@ -1928,5 +2055,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "13.6.0"
+    "version": "16.4.0"
 }
