@@ -630,7 +630,7 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
 - `prop::on_result(f)` hands the `prop::RunResult` of each run to `f`. The
   call runs `f` after the run ends and before it reports its verdict, so `f`
   also receives the result of a run that fails the test. The result has the
-  eleven fields of the detail of the run, such as the outcome, the counts of
+  thirteen fields of the detail of the run, such as the outcome, the counts of
   valid and rejected cases, the seed and the counterexample of a failing
   case. A tool that runs many properties writes them into a record of its
   own.
@@ -640,6 +640,11 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   `Case::observe` or fails ends the run as flaky. A simulation that iterates
   a `HashMap` or reads the wall clock then fails while its cases pass. Each
   replay costs one more run of the body.
+- `prop::replays(n)` makes a run replay a failing case `n` times before it
+  shrinks the case, once by default. The run shrinks the case when one or
+  more replays reproduce the failure, and it ends as flaky when none does.
+  The detail of the run states the replays and the replays that reproduced
+  the failure.
 
 A form takes a type with a derived generator:
 
@@ -786,6 +791,23 @@ fn the_register_keeps_its_last_write() {
   `stateful::Scheduler`. The releases of the scheduler are choices of the
   case, so a race replays and shrinks. A task awaits
   `Scheduler::yield_now` at each point where another task can run.
+- `Scheduler::spawn` takes a function that receives a handle of the
+  scheduler and returns the future of the task, as in
+  `scheduler.spawn(move |s| async move { s.yield_now().await })`. The
+  future is `Send`. Declare the state that a task borrows before the
+  scheduler, because the scheduler ends every task when it drops.
+- `Scheduler::wait(condition)` parks a task until `condition` returns true.
+  `s.clock().sleep(duration)` parks it until the time of the clock of the
+  scheduler is the deadline of the sleep. A parked task remains parked after
+  the run returns, until a later run or an advance makes it ready.
+- `Scheduler::advance(duration)` moves the clock deadline by deadline, and
+  each sleeping task runs at its deadline. Only `advance` moves the clock,
+  which starts at midnight UTC 2000-01-01.
+- `stateful::max_releases(n)` and `Strategy::max_releases(n)` state the
+  most tasks that one run or one advance releases, 1,000,000 by default. A
+  call that releases the limit while a task is still ready fails the case.
+- A client of a concurrent section that waits or sleeps when its section
+  has no ready task ends with the section, and its call remains open.
 
 ## Futures
 
@@ -957,8 +979,8 @@ under test.
 - Each case runs on `check` and `soft` of each crate that has its
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
-- The vectors run too: 57 for files, 112 for histories, 439 for properties
-  and 15 for machines. Two more property vectors skip Rust, because its
+- The vectors run too: 57 for files, 112 for histories, 443 for properties
+  and 21 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.
 - The crates implement all 111 assertions of the definition.

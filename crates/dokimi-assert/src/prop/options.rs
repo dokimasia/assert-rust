@@ -58,6 +58,7 @@ pub struct Options<T = ()> {
     pub(crate) explain: bool,
     pub(crate) workers: usize,
     pub(crate) confirm: usize,
+    pub(crate) replays: usize,
     pub(crate) hermetic: bool,
     pub(crate) around: Option<Wrapper>,
     pub(crate) on_result: Option<OnResult>,
@@ -80,6 +81,7 @@ impl<T: Clone> Clone for Options<T> {
             explain: self.explain,
             workers: self.workers,
             confirm: self.confirm,
+            replays: self.replays,
             hermetic: self.hermetic,
             around: self.around.clone(),
             on_result: self.on_result.clone(),
@@ -103,6 +105,7 @@ impl<T> Debug for Options<T> {
             .field("explain", &self.explain)
             .field("workers", &self.workers)
             .field("confirm", &self.confirm)
+            .field("replays", &self.replays)
             .field("hermetic", &self.hermetic)
             .field("using", &self.using)
             .finish_non_exhaustive()
@@ -111,7 +114,7 @@ impl<T> Debug for Options<T> {
 
 /// States 100 cases, 2,000 shrink runs, 30 seconds of shrinking, 8,192
 /// choices per case, the store of the test, an explanation of each failure,
-/// one worker and no replay of a valid case.
+/// one worker, no replay of a valid case and one replay of a failing case.
 impl<T> Default for Options<T> {
     fn default() -> Self {
         Self {
@@ -126,6 +129,7 @@ impl<T> Default for Options<T> {
             explain: true,
             workers: 1,
             confirm: 0,
+            replays: 1,
             hermetic: false,
             around: None,
             on_result: None,
@@ -255,6 +259,25 @@ impl<T> Options<T> {
         self
     }
 
+    /// States how often a run replays a failing case from its choices before
+    /// it shrinks the case, once by default.
+    ///
+    /// Every replay runs. A replay reproduces the failure when it requests
+    /// the same bounds, observes the same fingerprints and fails with the
+    /// same identity. The run shrinks the case when one or more replays
+    /// reproduce the failure, and ends as flaky with the difference of the
+    /// first replay when none does. The result of the run counts the replays
+    /// and the reproductions.
+    ///
+    /// # Panics
+    ///
+    /// Panics for `n` of 0.
+    pub fn replays(mut self, n: usize) -> Self {
+        assert!(n >= 1, "prop: replays(0) replays no failing case");
+        self.replays = n;
+        self
+    }
+
     /// Makes the run read none of the `DOKIMI_ASSERT_PROP_*` variables, for a
     /// test that runs a property to check something other than a subject.
     pub fn hermetic(mut self) -> Self {
@@ -355,6 +378,7 @@ impl<T> Options<T> {
             && self.explain
             && self.workers == 1
             && self.confirm == 0
+            && self.replays == 1
             && !self.hermetic
             && self.around.is_none()
             && self.on_result.is_none()
@@ -452,6 +476,16 @@ pub fn workers<T>(n: usize) -> Options<T> {
 /// Panics for `every` of 0.
 pub fn confirm<T>(every: usize) -> Options<T> {
     Options::default().confirm(every)
+}
+
+/// Returns the settings with the replays of a failing case before the
+/// shrink.
+///
+/// # Panics
+///
+/// Panics for `n` of 0.
+pub fn replays<T>(n: usize) -> Options<T> {
+    Options::default().replays(n)
 }
 
 /// Returns the settings of a run that reads no variable of the environment.

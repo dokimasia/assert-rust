@@ -11,7 +11,7 @@
 //! predicate is true. An [`Ending`] then ends the case with that identity, or
 //! with `None` for a case that does not fail.
 //!
-//! Five named bodies state what no predicate can:
+//! Six named bodies state what no predicate can:
 //!
 //! - `draws-nothing` requests no input.
 //! - `diverges` draws an integer in [0, 9] on its first call and a boolean on
@@ -23,6 +23,9 @@
 //! - `fails-then-skips` draws an integer in [0, 10^9]. Its case fails with
 //!   the identity `once` the first time that it draws a value above 1,000.
 //!   Every later call draws its value and then skips with the reason `after`.
+//! - `fails-on-even-calls` draws an integer in [0, 10^9]. Its case fails with
+//!   the identity `even` when the value is above 1,000 and the call is even,
+//!   counting the calls of the body from 1.
 
 use super::generator::{SpecError, build};
 use super::predicate::{Predicate, predicate};
@@ -104,6 +107,15 @@ pub fn body(spec: &Json, end: Ending) -> Result<Body, SpecError> {
                     failed.store(true, Ordering::SeqCst);
                 }
                 end(c, above.then_some("once"));
+            }))
+        }
+        Some("fails-on-even-calls") => {
+            let calls = AtomicU64::new(0);
+            let wide = build(&wide(), None)?;
+            Ok(Arc::new(move |c| {
+                let above = matches!(c.draw(&wide, DRAWN), Value::Int(held) if held > 1000);
+                let even = (calls.fetch_add(1, Ordering::SeqCst) + 1) % 2 == 0;
+                end(c, (above && even).then_some("even"));
             }))
         }
         Some(other) => Err(SpecError(format!("prop: {other:?} names no body"))),

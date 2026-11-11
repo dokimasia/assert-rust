@@ -25,6 +25,10 @@ const CONTRACT: &str = "the machine subject of the vector";
 /// The clients of a vector's setup that states none.
 const SETUP_CLIENTS: usize = 2;
 
+/// The name that the vectors give the failure of a scheduler at its limit of
+/// releases.
+const RELEASES: &str = "max-releases";
+
 /// Runs `vector`, and compares what the library reports with the vector.
 ///
 /// # Errors
@@ -99,10 +103,13 @@ fn setup_of(stated: &Json) -> Result<Setup, Disagreement> {
         .get("concurrent")
         .map(|most| count(most, "setup.concurrent"))
         .transpose()?;
-    let strategy = match stated.get("strategy") {
+    let mut strategy = match stated.get("strategy") {
         Some(strategy) => strategy_of(strategy)?,
         None => stateful::uniform(),
     };
+    if let Some(limit) = stated.get("max-releases") {
+        strategy = strategy.max_releases(count(limit, "setup.max-releases")?);
+    }
     Ok(Setup {
         steps,
         clients,
@@ -140,12 +147,20 @@ fn settings_of(stated: &Json) -> Result<Options, Disagreement> {
 }
 
 /// Returns the detail of a property's call record in the form of the
-/// vector's detail, which states the failure by its assertion. No machines
-/// vector states another failure, so the runner compares the others of a run
-/// as the call record states them.
+/// vector's detail, which states the failure by its assertion. The failure
+/// of a scheduler at its limit of releases has a record without an
+/// assertion, and the vectors name it max-releases. No machines vector
+/// states another failure, so the runner compares the others of a run as the
+/// call record states them.
 fn detail_of(record: &Json) -> Json {
     let mut detail = record["detail"].clone();
-    detail["failure"] = detail["failure"]["assertion"].clone();
+    let failure = &detail["failure"];
+    let stated = if failure.is_object() && failure["assertion"].is_null() {
+        Json::from(RELEASES)
+    } else {
+        failure["assertion"].clone()
+    };
+    detail["failure"] = stated;
     detail
 }
 

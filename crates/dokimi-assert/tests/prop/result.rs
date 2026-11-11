@@ -34,6 +34,7 @@ fn result_of(
 fn fields(result: &RunResult) -> Vec<(&'static str, Value)> {
     let value = |member: &Option<Value>| member.clone().unwrap_or(Value::Null);
     let text = |member: &Option<String>| member.clone().map_or(Value::Null, Value::String);
+    let count = |member: Option<usize>| member.map_or(Value::Null, Value::from);
     vec![
         ("outcome", result.outcome.into()),
         ("cases", result.cases.into()),
@@ -46,6 +47,8 @@ fn fields(result: &RunResult) -> Vec<(&'static str, Value)> {
         ("divergence", value(&result.divergence)),
         ("coverage", value(&result.coverage)),
         ("reason", text(&result.reason)),
+        ("replays", count(result.replays)),
+        ("reproduced", count(result.reproduced)),
     ]
 }
 

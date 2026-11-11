@@ -101,4 +101,51 @@ mod subject {
         );
         assert_eq!(found[0].field("outcome"), Some(&Value::from("flaky")));
     }
+
+    #[test]
+    fn fails_the_register_that_flushes_in_two_parts() {
+        let found = failures("register-flushes-in-two-parts", &setup(Options::default()));
+        let case = found[0]
+            .case_failure()
+            .expect("the property found a counterexample");
+        assert_eq!(case.assertion(), Some("linearizable"));
+    }
+
+    #[test]
+    fn passes_the_register_that_flushes() {
+        assert_eq!(failures("register-flushes", &setup(Options::default())), []);
+    }
+
+    #[test]
+    fn fails_the_ticker_that_skips_its_first_tick() {
+        let found = failures("ticker-skips-its-first-tick", &setup(Options::default()));
+        let case = found[0]
+            .case_failure()
+            .expect("the property found a counterexample");
+        assert_eq!(case.assertion(), Some("linearizable"));
+    }
+
+    #[test]
+    fn passes_the_ticker() {
+        assert_eq!(failures("ticker", &setup(Options::default())), []);
+    }
+
+    #[test]
+    fn fails_the_spinner_at_the_limit_of_releases() {
+        let limited = Setup {
+            strategy: stateful::max_releases(50),
+            ..setup(Options::default())
+        };
+        let found = failures("spins-until-a-flag", &limited);
+        let case = found[0]
+            .case_failure()
+            .expect("the property found a counterexample");
+        assert_eq!(
+            (case.assertion(), case.contract()),
+            (
+                None,
+                "the task scheduler released 50 tasks in one run, and a task is still ready"
+            )
+        );
+    }
 }

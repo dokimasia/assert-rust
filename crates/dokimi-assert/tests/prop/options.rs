@@ -6,7 +6,7 @@
 use crate::helpers::{Results, panic_of, records};
 use dokimi_assert::prop::{self, Case, Options, RunResult};
 use dokimi_assert::{Recorder, Standard, check};
-use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex, PoisonError};
 use std::time::Duration;
 
@@ -23,13 +23,13 @@ mod options {
         assert_eq!(
             stated(&Options::<()>::default()),
             "Options { cases: 100, seed: None, replay: None, shrink: 2000, shrink_time: 30s, max_choices: 8192, \
-             store: None, explain: true, workers: 1, confirm: 0, hermetic: false, using: {}, .. }"
+             store: None, explain: true, workers: 1, confirm: 0, replays: 1, hermetic: false, using: {}, .. }"
         );
     }
 
     #[test]
     fn starts_a_chain_with_the_function_of_each_setting() {
-        let tests: [(Options, &str); 14] = [
+        let tests: [(Options, &str); 15] = [
             (prop::cases(5), "cases: 5"),
             (prop::seed(7), "seed: Some(7)"),
             (prop::replay("prop1:AA"), r#"replay: Some("prop1:AA")"#),
@@ -40,6 +40,7 @@ mod options {
             (prop::explain(false), "explain: false"),
             (prop::workers(2), "workers: 2"),
             (prop::confirm(5), "confirm: 5"),
+            (prop::replays(3), "replays: 3"),
             (prop::hermetic(), "hermetic: true"),
             (prop::using(&prop::just(1_u8)), r#"using: {"u8"}"#),
             (prop::on_result(|_| {}), "cases: 100"),
@@ -83,6 +84,10 @@ mod options {
         assert_eq!(
             panic_of(|| _ = prop::confirm::<()>(0)).as_deref(),
             Some("prop: confirm(0) replays no case")
+        );
+        assert_eq!(
+            panic_of(|| _ = prop::replays::<()>(0)).as_deref(),
+            Some("prop: replays(0) replays no failing case")
         );
     }
 
@@ -460,6 +465,82 @@ mod confirm {
         assert!(
             raised.starts_with("the replay agrees with the case: flaky after 1 valid"),
             "{raised}"
+        );
+    }
+}
+
+mod replays {
+    use super::*;
+
+    /// The contract of every property of the module.
+    const CONTRACT: &str = "the replays reproduce the failure";
+
+    /// Returns the result of a run of `body` under `options` with the seed 7.
+    fn result_of(options: Options, body: impl Fn(&Case<'_>) + Send + Sync) -> RunResult {
+        let results = Results::default();
+        let options = options
+            .on_result(results.keep())
+            .hermetic()
+            .seed(7)
+            .store("");
+        prop::for_all(&Recorder::new(), CONTRACT, options, body);
+        results.kept().remove(0)
+    }
+
+    /// Returns a body that fails above 1,000 on each of its even calls,
+    /// counting its calls from 1.
+    fn even_calls() -> impl Fn(&Case<'_>) + Send + Sync {
+        let calls = AtomicU64::new(0);
+        move |c| {
+            let n = c.draw(&prop::integer(0..=1_000_000_000_i64), "n");
+            let odd = (calls.fetch_add(1, Ordering::SeqCst) + 1) % 2 == 1;
+            check::is_true(c, n <= 1000 || odd, "an odd call passes");
+        }
+    }
+
+    #[test]
+    fn shrinks_a_failure_that_one_replay_of_three_reproduces() {
+        let result = result_of(prop::replays(3), even_calls());
+        assert_eq!(
+            (result.outcome, result.replays, result.reproduced),
+            ("counterexample", Some(3), Some(1))
+        );
+    }
+
+    #[test]
+    fn ends_the_run_as_flaky_when_no_replay_reproduces_the_failure() {
+        let failed = AtomicBool::new(false);
+        let result = result_of(prop::replays(3), move |c| {
+            let n = c.draw(&prop::integer(0..=1_000_000_000_i64), "n");
+            let once = n > 1000 && !failed.swap(true, Ordering::SeqCst);
+            check::is_true(c, !once, "only the first case above 1,000 fails");
+        });
+        assert_eq!(
+            (result.outcome, result.replays, result.reproduced),
+            ("flaky", Some(3), Some(0))
+        );
+    }
+
+    #[test]
+    fn replays_a_failing_case_once_by_default() {
+        let result = result_of(Options::default(), |c| {
+            let n = c.draw(&prop::integer(0..=1_000_000_000_i64), "n");
+            check::is_true(c, n <= 1000, "n stays at 1,000 or below");
+        });
+        assert_eq!(
+            (result.outcome, result.replays, result.reproduced),
+            ("counterexample", Some(1), Some(1))
+        );
+    }
+
+    #[test]
+    fn states_no_replays_for_a_run_that_replays_no_failing_case() {
+        let result = result_of(Options::default(), |c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+        });
+        assert_eq!(
+            (result.outcome, result.replays, result.reproduced),
+            ("passed", None, None)
         );
     }
 }

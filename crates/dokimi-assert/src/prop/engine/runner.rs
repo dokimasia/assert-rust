@@ -172,6 +172,8 @@ pub struct Settings {
     /// The interval of the replays of valid cases: the run replays each valid
     /// case whose count is a multiple of it, and 0 replays none.
     pub confirm: usize,
+    /// The replays of a failing case before the shrink.
+    pub replays: usize,
 }
 
 impl Settings {
@@ -193,6 +195,7 @@ impl Settings {
             workers: 1,
             replay: None,
             confirm: 0,
+            replays: 1,
         }
     }
 }
@@ -247,6 +250,12 @@ pub struct Outcome {
     pub valued: bool,
     /// The reason of the case that skipped a skipped run.
     pub reason: Option<String>,
+    /// The replays of the failing case before the shrink, for a run that
+    /// replayed one.
+    pub replays: Option<usize>,
+    /// The replays that reproduced the failure, for a run that replayed a
+    /// failing case.
+    pub reproduced: Option<usize>,
     /// The draws of each stored case that ran, up to the one that ended the
     /// run.
     pub(crate) stored: Vec<Vec<Drawn>>,
@@ -328,6 +337,8 @@ impl Tally {
             runs: 0,
             valued: false,
             reason: None,
+            replays: None,
+            reproduced: None,
             stored: Vec::new(),
         }
     }
@@ -649,9 +660,11 @@ fn explore(run: &mut Run<'_, '_>, settings: &mut Settings) -> Result<Outcome, Fa
 
 /// Replays, shrinks and explains the failing case of a counterexample.
 ///
-/// A shrink budget of 0 adds the token alone. A replay that differs makes the
-/// outcome flaky. Any other outcome and a counterexample of values return
-/// unchanged.
+/// A shrink budget of 0 adds the token alone. The failing case is replayed
+/// as often as the setting replays states, and every replay runs. The case
+/// shrinks when one or more replays reproduce the failure, and the outcome
+/// is flaky with the difference of the first replay when none does. Any
+/// other outcome and a counterexample of values return unchanged.
 pub(crate) fn conclude(
     run: &mut Run<'_, '_>,
     settings: &Settings,
@@ -669,9 +682,21 @@ pub(crate) fn conclude(
         outcome.failing = Some(failing);
         return Ok(outcome);
     }
-    if let Some(divergence) = confirm(run, &failing, settings.max_choices, Phase::Replay)? {
+    let mut first = None;
+    let mut reproduced = 0;
+    for _ in 0..settings.replays {
+        match confirm(run, &failing, settings.max_choices, Phase::Replay)? {
+            None => reproduced += 1,
+            Some(divergence) => {
+                first.get_or_insert(divergence);
+            }
+        }
+    }
+    outcome.replays = Some(settings.replays);
+    outcome.reproduced = Some(reproduced);
+    if reproduced == 0 {
         outcome.kind = Kind::Flaky;
-        outcome.divergence = Some(divergence);
+        outcome.divergence = first;
         outcome.failing = Some(failing);
         return Ok(outcome);
     }

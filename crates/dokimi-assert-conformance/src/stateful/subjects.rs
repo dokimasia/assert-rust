@@ -40,6 +40,31 @@
 //!   other increment adds one and returns the count, and read returns the
 //!   count. The actions are increment, enabled while the spec's count is
 //!   below 3, and read. The spec is a counter.
+//! - `register-flushes-in-two-parts`: a register of a buffer and a durable
+//!   value, both initially null. Its write sets the buffer to the value and
+//!   returns null. Its read returns the buffer when it is set, and the
+//!   durable value otherwise. A flusher task, which the subject spawns before
+//!   the steps, waits until the buffer is set, takes the value and sets the
+//!   buffer to null, yields, sets the durable value to the value that it
+//!   took, and waits again. The actions are write, whose input is drawn under
+//!   `v` from [0, 1000], and read. The spec is a register, and the clients of
+//!   the concurrent section run as tasks of the scheduler of the flusher.
+//! - `register-flushes`: the same machine over a flusher that sets the
+//!   durable value and the buffer without a yield between.
+//! - `ticker-skips-its-first-tick`: a ticker task, which the subject spawns
+//!   before the steps, sleeps 4 ms on the clock of its scheduler and then
+//!   adds one to its count, four times. It skips the addition of its first
+//!   tick. The actions are advance and read. Advance advances the scheduler
+//!   by its input in milliseconds, drawn under `ms` from [0, 10], and returns
+//!   null. Read returns the count. The spec counts the milliseconds of the
+//!   advances, and its read returns the milliseconds divided by 4, rounded
+//!   down and at most 4.
+//! - `ticker`: the same machine over a ticker that adds one at each tick.
+//! - `spins-until-a-flag`: a flag, initially false, that no action sets. The
+//!   action is spin, which spawns a task that yields until the flag is set,
+//!   runs the scheduler, and does not record a call. The machine has no
+//!   spec, so a spin fails its case at the limit of releases of the
+//!   scheduler.
 //!
 //! [`subject`] builds each subject anew for a run, so a subject that counts
 //! over the cases of a run starts each run at 0.
@@ -49,8 +74,9 @@ use dokimi_assert::history::{Operation, Spec};
 use dokimi_assert::prop::{self, Case};
 use dokimi_assert::stateful::{self, Action, Machine, Options, Scheduler, Strategy};
 use std::collections::BTreeMap;
-use std::sync::atomic::{AtomicI64, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU64, Ordering};
 use std::sync::{Mutex, MutexGuard, PoisonError};
+use std::time::Duration;
 
 /// The count at which `counter-overflows` sets its count to 0.
 const OVERFLOW: i64 = 3;
@@ -68,6 +94,11 @@ const LIMIT: i64 = 3;
 /// `store-loses-on-crash` reports.
 const LOST: &str = "lost-write";
 const DURABLE: &str = "the store keeps every acknowledged put";
+
+/// The milliseconds that the ticker sleeps before each of its ticks, and its
+/// ticks.
+const PERIOD: u64 = 4;
+const TICKS: u64 = 4;
 
 /// The options of a subject's steps, those of a concurrent section, and the
 /// strategy of a subject's scheduler.
@@ -102,6 +133,17 @@ pub fn subject(name: &str) -> Option<Subject> {
             Box::new(|c: &Case<'_>, setup: &Setup| shared_counter(c, setup, false))
         }
         "counter-refuses-every-third" => refusing_counter(),
+        "register-flushes-in-two-parts" => {
+            Box::new(|c: &Case<'_>, setup: &Setup| flushed_register(c, setup, true))
+        }
+        "register-flushes" => {
+            Box::new(|c: &Case<'_>, setup: &Setup| flushed_register(c, setup, false))
+        }
+        "ticker-skips-its-first-tick" => {
+            Box::new(|c: &Case<'_>, setup: &Setup| ticker(c, setup, true))
+        }
+        "ticker" => Box::new(|c: &Case<'_>, setup: &Setup| ticker(c, setup, false)),
+        "spins-until-a-flag" => Box::new(spinner),
         _ => return None,
     };
     Some(subject)
@@ -225,6 +267,63 @@ impl Spec for Counter {
     }
 }
 
+/// The spec of a register, initially null: write leaves its value, and read
+/// returns the value.
+struct Register;
+
+impl Spec for Register {
+    type State = Option<i64>;
+
+    fn initial(&self) -> Option<i64> {
+        None
+    }
+
+    fn next(&self, state: &Option<i64>, op: &Operation) -> Vec<Option<i64>> {
+        if let ("write", [Value::Int(value)]) = (op.name(), op.args()) {
+            return vec![i64::try_from(*value).ok()];
+        }
+        if op.returned(state.map_or(Value::Null, Value::from)) {
+            vec![*state]
+        } else {
+            Vec::new()
+        }
+    }
+}
+
+/// The spec of the ticker, whose state is the milliseconds that the advances
+/// add. Its read returns the milliseconds divided by the period, rounded down
+/// and at most the ticks.
+struct Ticked;
+
+impl Spec for Ticked {
+    type State = u64;
+
+    fn initial(&self) -> u64 {
+        0
+    }
+
+    fn next(&self, state: &u64, op: &Operation) -> Vec<u64> {
+        if let ("advance", [Value::Int(ms)]) = (op.name(), op.args()) {
+            return vec![state + u64::try_from(*ms).unwrap_or_default()];
+        }
+        if op.returned((state / PERIOD).min(TICKS)) {
+            vec![*state]
+        } else {
+            Vec::new()
+        }
+    }
+}
+
+/// Returns the options of a subject whose clients of the concurrent section
+/// run as tasks of `scheduler`.
+fn on_tasks<'s>(setup: &Setup, scheduler: &'s Scheduler<'_>) -> Options<'s> {
+    let mut options = setup.steps.clients(setup.clients);
+    if let Some(most) = setup.concurrent {
+        options = options.concurrent(most);
+    }
+    options.tasks(scheduler)
+}
+
 /// Runs the queue machine over a ring of a drawn capacity.
 fn queue(c: &Case<'_>, setup: &Setup, loses_on_wrap: bool) {
     let capacity = c.draw(&prop::integer(1..=8_usize), "capacity");
@@ -334,11 +433,98 @@ fn shared_counter(c: &Case<'_>, setup: &Setup, racy: bool) {
         },
     )])
     .spec(Counter);
-    let mut options = setup.steps.clients(setup.clients);
-    if let Some(most) = setup.concurrent {
-        options = options.concurrent(most);
-    }
-    stateful::steps(c, &machine, options.tasks(&scheduler));
+    stateful::steps(c, &machine, on_tasks(setup, &scheduler));
+}
+
+/// Runs the register machine on clients that run as tasks, over a buffer
+/// that a flusher task moves into the durable value. The flusher yields
+/// between its two parts when `in_two_parts`.
+fn flushed_register(c: &Case<'_>, setup: &Setup, in_two_parts: bool) {
+    let register: Mutex<(Option<i64>, Option<i64>)> = Mutex::default();
+    let scheduler = Scheduler::new(c, setup.strategy);
+    let flushed = &register;
+    scheduler.spawn(move |s| async move {
+        loop {
+            s.wait(move || locked(flushed).0.is_some()).await;
+            let taken = locked(flushed).0.take();
+            if in_two_parts {
+                s.yield_now().await;
+            }
+            locked(flushed).1 = taken;
+        }
+    });
+    let machine = Machine::new([
+        Action::with_input(
+            "write",
+            |c: &Case<'_>, _: &Option<i64>| c.draw(&prop::integer(0..=1000_i64), "v"),
+            async |c: &Case<'_>, client: usize, value: i64| {
+                let call = c
+                    .history()
+                    .invoke(client, "write", [Value::from(value)], []);
+                locked(&register).0 = Some(value);
+                call.ok(Value::Null);
+            },
+        ),
+        Action::new("read", async |c: &Case<'_>, client: usize| {
+            let call = c.history().invoke(client, "read", [], []);
+            let (buffer, durable) = *locked(&register);
+            call.ok(buffer.or(durable).map_or(Value::Null, Value::from));
+        }),
+    ])
+    .spec(Register);
+    stateful::steps(c, &machine, on_tasks(setup, &scheduler));
+}
+
+/// Runs the ticker machine, whose advance moves the clock of the scheduler
+/// of the ticker task. The ticker skips the addition of its first tick when
+/// `skips_first`.
+fn ticker(c: &Case<'_>, setup: &Setup, skips_first: bool) {
+    let count = AtomicU64::new(0);
+    let scheduler = Scheduler::new(c, setup.strategy);
+    let ticked = &count;
+    scheduler.spawn(move |s| async move {
+        for tick in 0..TICKS {
+            s.clock().sleep(Duration::from_millis(PERIOD)).await;
+            if tick > 0 || !skips_first {
+                ticked.fetch_add(1, Ordering::SeqCst);
+            }
+        }
+    });
+    let machine = Machine::new([
+        Action::with_input(
+            "advance",
+            |c: &Case<'_>, _: &u64| c.draw(&prop::integer(0..=10_u64), "ms"),
+            async |c: &Case<'_>, client: usize, ms: u64| {
+                let call = c.history().invoke(client, "advance", [Value::from(ms)], []);
+                scheduler.advance(Duration::from_millis(ms));
+                call.ok(Value::Null);
+            },
+        ),
+        Action::new("read", async |c: &Case<'_>, client: usize| {
+            c.history()
+                .invoke(client, "read", [], [])
+                .ok(count.load(Ordering::SeqCst));
+        }),
+    ])
+    .spec(Ticked);
+    stateful::steps(c, &machine, setup.steps);
+}
+
+/// Runs the machine whose one action spawns a task that yields until a flag
+/// is set, and runs the scheduler. No action sets the flag.
+fn spinner(c: &Case<'_>, setup: &Setup) {
+    let flag = AtomicBool::new(false);
+    let scheduler = Scheduler::new(c, setup.strategy);
+    let set = &flag;
+    let machine = Machine::<()>::new([Action::new("spin", async |_: &Case<'_>, _: usize| {
+        scheduler.spawn(move |s| async move {
+            while !set.load(Ordering::SeqCst) {
+                s.yield_now().await;
+            }
+        });
+        scheduler.run();
+    })]);
+    stateful::steps(c, &machine, setup.steps);
 }
 
 /// Returns `counter-refuses-every-third`, with no increment counted yet.

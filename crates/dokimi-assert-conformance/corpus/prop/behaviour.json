@@ -24,7 +24,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -72,7 +74,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -121,7 +125,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -167,7 +173,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -211,7 +219,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -266,7 +276,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -320,7 +332,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -390,7 +404,9 @@
         ],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -438,7 +454,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -500,7 +518,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -553,7 +573,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -599,7 +621,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -635,7 +659,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -664,7 +690,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -695,7 +723,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -734,7 +764,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -756,7 +788,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -793,7 +827,9 @@
           "step": null
         },
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -832,7 +868,9 @@
           "step": null
         },
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 0
       }
     },
     {
@@ -872,7 +910,9 @@
           "step": null
         },
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -894,7 +934,140 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      }
+    },
+    {
+      "id": "behaviour/shrinks-a-failure-that-one-replay-of-three-reproduces",
+      "body": {
+        "kind": "fails-on-even-calls"
+      },
+      "settings": {
+        "seed": "7",
+        "replays": 3
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 1001
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1000
+            }
+          }
+        ],
+        "failure": "even",
+        "choices": "prop1:AOkH",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 3,
+        "reproduced": 1
+      }
+    },
+    {
+      "id": "behaviour/reports-a-failure-that-no-replay-of-three-reproduces",
+      "body": {
+        "kind": "fails-once"
+      },
+      "settings": {
+        "seed": "7",
+        "replays": 3
+      },
+      "detail": {
+        "outcome": "flaky",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 558560502
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "once",
+        "choices": null,
+        "others": null,
+        "divergence": {
+          "what": "verdict",
+          "index": 1,
+          "recorded": "once",
+          "replayed": null,
+          "label": null,
+          "step": null
+        },
+        "coverage": null,
+        "reason": null,
+        "replays": 3,
+        "reproduced": 0
+      }
+    },
+    {
+      "id": "behaviour/counts-a-reproduction-in-each-of-three-replays",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 10000
+        },
+        "fails": [
+          {
+            "identity": "big",
+            "when": {
+              "kind": "at-least",
+              "n": 1001
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "replays": 3
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 1001
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1000
+            }
+          }
+        ],
+        "failure": "big",
+        "choices": "prop1:AOkH",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 3,
+        "reproduced": 3
       }
     },
     {
@@ -928,7 +1101,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": "unsupported"
+        "reason": "unsupported",
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -966,7 +1141,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": "unsupported"
+        "reason": "unsupported",
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1031,7 +1208,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       }
     },
     {
@@ -1070,7 +1249,9 @@
           "step": null
         },
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 0
       }
     },
     {
@@ -1116,7 +1297,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1142,7 +1325,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1177,7 +1362,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1215,7 +1402,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1259,7 +1448,9 @@
           "valid": 100,
           "verdict": "refuted"
         },
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1298,7 +1489,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     },
     {
@@ -1342,7 +1535,9 @@
           "valid": 10,
           "verdict": "unmet"
         },
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       }
     }
   ]

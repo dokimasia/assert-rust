@@ -254,6 +254,8 @@ impl Exploration {
         if outcome.kind == Kind::Flaky {
             let mut flaky = self.tally.outcome(Kind::Flaky, outcome.failing.take());
             flaky.divergence = outcome.divergence.take();
+            flaky.replays = outcome.replays;
+            flaky.reproduced = outcome.reproduced;
             flaky.stored = std::mem::take(&mut self.stored);
             return Ok(Some(flaky));
         }

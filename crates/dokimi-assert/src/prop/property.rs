@@ -200,6 +200,7 @@ pub(crate) struct Property<'c> {
     explain: bool,
     workers: usize,
     confirm: usize,
+    replays: usize,
     entries: Option<Vec<Entry>>,
     /// The length of a campaign in whole seconds, and 0 for a property that
     /// runs no campaign.
@@ -243,6 +244,7 @@ impl<'c> Property<'c> {
             explain: options.explain,
             workers: options.workers,
             confirm: options.confirm,
+            replays: options.replays,
             entries,
             budget,
             replay,
@@ -268,6 +270,7 @@ impl<'c> Property<'c> {
         settings.explain = self.explain;
         settings.workers = self.workers;
         settings.confirm = self.confirm;
+        settings.replays = self.replays;
         settings
     }
 
@@ -700,7 +703,7 @@ fn wrapped<'s>(wrapper: &Wrapper, case: &Case<'s>, body: &(dyn Fn(&Case<'s>) + S
 /// run decides over every valid case. A hermetic run and a run in a process
 /// of a mutation run run no campaign.
 ///
-/// The failure is one record of `prop-for-all`, whose detail has the eleven
+/// The failure is one record of `prop-for-all`, whose detail has the thirteen
 /// fields of the definition, and whose sentence lists the counterexample and
 /// the replay token. The call ends with a fault before a run when a
 /// `DOKIMI_ASSERT_PROP_*` variable states no value of its kind, the replay

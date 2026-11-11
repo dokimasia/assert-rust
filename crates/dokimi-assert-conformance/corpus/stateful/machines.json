@@ -58,7 +58,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     },
@@ -82,7 +84,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -113,7 +117,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     },
@@ -137,7 +143,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -174,7 +182,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     },
@@ -198,7 +208,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -219,7 +231,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -243,7 +257,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -273,7 +289,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     },
@@ -294,7 +312,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -318,7 +338,9 @@
         "others": null,
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
       },
       "error": null
     },
@@ -361,7 +383,222 @@
           }
         },
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
+    },
+    {
+      "id": "register-flushes-in-two-parts/a-read-between-the-two-parts-of-a-flush-returns-null",
+      "subject": "register-flushes-in-two-parts",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 51,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "write"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "read",
+            "client": 1
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAEAAQABAAAAAAAAAAEAAQABAAAAAAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
+      },
+      "error": null
+    },
+    {
+      "id": "register-flushes-in-two-parts/keeps-the-priority-of-a-woken-task-under-pct-3",
+      "subject": "register-flushes-in-two-parts",
+      "setup": {
+        "strategy": {
+          "pct": 3
+        }
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 31,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "write"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "read",
+            "client": 1
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAAAAQABAAEAAAAAAAAAAQABAAEAAAAAAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
+      },
+      "error": null
+    },
+    {
+      "id": "register-flushes/passes-with-two-clients",
+      "subject": "register-flushes",
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
+    },
+    {
+      "id": "ticker-skips-its-first-tick/an-advance-of-4-ms-and-a-read-return-0",
+      "subject": "ticker-skips-its-first-tick",
+      "setup": {
+        "strategy": {
+          "pct": 1
+        }
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 7,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "advance"
+          },
+          {
+            "label": "ms",
+            "value": {
+              "type": "int",
+              "value": 4
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 3
+            }
+          },
+          {
+            "step": "read"
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAAAAQABAAEAAAAEAAEAAQ",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
+      },
+      "error": null
+    },
+    {
+      "id": "ticker/passes-when-each-tick-runs-at-its-deadline",
+      "subject": "ticker",
+      "setup": {
+        "strategy": {
+          "pct": 1
+        }
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 100,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
+    },
+    {
+      "id": "spins-until-a-flag/fails-the-case-at-the-release-limit",
+      "subject": "spins-until-a-flag",
+      "setup": {
+        "max-releases": 50
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "spin"
+          }
+        ],
+        "failure": "max-releases",
+        "choices": "prop1:AAEAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     },
@@ -454,7 +691,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     },
@@ -515,7 +754,9 @@
         "others": [],
         "divergence": null,
         "coverage": null,
-        "reason": null
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
       },
       "error": null
     }

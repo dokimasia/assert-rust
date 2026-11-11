@@ -56,8 +56,29 @@ mod reason {
         });
         assert_eq!(detail(&seat)["reason"], serde_json::Value::Null);
         let fields = seat.failures()[0].detail().to_vec();
-        assert_eq!(fields.len(), 11, "{fields:?}");
+        assert_eq!(fields.len(), 13, "{fields:?}");
         assert_eq!(fields[10], ("reason", Value::Null), "{fields:?}");
+    }
+}
+
+mod replays {
+    use super::*;
+
+    #[test]
+    fn states_the_replays_of_the_failing_case_and_its_reproductions() {
+        let seat = run(prop::replays(2), |c| {
+            let n = c.draw(&prop::integer(0..=9_u8), "n");
+            check::is_true(c, n < 3, "n stays below 3");
+        });
+        let fields = seat.failures()[0].detail().to_vec();
+        assert_eq!(
+            (&fields[11], &fields[12]),
+            (
+                &("replays", Value::from(2_usize)),
+                &("reproduced", Value::from(2_usize))
+            ),
+            "{fields:?}"
+        );
     }
 }
 

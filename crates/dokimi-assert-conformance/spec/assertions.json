@@ -559,7 +559,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -584,7 +586,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -616,7 +620,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -641,7 +647,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -672,7 +680,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -703,7 +713,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -728,7 +740,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -758,7 +772,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -783,7 +799,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -814,7 +832,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -839,7 +859,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -864,7 +886,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -889,7 +913,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -914,7 +940,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -939,7 +967,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -964,10 +994,12 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "package": "prop",
-            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run. A fault that ends a call in a case ends the run in every phase, and the call ends with the same fault.\n"
+            "summary": "A body passes for every input a run generates. A run replays the stored failures, tries the simplest input and the boundary inputs, then generates inputs it has not tested until it has run the stated number of cases or tested every input. A run replays a failing case as often as its option replays states, and shrinks the case when one or more of the replays reproduce the failure. A fixed sequence of passes shrinks a failing case towards the smallest case that fails the same way. A case that skips before the run finds a failing case skips the run. A fault that ends a call in a case ends the run in every phase, and the call ends with the same fault.\n"
         },
         "prop-has-prefix": {
             "arity": 3,
@@ -982,7 +1014,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1007,7 +1041,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1032,7 +1068,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1057,7 +1095,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1082,7 +1122,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1112,7 +1154,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1137,7 +1181,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1162,7 +1208,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1187,7 +1235,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1212,7 +1262,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1237,7 +1289,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1262,7 +1316,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1287,7 +1343,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1318,7 +1376,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1343,7 +1403,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1374,7 +1436,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1399,7 +1463,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1429,7 +1495,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1454,7 +1522,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1479,7 +1549,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1510,7 +1582,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1540,7 +1614,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1570,7 +1646,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1595,7 +1673,9 @@
                 "others",
                 "divergence",
                 "coverage",
-                "reason"
+                "reason",
+                "replays",
+                "reproduced"
             ],
             "form": {
                 "generates": [
@@ -1803,8 +1883,23 @@
         "racy-counter": {
             "summary": "A counter, initially 0, whose increment reads the count, yields to the task scheduler, writes the count plus one and returns it. The action is increment, which records its one call with no arguments. The spec is the counter of counter-overflows.\n"
         },
+        "register-flushes": {
+            "summary": "The machine of register-flushes-in-two-parts over a flusher that sets the durable value to the buffer and then sets the buffer to null, without a yield between.\n"
+        },
+        "register-flushes-in-two-parts": {
+            "summary": "A register of a buffer and a durable value, both initially null. write(v) sets the buffer to v and returns null. read returns the buffer when it is set, and the durable value otherwise. A flusher task, which the subject spawns before the steps, waits until the buffer is set, takes the value and sets the buffer to null, yields to the task scheduler, sets the durable value to the value it took, and waits again. The actions are write, whose input is drawn under \"v\" as an integer in [0, 1000], and read, each of which records its one call. The spec is a register: write leaves v, and read outputs the value and leaves it, initially null.\n"
+        },
+        "spins-until-a-flag": {
+            "summary": "A flag, initially false, that no action sets. The action is spin, which spawns a task that yields until the flag is set, runs the scheduler, and records no call. The machine has no spec, so a spin fails its case at the limit of releases of the scheduler, with the identity max-releases.\n"
+        },
         "store-loses-on-crash": {
             "summary": "A store of a buffer and a durable map. The actions are put, flush and crash. put's input is a key drawn under \"key\" as an integer in [0, 3] and the next value of a counter that starts at 1. put records a call of put with the key and the value as arguments, sets the key to the value in the buffer, and completes the call with null. flush is a drain action, enabled while the buffer is not empty, that moves the buffer into the durable map and empties it. crash empties the buffer. Neither records a call. The machine has no spec. Its settle check reads the durable value of each key that a put completed for, and fails with the identity lost-write when it is not the last value put under the key.\n"
+        },
+        "ticker": {
+            "summary": "The machine of ticker-skips-its-first-tick over a ticker that adds one at each of its four ticks.\n"
+        },
+        "ticker-skips-its-first-tick": {
+            "summary": "A ticker task, which the subject spawns before the steps, sleeps 4 ms on the clock of its scheduler and then adds one to its count, four times, and it skips the addition of its first tick. advance(ms) advances the scheduler by ms milliseconds and returns null, and read returns the count. The actions are advance, whose input is drawn under \"ms\" as an integer in [0, 10], and read, each of which records its one call. The spec counts the milliseconds of the advances: advance(ms) adds ms, and read outputs the milliseconds divided by 4, rounded down and at most 4.\n"
         }
     },
     "relaxations": {
@@ -1957,5 +2052,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "15.0.0"
+    "version": "16.0.0"
 }

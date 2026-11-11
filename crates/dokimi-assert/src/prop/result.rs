@@ -8,7 +8,7 @@ use super::engine::runner::Outcome;
 use crate::json::Json;
 use crate::value::Value;
 
-/// The result of one run of a property: the eleven fields of the detail of
+/// The result of one run of a property: the thirteen fields of the detail of
 /// the run. [`on_result`](crate::prop::on_result) hands it to a function when
 /// the run ends.
 ///
@@ -61,6 +61,12 @@ pub struct RunResult {
     pub coverage: Option<Value>,
     /// The reason of a skipped run.
     pub reason: Option<String>,
+    /// The replays of the failing case before the shrink, for a run that
+    /// replayed one.
+    pub replays: Option<usize>,
+    /// The replays that reproduced the failure, for a run that replayed a
+    /// failing case.
+    pub reproduced: Option<usize>,
 }
 
 /// Returns the value of the field `name` of a detail, or `None` for a field
@@ -88,5 +94,7 @@ pub(crate) fn result_of(outcome: &Outcome, detail: &Json) -> RunResult {
         divergence: member(detail, "divergence"),
         coverage: member(detail, "coverage"),
         reason: text("reason"),
+        replays: outcome.replays,
+        reproduced: outcome.reproduced,
     }
 }

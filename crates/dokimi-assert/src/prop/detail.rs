@@ -3,12 +3,12 @@
 
 //! The record of a property's run, its detail and its sentence.
 //!
-//! The detail has the eleven fields of `prop-for-all`: outcome, cases,
+//! The detail has the thirteen fields of `prop-for-all`: outcome, cases,
 //! rejected, seed, counterexample, failure, choices, others, divergence,
-//! coverage and reason. A field that the outcome does not use is null. The
-//! call record of a property states the same detail as JSON, with each drawn
-//! value a typed literal of its generator's type, or an opaque literal where
-//! the type has none.
+//! coverage, reason, replays and reproduced. A field that the outcome does
+//! not use is null. The call record of a property states the same detail as
+//! JSON, with each drawn value a typed literal of its generator's type, or an
+//! opaque literal where the type has none.
 
 use super::engine::case::{Drawn, Rendered, Step};
 use super::engine::choice::Bounds;
@@ -317,11 +317,16 @@ pub(crate) fn detail_json(outcome: &Outcome) -> Json {
             "reason",
             outcome.reason.as_deref().map_or(Json::Null, Json::from),
         ),
+        ("replays", outcome.replays.map_or(Json::Null, Json::from)),
+        (
+            "reproduced",
+            outcome.reproduced.map_or(Json::Null, Json::from),
+        ),
     ])
 }
 
-/// The names of the eleven fields of the detail, in order.
-const FIELDS: [&str; 11] = [
+/// The names of the thirteen fields of the detail, in order.
+const FIELDS: [&str; 13] = [
     "outcome",
     "cases",
     "rejected",
@@ -333,6 +338,8 @@ const FIELDS: [&str; 11] = [
     "divergence",
     "coverage",
     "reason",
+    "replays",
+    "reproduced",
 ];
 
 /// Returns the record of a run that did not pass, from the detail that

@@ -96,9 +96,10 @@ mod naming_table {
         max_allocs_with_setup as _, max_choices as _, no_error as _, none_handle_safe as _,
         not_contains as _, not_equal as _, of as _, of_shape as _, on_result as _, one_of as _,
         optional as _, pairwise as _, panics as _, permutation as _, recursive as _, register as _,
-        register_values as _, register_variants as _, replay as _, require as _, round_trip as _,
-        run_seed as _, sampled_from as _, seed as _, shape_of as _, shrink as _, shrink_time as _,
-        store as _, string as _, string_matching as _, using as _, values as _, workers as _,
+        register_values as _, register_variants as _, replay as _, replays as _, require as _,
+        round_trip as _, run_seed as _, sampled_from as _, seed as _, shape_of as _, shrink as _,
+        shrink_time as _, store as _, string as _, string_matching as _, using as _, values as _,
+        workers as _,
     };
     use dokimi_assert::soft::{
         accumulates as _, close_to as _, completes_within as _, contains as _,
@@ -115,8 +116,8 @@ mod naming_table {
     };
     use dokimi_assert::stateful::{
         self, Action, Machine, Scheduler, clients as _, concurrent as _, concurrent_mean as _,
-        max as _, mean as _, pct as _, repeat as _, steps as _, swarm as _, tasks as _,
-        uniform as _,
+        max as _, max_releases as _, mean as _, pct as _, repeat as _, steps as _, swarm as _,
+        tasks as _, uniform as _,
     };
     use dokimi_assert::{
         Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, System, Value, Where,
@@ -196,7 +197,7 @@ mod naming_table {
         let _ = (result.outcome, result.cases, result.rejected, result.seed);
         let _ = (&result.counterexample, &result.failure, &result.choices);
         let _ = (&result.others, &result.divergence, &result.coverage);
-        let _ = &result.reason;
+        let _ = (&result.reason, result.replays, result.reproduced);
         // The loop of a contract is `run`.
         let contract = Contract::new(seat, "c")
             .warmup(1)
@@ -255,10 +256,12 @@ mod naming_table {
             .spec(Count)
             .invariant(|_, _| {})
             .settle(|_, _| {});
-        let scheduler = Scheduler::new(case, stateful::uniform());
-        scheduler.spawn(async |_| {});
-        drop(scheduler.yield_now());
+        let scheduler = Scheduler::new(case, stateful::uniform().max_releases(1));
+        scheduler.spawn(|_| async {});
+        drop((scheduler.yield_now(), scheduler.wait(|| true)));
+        let _ = scheduler.clock().now();
         scheduler.run();
+        scheduler.advance(Duration::ZERO);
         seat.skip("c");
         // A skip ends the case, so it is the last call.
         case.skip("c");

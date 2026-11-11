@@ -1370,6 +1370,14 @@
                 "rust": "prop::replay",
                 "typescript": "prop.replay"
             },
+            "prop.replays": {
+                "go": "prop.Replays",
+                "java": "Prop.replays",
+                "kotlin": "Prop.replays",
+                "python": "prop.replays",
+                "rust": "prop::replays",
+                "typescript": "prop.replays"
+            },
             "prop.require": {
                 "go": "prop.Require",
                 "java": "Prop.require",
@@ -1473,6 +1481,14 @@
                 "python": "prop.workers",
                 "rust": "prop::workers",
                 "typescript": "prop.workers"
+            },
+            "scheduler.max-releases": {
+                "go": "stateful.MaxReleases",
+                "java": "Stateful.maxReleases",
+                "kotlin": "Stateful.maxReleases",
+                "python": "stateful.max_releases",
+                "rust": "stateful::max_releases",
+                "typescript": "stateful.maxReleases"
             },
             "scheduler.new": {
                 "go": "stateful.NewScheduler",
@@ -2157,6 +2173,22 @@
                 "rust": "rejected",
                 "typescript": "rejected"
             },
+            "run-result.replays": {
+                "go": "Replays",
+                "java": "replays",
+                "kotlin": "replays",
+                "python": "replays",
+                "rust": "replays",
+                "typescript": "replays"
+            },
+            "run-result.reproduced": {
+                "go": "Reproduced",
+                "java": "reproduced",
+                "kotlin": "reproduced",
+                "python": "reproduced",
+                "rust": "reproduced",
+                "typescript": "reproduced"
+            },
             "run-result.seed": {
                 "go": "Seed",
                 "java": "seed",
@@ -2164,6 +2196,22 @@
                 "python": "seed",
                 "rust": "seed",
                 "typescript": "seed"
+            },
+            "scheduler.advance": {
+                "go": "Advance",
+                "java": "advance",
+                "kotlin": "advance",
+                "python": "advance",
+                "rust": "advance",
+                "typescript": "advance"
+            },
+            "scheduler.clock": {
+                "go": "Clock",
+                "java": "clock",
+                "kotlin": "clock",
+                "python": "clock",
+                "rust": "clock",
+                "typescript": "clock"
             },
             "scheduler.run": {
                 "go": "Run",
@@ -2180,6 +2228,12 @@
                 "python": "spawn",
                 "rust": "spawn",
                 "typescript": "spawn"
+            },
+            "scheduler.wait": {
+                "go": "Wait",
+                "java": "await",
+                "rust": "wait",
+                "typescript": "wait"
             },
             "scheduler.yield": {
                 "go": "Yield",
@@ -2530,5 +2584,5 @@
             }
         }
     },
-    "version": "15.0.0"
+    "version": "16.0.0"
 }

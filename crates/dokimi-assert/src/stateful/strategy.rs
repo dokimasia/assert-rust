@@ -2,13 +2,39 @@
 // SPDX-License-Identifier: MIT
 
 //! The strategies of the task scheduler: how it chooses the ready task to
-//! release.
+//! release, and how many tasks one call releases.
 
-/// How a [`Scheduler`](super::Scheduler) chooses the ready task to release.
+/// The most tasks that one run or one advance releases by default.
+const MAX_RELEASES: usize = 1_000_000;
+
+/// The rule by which a [`Scheduler`](super::Scheduler) chooses the ready task
+/// to release, and the most tasks that one run or one advance of it releases.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Strategy {
     /// The depth of PCT, and 0 for the uniform strategy.
     pub(crate) depth: u64,
+    /// The most tasks that one run or one advance releases.
+    pub(crate) max_releases: usize,
+}
+
+impl Strategy {
+    /// States the most tasks that one run or one advance releases,
+    /// 1,000,000 by default. A run or an advance that has released `n` tasks
+    /// while a task is still ready ends every task, and fails the case with
+    /// the message "the task scheduler released n tasks in one run, and a
+    /// task is still ready". Under the uniform strategy each release is a
+    /// choice of the case, so a case passes the `max_choices` of the run
+    /// first unless the run raises it.
+    ///
+    /// # Panics
+    ///
+    /// Panics for `n` of 0.
+    #[must_use]
+    pub fn max_releases(mut self, n: usize) -> Self {
+        assert!(n >= 1, "stateful: max_releases(0) is no count of 1 or more");
+        self.max_releases = n;
+        self
+    }
 }
 
 /// Returns the strategy that chooses each release among the ready tasks, in
@@ -18,7 +44,10 @@ pub struct Strategy {
 /// wherever the failure allows.
 #[must_use]
 pub fn uniform() -> Strategy {
-    Strategy { depth: 0 }
+    Strategy {
+        depth: 0,
+        max_releases: MAX_RELEASES,
+    }
 }
 
 /// Returns the strategy of probabilistic concurrency testing of `depth`.
@@ -37,5 +66,19 @@ pub fn uniform() -> Strategy {
 #[must_use]
 pub fn pct(depth: u64) -> Strategy {
     assert!(depth >= 1, "stateful: pct(0) is no depth of 1 or more");
-    Strategy { depth }
+    Strategy {
+        depth,
+        max_releases: MAX_RELEASES,
+    }
+}
+
+/// Returns the uniform strategy with the most tasks that one run or one
+/// advance releases.
+///
+/// # Panics
+///
+/// Panics for `n` of 0.
+#[must_use]
+pub fn max_releases(n: usize) -> Strategy {
+    uniform().max_releases(n)
 }
