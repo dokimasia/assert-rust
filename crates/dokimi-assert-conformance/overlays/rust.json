@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@16.0.0",
+  "extends": "spec://assertions@16.1.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -127,6 +127,10 @@
     {
       "id": "cleanup",
       "why": "The trait Seat gives cleanup() a default that ends the call with a fault, so a helper calls the member on any seat and needs no function to register a cleanup."
+    },
+    {
+      "id": "skip",
+      "why": "The trait Seat gives skip() a default that writes the reason and returns, as the seat.skip entry of limits states, so a helper calls the member on any seat and needs no function to skip."
     }
   ],
   "sections": ["tasks", "threads"],

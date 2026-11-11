@@ -1514,6 +1514,13 @@
                 "rust": "stateful::uniform",
                 "typescript": "stateful.uniform"
             },
+            "skip": {
+                "go": "Skipf",
+                "java": "Check.skip",
+                "kotlin": "Check.skip",
+                "python": "skip",
+                "typescript": "skip"
+            },
             "stateful.steps": {
                 "go": "stateful.Steps",
                 "java": "Stateful.steps",
@@ -2584,5 +2591,5 @@
             }
         }
     },
-    "version": "16.0.0"
+    "version": "16.1.0"
 }
