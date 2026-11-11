@@ -921,6 +921,13 @@
             "python": "by_identity",
             "typescript": "byIdentity"
         },
+        "equate-by": {
+            "go": "EquateBy",
+            "java": "Option.equateBy",
+            "kotlin": "Option.equateBy",
+            "python": "equate_by",
+            "typescript": "equateBy"
+        },
         "equate-empty": {
             "go": "EquateEmpty",
             "java": "Option.EQUATE_EMPTY",
@@ -2515,5 +2522,5 @@
             }
         }
     },
-    "version": "14.0.0"
+    "version": "14.1.0"
 }

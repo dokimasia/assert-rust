@@ -24,7 +24,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Combining the combination of a and b with c gives what combining a with the combination of b and c gives. first is the former, and second the latter.\n"
         },
@@ -81,7 +82,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Combining a and b gives what combining b and a gives. first is the combination of a and b, and second the combination of b and a.\n"
         },
@@ -102,7 +104,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Text contains a substring, a sequence an element, or a map a key. An element or a key compares as equal compares, so an int does not match a float.\n"
         },
@@ -123,7 +126,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "32 calls of a subject with one input return equal results. first is the first result, and second the first result that differs.\n"
         },
@@ -144,7 +148,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Structural equality. A null collection does not equal an empty one, no type coercion, NaN is unequal to itself, floats compare exactly and by value so -0 equals +0, cycles stop, functions compare by identity.\n"
         },
@@ -299,7 +304,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Calling a subject twice with one input leaves the observed state that calling it once left. first is the observation after one call, and second after two.\n"
         },
@@ -431,7 +437,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "One iteration of a subject yields each element at most once. got is the first element equal to an earlier one, and index its position.\n"
         },
@@ -451,7 +458,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Negation of contains.\n"
         },
@@ -470,7 +478,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "Negation of equal.\n"
         },
@@ -486,7 +495,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Observed state changes across a call. got is the observation that did not change.\n"
         },
@@ -523,7 +533,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "A sequence contains the same elements as another, each as often, in any order. Elements compare as equal compares them.\n"
         },
@@ -587,7 +598,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of associative. Each case of a run generates a, b and c, and associative runs on them as prop-for-all runs a body.\n"
         },
@@ -642,7 +654,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of commutative. Each case of a run generates a and b, and commutative runs on them as prop-for-all runs a body.\n"
         },
@@ -672,7 +685,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of contains. Each case of a run generates the input, and contains runs on it as prop-for-all runs a body.\n"
         },
@@ -726,7 +740,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of deterministic. Each case of a run generates the input, and deterministic runs on it as prop-for-all runs a body.\n"
         },
@@ -781,7 +796,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of equal. Each case of a run generates the input, and equal runs on it as prop-for-all runs a body.\n"
         },
@@ -1078,7 +1094,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of idempotent. Each case of a run generates the input, and idempotent runs on it as prop-for-all runs a body.\n"
         },
@@ -1283,7 +1300,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of not-contains. Each case of a run generates the input, and not-contains runs on it as prop-for-all runs a body.\n"
         },
@@ -1338,7 +1356,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of not-equal. Each case of a run generates the input, and not-equal runs on it as prop-for-all runs a body.\n"
         },
@@ -1392,7 +1411,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of not-pure. Each case of a run generates the input, and not-pure runs on it as prop-for-all runs a body.\n"
         },
@@ -1472,7 +1492,8 @@
             "relaxations": [
                 "equate-empty",
                 "equate-nans",
-                "by-identity"
+                "by-identity",
+                "equate-by"
             ],
             "summary": "The property form of permutation. Each case of a run generates the input, and permutation runs on it as prop-for-all runs a body.\n"
         },
@@ -1501,7 +1522,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of pure. Each case of a run generates the input, and pure runs on it as prop-for-all runs a body.\n"
         },
@@ -1530,7 +1552,8 @@
             "package": "prop",
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The property form of round-trip. Each case of a run generates the input, and round-trip runs on it as prop-for-all runs a body.\n"
         },
@@ -1592,7 +1615,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "Observed state is unchanged across a call.\n"
         },
@@ -1609,7 +1633,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "The inverse conversion of the forward conversion of an input returns the input. want is the input, and got what came back.\n"
         },
@@ -1645,7 +1670,8 @@
             ],
             "relaxations": [
                 "equate-empty",
-                "equate-nans"
+                "equate-nans",
+                "equate-by"
             ],
             "summary": "32 iterations of a subject yield equal sequences. first is the first sequence, and second the first sequence that differs.\n"
         },
@@ -1784,6 +1810,9 @@
     "relaxations": {
         "by-identity": {
             "summary": "A reference equals another reference only when both refer to the same object, whatever the object's value. A value that is no reference compares as without it. The modifier applies wherever the comparison meets a reference: at the top, in an element of a list, in a value of a map and in a field of a record. What a reference is in each language is stated where the encoding states the reference literal.\n"
+        },
+        "equate-by": {
+            "summary": "A value of the type of the transform's argument compares by the transform's result, under the comparison and the other modifiers of the call. The modifier applies wherever the comparison meets such a value: at the top, in an element of a list, in a key and a value of a map and in a field of a record. At one place at most one transform applies: the result compares as it is, and its parts compare under the transforms again. The last transform of a call whose type matches a value applies. The record of equal and of not-equal states the result in place of got and want when the transform matches them.\n"
         },
         "equate-empty": {
             "summary": "An absent container equals an empty one of the same type. Without it a null map and an empty map are different values, which is what the standard states by default.\n"
@@ -1928,5 +1957,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "14.0.0"
+    "version": "14.1.0"
 }

@@ -96,7 +96,10 @@ mod declined {
     #[test]
     fn returns_the_relaxations_that_the_overlay_of_rust_declines() {
         let declined = definition::declined().expect("the overlay reads");
-        assert_eq!(declined, ["equate-empty", "equate-nans", "by-identity"]);
+        assert_eq!(
+            declined,
+            ["equate-empty", "equate-nans", "by-identity", "equate-by"]
+        );
     }
 }
 

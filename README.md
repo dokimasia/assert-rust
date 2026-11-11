@@ -884,8 +884,8 @@ containers compare element by element. Rust's floats and collections follow
 all three rules, so the library does not add a comparison of its own. A
 pair of types that `PartialEq` does not relate fails to compile.
 
-The definition offers three relaxations, and this library declines all
-three:
+The definition offers four relaxations, and this library declines all
+four:
 
 - `equate-empty`: an absent container and an empty one have different
   types, such as `Option<Vec<T>>` and `Vec<T>`.
@@ -893,6 +893,9 @@ three:
   `f64::to_bits`.
 - `by-identity`: `PartialEq` compares values, so a test compares two
   references with `std::ptr::eq`.
+- `equate-by`: a type states its own equality in `PartialEq`, such as a
+  prost message that derives it over its fields. A test that compares by a
+  transform compares the transformed values.
 
 ## Call records
 
