@@ -4,10 +4,10 @@
 //! The checks that the list-append or register transactions of a history
 //! exhibit no anomaly that an isolation level forbids.
 //!
-//! A check first reads the micro-operations for the six anomalies that need
+//! A check first reads the micro-operations for the seven anomalies that need
 //! no dependency graph. It then derives the write-write, write-read and
 //! read-write dependencies between committed transactions, and searches the
-//! graph for the five kinds of cycle. A level forbids a set of the eleven
+//! graph for the five kinds of cycle. A level forbids a set of the twelve
 //! kinds, and the record reports the first of them that the history
 //! exhibits.
 
@@ -222,7 +222,32 @@ fn observation_json(observation: &Observation) -> Json {
             ("appender", (*appender).into()),
             ("next", next.to_literal()),
         ]),
+        Observation::LostUpdate {
+            calls,
+            key,
+            read,
+            register,
+        } => lost_update_json(calls, key, read, *register),
     }
+}
+
+/// Returns the fields of an observation of a lost update: the two calls, the
+/// key, and the list that both read. A register read states its value, and
+/// null for the initial value.
+fn lost_update_json(calls: &[usize; 2], key: &Value, read: &[Value], register: bool) -> Json {
+    let read = if register {
+        or_null(read.first())
+    } else {
+        list_json(read)
+    };
+    object([
+        (
+            "calls",
+            Json::Array(calls.iter().map(|call| Json::from(*call)).collect()),
+        ),
+        ("key", key.to_literal()),
+        ("read", read),
+    ])
 }
 
 /// Returns the detail of a failing check as its call record states it.

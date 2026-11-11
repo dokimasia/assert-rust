@@ -89,6 +89,17 @@ mod has_snapshot_isolation {
     }
 
     #[test]
+    fn forbids_a_lost_update() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Get("x", None), Op::Write("x", 1)]);
+        commit(&h, 1, &[Op::Get("x", None), Op::Write("x", 2)]);
+        let seat = Recorder::new();
+        history::has_snapshot_isolation(&seat, &h, CONTRACT);
+        let failure = &seat.failures()[0];
+        assert_eq!(failure.field("anomaly"), Some(&Value::from("lost-update")));
+    }
+
+    #[test]
     fn ends_with_a_fault_that_names_the_check() {
         let h = History::new();
         h.invoke(0, "read", [], []).ok(Value::Null);

@@ -51,6 +51,7 @@ pub(crate) enum Anomaly {
     IncompatibleOrder,
     AbortedRead,
     IntermediateRead,
+    LostUpdate,
     G0,
     G1c,
     GSingle,
@@ -59,13 +60,14 @@ pub(crate) enum Anomaly {
 }
 
 /// The kinds of anomaly, in the order in which a record reports them.
-pub(crate) const ANOMALIES: [Anomaly; 11] = [
+pub(crate) const ANOMALIES: [Anomaly; 12] = [
     Anomaly::GarbageRead,
     Anomaly::DuplicateAppend,
     Anomaly::InternalInconsistency,
     Anomaly::IncompatibleOrder,
     Anomaly::AbortedRead,
     Anomaly::IntermediateRead,
+    Anomaly::LostUpdate,
     Anomaly::G0,
     Anomaly::G1c,
     Anomaly::GSingle,
@@ -83,6 +85,7 @@ impl Anomaly {
             Self::IncompatibleOrder => "incompatible-order",
             Self::AbortedRead => "aborted-read",
             Self::IntermediateRead => "intermediate-read",
+            Self::LostUpdate => "lost-update",
             Self::G0 => "G0",
             Self::G1c => "G1c",
             Self::GSingle => "G-single",
@@ -175,6 +178,16 @@ pub(crate) enum Observation {
         value: Value,
         appender: usize,
         next: Value,
+        register: bool,
+    },
+    /// Two ok transactions whose first micro-operations on `key` read the
+    /// list `read`, and that both append or write to the key. A register
+    /// read is the list of its one value, and the empty list for the initial
+    /// value.
+    LostUpdate {
+        calls: [usize; 2],
+        key: Value,
+        read: Vec<Value>,
         register: bool,
     },
 }
@@ -427,6 +440,28 @@ fn external_reads(txn: &Transaction) -> HashMap<Canonical, Option<Value>> {
     found
 }
 
+/// Returns the external reads of a transaction in the order of its
+/// micro-operations: each read that is the transaction's first
+/// micro-operation on its key, with the key and the list that it returned.
+fn first_reads(txn: &Transaction) -> Vec<(&Value, &[Value])> {
+    let mut touched = HashSet::new();
+    let mut found = Vec::new();
+    for mop in &txn.mops {
+        let key = id(mop.key());
+        if let Mop::Read {
+            key: stated,
+            list: Some(list),
+        } = mop
+        {
+            if !touched.contains(&key) {
+                found.push((stated, list.as_slice()));
+            }
+        }
+        touched.insert(key);
+    }
+    found
+}
+
 /// Returns the value of the last write of each key of a register
 /// transaction.
 fn external_writes(txn: &Transaction) -> HashMap<Canonical, Value> {
@@ -615,6 +650,7 @@ impl<'t> Analysis<'t> {
             Anomaly::IncompatibleOrder => self.incompatible.clone(),
             Anomaly::AbortedRead => self.aborted_read(),
             Anomaly::IntermediateRead => self.intermediate_read(),
+            Anomaly::LostUpdate => self.lost_update(),
             Anomaly::GNonadjacent => self.nonadjacent(),
             cycle => self.cycle(cycle, &cycle_search(cycle)),
         }
@@ -732,6 +768,50 @@ impl<'t> Analysis<'t> {
                 ))
             },
         )
+    }
+
+    /// Returns the first two ok transactions that read one version of a key
+    /// by their first micro-operation on it, and that both append or write to
+    /// the key. The write that the database installed second overwrote a
+    /// version that its transaction did not read. The transactions are in
+    /// the order of their invocations, so the instance is the first
+    /// transaction whose read matches an earlier one, and that earlier one.
+    fn lost_update(&self) -> Option<Instance> {
+        let mut readers: HashMap<(Canonical, Vec<Canonical>), usize> = HashMap::new();
+        for txn in self
+            .txns
+            .iter()
+            .filter(|txn| txn.kind() == Some(Completed::Ok))
+        {
+            let written: HashSet<Canonical> = txn
+                .mops
+                .iter()
+                .filter_map(|mop| match mop {
+                    Mop::Append { key, .. } | Mop::Write { key, .. } => Some(id(key)),
+                    Mop::Read { .. } => None,
+                })
+                .collect();
+            for (key, read) in first_reads(txn) {
+                if !written.contains(&id(key)) {
+                    continue;
+                }
+                let version = (id(key), read.iter().map(id).collect());
+                let first = *readers.entry(version).or_insert(txn.call);
+                if first != txn.call {
+                    return Some(single(
+                        Anomaly::LostUpdate,
+                        vec![first, txn.call],
+                        Observation::LostUpdate {
+                            calls: [first, txn.call],
+                            key: key.clone(),
+                            read: read.to_vec(),
+                            register: self.register,
+                        },
+                    ));
+                }
+            }
+        }
+        None
     }
 
     /// Returns each key's version order, in the order the keys first appear,

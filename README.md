@@ -731,7 +731,9 @@ the register is linearizable: violated in the partition of "x"
   history that writes with `["write", key, value]` is a register history.
   Its reads return the value of the register, or null for the initial
   value. A register history shows fewer anomalies than a list-append
-  history, because blind writes do not reveal an order between them.
+  history, because blind writes do not reveal an order between them. Both
+  levels forbid a lost update, in which two committed transactions read the
+  same list or value of a key first and then both append or write to it.
 
 ## Machines
 
@@ -955,7 +957,7 @@ under test.
 - Each case runs on `check` and `soft` of each crate that has its
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
-- The vectors run too: 57 for files, 110 for histories, 439 for properties
+- The vectors run too: 57 for files, 112 for histories, 439 for properties
   and 15 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.

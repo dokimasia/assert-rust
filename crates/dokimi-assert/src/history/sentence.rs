@@ -242,7 +242,27 @@ fn observation_text(observation: &Observation) -> String {
             };
             format!("call {call} read {read}, which call {appender} followed with {next}")
         }
+        Observation::LostUpdate {
+            calls,
+            key,
+            read,
+            register,
+        } => lost_update_text(*calls, key, read, *register),
     }
+}
+
+/// Returns the text of a lost update. The text names the two calls, the key
+/// and the list or the register value that both calls read.
+fn lost_update_text(calls: [usize; 2], key: &Value, read: &[Value], register: bool) -> String {
+    let (read, verb) = if register {
+        (register_text(read.first()), "wrote")
+    } else {
+        (list_text(read), "appended")
+    };
+    format!(
+        "calls {} and {} read {read} from {key}, and both {verb} to it",
+        calls[0], calls[1]
+    )
 }
 
 /// Returns the text of an internal inconsistency: the read, what the

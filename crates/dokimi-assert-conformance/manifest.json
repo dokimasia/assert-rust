@@ -1,8 +1,8 @@
 {
-    "commit": "6461fdf49a0b685e5c8831df3362c8d1f4624029",
-    "digest": "sha256:3d5ac33ec0bd271590fa6ff99aa9f3d6c1e85b629127ac9360386d2fb015c6e5",
+    "commit": "43476f24e7782562b28e7b2d6ac812d7f489a091",
+    "digest": "sha256:3590e768cedce376487533ba7999044a622f90b735100003b669ae4657fcecb9",
     "files": {
-        "VERSION": "sha256:269600cd339c9cfeebdf8fbd62860a991893c7d24672d95124966049991fcd93",
+        "VERSION": "sha256:55d90fdc3f902e5c0b16b3378f9eaa36e970a1c09723c33de7d47d0370044012",
         "corpus/accumulates.json": "sha256:9ac2967d84157a9b57d3fb59ef75378e60495ced35194ba170bf216deb0e3daf",
         "corpus/after-close.json": "sha256:c7df47d3ef812973763b2191caa55180c1d2536710873bb420ff8d4e79da6506",
         "corpus/associative.json": "sha256:41169311a5d852966b84a14702a528a8f99591e82c734d32017fc6586bae56e9",
@@ -30,8 +30,8 @@
         "corpus/has-suffix.json": "sha256:ee23deeed9804651f26c0a6be8fdb655acec52d003521de5498c1181caec646d",
         "corpus/history/linearizable.json": "sha256:5bd71a0e763f20cfdec46f162f8c6319ea961cbe50006548d883a852436a5f95",
         "corpus/history/seam.json": "sha256:d5e727ea967d185ebfb433db1cfa75e42cd2df88ab30e586ba9b141a60145dab",
-        "corpus/history/serializable.json": "sha256:af4cc86b24544b3758b757d11a9dfd78d4b5038dd677375d5ed3b7e03c08a712",
-        "corpus/history/snapshot-isolation.json": "sha256:37372dd869ef8cf5baccf5ce9852241205ecfccf68e5ca126545e672793f5d4e",
+        "corpus/history/serializable.json": "sha256:0123efa1da6c5bed6f16955cb48fc9cd599640c2c79c632dc54564df9277ed86",
+        "corpus/history/snapshot-isolation.json": "sha256:651a42e705b2e4c808d6610004557040c3839d5e56d409b23d8d849bd2b5865f",
         "corpus/honours-cancellation.json": "sha256:81fc9e6a6b721a0140cfe4e3d68847e36fc45463ec4baa25499613f26b6dc48f",
         "corpus/honours-deadline.json": "sha256:0bd133592bbdfbb145cabacdc1360904da546e9e3f000670c08222f3694ebe32",
         "corpus/idempotent.json": "sha256:f78e287c54ef7033ceff0148d71844c32085e5e61f1a0929d21e1708ec1a8f7f",
@@ -71,9 +71,9 @@
         "corpus/throws.json": "sha256:40dd385108c7ada8c0ce236a79c13db2da23e8e142f2fa5947fcce1623e7e365",
         "corpus/total.json": "sha256:ee76e6bd97358d2576dd24dc9d32949cdce5b46484635237a1a4c0e043322cb3",
         "corpus/true.json": "sha256:43e01f045228fd01449d2abad5c07b50b8d700fd6c986e6877a4f192ff86b616",
-        "overlays/rust.json": "sha256:72dfdaeb93fa1f48218e5f0070bf191555ecef60fbc0b7ed74dfc65191c3ff29",
-        "spec/assertions.json": "sha256:5645bb89357486fac1f771f40e2c15311741fe9f036e015a06ab8fda9d27dda3",
-        "spec/naming.json": "sha256:84df06d265be531761e036e5ea0cfe9c850b41d9eeede5d57c4e0f84844996ca",
+        "overlays/rust.json": "sha256:329cab87948eebd96a23ac793e0b12d9468febca285c8598d3f8beec0870a01f",
+        "spec/assertions.json": "sha256:e363801ca77364b66ff9bac19f589fd260a6936256131791949a567296f207df",
+        "spec/naming.json": "sha256:83bbc4d1514633c99ba75236ecac3bb74688acd272dd73ce181829db27cbe388",
         "spec/zones.json": "sha256:6eb1d994a1e2d727161582e20dee8cd429073fa561c06f8eb7442c20f810f6c6"
     },
     "languages": {
@@ -82,5 +82,5 @@
         ]
     },
     "repo": "dokimasia/assert-spec",
-    "version": "14.2.0"
+    "version": "15.0.0"
 }

@@ -108,6 +108,33 @@ mod anomalies_without_a_graph {
     }
 
     #[test]
+    fn finds_two_transactions_that_append_to_the_list_that_both_read() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Append("x", 1)]);
+        commit(&h, 1, &[Op::Read("x", &[1]), Op::Append("x", 2)]);
+        commit(&h, 2, &[Op::Read("x", &[1]), Op::Append("x", 3)]);
+        let stated = detail(&h);
+        assert_eq!(stated["anomaly"], "lost-update");
+        assert_eq!(
+            stated["explanation"][0],
+            json!({"calls": [2, 4], "key": text("x"), "read": {"type": "list", "of": "int", "value": [1]}})
+        );
+    }
+
+    #[test]
+    fn finds_no_lost_update_of_a_read_after_its_own_append_or_without_an_append() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Append("x", 1)]);
+        commit(&h, 1, &[Op::Append("x", 2), Op::Read("x", &[1, 2])]);
+        commit(&h, 2, &[Op::Read("x", &[1, 2]), Op::Append("x", 3)]);
+        commit(&h, 3, &[Op::Read("x", &[1, 2, 3])]);
+        commit(&h, 4, &[Op::Read("x", &[1, 2, 3]), Op::Read("y", &[])]);
+        let seat = Recorder::new();
+        history::is_serializable(&seat, &h, "the transactions are serializable");
+        assert!(!seat.failed(), "{}", seat.message());
+    }
+
+    #[test]
     fn commits_a_transaction_of_unknown_outcome_whose_append_a_read_observed() {
         let h = History::new();
         txn(&h, 0, &[Op::Append("x", 1)]).unknown("timeout");
@@ -228,6 +255,19 @@ mod registers {
         assert_eq!(
             detail(&h)["explanation"][0],
             json!({"from": 0, "to": 2, "relation": "rw", "key": text("x"), "value": null, "next": int(2)})
+        );
+    }
+
+    #[test]
+    fn states_null_for_a_lost_update_of_the_initial_value() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Get("x", None), Op::Write("x", 1)]);
+        commit(&h, 1, &[Op::Get("x", None), Op::Write("x", 2)]);
+        let stated = detail(&h);
+        assert_eq!(stated["anomaly"], "lost-update");
+        assert_eq!(
+            stated["explanation"][0],
+            json!({"calls": [0, 2], "key": text("x"), "read": null})
         );
     }
 

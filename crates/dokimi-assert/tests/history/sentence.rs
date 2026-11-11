@@ -194,6 +194,27 @@ mod isolation {
     }
 
     #[test]
+    fn states_the_read_and_the_writes_of_a_lost_update() {
+        let h = History::new();
+        commit(&h, 0, &[Op::Append("x", 1)]);
+        commit(&h, 1, &[Op::Read("x", &[1]), Op::Append("x", 2)]);
+        commit(&h, 2, &[Op::Read("x", &[1]), Op::Append("x", 3)]);
+        let got = serializable(&h);
+        assert!(
+            got.ends_with("calls 2 and 4 read [1] from \"x\", and both appended to it"),
+            "{got}"
+        );
+        let h = History::new();
+        commit(&h, 0, &[Op::Get("x", None), Op::Write("x", 1)]);
+        commit(&h, 1, &[Op::Get("x", None), Op::Write("x", 2)]);
+        let got = serializable(&h);
+        assert!(
+            got.ends_with("calls 0 and 2 read the initial value from \"x\", and both wrote to it"),
+            "{got}"
+        );
+    }
+
+    #[test]
     fn states_a_read_of_a_register_that_its_writer_aborted_or_overwrote() {
         let h = History::new();
         txn(&h, 0, &[Op::Write("x", 1)]).fail("aborted");
