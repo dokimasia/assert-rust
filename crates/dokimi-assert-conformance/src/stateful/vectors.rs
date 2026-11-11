@@ -9,15 +9,18 @@
 //! trace, and compares the detail of the property's call record with the
 //! vector's detail. A vector whose trace the run refuses states the entry,
 //! the name of its step and the reason as its error. The runner compares
-//! them with the fault that ends the call.
+//! them with the fault that ends the call. The stored cases of the settings
+//! are entries of a store in a directory of the vector's own.
 
 use super::subjects::{self, Setup};
 use crate::prop::choices::same_json;
+use crate::prop::vectors::write_stored;
 use crate::vector::{Disagreement, Vector};
 use dokimi_assert::Recorder;
 use dokimi_assert::prop::{self, Options};
 use dokimi_assert::stateful::{self, Strategy};
 use serde_json::Value as Json;
+use std::path::Path;
 
 /// The contract of the property that runs a machine subject.
 const CONTRACT: &str = "the machine subject of the vector";
@@ -30,15 +33,17 @@ const SETUP_CLIENTS: usize = 2;
 const RELEASES: &str = "max-releases";
 
 /// Runs `vector`, and compares what the library reports with the vector.
+/// `dir` is an empty directory of the vector's own, in which the run keeps
+/// the store of the stored cases of its settings.
 ///
 /// # Errors
 ///
 /// Returns how the run disagrees with the vector, and the member of a vector
 /// that names no subject or states a setup or a setting that the runner
 /// cannot take.
-pub fn run(vector: &Vector) -> Result<(), Disagreement> {
+pub fn run(vector: &Vector, dir: &Path) -> Result<(), Disagreement> {
     match vector.kind.as_str() {
-        "machines" => machines(&vector.raw),
+        "machines" => machines(&vector.raw, dir),
         kind => Err(Disagreement::new(
             "",
             format!("the runner runs no vector of the kind {kind:?}"),
@@ -136,10 +141,11 @@ fn names_of(stated: &Json) -> Result<Vec<String>, Disagreement> {
         .ok_or_else(|| Disagreement::new("setup.keep", format!("{stated} is no list of names")))
 }
 
-/// Returns the options of the run that a vector's settings state: its seed
-/// and its cases. The run reads no variable of the environment and keeps no
-/// store.
-fn settings_of(stated: &Json) -> Result<Options, Disagreement> {
+/// Returns the options of the run that a vector's settings state: its seed,
+/// its cases and its stored cases. The run does not read a variable of the
+/// environment. It keeps the store of its stored cases in `dir`, and it
+/// keeps no store without them.
+fn settings_of(stated: &Json, dir: &Path) -> Result<Options, Disagreement> {
     let mut options: Options = prop::hermetic().store("");
     for (name, value) in stated.as_object().into_iter().flatten() {
         options = match name.as_str() {
@@ -153,6 +159,12 @@ fn settings_of(stated: &Json) -> Result<Options, Disagreement> {
                 options.seed(seed)
             }
             "cases" => options.cases(count(value, "settings.cases")?),
+            "stored" => {
+                write_stored(value, dir, CONTRACT).map_err(|disagreement| {
+                    Disagreement::new("settings.stored", disagreement.to_string())
+                })?;
+                options.store(dir)
+            }
             _ => {
                 return Err(Disagreement::new(
                     format!("settings.{name}"),
@@ -209,7 +221,7 @@ fn compare_refusal(record: &Json, error: &Json) -> Result<(), Disagreement> {
 /// Runs the subject of a machines vector under its setup and its settings,
 /// after its trace, and compares the run with the detail or the error that
 /// the vector states.
-fn machines(raw: &Json) -> Result<(), Disagreement> {
+fn machines(raw: &Json, dir: &Path) -> Result<(), Disagreement> {
     let subject = raw["subject"]
         .as_str()
         .and_then(subjects::subject)
@@ -220,7 +232,7 @@ fn machines(raw: &Json) -> Result<(), Disagreement> {
             )
         })?;
     let setup = setup_of(&raw["setup"])?;
-    let mut options = settings_of(&raw["settings"])?;
+    let mut options = settings_of(&raw["settings"], dir)?;
     if let Some(trace) = raw.get("trace") {
         options = options.draws(&trace.to_string());
     }

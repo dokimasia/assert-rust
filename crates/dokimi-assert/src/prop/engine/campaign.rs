@@ -21,7 +21,7 @@
 //!
 //! The definition leaves these odds to each library.
 
-use super::case::{AsAny, Drawn, Provider, Record, Request, Span};
+use super::case::{AsAny, Provider, Record, Request, Span};
 use super::choice::{Bounds, Choice};
 use super::draw::{Draw, below};
 use super::execution::{Execution, Fault, Phase, Status};
@@ -29,6 +29,7 @@ use super::runner::{
     Kind, Outcome, Run, Settings, Tally, conclude, confirm_valid, generating, known_cases,
 };
 use super::source::{Source, case_source};
+use super::stored::{Taken, run_stored};
 use std::collections::{BTreeMap, HashSet};
 use std::time::{Duration, Instant};
 
@@ -88,8 +89,8 @@ struct Exploration {
     /// The first failure that the campaign concluded, with every later one
     /// among its others.
     found: Option<Outcome>,
-    /// The draws of each stored case that ran.
-    stored: Vec<Vec<Drawn>>,
+    /// How the campaign took each stored case that ran.
+    stored: Vec<Taken>,
 }
 
 impl Exploration {
@@ -363,10 +364,14 @@ pub(crate) fn campaign(
     for (phase, provider, valued) in known_cases(&mut settings) {
         let execution = run.execute(provider, settings.max_choices, None)?;
         (run.observer)(phase, &execution);
-        if phase == Phase::Stored {
-            exploration.stored.push(execution.record.draws.clone());
-        }
         if let Some(ended) = exploration.take(run, &settings, execution, valued, concluded)? {
+            return Ok(ended);
+        }
+    }
+    for case in std::mem::take(&mut settings.stored) {
+        let (execution, taken) = run_stored(run, &case, settings.max_choices)?;
+        exploration.stored.push(taken);
+        if let Some(ended) = exploration.take(run, &settings, execution, false, concluded)? {
             return Ok(ended);
         }
     }

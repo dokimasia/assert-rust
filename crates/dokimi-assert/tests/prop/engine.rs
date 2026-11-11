@@ -20,6 +20,7 @@ mod runner;
 mod shrink;
 mod source;
 mod store;
+mod stored;
 mod token;
 mod trace;
 mod tree;

@@ -15,12 +15,10 @@
 //! test stays in place. An entry of a later format is noted and skipped, and
 //! any other file is damaged.
 
-use super::engine::canonical::same;
-use super::engine::case::Drawn;
 use super::engine::choice::Choice;
-use super::engine::store::{self, MAX_DEPTH, Verdict};
+use super::engine::store::{self, FORMAT_STEPS, MAX_DEPTH, Verdict};
+use super::engine::stored::StoredCase;
 use crate::json::{self, Json};
-use crate::value::Value;
 use std::collections::HashSet;
 use std::fmt::Write as _;
 use std::fs;
@@ -43,12 +41,25 @@ pub(crate) struct StoreFault {
     pub(crate) reason: String,
 }
 
-/// An entry of a store that a property replays.
+/// An entry of a store that a property replays: its file name, its choices,
+/// its counterexample, and whether it is of the format that records steps.
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct Stored {
     pub(crate) name: String,
     pub(crate) choices: Vec<Choice>,
     pub(crate) counterexample: Vec<Json>,
+    pub(crate) steps: bool,
+}
+
+impl Stored {
+    /// Returns the stored case that the run of the entry takes.
+    pub(crate) fn case(&self) -> StoredCase {
+        StoredCase {
+            choices: self.choices.clone(),
+            counterexample: self.counterexample.clone(),
+            steps: self.steps,
+        }
+    }
 }
 
 /// The entries that a property reads from its store, oldest first, and the
@@ -181,12 +192,14 @@ pub(crate) fn load(directory: &Path, contract: &str) -> Result<Loaded, StoreFaul
                     .and_then(Json::as_array)
                     .map(<[Json]>::to_vec)
                     .unwrap_or_default();
+                let steps = parsed.get("store").and_then(Json::as_int) == Some(FORMAT_STEPS);
                 found.push((
                     date,
                     Stored {
                         name,
                         choices,
                         counterexample,
+                        steps,
                     },
                 ));
             }
@@ -247,26 +260,4 @@ pub(crate) fn seeds(directory: &Path) -> Result<Vec<(String, Vec<u8>)>, StoreFau
         .into_iter()
         .map(|(name, path)| fs::read(path).map(|data| (name, data)).map_err(refused))
         .collect()
-}
-
-/// Returns `true` when the draws of a replayed stored case differ from the
-/// draws of its entry: other labels, another number of draws, or another
-/// value of a draw with a value in the entry.
-pub(crate) fn differs(recorded: &[Json], replayed: &[Drawn]) -> bool {
-    if recorded.len() != replayed.len() {
-        return true;
-    }
-    recorded.iter().zip(replayed).any(|(entry, drawn)| {
-        if entry.get("label").and_then(Json::as_str) != Some(drawn.label.as_str()) {
-            return true;
-        }
-        let Some(stated) = entry.get("value") else {
-            return false;
-        };
-        let stated = Value::from_literal(stated).ok();
-        match (stated, &drawn.value.literal) {
-            (Some(stated), Some(value)) => !same(&stated, value),
-            _ => true,
-        }
-    })
 }

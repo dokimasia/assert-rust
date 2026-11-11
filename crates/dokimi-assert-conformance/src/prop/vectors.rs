@@ -20,6 +20,7 @@ use super::generator::{SpecError, build};
 use super::{fixtures, forms};
 use crate::definition::{self, Error};
 use crate::literal as typed;
+use dokimi_assert::prop::engine::case::Step;
 use dokimi_assert::prop::engine::choice::Choice;
 use dokimi_assert::prop::engine::coverage;
 use dokimi_assert::prop::engine::execution::Fault;
@@ -345,7 +346,7 @@ fn draws(raw: &Json) -> Result<Json, Disagreement> {
             .iter()
             .map(|(label, value)| Entry::Draw {
                 label: label.clone(),
-                value: value.clone(),
+                value: Some(value.clone()),
             })
             .collect(),
     ];
@@ -431,6 +432,39 @@ fn token_of(raw: &Json) -> Result<Json, Disagreement> {
     )
 }
 
+/// Returns the entries of a counterexample that a vector states at `at`:
+/// draw entries with a label and the typed literal of their value where they
+/// have one, and step entries with an action, a client and a drain mark.
+fn counterexample_of(stated: &Json, at: &str) -> Result<Vec<Entry>, Disagreement> {
+    stated
+        .as_array()
+        .ok_or_else(|| input(format!("{at} is no list")))?
+        .iter()
+        .map(|entry| {
+            if let Some(action) = entry.get("step").and_then(Json::as_str) {
+                let client = entry
+                    .get("client")
+                    .and_then(Json::as_u64)
+                    .and_then(|client| usize::try_from(client).ok());
+                return Ok(Entry::Step(Step {
+                    action: action.to_owned(),
+                    client,
+                    drain: entry.get("drain") == Some(&Json::Bool(true)),
+                }));
+            }
+            let value = entry
+                .get("value")
+                .map(typed::decode)
+                .transpose()
+                .map_err(input)?;
+            Ok(Entry::Draw {
+                label: entry["label"].as_str().unwrap_or_default().to_owned(),
+                value,
+            })
+        })
+        .collect()
+}
+
 /// Reads the text of one file of a store, or writes an entry and names it.
 fn store_of(raw: &Json) -> Result<Json, Disagreement> {
     let contract = raw["contract"].as_str().unwrap_or_default();
@@ -456,19 +490,7 @@ fn store_of(raw: &Json) -> Result<Json, Disagreement> {
             Ok((key.clone(), value))
         })
         .collect::<Result<_, Disagreement>>()?;
-    let counterexample = raw["counterexample"]
-        .as_array()
-        .ok_or_else(|| input("the counterexample is no list"))?
-        .iter()
-        .map(|draw| {
-            let value = draw
-                .get("value")
-                .map(typed::decode)
-                .transpose()
-                .map_err(input)?;
-            Ok((draw["label"].as_str().unwrap_or_default().to_owned(), value))
-        })
-        .collect::<Result<_, Disagreement>>()?;
+    let counterexample = counterexample_of(&raw["counterexample"], "counterexample")?;
     let failure = store::Failure {
         contract: contract.to_owned(),
         choices: choices.clone(),
@@ -675,7 +697,7 @@ fn options_of(settings: &Json, dir: &Path, spec: &Json) -> Result<Options, Disag
     if let Some(examples) = written.get("examples") {
         options = options.draws(&example_of(examples, spec)?);
     }
-    write_stored(&settings["stored"], dir, spec)?;
+    write_stored(&settings["stored"], dir, CONTRACT)?;
     Ok(options)
 }
 
@@ -709,12 +731,18 @@ fn example_of(examples: &Json, spec: &Json) -> Result<String, Disagreement> {
 }
 
 /// Writes each stored case of a vector's settings into the store `dir`, as
-/// an entry of the vector's property with the draw that its choices decode
-/// to.
+/// an entry of the property `contract` with the choices and the
+/// counterexample that the vector states.
 ///
 /// The first case was found on 2026-01-01, and each later case a day later,
 /// so the run tries the cases in the order of the vector.
-fn write_stored(stored: &Json, dir: &Path, spec: &Json) -> Result<(), Disagreement> {
+///
+/// # Errors
+///
+/// Returns the disagreement of a stored case that states no choices or no
+/// counterexample, of more than 31 stored cases, and of an entry that the
+/// store does not take.
+pub(crate) fn write_stored(stored: &Json, dir: &Path, contract: &str) -> Result<(), Disagreement> {
     let listed = stored.as_array().map(Vec::as_slice).unwrap_or_default();
     if listed.is_empty() {
         return Ok(());
@@ -727,19 +755,20 @@ fn write_stored(stored: &Json, dir: &Path, spec: &Json) -> Result<(), Disagreeme
                 "{at}: the runner dates 31 stored cases at most"
             )));
         }
-        let choices = choices_of(written, &at)?;
-        let value = drawn(written, spec, &at)?;
+        let choices = choices_of(&written["choices"], &format!("{at}.choices"))?;
+        let counterexample =
+            counterexample_of(&written["counterexample"], &format!("{at}.counterexample"))?;
         let failure = store::Failure {
-            contract: CONTRACT.to_owned(),
+            contract: contract.to_owned(),
             choices: choices.clone(),
             identity: STORED
                 .iter()
                 .map(|(key, value)| ((*key).to_owned(), Value::from(*value)))
                 .collect(),
-            counterexample: vec![(DRAWN.to_owned(), Some(value))],
+            counterexample,
         };
         let entry = store::entry(&failure, &version, &format!("2026-01-{:02}", day + 1));
-        std::fs::write(dir.join(store::name(CONTRACT, &choices)), entry)
+        std::fs::write(dir.join(store::name(contract, &choices)), entry)
             .map_err(|error| input(format!("{at}: the entry cannot be written: {error}")))?;
     }
     Ok(())

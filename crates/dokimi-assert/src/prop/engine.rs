@@ -27,6 +27,7 @@ pub mod runner;
 pub mod shrink;
 pub mod source;
 pub mod store;
+pub(crate) mod stored;
 pub mod token;
 pub mod trace;
 pub mod tree;

@@ -8,9 +8,11 @@
 //!
 //! 1. The known cases: each trace of a case whose draws and steps the caller
 //!    states, then each example of a case whose values the caller states,
-//!    then each stored choice sequence, oldest first. These cases do not enter
-//!    the case tree. A trace that the body cannot follow ends the run before
-//!    any other case runs.
+//!    then each stored case, oldest first. A stored case runs its choices,
+//!    and the counterexample of its entry as a trace when the choices decode
+//!    to another counterexample. These cases do not enter the case tree. A
+//!    trace that the body cannot follow ends the run before any other case
+//!    runs, and the trace of a stored case gives way to its choices.
 //! 2. The simplest case, whose every choice is its target.
 //! 3. The random cases: case `i` of the seed, for `i = 0, 1, 2, ...`, until
 //!    `cases` valid cases have run, the domain is exhausted, or ten times
@@ -43,13 +45,14 @@
 //! explain run that skips neither fails the way the failure fails nor passes.
 
 use super::ahead::Executor;
-use super::case::{Drawn, Generating, MAX_CHOICES, Provider, Replaying};
+use super::case::{Generating, MAX_CHOICES, Provider, Replaying};
 use super::choice::Choice;
 use super::coverage::{self, CHECKS, Verdict};
 use super::edge::{BOUNDARIES, Edge};
 use super::execution::{Body, Divergence, Execution, Fault, Phase, Status, execute};
 use super::shrink::{DEFAULT_BUDGET, Explained, Shrinker, confirm, explain};
 use super::source::case_source;
+use super::stored::{StoredCase, Taken, run_stored as run_stored_case};
 use super::token;
 use super::trace::{Entry, Tracing};
 use super::tree::Tree;
@@ -156,8 +159,8 @@ pub struct Settings {
     pub traces: Vec<Vec<Entry>>,
     /// The cases whose values the caller states, which run next.
     pub examples: Vec<Example>,
-    /// The stored choice sequences, oldest first.
-    pub stored: Vec<Vec<Choice>>,
+    /// The stored cases, oldest first.
+    pub(crate) stored: Vec<StoredCase>,
     /// The runs that shrinking and explaining every failure may spend. A
     /// budget of 0 turns both off.
     pub shrink: usize,
@@ -256,9 +259,9 @@ pub struct Outcome {
     /// The replays that reproduced the failure, for a run that replayed a
     /// failing case.
     pub reproduced: Option<usize>,
-    /// The draws of each stored case that ran, up to the one that ended the
-    /// run.
-    pub(crate) stored: Vec<Vec<Drawn>>,
+    /// How the run took each stored case that ran, up to the one that ended
+    /// the run.
+    pub(crate) stored: Vec<Taken>,
 }
 
 /// The counts of a run so far.
@@ -448,9 +451,8 @@ fn prefix_cases(cases: usize) -> usize {
     (cases / PREFIX_DIVISOR).min(MAX_PREFIX_CASES)
 }
 
-/// Takes the known cases of a run out of `settings`, in order: each trace,
-/// each example and each stored case, with its phase and whether it states
-/// the values of its draws.
+/// Takes the traces and the examples of a run out of `settings`, in order,
+/// each with its phase and whether it states the values of its draws.
 pub(crate) fn known_cases(settings: &mut Settings) -> Vec<(Phase, Box<dyn Provider>, bool)> {
     let mut known: Vec<(Phase, Box<dyn Provider>, bool)> = Vec::new();
     for trace in std::mem::take(&mut settings.traces) {
@@ -466,42 +468,50 @@ pub(crate) fn known_cases(settings: &mut Settings) -> Vec<(Phase, Box<dyn Provid
             ),
         });
     }
-    for choices in &settings.stored {
-        known.push((
-            Phase::Stored,
-            Box::new(Replaying::new(choices.clone())),
-            false,
-        ));
-    }
     known
 }
 
-/// Runs the known cases outside the case tree until one ends the run.
-/// `stored` receives the draws of each stored case that ran. A known case
-/// other than an example of values is replayed under the setting confirm.
+/// Counts the case of a known case, and replays a valid one under the
+/// setting confirm unless it is an example of values. The result is the
+/// outcome that the case or its replay ends the run with.
+fn take_known(
+    run: &mut Run<'_, '_>,
+    settings: &Settings,
+    tally: &mut Tally,
+    execution: Execution,
+    valued: bool,
+) -> Result<Option<Outcome>, Fault> {
+    match tally.count(execution) {
+        Err(mut outcome) => {
+            outcome.valued = valued;
+            Ok(Some(*outcome))
+        }
+        Ok(Some(valid)) if !valued => confirm_valid(run, settings, tally, valid),
+        Ok(_) => Ok(None),
+    }
+}
+
+/// Runs the known cases outside the case tree until one ends the run: the
+/// traces and the examples, and then the stored cases. `stored` receives how
+/// the run took each stored case that ran.
 fn try_known(
     run: &mut Run<'_, '_>,
     settings: &mut Settings,
     tally: &mut Tally,
-    stored: &mut Vec<Vec<Drawn>>,
+    stored: &mut Vec<Taken>,
 ) -> Result<Option<Outcome>, Fault> {
     for (phase, provider, valued) in known_cases(settings) {
         let execution = run.execute(provider, settings.max_choices, None)?;
         (run.observer)(phase, &execution);
-        if phase == Phase::Stored {
-            stored.push(execution.record.draws.clone());
+        if let Some(outcome) = take_known(run, settings, tally, execution, valued)? {
+            return Ok(Some(outcome));
         }
-        match tally.count(execution) {
-            Err(mut outcome) => {
-                outcome.valued = valued;
-                return Ok(Some(*outcome));
-            }
-            Ok(Some(valid)) if !valued => {
-                if let Some(outcome) = confirm_valid(run, settings, tally, valid)? {
-                    return Ok(Some(outcome));
-                }
-            }
-            Ok(_) => {}
+    }
+    for case in std::mem::take(&mut settings.stored) {
+        let (execution, taken) = run_stored_case(run, &case, settings.max_choices)?;
+        stored.push(taken);
+        if let Some(outcome) = take_known(run, settings, tally, execution, false)? {
+            return Ok(Some(outcome));
         }
     }
     Ok(None)

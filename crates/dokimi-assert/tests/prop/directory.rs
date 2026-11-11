@@ -125,7 +125,7 @@ mod child {
     #[test]
     #[ignore = "a spec of the store runs it in a child process"]
     fn skips_an_entry_of_a_later_format() {
-        plant("later", "later.json", r#"{"store": 2}"#);
+        plant("later", "later.json", r#"{"store": 3}"#);
         run_failing("later");
     }
 

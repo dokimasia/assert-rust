@@ -588,7 +588,11 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
 ```
 
 - A failing run writes its smallest case to the store of the test under
-  `testdata/prop`, and later runs replay it first.
+  `testdata/prop`, and later runs replay it first. The entry records the
+  counterexample of the case, with the steps of a machine among its draws.
+  When the choices of an entry decode to another counterexample, the run
+  replays the recorded counterexample, so a machine with a new action keeps
+  the defect of its stored case.
 - A form, such as `prop::equal` or `prop::round_trip`, runs one assertion
   on every generated input.
 - `prop::of::<T>()` returns the generator of a type that implements
@@ -982,8 +986,8 @@ under test.
 - Each case runs on `check` and `soft` of each crate that has its
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
-- The vectors run too: 57 for files, 112 for histories, 443 for properties
-  and 22 for machines. Two more property vectors skip Rust, because its
+- The vectors run too: 57 for files, 112 for histories, 450 for properties
+  and 25 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.
 - The crates implement all 111 assertions of the definition.

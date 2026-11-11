@@ -12,15 +12,16 @@
 
 use super::case::{Case, Context};
 use super::detail::{FOR_ALL, detail_json, record_of};
-use super::directory::{self, Loaded, StoreFault};
+use super::directory::{self, Loaded, StoreFault, Stored};
 use super::engine::campaign;
 use super::engine::case::{Step, Stop};
 use super::engine::choice::Choice;
 use super::engine::execution::{Execution, Fault, Phase};
 use super::engine::runner::{self, Example, Kind, Outcome, Run as EngineRun, Settings};
 use super::engine::store::{self, MAX_DEPTH};
+use super::engine::stored::{StoredCase, Taken, trace_of};
 use super::engine::token;
-use super::engine::trace::{Entry, Refusal, TraceError};
+use super::engine::trace::{self, Entry, Refusal, TraceError, Traced};
 use super::environment;
 use super::options::{OnResult, Options, Wrapper};
 use super::result::result_of;
@@ -89,6 +90,18 @@ impl From<StoreFault> for Refused {
 /// entries starts with.
 const DRAWS: &str = "draws";
 
+/// The member of a stored entry, which the location of each refusal of its
+/// trace starts with.
+const COUNTEREXAMPLE: &str = "counterexample";
+
+/// The start of the note of a stored case whose choices decode to another
+/// counterexample than its entry records.
+const DECODED: &str = "the stored case decodes to other values than it records";
+
+/// The part of such a note that states that the run tested the values of
+/// the choices.
+const TESTED: &str = "the run tested those";
+
 /// Returns the entries of the draws option's text: a JSON array of draw
 /// entries and step entries.
 fn entries_of(text: &str) -> Result<Vec<Entry>, Refused> {
@@ -135,28 +148,35 @@ fn entries_of(text: &str) -> Result<Vec<Entry>, Refused> {
         })?;
         entries.push(Entry::Draw {
             label: label.to_owned(),
-            value,
+            value: Some(value),
         });
     }
     Ok(entries)
 }
 
-/// Returns the fault at an entry of the draws option that the body cannot
-/// follow.
-fn refusal(entries: &[Entry], error: &TraceError) -> Refused {
-    let at = format!("{DRAWS}[{}].{}", error.entry, error.refusal.name());
+/// Returns the fault at an entry of a trace that the body cannot follow. The
+/// location of the entry starts with `trace`: the draws option, or the
+/// counterexample of a stored case.
+fn refusal(trace: &str, entries: &[Entry], error: &TraceError) -> Refused {
+    let at = format!("{trace}[{}].{}", error.entry, error.refusal.name());
     let label = format!("{:?}", error.name);
     match error.refusal {
         Refusal::Step => Refused::new(
             at,
             format!("the machine cannot take the step {label} there"),
         ),
-        Refusal::Value => Refused::new(
-            at,
-            format!(
-                "the generator of the draw labelled {label} does not produce the value of the entry"
+        Refusal::Value => match &entries[error.entry] {
+            Entry::Draw { value: None, .. } => Refused::new(
+                at,
+                format!("the entry of the draw labelled {label} has no value"),
             ),
-        ),
+            _ => Refused::new(
+                at,
+                format!(
+                    "the generator of the draw labelled {label} does not produce the value of the entry"
+                ),
+            ),
+        },
         // A draw refuses the label of an entry that the trace states.
         Refusal::Label => {
             let taken = match &entries[error.entry] {
@@ -257,7 +277,7 @@ impl<'c> Property<'c> {
     }
 
     /// Returns the settings of a run of the property.
-    fn settings(&self, examples: Vec<Example>, stored: Vec<Vec<Choice>>) -> Settings {
+    fn settings(&self, examples: Vec<Example>, stored: Vec<StoredCase>) -> Settings {
         let mut settings = Settings::new(self.seed);
         settings.cases = self.cases;
         settings.max_choices = self.max_choices;
@@ -314,11 +334,7 @@ impl<'c> Property<'c> {
             Ok(loaded) => loaded,
             Err(refused) => return self.fault(run, &refused),
         };
-        let stored = loaded
-            .entries
-            .iter()
-            .map(|entry| entry.choices.clone())
-            .collect();
+        let stored = loaded.entries.iter().map(Stored::case).collect();
         let settings = self.settings(examples, stored);
         let mut saved = Vec::new();
         let mut keep = |found: &Outcome| saved.extend(self.save(found));
@@ -357,11 +373,7 @@ impl<'c> Property<'c> {
             Err(refused) => return self.fault(run, &refused),
         };
         let context = self.context(seat, run);
-        let stored = loaded
-            .entries
-            .iter()
-            .map(|entry| entry.choices.clone())
-            .collect();
+        let stored = loaded.entries.iter().map(Stored::case).collect();
         let settings = self.settings(Vec::new(), stored);
         let Some(outcome) = self.drive(run, &context, body, |engine| {
             runner::run_stored(engine, settings)
@@ -489,7 +501,7 @@ impl<'c> Property<'c> {
             Ok(outcome) => Some(outcome),
             Err(Fault::Trace(error)) => {
                 let entries = self.entries.as_deref().unwrap_or_default();
-                self.fault(run, &refusal(entries, &error));
+                self.fault(run, &refusal(DRAWS, entries, &error));
                 None
             }
             Err(Fault::Run(text)) => {
@@ -526,19 +538,24 @@ impl<'c> Property<'c> {
                 .failure
                 .as_ref()
                 .expect("a failed case has its failure");
+            let record = &execution.record;
             let failure = store::Failure {
                 contract: self.call.contract.to_owned(),
-                choices: execution.record.choices.clone(),
+                choices: record.choices.clone(),
                 identity: failed
                     .entry
                     .iter()
                     .map(|(key, value)| ((*key).to_owned(), value.clone()))
                     .collect(),
-                counterexample: execution
-                    .record
-                    .draws
-                    .iter()
-                    .map(|drawn| (drawn.label.clone(), drawn.value.literal.clone()))
+                counterexample: trace::entries(record)
+                    .into_iter()
+                    .map(|entry| match entry {
+                        Traced::Draw(number) => Entry::Draw {
+                            label: record.draws[number].label.clone(),
+                            value: record.draws[number].value.literal.clone(),
+                        },
+                        Traced::Step(step) => Entry::Step(step),
+                    })
                     .collect(),
             };
             let name = store::name(self.call.contract, &failure.choices);
@@ -557,8 +574,10 @@ impl<'c> Property<'c> {
     }
 
     /// Returns the faults of the store that the run notes: each file that it
-    /// skipped, and each stored case that decodes to other values than its
-    /// entry records.
+    /// skipped, and each stored case whose choices decode to another
+    /// counterexample than its entry records. The note of such a case states
+    /// that the run replayed the counterexample, or that it tested the values
+    /// of the choices and why.
     fn store_notes(&self, loaded: &Loaded, outcome: &Outcome) -> Vec<Refused> {
         let Some(directory) = &self.directory else {
             return Vec::new();
@@ -573,13 +592,24 @@ impl<'c> Property<'c> {
                 )
             })
             .collect();
-        for (draws, entry) in outcome.stored.iter().zip(&loaded.entries) {
-            if directory::differs(&entry.counterexample, draws) {
-                notes.push(Refused::new(
-                    directory.join(&entry.name).display().to_string(),
-                    "the stored case decodes to other values than it records, and the run tested those",
-                ));
-            }
+        for (taken, entry) in outcome.stored.iter().zip(&loaded.entries) {
+            let ran = match taken {
+                Taken::Stated => continue,
+                Taken::Replayed => "the run replayed its counterexample".to_owned(),
+                Taken::Failed => TESTED.to_owned(),
+                Taken::Refused(error) => {
+                    let entries = trace_of(&entry.counterexample);
+                    let refused = refusal(COUNTEREXAMPLE, &entries, error);
+                    format!("{TESTED}: {}: {}", refused.at, refused.reason)
+                }
+                Taken::Untaken(at) => {
+                    format!("{TESTED}: {COUNTEREXAMPLE}[{at}]: the case leaves the entry untaken")
+                }
+            };
+            notes.push(Refused::new(
+                directory.join(&entry.name).display().to_string(),
+                format!("{DECODED}, and {ran}"),
+            ));
         }
         notes
     }

@@ -827,6 +827,256 @@
         "reproduced": 1
       },
       "error": null
+    },
+    {
+      "id": "queue-loses-on-wrap/a-stored-case-of-other-actions-replays-its-steps",
+      "subject": "queue-loses-on-wrap",
+      "settings": {
+        "seed": "1",
+        "cases": 1,
+        "stored": [
+          {
+            "choices": [
+              2,
+              1,
+              1,
+              1,
+              1,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "counterexample": [
+              {
+                "label": "capacity",
+                "value": {
+                  "type": "int",
+                  "value": 2
+                }
+              },
+              {
+                "step": "put"
+              },
+              {
+                "label": "v",
+                "value": {
+                  "type": "int",
+                  "value": 0
+                }
+              },
+              {
+                "step": "put"
+              },
+              {
+                "label": "v",
+                "value": {
+                  "type": "int",
+                  "value": 1
+                }
+              },
+              {
+                "step": "get"
+              }
+            ]
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "label": "capacity",
+            "value": {
+              "type": "int",
+              "value": 2
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 1
+            },
+            "any-value-fails": true,
+            "nearest-passing": null
+          },
+          {
+            "step": "get"
+          }
+        ],
+        "failure": "linearizable",
+        "choices": "prop1:AAIAAQABAAEAAAAAAAEAAAABAAEAAQ",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
+      },
+      "error": null
+    },
+    {
+      "id": "queue-loses-on-wrap/a-stored-case-of-an-action-the-machine-lacks-runs-its-choices",
+      "subject": "queue-loses-on-wrap",
+      "settings": {
+        "seed": "1",
+        "cases": 1,
+        "stored": [
+          {
+            "choices": [
+              2,
+              1,
+              1,
+              1,
+              1,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "counterexample": [
+              {
+                "label": "capacity",
+                "value": {
+                  "type": "int",
+                  "value": 2
+                }
+              },
+              {
+                "step": "put"
+              },
+              {
+                "label": "v",
+                "value": {
+                  "type": "int",
+                  "value": 0
+                }
+              },
+              {
+                "step": "put"
+              },
+              {
+                "label": "v",
+                "value": {
+                  "type": "int",
+                  "value": 1
+                }
+              },
+              {
+                "step": "pop"
+              }
+            ]
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 5,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
+    },
+    {
+      "id": "queue-loses-on-wrap/a-stored-case-of-draws-alone-runs-its-choices",
+      "subject": "queue-loses-on-wrap",
+      "settings": {
+        "seed": "1",
+        "cases": 1,
+        "stored": [
+          {
+            "choices": [
+              2,
+              1,
+              1,
+              1,
+              1,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ],
+            "counterexample": [
+              {
+                "label": "capacity",
+                "value": {
+                  "type": "int",
+                  "value": 2
+                }
+              },
+              {
+                "label": "v",
+                "value": {
+                  "type": "int",
+                  "value": 0
+                }
+              },
+              {
+                "label": "v",
+                "value": {
+                  "type": "int",
+                  "value": 1
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 5,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
     }
   ]
 }

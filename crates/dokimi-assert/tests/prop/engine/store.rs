@@ -5,12 +5,32 @@
 //! and the verdict that a run gives each file that it reads.
 
 use dokimi_assert::Value;
+use dokimi_assert::prop::engine::case::Step;
 use dokimi_assert::prop::engine::choice::Choice;
 use dokimi_assert::prop::engine::store::{Failure, Verdict, entry, name, read};
+use dokimi_assert::prop::engine::trace::Entry;
 use serde_json::json;
 
 /// The contract of the entries of the spec.
 const CONTRACT: &str = "n stays below 3";
+
+/// Returns an entry of format 2 of the property with `counterexample`.
+fn format_2(counterexample: serde_json::Value) -> String {
+    let mut stated: serde_json::Value =
+        serde_json::from_str(&with("counterexample", Some(counterexample)))
+            .expect("an entry is JSON");
+    stated["store"] = json!(2);
+    stated.to_string()
+}
+
+/// Returns a step entry of `action`.
+fn step(action: &str, client: Option<usize>, drain: bool) -> Entry {
+    Entry::Step(Step {
+        action: action.to_owned(),
+        client,
+        drain,
+    })
+}
 
 /// Returns an entry of the format whose member `key` is `value`, or without
 /// the member for a `value` of `None`.
@@ -48,9 +68,23 @@ mod read {
     }
 
     #[test]
+    fn replays_an_entry_of_format_2_with_its_step_entries() {
+        let counterexample = json!([
+            {"step": "put"},
+            {"label": "n"},
+            {"step": "get", "client": 1},
+            {"step": "deliver", "drain": true}
+        ]);
+        assert_eq!(
+            read(&format_2(counterexample), CONTRACT),
+            Verdict::Replay(vec![Choice::Integer(5)])
+        );
+    }
+
+    #[test]
     fn skips_an_entry_of_a_later_format_or_token() {
         assert_eq!(
-            read(&with("store", Some(json!(2))), CONTRACT),
+            read(&with("store", Some(json!(3))), CONTRACT),
             Verdict::Skip
         );
         assert_eq!(
@@ -129,6 +163,31 @@ mod read {
                 "a token that does not read",
                 with("choices", Some(json!("prop1:!"))),
             ),
+            (
+                "a step entry in format 1",
+                with("counterexample", Some(json!([{"step": "put"}]))),
+            ),
+            (
+                "a step entry of a client and the drain",
+                format_2(json!([{"step": "put", "client": 1, "drain": true}])),
+            ),
+            (
+                "a drain mark that is not true",
+                format_2(json!([{"step": "put", "drain": false}])),
+            ),
+            (
+                "a client below 0",
+                format_2(json!([{"step": "put", "client": -1}])),
+            ),
+            (
+                "a client above 2^31 - 1",
+                format_2(json!([{"step": "put", "client": 2_147_483_648_u64}])),
+            ),
+            ("a step that is no text", format_2(json!([{"step": 1}]))),
+            (
+                "a step entry with another key",
+                format_2(json!([{"step": "put", "label": "n"}])),
+            ),
         ];
         for (name, give) in tests {
             assert_eq!(read(&give, CONTRACT), Verdict::Damaged, "{name}");
@@ -162,13 +221,48 @@ mod entry {
                 ("assertion".to_owned(), Value::Bool(true)),
                 ("line".to_owned(), Value::Int(1)),
             ],
-            counterexample: vec![("n".to_owned(), None)],
+            counterexample: vec![Entry::Draw {
+                label: "n".to_owned(),
+                value: None,
+            }],
         };
         let written: serde_json::Value =
             serde_json::from_str(&entry(&failure, "9.0.0", "2026-01-01"))
                 .expect("an entry is JSON");
+        assert_eq!(written["store"], 1);
         assert_eq!(written["identity"], json!({"assertion": "true", "line": 1}));
         assert_eq!(written["counterexample"], json!([{"label": "n"}]));
+    }
+
+    #[test]
+    fn writes_format_2_for_a_counterexample_with_a_step_entry() {
+        let failure = Failure {
+            contract: CONTRACT.to_owned(),
+            choices: vec![Choice::Integer(2)],
+            identity: vec![("assertion".to_owned(), Value::from("linearizable"))],
+            counterexample: vec![
+                Entry::Draw {
+                    label: "capacity".to_owned(),
+                    value: Some(Value::Int(2)),
+                },
+                step("put", None, false),
+                step("put", Some(1), false),
+                step("get", None, true),
+            ],
+        };
+        let written: serde_json::Value =
+            serde_json::from_str(&entry(&failure, "16.3.0", "2026-11-10"))
+                .expect("an entry is JSON");
+        assert_eq!(written["store"], 2);
+        assert_eq!(
+            written["counterexample"],
+            json!([
+                {"label": "capacity", "value": {"type": "int", "value": 2}},
+                {"step": "put"},
+                {"step": "put", "client": 1},
+                {"step": "get", "drain": true}
+            ])
+        );
     }
 }
 

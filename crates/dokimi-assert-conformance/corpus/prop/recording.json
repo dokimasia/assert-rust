@@ -1040,12 +1040,34 @@
           ]
         ],
         "stored": [
-          [
-            3
-          ],
-          [
-            950
-          ]
+          {
+            "choices": [
+              3
+            ],
+            "counterexample": [
+              {
+                "label": "value",
+                "value": {
+                  "type": "int",
+                  "value": 3
+                }
+              }
+            ]
+          },
+          {
+            "choices": [
+              950
+            ],
+            "counterexample": [
+              {
+                "label": "value",
+                "value": {
+                  "type": "int",
+                  "value": 950
+                }
+              }
+            ]
+          }
         ],
         "shrink": 0
       },

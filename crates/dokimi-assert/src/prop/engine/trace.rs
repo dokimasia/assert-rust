@@ -13,17 +13,18 @@
 //! from the entries:
 //!
 //! - A draw takes the next entry, which must be a draw entry with the draw's
-//!   label. Its value runs backwards through the draw's generator, and the
-//!   draw decodes the choices that result. A draw past the last entry takes
-//!   its targets.
+//!   label and a value. Its value runs backwards through the draw's
+//!   generator, and the draw decodes the choices that result. A draw past the
+//!   last entry takes its targets.
 //! - A machine turns each step entry into the choices of one step, which the
 //!   provider serves as they are requested.
 //! - Every other request takes its target.
 //!
 //! A trace that the body cannot follow ends the run with a [`TraceError`],
-//! which names the entry: a draw entry with another label, a value that the
-//! generator cannot produce, or a step entry that the machine cannot take at
-//! its position. The error is no failure of the case.
+//! which names the entry: a draw entry with another label, a draw entry
+//! without a value, a value that the generator cannot produce, or a step
+//! entry that the machine cannot take at its position. The error is no
+//! failure of the case.
 
 use super::case::{Provider, Record, Request, Step};
 use super::choice::Choice;
@@ -39,8 +40,9 @@ pub enum Entry {
     Draw {
         /// The label of the draw.
         label: String,
-        /// The value of the draw.
-        value: Value,
+        /// The value of the draw, or `None` for an entry that states no
+        /// value.
+        value: Option<Value>,
     },
     /// A step of a machine.
     Step(Step),
@@ -51,7 +53,8 @@ pub enum Entry {
 pub enum Refusal {
     /// The draw has another label than the entry.
     Label,
-    /// The draw's generator cannot produce the entry's value.
+    /// The entry states no value, or the draw's generator cannot produce the
+    /// entry's value.
     Value,
     /// The machine cannot take the step entry at its position.
     Step,
@@ -144,8 +147,9 @@ impl Tracing {
     ///
     /// # Errors
     ///
-    /// Returns an error when the next entry is no draw entry with `label`, or
-    /// when the generator cannot produce its value.
+    /// Returns an error when the next entry is no draw entry with `label`,
+    /// when it states no value, or when the generator cannot produce its
+    /// value.
     pub(crate) fn drawing(
         &mut self,
         label: &str,
@@ -169,6 +173,9 @@ impl Tracing {
         if stated != label {
             return Err(refused(Refusal::Label));
         }
+        let Some(value) = value else {
+            return Err(refused(Refusal::Value));
+        };
         let choices = invert(value).map_err(|_| refused(Refusal::Value))?;
         self.queue.extend(choices);
         self.at += 1;
@@ -205,6 +212,12 @@ impl Tracing {
     pub(crate) fn take(&mut self, values: &[i128]) {
         self.prepare(values);
         self.at += 1;
+    }
+
+    /// Returns the position of the first entry that the case left untaken,
+    /// or `None` when it took every entry.
+    pub(crate) fn untaken(&self) -> Option<usize> {
+        (self.at < self.entries.len()).then_some(self.at)
     }
 
     /// Returns the error of the next entry, a step entry that the machine

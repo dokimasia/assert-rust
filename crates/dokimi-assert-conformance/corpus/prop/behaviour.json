@@ -544,9 +544,20 @@
       "settings": {
         "seed": "7",
         "stored": [
-          [
-            950
-          ]
+          {
+            "choices": [
+              950
+            ],
+            "counterexample": [
+              {
+                "label": "value",
+                "value": {
+                  "type": "int",
+                  "value": 950
+                }
+              }
+            ]
+          }
         ]
       },
       "detail": {
@@ -570,6 +581,76 @@
         ],
         "failure": "big",
         "choices": "prop1:AIQH",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": 1,
+        "reproduced": 1
+      }
+    },
+    {
+      "id": "behaviour/replays-the-recorded-value-of-a-stored-case-of-other-choices",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        },
+        "fails": [
+          {
+            "identity": "exact",
+            "when": {
+              "kind": "equals",
+              "value": {
+                "type": "int",
+                "value": 950
+              }
+            }
+          }
+        ]
+      },
+      "settings": {
+        "seed": "7",
+        "cases": 1,
+        "stored": [
+          {
+            "choices": [
+              3
+            ],
+            "counterexample": [
+              {
+                "label": "value",
+                "value": {
+                  "type": "int",
+                  "value": 950
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 950
+            },
+            "any-value-fails": false,
+            "nearest-passing": {
+              "type": "int",
+              "value": 949
+            }
+          }
+        ],
+        "failure": "exact",
+        "choices": "prop1:ALYH",
         "others": [],
         "divergence": null,
         "coverage": null,
@@ -1179,9 +1260,20 @@
       "settings": {
         "seed": "7",
         "stored": [
-          [
-            500
-          ]
+          {
+            "choices": [
+              500
+            ],
+            "counterexample": [
+              {
+                "label": "value",
+                "value": {
+                  "type": "int",
+                  "value": 500
+                }
+              }
+            ]
+          }
         ]
       },
       "detail": {

@@ -5,7 +5,8 @@
 
 use crate::helpers::{Scratch, Skipping, panic_of, records};
 use dokimi_assert::prop::{self, Arbitrary, Case, Definitions, Shape, ShapeError};
-use dokimi_assert::{Recorder, Value, check};
+use dokimi_assert::stateful::{self, Action, Machine};
+use dokimi_assert::{Recorder, Seat, Value, check};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 /// An identifier, whose values have no typed literal.
@@ -461,6 +462,35 @@ mod save {
         assert!(
             std::fs::read_dir(dir.join("store")).is_err(),
             "the run writes no entry"
+        );
+    }
+
+    #[test]
+    fn writes_an_entry_of_format_2_with_the_steps_of_a_machine() {
+        let dir = Scratch::new();
+        let seat = Recorder::new();
+        let options = prop::hermetic().seed(1).store(dir.join("store"));
+        prop::for_all(&seat, "the machine holds", options, |c| {
+            let machine =
+                Machine::<i64>::new([Action::new("boom", async |c: &Case<'_>, _: usize| {
+                    c.fail("the step fails");
+                })]);
+            stateful::steps(c, &machine, stateful::max(3));
+        });
+        assert_eq!(records(&seat)[0]["detail"]["outcome"], "counterexample");
+        let written: Vec<serde_json::Value> = std::fs::read_dir(dir.join("store"))
+            .expect("the run writes an entry")
+            .map(|file| {
+                let text = std::fs::read_to_string(file.expect("the entry lists").path())
+                    .expect("the entry reads");
+                serde_json::from_str(&text).expect("the entry is JSON")
+            })
+            .collect();
+        assert_eq!(written.len(), 1);
+        assert_eq!(written[0]["store"], 2);
+        assert_eq!(
+            written[0]["counterexample"],
+            serde_json::json!([{"step": "boom"}])
         );
     }
 }

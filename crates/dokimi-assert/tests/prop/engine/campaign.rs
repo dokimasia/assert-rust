@@ -388,7 +388,7 @@ mod campaign {
         let fault = line(&printed, "fault ").unwrap_or_default();
         assert!(
             fault.ends_with(
-                "the stored case decodes to other values than it records, and the run tested those"
+                "the stored case decodes to other values than it records, and the run replayed its counterexample"
             ),
             "{printed}"
         );

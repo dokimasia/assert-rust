@@ -15,26 +15,40 @@
 //! followed by `.json`. The same failure, shrunk to the same choices, has the
 //! same name in every language.
 //!
+//! An entry records the counterexample of its case in request order. A run
+//! writes format 2 for a counterexample with a step entry, and format 1 for
+//! every other counterexample. Format 1 records draw entries alone, so a
+//! runner of an earlier definition still replays the entries of a property
+//! without a machine.
+//!
 //! A run gives each file one verdict:
 //!
-//! - `Replay`: an entry of the format for the property, whose token is of
+//! - `Replay`: an entry of format 1 or 2 for the property, whose token is of
 //!   the version that the token module encodes. The run tries its choices
 //!   first.
-//! - `Other`: an entry of the format for another property of the test.
+//! - `Other`: an entry of format 1 or 2 for another property of the test.
 //! - `Skip`: an entry of a later format, or whose token is of a later version.
 //!   The run notes it and goes on.
 //! - `Damaged`: any other file, including JSON that repeats a name within an
-//!   object, states a non-finite number, or nests past 64 levels. The test
-//!   fails, as it fails on a damaged golden file.
+//!   object, states a non-finite number, or nests past 64 levels. An entry of
+//!   format 1 with a step entry is damaged, and so is an entry of format 2
+//!   with a step entry out of its form. The test fails, as it fails on a
+//!   damaged golden file.
 
+use super::case::Step;
 use super::choice::Choice;
 use super::source::mix;
 use super::token;
+use super::trace::Entry;
 use crate::json::{self, Json, object};
 use crate::value::Value;
 
-/// The format of the entries that this module writes and replays.
-const FORMAT: i128 = 1;
+/// The format of an entry whose counterexample has draw entries alone.
+const FORMAT_DRAWS: i128 = 1;
+
+/// The format of an entry whose counterexample has a step entry, the latest
+/// format.
+pub(crate) const FORMAT_STEPS: i128 = 2;
 
 /// The version of the tokens that the token module encodes.
 const TOKEN_VERSION: u64 = 1;
@@ -47,7 +61,8 @@ pub(crate) const MAX_DEPTH: usize = 64;
 /// draw.
 const ABOVE_VALUE: usize = 3;
 
-/// The largest line of an identity, the largest signed 32-bit integer.
+/// The largest line of an identity and the largest client of a step entry,
+/// the largest signed 32-bit integer.
 const LINE_MAX: i128 = 2_147_483_647;
 
 /// The fields of an entry, in the order that a run writes them.
@@ -104,9 +119,9 @@ pub struct Failure {
     pub choices: Vec<Choice>,
     /// The identity of the failure, with the keys of one of the forms.
     pub identity: Vec<(String, Value)>,
-    /// One draw of the counterexample: its label, and its typed literal where
-    /// it has one.
-    pub counterexample: Vec<(String, Option<Value>)>,
+    /// The entries of the counterexample, in request order: each draw with
+    /// its label and its typed literal where it has one, and each step.
+    pub counterexample: Vec<Entry>,
 }
 
 /// Returns the file name of the entry of a contract and a minimal case.
@@ -119,8 +134,9 @@ pub fn name(contract: &str, choices: &[Choice]) -> String {
 }
 
 /// Returns the entry that a run of `definition` writes on the date `found`,
-/// written as `YYYY-MM-DD`. A draw whose value would nest the entry past 64
-/// levels is recorded by its label alone.
+/// written as `YYYY-MM-DD`. The entry is of format 2 for a counterexample
+/// with a step entry, and of format 1 otherwise. A draw whose value would
+/// nest the entry past 64 levels is recorded by its label alone.
 #[must_use]
 pub fn entry(failure: &Failure, definition: &str, found: &str) -> String {
     let identity = Json::Object(
@@ -130,30 +146,66 @@ pub fn entry(failure: &Failure, definition: &str, found: &str) -> String {
             .map(|(key, value)| (key.clone(), plain(value)))
             .collect(),
     );
-    let draws = failure
+    let stepped = failure
         .counterexample
         .iter()
-        .map(|(label, value)| {
-            let mut draw = vec![("label".to_owned(), Json::from(label.as_str()))];
-            if let Some(value) = value {
-                let literal = value.to_literal();
-                if literal.depth() <= MAX_DEPTH - ABOVE_VALUE {
-                    draw.push(("value".to_owned(), literal));
-                }
-            }
-            Json::Object(draw)
-        })
-        .collect();
+        .any(|entry| matches!(entry, Entry::Step(_)));
+    let format = if stepped { FORMAT_STEPS } else { FORMAT_DRAWS };
     object([
-        ("store", Json::Int(FORMAT)),
+        ("store", Json::Int(format)),
         ("definition", definition.into()),
         ("property", failure.contract.as_str().into()),
         ("identity", identity),
         ("choices", token::encode(&failure.choices).into()),
-        ("counterexample", Json::Array(draws)),
+        (
+            "counterexample",
+            Json::Array(failure.counterexample.iter().map(recorded).collect()),
+        ),
         ("found", found.into()),
     ])
     .pretty()
+}
+
+/// Returns the JSON of an entry of a counterexample: a draw entry with its
+/// label and its value, or a step entry with its action, its client and its
+/// drain mark.
+fn recorded(entry: &Entry) -> Json {
+    match entry {
+        Entry::Draw { label, value } => {
+            let mut draw = vec![("label".to_owned(), Json::from(label.as_str()))];
+            let literal = value
+                .as_ref()
+                .map(Value::to_literal)
+                .filter(|literal| literal.depth() <= MAX_DEPTH - ABOVE_VALUE);
+            if let Some(literal) = literal {
+                draw.push(("value".to_owned(), literal));
+            }
+            Json::Object(draw)
+        }
+        Entry::Step(step) => {
+            let mut members = vec![("step".to_owned(), Json::from(step.action.as_str()))];
+            if let Some(client) = step.client {
+                members.push(("client".to_owned(), Json::from(client)));
+            }
+            if step.drain {
+                members.push(("drain".to_owned(), Json::Bool(true)));
+            }
+            Json::Object(members)
+        }
+    }
+}
+
+/// Returns the step of a step entry of an entry of format 2, which
+/// [`read`] finds in its form.
+pub(crate) fn step_of(entry: &Json) -> Option<Step> {
+    Some(Step {
+        action: entry.get("step")?.as_str()?.to_owned(),
+        client: entry
+            .get("client")
+            .and_then(Json::as_int)
+            .and_then(|client| usize::try_from(client).ok()),
+        drain: entry.get("drain").is_some(),
+    })
 }
 
 /// Returns the plain JSON of an identity's value: text or a line.
@@ -174,13 +226,13 @@ pub fn read(text: &str, contract: &str) -> Verdict {
     let Some(Json::Int(version)) = document.get("store") else {
         return Verdict::Damaged;
     };
-    if *version < FORMAT {
+    if *version < FORMAT_DRAWS {
         return Verdict::Damaged;
     }
-    if *version > FORMAT {
+    if *version > FORMAT_STEPS {
         return Verdict::Skip;
     }
-    if !well_formed(&document) {
+    if !well_formed(&document, *version == FORMAT_STEPS) {
         return Verdict::Damaged;
     }
     let token = document
@@ -212,8 +264,9 @@ fn token_version(token: &str) -> Option<u64> {
     digits.parse().ok().or(Some(u64::MAX))
 }
 
-/// Returns `true` when every field of an entry of the format has its form.
-fn well_formed(document: &Json) -> bool {
+/// Returns `true` when every field of an entry has its form. A step entry
+/// has its form only in an entry of format 2, which `steps` states.
+fn well_formed(document: &Json, steps: bool) -> bool {
     let fields = document.as_object().map_or(0, <[(String, Json)]>::len);
     if fields != FIELDS.len() || !FIELDS.iter().all(|field| document.get(field).is_some()) {
         return false;
@@ -225,7 +278,9 @@ fn well_formed(document: &Json) -> bool {
         && document.get("property").and_then(Json::as_str).is_some()
         && document.get("identity").is_some_and(identity)
         && document.get("choices").and_then(Json::as_str).is_some()
-        && document.get("counterexample").is_some_and(counterexample)
+        && document
+            .get("counterexample")
+            .is_some_and(|entries| counterexample(entries, steps))
         && document
             .get("found")
             .and_then(Json::as_str)
@@ -267,20 +322,49 @@ fn identity(identity: &Json) -> bool {
         })
 }
 
-/// Returns `true` for a list of draws with a label each.
-fn counterexample(draws: &Json) -> bool {
-    draws.as_array().is_some_and(|draws| {
-        draws.iter().all(|draw| {
-            draw.as_object().is_some_and(|members| {
-                let keys: Vec<&str> = members.iter().map(|(key, _)| key.as_str()).collect();
-                let shaped = matches!(
-                    keys.as_slice(),
-                    ["label"] | ["label", "value"] | ["value", "label"]
-                );
-                shaped && draw.get("label").and_then(Json::as_str).is_some()
-            })
-        })
+/// Returns `true` for a list of entries: draw entries with a label each, and
+/// for `steps` step entries too.
+fn counterexample(entries: &Json, steps: bool) -> bool {
+    entries.as_array().is_some_and(|entries| {
+        entries
+            .iter()
+            .all(|entry| draw_entry(entry) || (steps && step_entry(entry)))
     })
+}
+
+/// Returns the keys of an object, sorted.
+fn keys(entry: &Json) -> Vec<&str> {
+    let mut keys: Vec<&str> = entry
+        .as_object()
+        .unwrap_or_default()
+        .iter()
+        .map(|(key, _)| key.as_str())
+        .collect();
+    keys.sort_unstable();
+    keys
+}
+
+/// Returns `true` for a draw entry: a label, and a value where it has one.
+fn draw_entry(entry: &Json) -> bool {
+    matches!(keys(entry).as_slice(), ["label"] | ["label", "value"])
+        && entry.get("label").and_then(Json::as_str).is_some()
+}
+
+/// Returns `true` for a step entry: an action, with a client from 0 to
+/// 2^31 − 1 or a drain mark that is true.
+fn step_entry(entry: &Json) -> bool {
+    let shaped = matches!(
+        keys(entry).as_slice(),
+        ["step"] | ["client" | "drain", "step"]
+    );
+    shaped
+        && entry.get("step").and_then(Json::as_str).is_some()
+        && entry
+            .get("client")
+            .is_none_or(|client| matches!(client, Json::Int(at) if (0..=LINE_MAX).contains(at)))
+        && entry
+            .get("drain")
+            .is_none_or(|drain| matches!(drain, Json::Bool(true)))
 }
 
 /// Returns `true` for a calendar date written as `YYYY-MM-DD`.

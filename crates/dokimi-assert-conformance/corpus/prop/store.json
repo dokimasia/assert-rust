@@ -221,6 +221,111 @@
       }
     },
     {
+      "id": "store/writes-format-2-for-a-counterexample-with-steps",
+      "contract": "the queue behaves like a slice",
+      "choices": [
+        2,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "identity": {
+        "assertion": "linearizable",
+        "file": "queue_test.go",
+        "line": 31
+      },
+      "counterexample": [
+        {
+          "label": "capacity",
+          "value": {
+            "type": "int",
+            "value": 2
+          }
+        },
+        {
+          "step": "put"
+        },
+        {
+          "label": "v",
+          "value": {
+            "type": "int",
+            "value": 0
+          }
+        },
+        {
+          "step": "put",
+          "client": 1
+        },
+        {
+          "label": "v",
+          "value": {
+            "type": "int",
+            "value": 1
+          }
+        },
+        {
+          "step": "get",
+          "drain": true
+        }
+      ],
+      "definition": "16.3.0",
+      "found": "2026-11-10",
+      "name": "dc15405e885b072e.json",
+      "entry": {
+        "store": 2,
+        "definition": "16.3.0",
+        "property": "the queue behaves like a slice",
+        "identity": {
+          "assertion": "linearizable",
+          "file": "queue_test.go",
+          "line": 31
+        },
+        "choices": "prop1:AAIAAQABAAEAAQAAAAEAAQABAAEAAA",
+        "counterexample": [
+          {
+            "label": "capacity",
+            "value": {
+              "type": "int",
+              "value": 2
+            }
+          },
+          {
+            "step": "put"
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 0
+            }
+          },
+          {
+            "step": "put",
+            "client": 1
+          },
+          {
+            "label": "v",
+            "value": {
+              "type": "int",
+              "value": 1
+            }
+          },
+          {
+            "step": "get",
+            "drain": true
+          }
+        ],
+        "found": "2026-11-10"
+      }
+    },
+    {
       "id": "store/replays-an-entry-of-the-property",
       "contract": "decoding undoes encoding",
       "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
@@ -246,9 +351,18 @@
       "choices": null
     },
     {
+      "id": "store/replays-an-entry-of-format-2",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 2, \"definition\": \"16.3.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"found\": \"2026-11-10\", \"counterexample\": [\n {\"step\": \"put\"}, {\"label\": \"v\"}, {\"step\": \"get\", \"client\": 1},\n {\"step\": \"deliver\", \"drain\": true}]}\n",
+      "verdict": "replay",
+      "choices": [
+        7
+      ]
+    },
+    {
       "id": "store/skips-an-entry-of-a-later-format",
       "contract": "decoding undoes encoding",
-      "text": "{\"store\": 2, \"layout\": \"unknown to format 1\"}",
+      "text": "{\"store\": 3, \"layout\": \"unknown to format 2\"}",
       "verdict": "skip",
       "choices": null
     },
@@ -298,6 +412,34 @@
       "id": "store/rejects-a-token-not-in-canonical-form",
       "contract": "decoding undoes encoding",
       "text": "{\"store\": 1, \"definition\": \"1.2.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc=\", \"counterexample\": [], \"found\": \"2026-10-01\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-step-entry-in-format-1",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 1, \"definition\": \"16.3.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [{\"step\": \"put\"}], \"found\": \"2026-11-10\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-step-entry-of-a-client-and-the-drain",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 2, \"definition\": \"16.3.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [{\"step\": \"put\", \"client\": 1, \"drain\": true}],\n \"found\": \"2026-11-10\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-drain-mark-that-is-not-true",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 2, \"definition\": \"16.3.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [{\"step\": \"put\", \"drain\": false}],\n \"found\": \"2026-11-10\"}\n",
+      "verdict": "damaged",
+      "choices": null
+    },
+    {
+      "id": "store/rejects-a-client-below-0",
+      "contract": "decoding undoes encoding",
+      "text": "{\"store\": 2, \"definition\": \"16.3.0\", \"property\": \"decoding undoes encoding\",\n \"identity\": {\"assertion\": \"equal\", \"file\": \"codec_test.go\", \"line\": 18},\n \"choices\": \"prop1:AAc\", \"counterexample\": [{\"step\": \"put\", \"client\": -1}],\n \"found\": \"2026-11-10\"}\n",
       "verdict": "damaged",
       "choices": null
     },
