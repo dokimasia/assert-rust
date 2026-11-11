@@ -296,6 +296,9 @@ impl<T: 'static, U: 'static> Node<U> for Bound<T, U> {
     }
 }
 
+/// The id of a composite generator.
+pub(crate) const COMPOSITE: &str = "composite";
+
 /// The generator whose value a function returns from the case it receives.
 pub(crate) struct Composite<T> {
     pub(crate) f: Arc<dyn Fn(&Case<'_>) -> T + Send + Sync>,
@@ -303,7 +306,7 @@ pub(crate) struct Composite<T> {
 
 impl<T: 'static> Node<T> for Composite<T> {
     fn id(&self) -> &'static str {
-        "composite"
+        COMPOSITE
     }
 
     /// Runs the function inside a span labelled `composite`. A draw of the

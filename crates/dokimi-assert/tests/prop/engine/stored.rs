@@ -5,7 +5,7 @@
 //! choices, and from the counterexample of its entry as a trace when the
 //! choices decode to another counterexample.
 
-use crate::helpers::{Scratch, records};
+use crate::helpers::{Scratch, pairs, records};
 use dokimi_assert::prop::{self, Case};
 use dokimi_assert::stateful::{self, Action, Machine};
 use dokimi_assert::{Recorder, Seat, check};
@@ -151,6 +151,23 @@ mod stored {
             notes.ends_with("and the run replayed its counterexample"),
             "{notes}"
         );
+    }
+
+    #[test]
+    fn replays_a_composite_whose_entry_records_no_value() {
+        let seat = run_stored(
+            &entry(
+                1,
+                NO_CHOICES,
+                r#"[{"label": "a", "value": {"type": "int", "value": 7}},
+                {"label": "b", "value": {"type": "int", "value": 3}}, {"label": "pair"}]"#,
+            ),
+            |c| {
+                let pair = c.draw(&pairs(), "pair");
+                check::not_equal(c, pair, vec![7_u8, 3], "the pair is not 7 and 3");
+            },
+        );
+        assert_eq!(ended(&seat), ("counterexample".to_owned(), 0));
     }
 
     #[test]

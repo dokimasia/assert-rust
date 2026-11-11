@@ -5,7 +5,7 @@
 
 use dokimi_assert::files::{self, Tree, Workspace};
 use dokimi_assert::history::{Call, History, Operation, Spec};
-use dokimi_assert::prop::RunResult;
+use dokimi_assert::prop::{self, Generator, RunResult};
 use dokimi_assert::{Collector, Failure, Recorder, Seat, Value};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
@@ -31,6 +31,17 @@ impl Spec for Register {
             _ => Vec::new(),
         }
     }
+}
+
+/// Returns the composite of a digit under `a` and then one under `b`, as
+/// the list of the two.
+pub(crate) fn pairs() -> Generator<Vec<u8>> {
+    prop::composite(|c| {
+        vec![
+            c.draw(&prop::integer(0..=9_u8), "a"),
+            c.draw(&prop::integer(0..=9_u8), "b"),
+        ]
+    })
 }
 
 /// Records a write of `value` to the key `x` by `client`, which returns null.

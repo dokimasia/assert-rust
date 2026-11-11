@@ -17,7 +17,7 @@ use super::engine::case::{
     CaseFault, Drawn, Erased, Failed, Mark, Record, Rendered, Request, Signal, Stop, identity_key,
 };
 use super::engine::choice::{Choice, IntegerBounds, SequenceBounds, UINT64_MAX};
-use super::generator::Generator;
+use super::generator::{COMPOSITE, Generator};
 use crate::cancel::Cancel;
 use crate::clock::Clock;
 use crate::failure::{Failure, Where};
@@ -249,11 +249,16 @@ impl<'s> Case<'s> {
             });
             return Ok(value);
         }
+        // A composite takes its entry of a trace once it decodes, after the
+        // entries of its draws.
+        let composite = generator.node().id() == COMPOSITE;
         let traced = self.with_record(|record| {
-            record
-                .provider()
-                .tracing()
-                .map(|tracing| tracing.drawing(label, &|value| generator.invert(value)))
+            record.provider().tracing().map(|tracing| {
+                if composite {
+                    return Ok(());
+                }
+                tracing.drawing(label, &|value| generator.invert(value))
+            })
         });
         if let Some(Err(refused)) = traced {
             return Err(Stop::Trace(refused));
@@ -262,6 +267,17 @@ impl<'s> Case<'s> {
         let decoded = generator.decode(self);
         self.with_record(Record::end_draw);
         let value = decoded?;
+        if composite {
+            let taken = self.with_record(|record| {
+                record
+                    .provider()
+                    .tracing()
+                    .map(|tracing| tracing.drawn(label))
+            });
+            if let Some(Err(refused)) = taken {
+                return Err(Stop::Trace(refused));
+            }
+        }
         let rendered = generator.render(&value);
         let erased: Arc<dyn Erased> = Arc::new(generator.clone());
         self.with_record(|record| {

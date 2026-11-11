@@ -132,6 +132,32 @@ mod subject {
     }
 
     #[test]
+    fn fails_the_put_of_the_pair_of_7_and_3() {
+        let subject =
+            subjects::subject("pair-fails-at-7-and-3").expect("the definition states the subject");
+        let trace = r#"[{"step": "put"},
+            {"label": "a", "value": {"type": "int", "value": 7}},
+            {"label": "b", "value": {"type": "int", "value": 3}},
+            {"label": "pair", "value": {"type": "list", "of": "int", "value": [7, 3]}}]"#;
+        let swarmless = setup(stateful::swarm(false));
+        let seat = Recorder::new();
+        prop::for_all(
+            &seat,
+            "the subject",
+            prop::draws(trace).hermetic().seed(1).store(""),
+            |c| subject(c, &swarmless),
+        );
+        let case = seat.failures()[0]
+            .case_failure()
+            .cloned()
+            .expect("the property found a counterexample");
+        assert_eq!(
+            (case.assertion(), case.contract()),
+            (Some("pair"), "put of the pair [7, 3]")
+        );
+    }
+
+    #[test]
     fn fails_the_spinner_at_the_limit_of_releases() {
         let limited = Setup {
             strategy: stateful::max_releases(50),

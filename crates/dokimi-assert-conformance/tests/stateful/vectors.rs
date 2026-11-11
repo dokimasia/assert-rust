@@ -124,6 +124,7 @@ mod run {
             (json!({"cases": 0}), "settings.cases"),
             (json!({"workers": 2}), "settings.workers"),
             (json!({"stored": [{"choices": "none"}]}), "settings.stored"),
+            (json!({"shrink": "none"}), "settings.shrink"),
         ];
         for (give_settings, want_at) in tests {
             let mut stated = vector("correct-queue/passes-with-swarm");

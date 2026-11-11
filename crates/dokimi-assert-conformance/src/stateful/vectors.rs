@@ -142,9 +142,9 @@ fn names_of(stated: &Json) -> Result<Vec<String>, Disagreement> {
 }
 
 /// Returns the options of the run that a vector's settings state: its seed,
-/// its cases and its stored cases. The run does not read a variable of the
-/// environment. It keeps the store of its stored cases in `dir`, and it
-/// keeps no store without them.
+/// its cases, its shrink budget and its stored cases. The run does not read
+/// a variable of the environment. It keeps the store of its stored cases in
+/// `dir`, and it keeps no store without them.
 fn settings_of(stated: &Json, dir: &Path) -> Result<Options, Disagreement> {
     let mut options: Options = prop::hermetic().store("");
     for (name, value) in stated.as_object().into_iter().flatten() {
@@ -159,6 +159,7 @@ fn settings_of(stated: &Json, dir: &Path) -> Result<Options, Disagreement> {
                 options.seed(seed)
             }
             "cases" => options.cases(count(value, "settings.cases")?),
+            "shrink" => options.shrink(at_least(value, "settings.shrink", 0)?),
             "stored" => {
                 write_stored(value, dir, CONTRACT).map_err(|disagreement| {
                     Disagreement::new("settings.stored", disagreement.to_string())

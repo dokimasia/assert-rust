@@ -1877,6 +1877,9 @@
         "counter-refuses-every-third": {
             "summary": "A counter, initially 0, that refuses every third increment, counted over every case of the run. A refused increment completes with fail and the error refused, and leaves the count. Any other increment adds one to the count and returns it, and read returns the count. The actions are increment, enabled while the spec's count is below 3, and read, each of which records its one call with no arguments. The spec is a counter: increment outputs the count plus one and leaves it, and read outputs the count and leaves it. The machine's enabled reads a count that the subject's refusals change, so a case that repeats an earlier case's choices can list other actions.\n"
         },
+        "pair-fails-at-7-and-3": {
+            "summary": "A machine without a spec. The actions are noop, which does nothing, and put, whose input is a composite drawn under \"pair\". The composite draws an integer in [0, 9] under \"a\" and then one under \"b\", and returns the list of the two. put fails with the identity pair for the list [7, 3]. Neither action records a call.\n"
+        },
         "queue-loses-on-wrap": {
             "summary": "A queue in a ring of slots, of a capacity drawn under \"capacity\" as an integer in [1, 8]. put(v) returns false when the queue is full. Otherwise it writes v at the write index, or into the first slot when the write index is at the last slot, moves the index on to the next slot, from the last to the first, and returns true. get() removes and returns the oldest value, or returns null when the queue is empty. The actions are put, whose input is drawn under \"v\" as an integer in [0, 1000], and get, each of which records its one call. The spec is a queue of the capacity: put outputs whether the queue had room and adds v when it had, and get outputs the head and removes it, or outputs null.\n"
         },
@@ -2052,5 +2055,5 @@
             "summary": "Yields two objects, and the value of each is 1.\n"
         }
     },
-    "version": "16.3.0"
+    "version": "16.4.0"
 }

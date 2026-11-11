@@ -1077,6 +1077,343 @@
         "reproduced": null
       },
       "error": null
+    },
+    {
+      "id": "pair-fails-at-7-and-3/a-trace-of-a-composite-replays-its-draws",
+      "subject": "pair-fails-at-7-and-3",
+      "setup": {
+        "swarm": false
+      },
+      "settings": {
+        "seed": "1",
+        "shrink": 0
+      },
+      "trace": [
+        {
+          "step": "put"
+        },
+        {
+          "label": "a",
+          "value": {
+            "type": "int",
+            "value": 7
+          }
+        },
+        {
+          "label": "b",
+          "value": {
+            "type": "int",
+            "value": 3
+          }
+        },
+        {
+          "label": "pair",
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              7,
+              3
+            ]
+          }
+        }
+      ],
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "put"
+          },
+          {
+            "label": "a",
+            "value": {
+              "type": "int",
+              "value": 7
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          },
+          {
+            "label": "b",
+            "value": {
+              "type": "int",
+              "value": 3
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          },
+          {
+            "label": "pair",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                7,
+                3
+              ]
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "pair",
+        "choices": "prop1:AAEAAQAHAAM",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
+    },
+    {
+      "id": "pair-fails-at-7-and-3/a-trace-of-another-label-at-the-end-of-a-composite-is-refused",
+      "subject": "pair-fails-at-7-and-3",
+      "setup": {
+        "swarm": false
+      },
+      "settings": {
+        "seed": "1",
+        "shrink": 0
+      },
+      "trace": [
+        {
+          "step": "put"
+        },
+        {
+          "label": "a",
+          "value": {
+            "type": "int",
+            "value": 7
+          }
+        },
+        {
+          "label": "b",
+          "value": {
+            "type": "int",
+            "value": 3
+          }
+        },
+        {
+          "label": "other",
+          "value": {
+            "type": "list",
+            "of": "int",
+            "value": [
+              7,
+              3
+            ]
+          }
+        }
+      ],
+      "detail": null,
+      "error": {
+        "entry": 3,
+        "name": "pair",
+        "reason": "label"
+      }
+    },
+    {
+      "id": "pair-fails-at-7-and-3/a-stored-case-of-other-actions-replays-its-composite",
+      "subject": "pair-fails-at-7-and-3",
+      "setup": {
+        "swarm": false
+      },
+      "settings": {
+        "seed": "1",
+        "cases": 1,
+        "shrink": 0,
+        "stored": [
+          {
+            "choices": [
+              1,
+              0,
+              7,
+              3
+            ],
+            "counterexample": [
+              {
+                "step": "put"
+              },
+              {
+                "label": "a",
+                "value": {
+                  "type": "int",
+                  "value": 7
+                }
+              },
+              {
+                "label": "b",
+                "value": {
+                  "type": "int",
+                  "value": 3
+                }
+              },
+              {
+                "label": "pair",
+                "value": {
+                  "type": "list",
+                  "of": "int",
+                  "value": [
+                    7,
+                    3
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "put"
+          },
+          {
+            "label": "a",
+            "value": {
+              "type": "int",
+              "value": 7
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          },
+          {
+            "label": "b",
+            "value": {
+              "type": "int",
+              "value": 3
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          },
+          {
+            "label": "pair",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                7,
+                3
+              ]
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "pair",
+        "choices": "prop1:AAEAAQAHAAM",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
+    },
+    {
+      "id": "pair-fails-at-7-and-3/a-stored-composite-without-a-value-replays-its-draws",
+      "subject": "pair-fails-at-7-and-3",
+      "setup": {
+        "swarm": false
+      },
+      "settings": {
+        "seed": "1",
+        "cases": 1,
+        "shrink": 0,
+        "stored": [
+          {
+            "choices": [
+              1,
+              0,
+              7,
+              3
+            ],
+            "counterexample": [
+              {
+                "step": "put"
+              },
+              {
+                "label": "a",
+                "value": {
+                  "type": "int",
+                  "value": 7
+                }
+              },
+              {
+                "label": "b",
+                "value": {
+                  "type": "int",
+                  "value": 3
+                }
+              },
+              {
+                "label": "pair"
+              }
+            ]
+          }
+        ]
+      },
+      "detail": {
+        "outcome": "counterexample",
+        "cases": 0,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": [
+          {
+            "step": "put"
+          },
+          {
+            "label": "a",
+            "value": {
+              "type": "int",
+              "value": 7
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          },
+          {
+            "label": "b",
+            "value": {
+              "type": "int",
+              "value": 3
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          },
+          {
+            "label": "pair",
+            "value": {
+              "type": "list",
+              "of": "int",
+              "value": [
+                7,
+                3
+              ]
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": "pair",
+        "choices": "prop1:AAEAAQAHAAM",
+        "others": [],
+        "divergence": null,
+        "coverage": null,
+        "reason": null,
+        "replays": null,
+        "reproduced": null
+      },
+      "error": null
     }
   ]
 }

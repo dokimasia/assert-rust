@@ -16,6 +16,10 @@
 //!   label and a value. Its value runs backwards through the draw's
 //!   generator, and the draw decodes the choices that result. A draw past the
 //!   last entry takes its targets.
+//! - A draw of a composite takes no entry when it starts, and the draws of
+//!   its function take theirs. Once it decodes, it takes the next entry by
+//!   its label and does not read the value. A case records a composite after
+//!   its draws, so the entry may lack a value.
 //! - A machine turns each step entry into the choices of one step, which the
 //!   provider serves as they are requested.
 //! - Every other request takes its target.
@@ -155,31 +159,52 @@ impl Tracing {
         label: &str,
         invert: &dyn Fn(&Value) -> Result<Vec<Choice>, CannotInvert>,
     ) -> Result<(), TraceError> {
-        let Some(entry) = self.entries.get(self.at) else {
+        let at = self.at;
+        if !self.take_draw(label)? {
             return Ok(());
-        };
-        let refused = |refusal| TraceError {
-            entry: self.at,
-            name: label.to_owned(),
-            refusal,
-        };
-        let Entry::Draw {
-            label: stated,
-            value,
-        } = entry
-        else {
-            return Err(refused(Refusal::Label));
-        };
-        if stated != label {
-            return Err(refused(Refusal::Label));
         }
-        let Some(value) = value else {
-            return Err(refused(Refusal::Value));
+        let refused = TraceError {
+            entry: at,
+            name: label.to_owned(),
+            refusal: Refusal::Value,
         };
-        let choices = invert(value).map_err(|_| refused(Refusal::Value))?;
+        let Some(Entry::Draw {
+            value: Some(value), ..
+        }) = self.entries.get(at)
+        else {
+            return Err(refused);
+        };
+        let choices = invert(value).map_err(|_| refused)?;
         self.queue.extend(choices);
-        self.at += 1;
         Ok(())
+    }
+
+    /// Takes the next entry for a composite labelled `label` once it
+    /// decodes, by its label alone. A composite past the last entry takes no
+    /// entry.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when the next entry is no draw entry with `label`.
+    pub(crate) fn drawn(&mut self, label: &str) -> Result<(), TraceError> {
+        self.take_draw(label).map(drop)
+    }
+
+    /// Takes the next entry, a draw entry with `label`, and returns whether
+    /// it took one. A draw past the last entry takes no entry.
+    fn take_draw(&mut self, label: &str) -> Result<bool, TraceError> {
+        let Some(entry) = self.entries.get(self.at) else {
+            return Ok(false);
+        };
+        if !matches!(entry, Entry::Draw { label: stated, .. } if stated == label) {
+            return Err(TraceError {
+                entry: self.at,
+                name: label.to_owned(),
+                refusal: Refusal::Label,
+            });
+        }
+        self.at += 1;
+        Ok(true)
     }
 
     /// Returns the next entry when it is a step entry.

@@ -65,6 +65,11 @@
 //!   runs the scheduler, and does not record a call. The machine has no
 //!   spec, so a spin fails its case at the limit of releases of the
 //!   scheduler.
+//! - `pair-fails-at-7-and-3`: a machine without a spec of the actions noop
+//!   and put. Noop does nothing. The input of put is a composite drawn under
+//!   `pair`, which draws a digit from [0, 9] under `a` and then one under
+//!   `b`, and returns the list of the two. Put fails with the record of
+//!   `pair` for the list [7, 3]. The actions do not record a call.
 //!
 //! [`subject`] builds each subject anew for a run, so a subject that counts
 //! over the cases of a run starts each run at 0.
@@ -99,6 +104,12 @@ const DURABLE: &str = "the store keeps every acknowledged put";
 /// ticks.
 const PERIOD: u64 = 4;
 const TICKS: u64 = 4;
+
+/// The label of the input of the put of `pair-fails-at-7-and-3`, which is
+/// also the assertion of the record of its failure, and the pair that it
+/// fails for.
+const PAIR: &str = "pair";
+const FAILING: [i64; 2] = [7, 3];
 
 /// The options of a subject's steps, those of a concurrent section, the
 /// strategy of a subject's scheduler, and the actions that every case keeps.
@@ -146,6 +157,7 @@ pub fn subject(name: &str) -> Option<Subject> {
         }
         "ticker" => Box::new(|c: &Case<'_>, setup: &Setup| ticker(c, setup, false)),
         "spins-until-a-flag" => Box::new(spinner),
+        "pair-fails-at-7-and-3" => Box::new(pair_fails),
         _ => return None,
     };
     Some(subject)
@@ -562,6 +574,34 @@ fn spinner(c: &Case<'_>, setup: &Setup) {
         scheduler.run();
     });
     let machine = Machine::<()>::new(marked(setup, [spin]));
+    stateful::steps(c, &machine, setup.steps);
+}
+
+/// Runs the machine of noop and of put, whose composite input fails for the
+/// pair 7 and 3.
+fn pair_fails(c: &Case<'_>, setup: &Setup) {
+    let pairs = prop::composite(|c| {
+        Value::from(vec![
+            Value::from(c.draw(&prop::integer(0..=9_i64), "a")),
+            Value::from(c.draw(&prop::integer(0..=9_i64), "b")),
+        ])
+    });
+    let failing = Value::from(FAILING.map(Value::from).to_vec());
+    let machine = Machine::<()>::new(marked(
+        setup,
+        [
+            Action::new("noop", async |_: &Case<'_>, _: usize| {}),
+            Action::with_input(
+                "put",
+                move |c: &Case<'_>, (): &()| c.draw(&pairs, PAIR),
+                async |c: &Case<'_>, _: usize, pair: Value| {
+                    if pair == failing {
+                        c.fail_with(PAIR, &format!("put of the pair {FAILING:?}"), Vec::new());
+                    }
+                },
+            ),
+        ],
+    ));
     stateful::steps(c, &machine, setup.steps);
 }
 
