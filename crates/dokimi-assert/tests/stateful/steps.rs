@@ -166,6 +166,20 @@ mod steps {
     }
 
     #[test]
+    fn continues_a_concurrent_section_by_its_mean() {
+        let others = |mean: usize| {
+            let log = Mutex::new(Vec::new());
+            run(Options::default(), |c| {
+                let steps = stateful::clients(2).concurrent_mean(mean);
+                stateful::steps(c, &logged(&log), steps);
+            });
+            let log = log.into_inner().unwrap_or_else(PoisonError::into_inner);
+            log.iter().filter(|step| !step.ends_with(" on 0")).count()
+        };
+        assert!(others(12) > others(0));
+    }
+
+    #[test]
     fn draws_with_the_generators_of_the_run_on_the_threads_of_its_clients() {
         let large = AtomicUsize::new(0);
         let seat = run(prop::using(&prop::integer(0..=9_u16)), |c| {

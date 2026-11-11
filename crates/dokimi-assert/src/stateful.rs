@@ -78,7 +78,7 @@ mod steps;
 mod strategy;
 
 pub use machine::{Action, Machine};
-pub use options::{Options, clients, concurrent, max, mean, repeat, swarm, tasks};
+pub use options::{Options, clients, concurrent, concurrent_mean, max, mean, repeat, swarm, tasks};
 pub use scheduler::{Scheduler, YieldNow};
 pub use steps::steps;
 pub use strategy::{Strategy, pct, uniform};

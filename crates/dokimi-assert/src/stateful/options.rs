@@ -20,6 +20,7 @@ pub struct Options<'s> {
     pub(crate) swarm: bool,
     pub(crate) clients: usize,
     pub(crate) concurrent: usize,
+    pub(crate) concurrent_mean: Option<usize>,
     pub(crate) scheduler: Option<&'s (dyn Section + Sync + 's)>,
     pub(crate) repeat: usize,
 }
@@ -32,6 +33,7 @@ impl fmt::Debug for Options<'_> {
             .field("swarm", &self.swarm)
             .field("clients", &self.clients)
             .field("concurrent", &self.concurrent)
+            .field("concurrent_mean", &self.concurrent_mean)
             .field("tasks", &self.scheduler.is_some())
             .field("repeat", &self.repeat)
             .finish()
@@ -40,8 +42,8 @@ impl fmt::Debug for Options<'_> {
 
 /// States a mean of 30 sequential steps, at most 100 sequential steps and
 /// 100 steps of the drain, a swarm, one client, at most 16 steps of a
-/// concurrent section, clients on threads and 4 runs of a case whose section
-/// runs on threads.
+/// concurrent section with the mean of a collection, clients on threads and
+/// 4 runs of a case whose section runs on threads.
 impl Default for Options<'_> {
     fn default() -> Self {
         Self {
@@ -50,6 +52,7 @@ impl Default for Options<'_> {
             swarm: true,
             clients: 1,
             concurrent: 16,
+            concurrent_mean: None,
             scheduler: None,
             repeat: 4,
         }
@@ -92,6 +95,15 @@ impl<'s> Options<'s> {
     /// States the most steps of a concurrent section.
     pub fn concurrent(mut self, n: usize) -> Self {
         self.concurrent = n;
+        self
+    }
+
+    /// States the mean number of steps of a concurrent section. A section
+    /// without the setting averages the length of a collection of 0 to
+    /// [`concurrent`](Self::concurrent) elements: 5 steps for a maximum of 10
+    /// or more. The maximum still stops a section.
+    pub fn concurrent_mean(mut self, n: usize) -> Self {
+        self.concurrent_mean = Some(n);
         self
     }
 
@@ -143,6 +155,12 @@ pub fn clients<'s>(n: usize) -> Options<'s> {
 /// Returns the settings with the most steps of a concurrent section.
 pub fn concurrent<'s>(n: usize) -> Options<'s> {
     Options::default().concurrent(n)
+}
+
+/// Returns the settings with the mean number of steps of a concurrent
+/// section.
+pub fn concurrent_mean<'s>(n: usize) -> Options<'s> {
+    Options::default().concurrent_mean(n)
 }
 
 /// Returns the settings whose concurrent clients run as tasks of

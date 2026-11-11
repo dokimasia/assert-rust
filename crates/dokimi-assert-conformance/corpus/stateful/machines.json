@@ -299,6 +299,30 @@
       "error": null
     },
     {
+      "id": "racy-counter/a-concurrent-mean-of-0-stops-each-section-before-the-race",
+      "subject": "racy-counter",
+      "setup": {
+        "concurrent-mean": 0
+      },
+      "settings": {
+        "seed": "1"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 98,
+        "rejected": 0,
+        "seed": "1",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": null
+      },
+      "error": null
+    },
+    {
       "id": "counter-refuses-every-third/a-refusal-changes-the-actions-a-step-lists",
       "subject": "counter-refuses-every-third",
       "setup": {

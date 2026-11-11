@@ -14,7 +14,8 @@ mod options {
     fn states_the_defaults_of_the_definition() {
         assert_eq!(
             format!("{:?}", Options::default()),
-            "Options { mean: 30, max: 100, swarm: true, clients: 1, concurrent: 16, tasks: false, repeat: 4 }"
+            "Options { mean: 30, max: 100, swarm: true, clients: 1, concurrent: 16, concurrent_mean: None, \
+             tasks: false, repeat: 4 }"
         );
     }
 
@@ -26,6 +27,7 @@ mod options {
             (stateful::swarm(false), "swarm: false"),
             (stateful::clients(3), "clients: 3"),
             (stateful::concurrent(7), "concurrent: 7"),
+            (stateful::concurrent_mean(12), "concurrent_mean: Some(12)"),
             (stateful::repeat(2), "repeat: 2"),
             (
                 stateful::mean(5)
@@ -33,8 +35,9 @@ mod options {
                     .swarm(false)
                     .clients(3)
                     .concurrent(7)
+                    .concurrent_mean(0)
                     .repeat(2),
-                "concurrent: 7",
+                "concurrent_mean: Some(0)",
             ),
         ];
         for (give, want) in tests {

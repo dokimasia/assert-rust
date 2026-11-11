@@ -95,10 +95,12 @@ struct Run<'r, 'a, S> {
 ///    run, which requests the step's input and runs the action. The check and
 ///    the invariant follow each step.
 /// 4. A concurrent section, for `clients` of 2 or more. The section lists
-///    its steps before any runs: each a flag with the most steps of
-///    `concurrent`, a client from 0 to the clients, an index into the kept
-///    actions without `enabled`, and the step's input. Client 0 runs its
-///    steps, and then the other clients run theirs: as tasks of the
+///    its steps before any runs. Each step is a flag with the most steps of
+///    `concurrent` and the mean of `concurrent_mean`, a client from 0 to the
+///    clients, an index into the kept actions without `enabled`, and the
+///    step's input. Without `concurrent_mean`, the flags take the mean of a
+///    collection. Client 0 runs its steps, and then the other clients run
+///    theirs: as tasks of the
 ///    scheduler of `tasks`, one task per client that has a step, spawned in
 ///    client order, or else on threads, and then the case runs up to
 ///    `repeat` times, because threads do not replay. The check follows.
@@ -393,7 +395,8 @@ where
                     }
                 });
             }
-            if eligible.is_empty() || !self.more(count, Sizes::up_to(most), None) {
+            let mean = self.options.concurrent_mean;
+            if eligible.is_empty() || !self.more(count, Sizes::up_to(most), mean) {
                 break;
             }
             let client = self.client();

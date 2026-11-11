@@ -44,11 +44,18 @@ pub fn run(vector: &Vector) -> Result<(), Disagreement> {
 
 /// Returns the count of 1 or more that a member states.
 fn count(stated: &Json, member: &str) -> Result<usize, Disagreement> {
+    at_least(stated, member, 1)
+}
+
+/// Returns the count of `least` or more that a member states.
+fn at_least(stated: &Json, member: &str, least: u64) -> Result<usize, Disagreement> {
     stated
         .as_u64()
-        .filter(|n| *n >= 1)
+        .filter(|n| *n >= least)
         .and_then(|n| usize::try_from(n).ok())
-        .ok_or_else(|| Disagreement::new(member, format!("{stated} is no count of 1 or more")))
+        .ok_or_else(|| {
+            Disagreement::new(member, format!("{stated} is no count of {least} or more"))
+        })
 }
 
 /// Returns the strategy that a setup states: `"uniform"`, or the PCT of the
@@ -81,6 +88,9 @@ fn setup_of(stated: &Json) -> Result<Setup, Disagreement> {
             .as_bool()
             .ok_or_else(|| Disagreement::new("setup.swarm", format!("{swarm} is no bool")))?;
         steps = steps.swarm(on);
+    }
+    if let Some(mean) = stated.get("concurrent-mean") {
+        steps = steps.concurrent_mean(at_least(mean, "setup.concurrent-mean", 0)?);
     }
     let clients = stated
         .get("clients")

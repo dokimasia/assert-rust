@@ -73,7 +73,8 @@ const DURABLE: &str = "the store keeps every acknowledged put";
 /// strategy of a subject's scheduler.
 #[derive(Debug, Clone, Copy)]
 pub struct Setup {
-    /// The options that every subject takes: mean, max and swarm.
+    /// The options that every subject takes: mean, max, swarm and the mean
+    /// steps of a concurrent section.
     pub steps: Options<'static>,
     /// The clients of a concurrent section.
     pub clients: usize,

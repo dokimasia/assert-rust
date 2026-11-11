@@ -777,6 +777,9 @@ fn the_register_keeps_its_last_write() {
   failure needs, and it replays from its token.
 - The clients of a concurrent section run on threads by default. A case
   then runs up to `repeat` times, because threads do not replay.
+- A concurrent section averages 5 steps under the default maximum of 16.
+  `stateful::concurrent_mean(n)` sets another mean, and the maximum of
+  `stateful::concurrent(n)` still stops a section.
 - With the option `stateful::tasks`, the clients run as tasks of a
   `stateful::Scheduler`. The releases of the scheduler are choices of the
   case, so a race replays and shrinks. A task awaits
@@ -953,7 +956,7 @@ under test.
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
 - The vectors run too: 57 for files, 110 for histories, 439 for properties
-  and 14 for machines. Two more property vectors skip Rust, because its
+  and 15 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.
 - The crates implement all 111 assertions of the definition.

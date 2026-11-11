@@ -114,8 +114,9 @@ mod naming_table {
         not_contains as _, not_equal as _, pairwise as _, panics as _, round_trip as _,
     };
     use dokimi_assert::stateful::{
-        self, Action, Machine, Scheduler, clients as _, concurrent as _, max as _, mean as _,
-        pct as _, repeat as _, steps as _, swarm as _, tasks as _, uniform as _,
+        self, Action, Machine, Scheduler, clients as _, concurrent as _, concurrent_mean as _,
+        max as _, mean as _, pct as _, repeat as _, steps as _, swarm as _, tasks as _,
+        uniform as _,
     };
     use dokimi_assert::{
         Clock, Collector, Controlled, Failure, Recorder, Seat, Standard, System, Value, Where,

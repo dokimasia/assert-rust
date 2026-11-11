@@ -1522,6 +1522,14 @@
                 "rust": "stateful::concurrent",
                 "typescript": "stateful.concurrent"
             },
+            "steps.concurrent-mean": {
+                "go": "stateful.ConcurrentMean",
+                "java": "Stateful.concurrentMean",
+                "kotlin": "Stateful.concurrentMean",
+                "python": "stateful.concurrent_mean",
+                "rust": "stateful::concurrent_mean",
+                "typescript": "stateful.concurrentMean"
+            },
             "steps.max": {
                 "go": "stateful.Max",
                 "java": "Stateful.max",
@@ -2522,5 +2530,5 @@
             }
         }
     },
-    "version": "14.1.0"
+    "version": "14.2.0"
 }
