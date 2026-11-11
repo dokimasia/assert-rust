@@ -212,22 +212,24 @@ fn explain_seed(seed: u64, draw: u64, filling: u64) -> u64 {
     seed.wrapping_add((draw + 1) << 32).wrapping_add(filling)
 }
 
-/// Replays a failing case once, and returns how the replay differed, if it
-/// did.
+/// Replays a case once under `phase`, and returns how the replay differed, if
+/// it did.
 ///
-/// The comparison takes the requests' bounds first, then the observed
-/// fingerprints, then the way the replay ended.
+/// The case is a failing case, or a valid case that the setting confirm
+/// replays. The comparison takes the requests' bounds first, then the
+/// observed fingerprints, then the way the replay ended.
 pub(crate) fn confirm(
     run: &mut Run<'_, '_>,
     failing: &Execution,
     max_choices: usize,
+    phase: Phase,
 ) -> Result<Option<Divergence>, Fault> {
     let replay = run.execute(
         Box::new(Replaying::new(failing.record.choices.clone())),
         max_choices,
         None,
     )?;
-    (run.observer)(Phase::Replay, &replay);
+    (run.observer)(phase, &replay);
     let recorded: Vec<Version> = failing
         .record
         .requests

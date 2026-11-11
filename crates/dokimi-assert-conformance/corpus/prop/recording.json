@@ -733,6 +733,107 @@
       ]
     },
     {
+      "id": "recording/records-the-replay-of-every-fifth-valid-case",
+      "body": {
+        "draw": {
+          "gen": "integer",
+          "min": 0,
+          "max": 1000
+        }
+      },
+      "settings": {
+        "seed": "7",
+        "cases": 10,
+        "confirm": 5
+      },
+      "verdict": "pass",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 4,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 5,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 6,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 7,
+          "phase": "confirm",
+          "verdict": "pass"
+        },
+        {
+          "run": 8,
+          "phase": "edge",
+          "verdict": "pass"
+        },
+        {
+          "run": 9,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 11,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 12,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 13,
+          "phase": "random",
+          "verdict": "pass"
+        },
+        {
+          "run": 14,
+          "phase": "confirm",
+          "verdict": "pass"
+        }
+      ]
+    },
+    {
+      "id": "recording/records-the-replay-of-a-valid-case-that-observes-another-fingerprint",
+      "body": {
+        "kind": "observes-its-calls"
+      },
+      "settings": {
+        "seed": "7",
+        "confirm": 1
+      },
+      "verdict": "fail",
+      "calls": [
+        {
+          "run": 1,
+          "phase": "simplest",
+          "verdict": "pass"
+        },
+        {
+          "run": 2,
+          "phase": "confirm",
+          "verdict": "pass"
+        }
+      ]
+    },
+    {
       "id": "recording/records-the-examples-then-the-stored-cases",
       "body": {
         "draw": {

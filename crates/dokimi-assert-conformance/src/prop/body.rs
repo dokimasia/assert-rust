@@ -11,11 +11,13 @@
 //! predicate is true. An [`Ending`] then ends the case with that identity, or
 //! with `None` for a case that does not fail.
 //!
-//! Four named bodies state what no predicate can:
+//! Five named bodies state what no predicate can:
 //!
 //! - `draws-nothing` requests no input.
 //! - `diverges` draws an integer in [0, 9] on its first call and a boolean on
 //!   every later call.
+//! - `observes-its-calls` draws an integer in [0, 9] and observes the number
+//!   of its calls so far: 1 on its first call.
 //! - `fails-once` draws an integer in [0, 10^9]. Its case fails with the
 //!   identity `once` the first time that it draws a value above 1,000.
 //! - `fails-then-skips` draws an integer in [0, 10^9]. Its case fails with
@@ -28,7 +30,7 @@ use dokimi_assert::Value;
 use dokimi_assert::prop::Case;
 use serde_json::{Value as Json, json};
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 /// The label of a body's one draw.
 pub const DRAWN: &str = "value";
@@ -69,6 +71,15 @@ pub fn body(spec: &Json, end: Ending) -> Result<Body, SpecError> {
                 };
                 c.draw(generator, DRAWN);
                 drawn.store(true, Ordering::SeqCst);
+                end(c, None);
+            }))
+        }
+        Some("observes-its-calls") => {
+            let calls = AtomicU64::new(0);
+            let digit = build(&json!({"gen": "integer", "min": 0, "max": 9}), None)?;
+            Ok(Arc::new(move |c| {
+                c.draw(&digit, DRAWN);
+                c.observe(calls.fetch_add(1, Ordering::SeqCst) + 1);
                 end(c, None);
             }))
         }

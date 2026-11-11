@@ -6,7 +6,7 @@
 use crate::helpers::{Results, panic_of, records};
 use dokimi_assert::prop::{self, Case, Options, RunResult};
 use dokimi_assert::{Recorder, Standard, check};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex, PoisonError};
 use std::time::Duration;
 
@@ -23,13 +23,13 @@ mod options {
         assert_eq!(
             stated(&Options::<()>::default()),
             "Options { cases: 100, seed: None, replay: None, shrink: 2000, shrink_time: 30s, max_choices: 8192, \
-             store: None, explain: true, workers: 1, hermetic: false, using: {}, .. }"
+             store: None, explain: true, workers: 1, confirm: 0, hermetic: false, using: {}, .. }"
         );
     }
 
     #[test]
     fn starts_a_chain_with_the_function_of_each_setting() {
-        let tests: [(Options, &str); 13] = [
+        let tests: [(Options, &str); 14] = [
             (prop::cases(5), "cases: 5"),
             (prop::seed(7), "seed: Some(7)"),
             (prop::replay("prop1:AA"), r#"replay: Some("prop1:AA")"#),
@@ -39,6 +39,7 @@ mod options {
             (prop::store("dir"), r#"store: Some("dir")"#),
             (prop::explain(false), "explain: false"),
             (prop::workers(2), "workers: 2"),
+            (prop::confirm(5), "confirm: 5"),
             (prop::hermetic(), "hermetic: true"),
             (prop::using(&prop::just(1_u8)), r#"using: {"u8"}"#),
             (prop::on_result(|_| {}), "cases: 100"),
@@ -78,6 +79,10 @@ mod options {
         assert_eq!(
             panic_of(|| _ = prop::workers::<()>(0)).as_deref(),
             Some("prop: workers(0) runs nothing")
+        );
+        assert_eq!(
+            panic_of(|| _ = prop::confirm::<()>(0)).as_deref(),
+            Some("prop: confirm(0) replays no case")
         );
     }
 
@@ -274,6 +279,188 @@ mod on_result {
             drawing,
         );
         assert_eq!(results.kept().len(), 1);
+    }
+}
+
+mod confirm {
+    use super::*;
+
+    /// The contract of every property of the module.
+    const CONTRACT: &str = "the replay agrees with the case";
+
+    /// Returns the settings of the module's runs under `options`.
+    fn hermetic<T>(options: Options<T>) -> Options<T> {
+        options.hermetic().seed(7).store("")
+    }
+
+    /// Returns the record of the call of a property on `seat`.
+    fn property(seat: &Recorder) -> serde_json::Value {
+        records(seat)
+            .into_iter()
+            .find(|record| record["parent"].is_null())
+            .expect("the property records its call")
+    }
+
+    /// Returns a body that draws a digit and observes the number of its calls
+    /// so far: 1 on its first call.
+    fn observing() -> impl Fn(&Case<'_>) + Send + Sync {
+        let calls = AtomicU64::new(0);
+        move |c| {
+            let _ = c.draw(&prop::integer(0..=9_u8), "n");
+            c.observe(calls.fetch_add(1, Ordering::SeqCst) + 1);
+        }
+    }
+
+    /// Returns a predicate that keeps each value that it sees, and fails from
+    /// its call `failing` on.
+    fn seeing(seen: &Arc<Mutex<Vec<u8>>>, failing: usize) -> impl Fn(&u8) -> bool + Send + Sync {
+        let kept = Arc::clone(seen);
+        move |n| {
+            let mut seen = kept.lock().unwrap_or_else(PoisonError::into_inner);
+            seen.push(*n);
+            seen.len() < failing
+        }
+    }
+
+    #[test]
+    fn replays_every_fifth_valid_case_right_after_the_case() {
+        let seat = Recorder::new();
+        let options = hermetic(prop::confirm(5).cases(10));
+        prop::for_all(&seat, CONTRACT, options, |c| {
+            let n = c.draw(&prop::integer(0..=1000_i64), "n");
+            check::is_true(c, true, &format!("the case of {n} passes"));
+        });
+        let calls: Vec<(serde_json::Value, serde_json::Value)> = records(&seat)
+            .into_iter()
+            .filter(|record| !record["parent"].is_null())
+            .map(|record| (record["phase"].clone(), record["contract"].clone()))
+            .collect();
+        let replayed: Vec<bool> = (1..calls.len())
+            .filter(|&at| calls[at].0 == "confirm")
+            .map(|at| calls[at].1 == calls[at - 1].1)
+            .collect();
+        assert_eq!(replayed, [true, true], "{calls:?}");
+        assert_eq!(property(&seat)["verdict"], "pass");
+    }
+
+    #[test]
+    fn ends_the_run_as_flaky_at_a_valid_case_whose_replay_observes_another_fingerprint() {
+        let seat = Recorder::new();
+        prop::for_all(&seat, CONTRACT, hermetic(prop::confirm(1)), observing());
+        let detail = &property(&seat)["detail"];
+        assert_eq!(
+            (
+                &detail["outcome"],
+                &detail["failure"],
+                &detail["divergence"]["what"],
+                &detail["counterexample"][0]["value"]["value"],
+            ),
+            (
+                &"flaky".into(),
+                &serde_json::Value::Null,
+                &"fingerprint".into(),
+                &0.into()
+            ),
+            "{detail}"
+        );
+        assert!(
+            seat.message().contains("divergence: the fingerprint at 0"),
+            "{}",
+            seat.message()
+        );
+    }
+
+    #[test]
+    fn passes_the_same_body_without_the_option() {
+        let seat = Recorder::new();
+        prop::for_all(&seat, CONTRACT, hermetic(Options::default()), observing());
+        assert!(!seat.failed(), "{}", seat.message());
+    }
+
+    #[test]
+    fn replays_an_example_of_choices_right_after_it() {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let options = hermetic(prop::example([5_u8]).confirm(1).cases(1));
+        prop::is_true(
+            &Recorder::new(),
+            seeing(&seen, usize::MAX),
+            CONTRACT,
+            options,
+        );
+        let seen = seen.lock().unwrap_or_else(PoisonError::into_inner);
+        assert_eq!(seen[..2], [5, 5]);
+    }
+
+    #[test]
+    fn does_not_replay_an_example_of_values() {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        // A generator that map returns has no inverse, so the example keeps its value.
+        let generator = prop::integer(0..=255_u8).map(|n| n);
+        let options = hermetic(prop::example([5_u8]).using(&generator).confirm(1).cases(1));
+        prop::is_true(
+            &Recorder::new(),
+            seeing(&seen, usize::MAX),
+            CONTRACT,
+            options,
+        );
+        let seen = seen.lock().unwrap_or_else(PoisonError::into_inner);
+        assert_eq!(seen[..3], [5, 0, 0]);
+    }
+
+    #[test]
+    fn ends_the_run_as_flaky_at_an_example_whose_replay_fails() {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let seat = Recorder::new();
+        let options = hermetic(prop::example([5_u8]).confirm(1));
+        prop::is_true(&seat, seeing(&seen, 2), CONTRACT, options);
+        let detail = &property(&seat)["detail"];
+        assert_eq!(
+            (
+                &detail["outcome"],
+                &detail["divergence"]["what"],
+                &detail["counterexample"][0]["value"]["value"],
+            ),
+            (&"flaky".into(), &"verdict".into(), &5.into()),
+            "{detail}"
+        );
+    }
+
+    #[test]
+    fn replays_the_case_of_a_replay_token() {
+        let calls = Arc::new(AtomicUsize::new(0));
+        let counted = Arc::clone(&calls);
+        let seat = Recorder::new();
+        let options = hermetic(prop::replay("prop1:AAc").confirm(1));
+        prop::for_all(&seat, CONTRACT, options, move |c| {
+            let _ = c.draw(&prop::integer(0..=9_u8), "n");
+            counted.fetch_add(1, Ordering::SeqCst);
+        });
+        assert!(!seat.failed(), "{}", seat.message());
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+    }
+
+    #[test]
+    fn ends_a_run_of_a_replay_token_as_flaky_without_a_token() {
+        let seat = Recorder::new();
+        let options = hermetic(prop::replay("prop1:AAc").confirm(1));
+        prop::for_all(&seat, CONTRACT, options, observing());
+        let detail = &property(&seat)["detail"];
+        assert_eq!(
+            (&detail["outcome"], &detail["choices"]),
+            (&"flaky".into(), &serde_json::Value::Null),
+            "{detail}"
+        );
+    }
+
+    #[test]
+    fn ends_a_call_of_the_fuzz_bridge_as_flaky_at_an_input_whose_replay_differs() {
+        let seat = Recorder::new();
+        let target = prop::fuzz(&seat, CONTRACT, hermetic(prop::confirm(1)), observing());
+        let raised = panic_of(|| target(&[1])).expect("the input fails on its seat");
+        assert!(
+            raised.starts_with("the replay agrees with the case: flaky after 1 valid"),
+            "{raised}"
+        );
     }
 }
 

@@ -22,12 +22,19 @@
 //! 4. The coverage cases: when a requirement is undecided at a check, further
 //!    random cases up to the next check, at 2, 4 and 8 times `cases`.
 //!
-//! A valid case passed and repeats no earlier case. A failing case is
-//! replayed, shrunk and explained, and the run ends as a counterexample, or as
-//! flaky when the replay differs. A run that found no failing case fails
-//! anyway when it rejected more than ten times as many cases as were valid,
-//! when no case requested an input, or when a coverage requirement is refuted
-//! or unmet, checked in that order.
+//! A valid case passed and repeats no earlier case. Under the setting
+//! confirm, the run replays each valid case whose count is a multiple of
+//! confirm right after the case, from its choices, as it replays a failing
+//! case. A replay that requests other bounds, observes another fingerprint or
+//! fails ends the run as flaky, with the valid case as its failing case. A
+//! replay that is rejected or skips does not differ. The replay counts as no
+//! case, and an example of values is not replayed.
+//!
+//! A failing case is replayed, shrunk and explained, and the run ends as a
+//! counterexample, or as flaky when the replay differs. A run that found no
+//! failing case fails anyway when it rejected more than ten times as many
+//! cases as were valid, when no case requested an input, or when a coverage
+//! requirement is refuted or unmet, checked in that order.
 //!
 //! A case that skips before the run finds a failing case ends the run as
 //! skipped, in every phase. Once the run has found a failing case, a case
@@ -162,6 +169,9 @@ pub struct Settings {
     pub workers: usize,
     /// The one case that the run tries, for a run of a replay token.
     pub replay: Option<Vec<Choice>>,
+    /// The interval of the replays of valid cases: the run replays each valid
+    /// case whose count is a multiple of it, and 0 replays none.
+    pub confirm: usize,
 }
 
 impl Settings {
@@ -182,6 +192,7 @@ impl Settings {
             explain: true,
             workers: 1,
             replay: None,
+            confirm: 0,
         }
     }
 }
@@ -262,35 +273,43 @@ impl Tally {
         }
     }
 
-    /// Counts one execution, and returns it when it ends the run: a failed
-    /// case ends it with a counterexample, a diverged case as flaky, and a
-    /// skipped case as skipped with its reason.
-    pub(crate) fn take(&mut self, execution: Execution) -> Option<Outcome> {
+    /// Counts one execution, and returns the outcome that it ends the run with
+    /// as the error: a failed case ends it with a counterexample, a diverged
+    /// case as flaky, and a skipped case as skipped with its reason. A valid
+    /// case returns its execution, and any other case `None`.
+    pub(crate) fn count(
+        &mut self,
+        execution: Execution,
+    ) -> Result<Option<Execution>, Box<Outcome>> {
         let record = &execution.record;
         self.requested |= !record.draws.is_empty() || !record.choices.is_empty();
         match execution.status {
-            Status::Failed => return Some(self.outcome(Kind::Counterexample, Some(execution))),
+            Status::Failed => Err(Box::new(
+                self.outcome(Kind::Counterexample, Some(execution)),
+            )),
             Status::Diverged => {
-                let divergence = execution.divergence.clone();
                 let mut outcome = self.outcome(Kind::Flaky, None);
-                outcome.divergence = divergence;
-                return Some(outcome);
+                outcome.divergence = execution.divergence;
+                Err(Box::new(outcome))
             }
             Status::Skipped => {
                 let mut outcome = self.outcome(Kind::Skipped, None);
                 outcome.reason = execution.reason;
-                return Some(outcome);
+                Err(Box::new(outcome))
             }
-            Status::Rejected => self.rejected += 1,
+            Status::Rejected => {
+                self.rejected += 1;
+                Ok(None)
+            }
             Status::Passed => {
                 self.valid += 1;
                 for label in &record.labels {
                     *self.labels.entry(label.clone()).or_default() += 1;
                 }
+                Ok(Some(execution))
             }
-            Status::Repeated => {}
+            Status::Repeated => Ok(None),
         }
-        None
     }
 
     /// Returns an outcome of `kind` with the counts so far.
@@ -378,6 +397,41 @@ impl Run<'_, '_> {
     }
 }
 
+/// Replays a valid case whose count is a multiple of the setting confirm,
+/// under the phase confirm, right after the case that `tally` counted. The
+/// result is the flaky outcome of a replay that differs.
+pub(crate) fn confirm_valid(
+    run: &mut Run<'_, '_>,
+    settings: &Settings,
+    tally: &Tally,
+    valid: Execution,
+) -> Result<Option<Outcome>, Fault> {
+    if settings.confirm == 0 || tally.valid % settings.confirm != 0 {
+        return Ok(None);
+    }
+    let Some(divergence) = confirm(run, &valid, settings.max_choices, Phase::Confirm)? else {
+        return Ok(None);
+    };
+    let mut outcome = tally.outcome(Kind::Flaky, Some(valid));
+    outcome.divergence = Some(divergence);
+    Ok(Some(outcome))
+}
+
+/// Counts one execution and replays a valid case under the setting confirm.
+/// The result is the outcome that the case or its replay ends the run with.
+pub(crate) fn take_confirmed(
+    run: &mut Run<'_, '_>,
+    settings: &Settings,
+    tally: &mut Tally,
+    execution: Execution,
+) -> Result<Option<Outcome>, Fault> {
+    match tally.count(execution) {
+        Err(outcome) => Ok(Some(*outcome)),
+        Ok(None) => Ok(None),
+        Ok(Some(valid)) => confirm_valid(run, settings, tally, valid),
+    }
+}
+
 /// Returns the most valid cases at which a run tries a prefix case.
 fn prefix_cases(cases: usize) -> usize {
     (cases / PREFIX_DIVISOR).min(MAX_PREFIX_CASES)
@@ -412,7 +466,8 @@ pub(crate) fn known_cases(settings: &mut Settings) -> Vec<(Phase, Box<dyn Provid
 }
 
 /// Runs the known cases outside the case tree until one ends the run.
-/// `stored` receives the draws of each stored case that ran.
+/// `stored` receives the draws of each stored case that ran. A known case
+/// other than an example of values is replayed under the setting confirm.
 fn try_known(
     run: &mut Run<'_, '_>,
     settings: &mut Settings,
@@ -425,9 +480,17 @@ fn try_known(
         if phase == Phase::Stored {
             stored.push(execution.record.draws.clone());
         }
-        if let Some(mut outcome) = tally.take(execution) {
-            outcome.valued = valued;
-            return Ok(Some(outcome));
+        match tally.count(execution) {
+            Err(mut outcome) => {
+                outcome.valued = valued;
+                return Ok(Some(*outcome));
+            }
+            Ok(Some(valid)) if !valued => {
+                if let Some(outcome) = confirm_valid(run, settings, tally, valid)? {
+                    return Ok(Some(outcome));
+                }
+            }
+            Ok(_) => {}
         }
     }
     Ok(None)
@@ -447,15 +510,16 @@ struct Phases<'p, 'e, 'r, 's> {
 }
 
 impl Phases<'_, '_, '_, '_> {
-    /// Passes one case of `phase` to the observer and counts it.
-    fn seen(&mut self, phase: Phase, execution: Execution) -> Option<Outcome> {
+    /// Passes one case of `phase` to the observer and counts it. The setting
+    /// confirm replays a valid case right after it.
+    fn seen(&mut self, phase: Phase, execution: Execution) -> Result<Option<Outcome>, Fault> {
         (self.run.observer)(phase, &execution);
-        self.tally.take(execution)
+        take_confirmed(self.run, self.settings, self.tally, execution)
     }
 
     fn simplest(&mut self) -> Result<Option<Outcome>, Fault> {
         let execution = self.executor.replay(&mut self.tree, Vec::new())?;
-        Ok(self.seen(Phase::Simplest, execution))
+        self.seen(Phase::Simplest, execution)
     }
 
     /// Runs the next random case, then its prefix case and the next edge
@@ -464,7 +528,7 @@ impl Phases<'_, '_, '_, '_> {
         let generated = self.executor.random(&mut self.tree, self.index)?;
         self.index += 1;
         let (execution, choices, mut source) = generated;
-        if let Some(outcome) = self.seen(self.phase, execution) {
+        if let Some(outcome) = self.seen(self.phase, execution)? {
             return Ok(Some(outcome));
         }
         let prefixed = self.tally.valid <= prefix_cases(self.settings.cases)
@@ -476,7 +540,7 @@ impl Phases<'_, '_, '_, '_> {
             let execution = self
                 .executor
                 .replay(&mut self.tree, choices[..cut].to_vec())?;
-            if let Some(outcome) = self.seen(Phase::Prefix, execution) {
+            if let Some(outcome) = self.seen(Phase::Prefix, execution)? {
                 return Ok(Some(outcome));
             }
         }
@@ -491,7 +555,7 @@ impl Phases<'_, '_, '_, '_> {
         }
         let execution = self.executor.edge(&mut self.tree, self.edges)?;
         self.edges += 1;
-        Ok(self.seen(Phase::Edge, execution))
+        self.seen(Phase::Edge, execution)
     }
 
     /// Runs random cases until `target` cases are valid, then the edge cases
@@ -605,7 +669,7 @@ pub(crate) fn conclude(
         outcome.failing = Some(failing);
         return Ok(outcome);
     }
-    if let Some(divergence) = confirm(run, &failing, settings.max_choices)? {
+    if let Some(divergence) = confirm(run, &failing, settings.max_choices, Phase::Replay)? {
         outcome.kind = Kind::Flaky;
         outcome.divergence = Some(divergence);
         outcome.failing = Some(failing);
@@ -629,7 +693,16 @@ pub(crate) fn conclude(
     Ok(outcome)
 }
 
-/// Runs the one case that `choices` record, and reports it as found.
+/// Adds the replay token of the failing case to a counterexample.
+fn with_token(mut outcome: Outcome) -> Outcome {
+    if let (Kind::Counterexample, Some(failing)) = (outcome.kind, &outcome.failing) {
+        outcome.token = Some(token::encode(&failing.record.choices));
+    }
+    outcome
+}
+
+/// Runs the one case that `choices` record, and reports it as found. The
+/// case is the first valid case of the run under the setting confirm.
 fn replay_only(
     run: &mut Run<'_, '_>,
     settings: &Settings,
@@ -642,11 +715,8 @@ fn replay_only(
         None,
     )?;
     (run.observer)(Phase::Token, &execution);
-    if let Some(mut outcome) = tally.take(execution) {
-        if let Some(failing) = &outcome.failing {
-            outcome.token = Some(token::encode(&failing.record.choices));
-        }
-        return Ok(outcome);
+    if let Some(outcome) = take_confirmed(run, settings, &mut tally, execution)? {
+        return Ok(with_token(outcome));
     }
     Ok(tally
         .failure_without_counterexample()
@@ -681,10 +751,7 @@ pub(crate) fn run_stored(run: &mut Run<'_, '_>, mut settings: Settings) -> Resul
     let found = try_known(run, &mut settings, &mut tally, &mut stored)?;
     let mut outcome = found.unwrap_or_else(|| tally.outcome(Kind::Passed, None));
     outcome.stored = stored;
-    if let Some(failing) = &outcome.failing {
-        outcome.token = Some(token::encode(&failing.record.choices));
-    }
-    Ok(outcome)
+    Ok(with_token(outcome))
 }
 
 /// Returns the provider of random case `index` of `seed`.

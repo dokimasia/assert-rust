@@ -16,6 +16,14 @@ fn checked<S: Spec>(h: &History, spec: &S, options: Options) -> (Recorder, serde
     (seat, record)
 }
 
+/// Returns the outcome of a check of `h` against the register under a budget
+/// of 1,325 steps, and under a budget of 1,324 steps. A check that passes
+/// states no outcome.
+fn outcomes(h: &History) -> [serde_json::Value; 2] {
+    [1325, 1324]
+        .map(|steps| checked(h, &Register, history::budget(steps)).1["detail"]["outcome"].clone())
+}
+
 /// A register spec whose `hash` or `equal` panics.
 struct Unhashable {
     in_hash: bool,
@@ -91,6 +99,57 @@ mod search {
             Some(2)
         );
         assert_eq!(record["detail"]["steps"], 5);
+    }
+
+    #[test]
+    fn skips_a_configuration_that_a_configuration_of_the_memo_covers() {
+        let h = History::new();
+        for client in 0..2 {
+            h.invoke(client, "write", [1.into()], ["x".into()])
+                .unknown("crashed");
+        }
+        read(&h, 2, 7);
+        let (_, record) = checked(&h, &Register, Options::default());
+        let detail = &record["detail"];
+        let calls = |field: &str| -> Vec<serde_json::Value> {
+            detail[field]
+                .as_array()
+                .expect("a list")
+                .iter()
+                .map(|span| span["call"].clone())
+                .collect()
+        };
+        assert_eq!(
+            (detail["outcome"].clone(), detail["steps"].clone()),
+            ("violated".into(), 7.into())
+        );
+        assert_eq!(
+            (calls("linearized"), calls("candidates")),
+            (vec![0.into()], vec![4.into()])
+        );
+    }
+
+    #[test]
+    fn passes_unknown_writes_that_no_read_needs_in_1325_steps() {
+        let h = History::new();
+        for i in 0..12_i64 {
+            let client = usize::try_from(i % 3).expect("a client");
+            h.invoke(client, "write", [(i % 3 + 1).into()], ["x".into()])
+                .unknown("crashed");
+        }
+        read(&h, 0, 0);
+        assert_eq!(outcomes(&h), [serde_json::Value::Null, "undecided".into()]);
+    }
+
+    #[test]
+    fn passes_pending_writes_that_no_read_needs_in_1325_steps() {
+        let h = History::new();
+        for i in 0..12_i64 {
+            let client = usize::try_from(i).expect("a client");
+            let _pending = h.invoke(client, "write", [(i % 3 + 1).into()], ["x".into()]);
+        }
+        read(&h, 12, 0);
+        assert_eq!(outcomes(&h), [serde_json::Value::Null, "undecided".into()]);
     }
 
     #[test]

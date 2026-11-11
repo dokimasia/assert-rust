@@ -25,7 +25,9 @@ use super::case::{AsAny, Drawn, Provider, Record, Request, Span};
 use super::choice::{Bounds, Choice};
 use super::draw::{Draw, below};
 use super::execution::{Execution, Fault, Phase, Status};
-use super::runner::{Kind, Outcome, Run, Settings, Tally, conclude, generating, known_cases};
+use super::runner::{
+    Kind, Outcome, Run, Settings, Tally, conclude, confirm_valid, generating, known_cases,
+};
 use super::source::{Source, case_source};
 use std::collections::{BTreeMap, HashSet};
 use std::time::{Duration, Instant};
@@ -191,9 +193,10 @@ impl Exploration {
 
     /// Counts an execution, admits a valid case to the pool, concludes a
     /// failure, and returns the outcome that ends the campaign: a skip before
-    /// the first failure, with the draws of the stored cases, or the flaky
-    /// outcome of a failure whose replay differs. `valued` states a case of an
-    /// example of values.
+    /// the first failure, with the draws of the stored cases, the flaky
+    /// outcome of a failure whose replay differs, or the flaky outcome of a
+    /// valid case whose replay under the setting confirm differs. `valued`
+    /// states a case of an example of values, which no replay confirms.
     fn take(
         &mut self,
         run: &mut Run<'_, '_>,
@@ -205,16 +208,23 @@ impl Exploration {
         if execution.status == Status::Passed {
             self.admit(&execution.record);
         }
-        match self.tally.take(execution) {
-            Some(mut skipped) if skipped.kind == Kind::Skipped => {
+        match self.tally.count(execution) {
+            Err(mut skipped) if skipped.kind == Kind::Skipped => {
                 if self.found.is_some() {
                     return Ok(None);
                 }
                 skipped.stored = std::mem::take(&mut self.stored);
-                Ok(Some(skipped))
+                Ok(Some(*skipped))
             }
-            Some(found) => self.fail(run, settings, found, valued, concluded),
-            None => Ok(None),
+            Err(found) => self.fail(run, settings, *found, valued, concluded),
+            Ok(Some(valid)) if !valued => {
+                let flaky = confirm_valid(run, settings, &self.tally, valid)?;
+                Ok(flaky.map(|mut flaky| {
+                    flaky.stored = std::mem::take(&mut self.stored);
+                    flaky
+                }))
+            }
+            Ok(_) => Ok(None),
         }
     }
 
@@ -323,9 +333,11 @@ impl Exploration {
 /// A failing case whose identity no earlier failure had is replayed, shrunk
 /// and explained as a run concludes its failure, `concluded` receives the
 /// outcome, and the campaign goes on. A replay that differs ends the campaign
-/// as flaky. A case that skips before the first failure ends the campaign as
-/// skipped. After the first failure, a case that skips counts as neither a
-/// valid nor a rejected case, and the campaign goes on.
+/// as flaky. Under the setting confirm, the campaign replays each valid case
+/// whose count is a multiple of confirm as a run does, and a replay that
+/// differs ends it as flaky too. A case that skips before the first failure
+/// ends the campaign as skipped. After the first failure, a case that skips
+/// counts as neither a valid nor a rejected case, and the campaign goes on.
 ///
 /// When the budget has passed, the campaign returns a counterexample of the
 /// first failure that it concluded, with every later one among its others.

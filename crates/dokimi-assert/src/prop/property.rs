@@ -199,6 +199,7 @@ pub(crate) struct Property<'c> {
     shrink_time: Option<Duration>,
     explain: bool,
     workers: usize,
+    confirm: usize,
     entries: Option<Vec<Entry>>,
     /// The length of a campaign in whole seconds, and 0 for a property that
     /// runs no campaign.
@@ -241,6 +242,7 @@ impl<'c> Property<'c> {
             shrink_time: Some(options.shrink_time).filter(|limit| !limit.is_zero()),
             explain: options.explain,
             workers: options.workers,
+            confirm: options.confirm,
             entries,
             budget,
             replay,
@@ -265,6 +267,7 @@ impl<'c> Property<'c> {
         settings.shrink_time = self.shrink_time;
         settings.explain = self.explain;
         settings.workers = self.workers;
+        settings.confirm = self.confirm;
         settings
     }
 
@@ -368,7 +371,9 @@ impl<'c> Property<'c> {
 
     /// Runs the case that the fuzz bridge decodes from `data`, and reports
     /// it: a pass counts one valid or one rejected case, and a failing case is
-    /// replayed, shrunk, explained and stored as a failing case of a run is.
+    /// replayed, shrunk, explained and stored as a failing case of a run is. A
+    /// case that passes is the first valid case of its call, so the setting
+    /// confirm of 1 replays it.
     #[track_caller]
     pub(crate) fn input(
         &self,
@@ -384,7 +389,7 @@ impl<'c> Property<'c> {
             let execution = engine.execute(provider, settings.max_choices, None)?;
             (engine.observer)(Phase::Fuzz, &execution);
             let mut tally = runner::Tally::new(settings.seed);
-            match tally.take(execution) {
+            match runner::take_confirmed(engine, &settings, &mut tally, execution)? {
                 None => Ok(tally.outcome(Kind::Passed, None)),
                 Some(found) => runner::conclude(engine, &settings, found),
             }

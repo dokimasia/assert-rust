@@ -634,6 +634,12 @@ replay: prop::replay("prop1:AAEAAAABAAEAAA") or DOKIMI_ASSERT_PROP_REPLAY=prop1:
   valid and rejected cases, the seed and the counterexample of a failing
   case. A tool that runs many properties writes them into a record of its
   own.
+- `prop::confirm(every)` makes a run replay each valid case whose count is
+  a multiple of `every` right after the case, from its choices. A replay
+  that requests other bounds, observes another fingerprint with
+  `Case::observe` or fails ends the run as flaky. A simulation that iterates
+  a `HashMap` or reads the wall clock then fails while its cases pass. Each
+  replay costs one more run of the body.
 
 A form takes a type with a derived generator:
 
@@ -943,7 +949,7 @@ under test.
 - Each case runs on `check` and `soft` of each crate that has its
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
-- The vectors run too: 57 for files, 108 for histories, 435 for properties
+- The vectors run too: 57 for files, 110 for histories, 439 for properties
   and 14 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.

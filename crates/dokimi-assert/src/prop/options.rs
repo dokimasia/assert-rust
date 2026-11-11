@@ -57,6 +57,7 @@ pub struct Options<T = ()> {
     pub(crate) store: Option<PathBuf>,
     pub(crate) explain: bool,
     pub(crate) workers: usize,
+    pub(crate) confirm: usize,
     pub(crate) hermetic: bool,
     pub(crate) around: Option<Wrapper>,
     pub(crate) on_result: Option<OnResult>,
@@ -78,6 +79,7 @@ impl<T: Clone> Clone for Options<T> {
             store: self.store.clone(),
             explain: self.explain,
             workers: self.workers,
+            confirm: self.confirm,
             hermetic: self.hermetic,
             around: self.around.clone(),
             on_result: self.on_result.clone(),
@@ -100,6 +102,7 @@ impl<T> Debug for Options<T> {
             .field("store", &self.store)
             .field("explain", &self.explain)
             .field("workers", &self.workers)
+            .field("confirm", &self.confirm)
             .field("hermetic", &self.hermetic)
             .field("using", &self.using)
             .finish_non_exhaustive()
@@ -107,8 +110,8 @@ impl<T> Debug for Options<T> {
 }
 
 /// States 100 cases, 2,000 shrink runs, 30 seconds of shrinking, 8,192
-/// choices per case, the store of the test, an explanation of each failure
-/// and one worker.
+/// choices per case, the store of the test, an explanation of each failure,
+/// one worker and no replay of a valid case.
 impl<T> Default for Options<T> {
     fn default() -> Self {
         Self {
@@ -122,6 +125,7 @@ impl<T> Default for Options<T> {
             store: None,
             explain: true,
             workers: 1,
+            confirm: 0,
             hermetic: false,
             around: None,
             on_result: None,
@@ -229,6 +233,28 @@ impl<T> Options<T> {
         self
     }
 
+    /// Replays each valid case whose count is a multiple of `every`, right
+    /// after the case, from its choices, as the run replays a failing case.
+    ///
+    /// A replay that requests other bounds, observes another fingerprint or
+    /// fails ends the run as flaky, with the valid case as its counterexample
+    /// and without a failure. A replay that is rejected or skips does not
+    /// differ. The replay counts as no case, and its calls state the phase
+    /// `confirm`. An example of values has no choices, so the run does not
+    /// replay it. [`for_all`](crate::prop::for_all), a property form, a
+    /// campaign and a replay token count the valid cases of a call from 1.
+    /// Each input of [`fuzz`](crate::prop::fuzz) is the one case of its call,
+    /// so only `confirm(1)` replays it.
+    ///
+    /// # Panics
+    ///
+    /// Panics for `every` of 0.
+    pub fn confirm(mut self, every: usize) -> Self {
+        assert!(every >= 1, "prop: confirm(0) replays no case");
+        self.confirm = every;
+        self
+    }
+
     /// Makes the run read none of the `DOKIMI_ASSERT_PROP_*` variables, for a
     /// test that runs a property to check something other than a subject.
     pub fn hermetic(mut self) -> Self {
@@ -328,6 +354,7 @@ impl<T> Options<T> {
             && self.store.is_none()
             && self.explain
             && self.workers == 1
+            && self.confirm == 0
             && !self.hermetic
             && self.around.is_none()
             && self.on_result.is_none()
@@ -415,6 +442,16 @@ pub fn explain<T>(enabled: bool) -> Options<T> {
 /// Panics for `n` of 0.
 pub fn workers<T>(n: usize) -> Options<T> {
     Options::default().workers(n)
+}
+
+/// Returns the settings with the replay of each valid case whose count is a
+/// multiple of `every`.
+///
+/// # Panics
+///
+/// Panics for `every` of 0.
+pub fn confirm<T>(every: usize) -> Options<T> {
+    Options::default().confirm(every)
 }
 
 /// Returns the settings of a run that reads no variable of the environment.

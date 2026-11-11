@@ -14,9 +14,13 @@
 //! The search passes when every known call is linearized.
 //!
 //! A configuration is a set of linearized calls and the states they leave,
-//! no two of them equal. Two configurations are the same when their sets are
-//! equal and their states are the same states in any order. The search stops
-//! as undecided before a step that would take it past its budget, before it
+//! no two of them equal. The search skips a configuration that the memo
+//! covers: a configuration in the memo with the same states in any order and
+//! the same calls with a completion entry, whose other calls are among the
+//! configuration's. A call without a completion entry need not take effect,
+//! so every order that follows the configuration also follows the one in the
+//! memo. The search stops as undecided before a step that would take it past
+//! its budget, before it
 //! stores a configuration that would take the memo past its limit, which
 //! counts one bit per call of the partition for each configuration, and once
 //! its time has passed.
@@ -31,9 +35,11 @@ use crate::matcher::panics::{message, quietly};
 use std::collections::HashMap;
 use std::time::Instant;
 
-/// The sets of states that a search stored, by their configuration's
-/// linearized calls and the sorted hashes of the states.
-type Memo<S> = HashMap<(Vec<u64>, Vec<u64>), Vec<Vec<S>>>;
+/// The configurations that a search stored, by their linearized calls with a
+/// completion entry and the sorted hashes of their states. Each configuration
+/// has its linearized calls without a completion entry, a bit per position,
+/// and its states.
+type Memo<S> = HashMap<(Vec<u64>, Vec<u64>), Vec<(Vec<u64>, Vec<S>)>>;
 
 /// How a check or the search of a partition ended.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -138,6 +144,8 @@ pub(crate) struct Search<'a, S: Spec + ?Sized> {
     /// The entry of each call's invocation, and of a known call's completion.
     invocation: Vec<usize>,
     completion: Vec<Option<usize>>,
+    /// The calls without a completion entry, a bit per position.
+    optional: Vec<u64>,
     /// The known calls that are not linearized.
     open: usize,
     steps: u64,
@@ -194,6 +202,10 @@ impl<'a, S: Spec + ?Sized> Search<'a, S> {
                 completion[position] = Some(entry);
             }
         }
+        let mut optional = vec![0; calls.len().div_ceil(64)];
+        for (position, _) in completion.iter().enumerate().filter(|(_, c)| c.is_none()) {
+            optional[position / 64] |= 1 << (position % 64);
+        }
         Self {
             calls,
             spec,
@@ -208,6 +220,7 @@ impl<'a, S: Spec + ?Sized> Search<'a, S> {
             invokes: entries.iter().map(|&(_, _, invokes)| invokes).collect(),
             invocation,
             completion,
+            optional,
             open: calls
                 .iter()
                 .filter(|call| call.span.operation.known())
@@ -355,22 +368,37 @@ impl<'a, S: Spec + ?Sized> Search<'a, S> {
         Ok(following)
     }
 
-    /// Stores a configuration, and returns whether the memo lacked it.
+    /// Stores a configuration, and returns whether the memo did not cover it.
+    ///
+    /// A configuration in the memo covers this one when the two have the same
+    /// states and the same calls with a completion entry, and its calls
+    /// without one are among this configuration's.
     fn remember(&mut self, done: &[u64], states: &[S::State]) -> Result<bool, Limit> {
         self.calling = "hash";
         let mut hashes: Vec<u64> = states.iter().map(|state| self.spec.hash(state)).collect();
         hashes.sort_unstable();
         hashes.dedup();
         self.calling = "equal";
-        let name = (done.to_vec(), hashes);
+        let optional: Vec<u64> = done
+            .iter()
+            .zip(&self.optional)
+            .map(|(d, o)| d & o)
+            .collect();
+        let required: Vec<u64> = done
+            .iter()
+            .zip(&self.optional)
+            .map(|(d, o)| d & !o)
+            .collect();
+        let name = (required, hashes);
         if let Some(bucket) = self.memo.get(&name) {
-            let seen = bucket.iter().any(|seen| {
-                seen.len() == states.len()
+            let covered = bucket.iter().any(|(taken, seen)| {
+                taken.iter().zip(&optional).all(|(t, o)| t & !o == 0)
+                    && seen.len() == states.len()
                     && states
                         .iter()
                         .all(|state| seen.iter().any(|other| self.spec.equal(state, other)))
             });
-            if seen {
+            if covered {
                 return Ok(false);
             }
         }
@@ -378,7 +406,10 @@ impl<'a, S: Spec + ?Sized> Search<'a, S> {
         if (self.configurations + 1).saturating_mul(calls) > self.memo_limit {
             return Err(Limit::Memo);
         }
-        self.memo.entry(name).or_default().push(states.to_vec());
+        self.memo
+            .entry(name)
+            .or_default()
+            .push((optional, states.to_vec()));
         self.configurations += 1;
         Ok(true)
     }

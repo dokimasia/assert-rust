@@ -46,7 +46,7 @@ pub const CONTRACT: &str = "the property of the vector";
 const END: &str = "the body of the recording vector passes";
 
 /// The settings that a behaviour vector and a recording vector can state.
-const SETTINGS: [&str; 9] = [
+const SETTINGS: [&str; 10] = [
     "seed",
     "cases",
     "max-choices",
@@ -56,6 +56,7 @@ const SETTINGS: [&str; 9] = [
     "shrink",
     "replay",
     "workers",
+    "confirm",
 ];
 
 /// The identity of the entry of each stored case.
@@ -645,6 +646,9 @@ fn options_of(settings: &Json, dir: &Path, spec: &Json) -> Result<Options, Disag
     }
     if let Some(workers) = written.get("workers") {
         options = options.workers(count(workers, "settings.workers")?);
+    }
+    if let Some(every) = written.get("confirm") {
+        options = options.confirm(count(every, "settings.confirm")?);
     }
     for requirement in settings["requirements"]
         .as_array()

@@ -260,7 +260,12 @@ pub(crate) fn detail_json(outcome: &Outcome) -> Json {
                 entries_json(failing, &outcome.explanation, false)
             }),
         ),
-        ("failure", concluded.map_or(Json::Null, failed_json)),
+        (
+            "failure",
+            concluded
+                .filter(|failing| failing.failure.is_some())
+                .map_or(Json::Null, failed_json),
+        ),
         (
             "choices",
             outcome
@@ -436,7 +441,9 @@ fn sentence(outcome: &Outcome, contract: &str) -> String {
     );
     if let Some(failing) = &outcome.failing {
         entry_lines(failing, &outcome.explanation, &mut text);
-        text.push_str(&failure_line("failure", failing));
+        if failing.failure.is_some() {
+            text.push_str(&failure_line("failure", failing));
+        }
     }
     if outcome.kind == Kind::Counterexample {
         if let Some(token) = &outcome.token {

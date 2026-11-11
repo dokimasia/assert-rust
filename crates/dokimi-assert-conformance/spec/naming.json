@@ -1163,6 +1163,14 @@
                 "rust": "prop::composite",
                 "typescript": "prop.composite"
             },
+            "prop.confirm": {
+                "go": "prop.Confirm",
+                "java": "Prop.confirm",
+                "kotlin": "Prop.confirm",
+                "python": "prop.confirm",
+                "rust": "prop::confirm",
+                "typescript": "prop.confirm"
+            },
             "prop.dict": {
                 "go": "prop.Dict",
                 "java": "Prop.dict",
@@ -2507,5 +2515,5 @@
             }
         }
     },
-    "version": "13.6.0"
+    "version": "14.0.0"
 }

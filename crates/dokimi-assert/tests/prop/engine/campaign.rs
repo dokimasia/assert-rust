@@ -10,6 +10,7 @@ use crate::helpers::{Scratch, in_child, records};
 use dokimi_assert::prop::{self, Case};
 use dokimi_assert::{Recorder, check};
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
+use std::sync::{Arc, Mutex, PoisonError};
 
 /// The variables of a campaign of one second.
 const CAMPAIGN: [(&str, &str); 2] = [
@@ -240,6 +241,55 @@ mod child {
 
     #[test]
     #[ignore = "a spec of the campaign runs it in a child process"]
+    fn replays_every_third_valid_case() {
+        let seat = Recorder::new();
+        let options = prop::confirm(3).seed(1).store("");
+        prop::for_all(&seat, "the campaign holds", options, |c| {
+            let n = c.draw(&prop::integer(0..=1000_i64), "n");
+            check::is_true(c, n >= 0, "n is not negative");
+        });
+        let records = records(&seat);
+        let replays = records
+            .iter()
+            .filter(|record| record["phase"] == "confirm")
+            .count();
+        println!("record {}", records[0]);
+        println!("replays {replays}");
+    }
+
+    #[test]
+    #[ignore = "a spec of the campaign runs it in a child process"]
+    fn ends_as_flaky_at_a_valid_case_whose_replay_differs() {
+        let calls = AtomicU64::new(0);
+        print_campaign(prop::confirm(1), move |c| {
+            let _ = c.draw(&prop::boolean(), "flag");
+            c.observe(calls.fetch_add(1, Ordering::SeqCst) + 1);
+        });
+    }
+
+    #[test]
+    #[ignore = "a spec of the campaign runs it in a child process"]
+    fn does_not_replay_an_example_of_values() {
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let kept = Arc::clone(&seen);
+        // A generator that map returns has no inverse, so the example keeps its value.
+        let generator = prop::integer(0..=255_u8).map(|n| n);
+        let options = prop::examples([200_u8])
+            .using(&generator)
+            .confirm(1)
+            .seed(1)
+            .store("");
+        let predicate = move |n: &u8| {
+            kept.lock().unwrap_or_else(PoisonError::into_inner).push(*n);
+            true
+        };
+        prop::is_true(&Recorder::new(), predicate, "the campaign holds", options);
+        let seen = seen.lock().unwrap_or_else(PoisonError::into_inner);
+        println!("seen {} {} {}", seen[0], seen[1], seen[2]);
+    }
+
+    #[test]
+    #[ignore = "a spec of the campaign runs it in a child process"]
     fn concludes_a_failure_of_an_example_of_values() {
         let seat = Recorder::new();
         // A generator that map returns has no inverse, so the example keeps its value.
@@ -355,6 +405,44 @@ mod campaign {
         assert_eq!(detail["outcome"], "counterexample", "{record}");
         assert_eq!(detail["cases"], passed, "{record}");
         assert_eq!(detail["rejected"], 0, "{record}");
+    }
+
+    #[test]
+    fn replays_every_third_valid_case_under_the_phase_confirm() {
+        let printed = printed("replays_every_third_valid_case");
+        let record = record_in(&printed);
+        let replays: u64 = line(&printed, "replays ")
+            .and_then(|count| count.trim().parse().ok())
+            .unwrap_or_else(|| panic!("the child prints its replays: {printed}"));
+        assert_eq!(record["verdict"], "pass", "{record}");
+        assert_eq!(
+            record["detail"]["cases"].as_u64().map(|cases| cases / 3),
+            Some(replays),
+            "{record}"
+        );
+    }
+
+    #[test]
+    fn ends_as_flaky_when_the_replay_of_a_valid_case_differs() {
+        let record = campaign("ends_as_flaky_at_a_valid_case_whose_replay_differs");
+        let detail = &record["detail"];
+        assert_eq!(
+            (&detail["outcome"], &detail["failure"]),
+            (&"flaky".into(), &serde_json::Value::Null),
+            "{record}"
+        );
+    }
+
+    #[test]
+    fn replays_no_example_of_values() {
+        let printed = printed("does_not_replay_an_example_of_values");
+        let seen: Vec<&str> = line(&printed, "seen ")
+            .unwrap_or_else(|| panic!("the child prints what it saw: {printed}"))
+            .split_whitespace()
+            .collect();
+        assert_eq!(seen[0], "200", "{printed}");
+        assert_eq!(seen[1], seen[2], "{printed}");
+        assert_ne!(seen[1], "200", "{printed}");
     }
 
     #[test]

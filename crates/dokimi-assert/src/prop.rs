@@ -96,8 +96,8 @@ pub use generators::{
     one_of, optional, permutation, recursive, sampled_from, string, string_matching,
 };
 pub use options::{
-    Options, around, cases, draws, example, examples, explain, hermetic, max_choices, on_result,
-    replay, require, seed, shrink, shrink_time, store, using, workers,
+    Options, around, cases, confirm, draws, example, examples, explain, hermetic, max_choices,
+    on_result, replay, require, seed, shrink, shrink_time, store, using, workers,
 };
 pub use property::{for_all, fuzz};
 pub use registry::{Variant, of, register, register_values, register_variants, shape_of};

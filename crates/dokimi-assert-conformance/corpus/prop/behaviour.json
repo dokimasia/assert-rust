@@ -836,6 +836,68 @@
       }
     },
     {
+      "id": "behaviour/reports-a-valid-case-whose-replay-observes-another-fingerprint",
+      "body": {
+        "kind": "observes-its-calls"
+      },
+      "settings": {
+        "seed": "7",
+        "confirm": 1
+      },
+      "detail": {
+        "outcome": "flaky",
+        "cases": 1,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": [
+          {
+            "label": "value",
+            "value": {
+              "type": "int",
+              "value": 0
+            },
+            "any-value-fails": null,
+            "nearest-passing": null
+          }
+        ],
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": {
+          "what": "fingerprint",
+          "index": 0,
+          "recorded": 1,
+          "replayed": 2,
+          "label": null,
+          "step": null
+        },
+        "coverage": null,
+        "reason": null
+      }
+    },
+    {
+      "id": "behaviour/passes-the-same-body-without-confirm",
+      "body": {
+        "kind": "observes-its-calls"
+      },
+      "settings": {
+        "seed": "7"
+      },
+      "detail": {
+        "outcome": "passed",
+        "cases": 10,
+        "rejected": 0,
+        "seed": "7",
+        "counterexample": null,
+        "failure": null,
+        "choices": null,
+        "others": null,
+        "divergence": null,
+        "coverage": null,
+        "reason": null
+      }
+    },
+    {
       "id": "behaviour/skips-the-run-at-a-case-that-skips",
       "body": {
         "draw": {

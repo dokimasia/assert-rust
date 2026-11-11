@@ -32,7 +32,7 @@ use std::sync::{Arc, LazyLock, Mutex, MutexGuard, OnceLock, PoisonError};
 /// that the conformance crate vendors. The published crate does not contain
 /// that copy, so the specs compare this constant with the file `VERSION` of
 /// the copy.
-pub(crate) const DEFINITION: &str = "13.6.0";
+pub(crate) const DEFINITION: &str = "14.0.0";
 
 /// The variable that turns recording on.
 pub(crate) const VARIABLE: &str = "DOKIMI_ASSERT_RECORD";
@@ -109,6 +109,8 @@ pub enum Phase {
     Edge,
     /// A random case after the first coverage check.
     Coverage,
+    /// The replay of a valid case under `prop::confirm`, right after the case.
+    Confirm,
     /// The replay of the failing case before shrinking.
     Replay,
     /// A candidate that the shrinker runs.
@@ -133,6 +135,7 @@ impl Phase {
             Self::Prefix => "prefix",
             Self::Edge => "edge",
             Self::Coverage => "coverage",
+            Self::Confirm => "confirm",
             Self::Replay => "replay",
             Self::Shrink => "shrink",
             Self::Explain => "explain",
