@@ -7,7 +7,7 @@ created: 2026-10-21
 updated: 2026-10-22
 discussion: https://github.com/dokimasia/assert-rust/issues/7
 supersedes: RFC-0002
-superseded-by: none
+superseded-by: RFC-0005, in part
 produces-adr: none
 ---
 
