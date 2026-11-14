@@ -11,7 +11,7 @@ members = [
 resolver = "3"
 
 [workspace.package]
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.85"
 license = "MIT"
@@ -21,9 +21,9 @@ categories = ["development-tools::testing"]
 keywords = ["assertions", "testing", "property-testing", "conformance"]
 
 [workspace.dependencies]
-dokimi-assert = { path = "crates/dokimi-assert", version = "0.2.0" }
-dokimi-assert-derive = { path = "crates/dokimi-assert-derive", version = "0.2.0" }
-dokimi-assert-tokio = { path = "crates/dokimi-assert-tokio", version = "0.2.0" }
+dokimi-assert = { path = "crates/dokimi-assert", version = "0.3.0" }
+dokimi-assert-derive = { path = "crates/dokimi-assert-derive", version = "0.3.0" }
+dokimi-assert-tokio = { path = "crates/dokimi-assert-tokio", version = "0.3.0" }
 chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 jiff = "0.2.38"
 proc-macro2 = "1.0.107"
