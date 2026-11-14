@@ -44,6 +44,12 @@ pub(crate) fn pairs() -> Generator<Vec<u8>> {
     })
 }
 
+/// Returns the generator of a byte string of one byte. Its values have the
+/// typed literal of the values of [`pairs`], and it has no composite.
+pub(crate) fn one_byte() -> Generator<Vec<u8>> {
+    prop::bytes(1..=1)
+}
+
 /// Records a write of `value` to the key `x` by `client`, which returns null.
 pub(crate) fn write(history: &History, client: usize, value: i64) {
     history

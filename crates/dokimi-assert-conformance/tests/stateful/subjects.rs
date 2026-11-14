@@ -34,6 +34,31 @@ fn failures(name: &str, setup: &Setup) -> Vec<dokimi_assert::Failure> {
     seat.failures()
 }
 
+/// The trace of a put whose composite draws the digits 7 and 3 before the
+/// entry of the pair.
+const PAIR: &str = r#"[{"step": "put"},
+    {"label": "a", "value": {"type": "int", "value": 7}},
+    {"label": "b", "value": {"type": "int", "value": 3}},
+    {"label": "pair", "value": {"type": "list", "of": "int", "value": [7, 3]}}]"#;
+
+/// Runs the subject `name` without swarm on a first case of the draws
+/// `trace` with the seed 1, and returns the failure of the case.
+fn traced(name: &str, trace: &str) -> dokimi_assert::Failure {
+    let subject = subjects::subject(name).expect("the definition states the subject");
+    let swarmless = setup(stateful::swarm(false));
+    let seat = Recorder::new();
+    prop::for_all(
+        &seat,
+        "the subject",
+        prop::draws(trace).hermetic().seed(1).store(""),
+        |c| subject(c, &swarmless),
+    );
+    seat.failures()[0]
+        .case_failure()
+        .cloned()
+        .expect("the property found a counterexample")
+}
+
 mod subject {
     use super::*;
 
@@ -133,23 +158,42 @@ mod subject {
 
     #[test]
     fn fails_the_put_of_the_pair_of_7_and_3() {
-        let subject =
-            subjects::subject("pair-fails-at-7-and-3").expect("the definition states the subject");
-        let trace = r#"[{"step": "put"},
-            {"label": "a", "value": {"type": "int", "value": 7}},
-            {"label": "b", "value": {"type": "int", "value": 3}},
-            {"label": "pair", "value": {"type": "list", "of": "int", "value": [7, 3]}}]"#;
-        let swarmless = setup(stateful::swarm(false));
-        let seat = Recorder::new();
-        prop::for_all(
-            &seat,
-            "the subject",
-            prop::draws(trace).hermetic().seed(1).store(""),
-            |c| subject(c, &swarmless),
+        let case = traced("pair-fails-at-7-and-3", PAIR);
+        assert_eq!(
+            (case.assertion(), case.contract()),
+            (Some("pair"), "put of the pair [7, 3]")
         );
-        let case = seat.failures()[0]
+    }
+
+    #[test]
+    fn fails_the_put_of_the_integer_7_through_the_one_of() {
+        let found = failures(
+            "one-of-pair-fails-at-7-and-3",
+            &setup(stateful::swarm(false)),
+        );
+        let case = found[0]
             .case_failure()
-            .cloned()
+            .expect("the property found a counterexample");
+        assert_eq!(
+            (case.assertion(), case.contract()),
+            (Some("pair"), "put of the integer 7")
+        );
+    }
+
+    #[test]
+    fn fails_the_put_of_the_pair_of_7_and_3_through_the_one_of() {
+        let case = traced("one-of-pair-fails-at-7-and-3", PAIR);
+        assert_eq!(
+            (case.assertion(), case.contract()),
+            (Some("pair"), "put of the pair [7, 3]")
+        );
+    }
+
+    #[test]
+    fn fails_the_put_of_a_list_that_has_the_pair_of_7_and_3() {
+        let found = failures("pairs-fail-at-7-and-3", &setup(stateful::swarm(false)));
+        let case = found[0]
+            .case_failure()
             .expect("the property found a counterexample");
         assert_eq!(
             (case.assertion(), case.contract()),

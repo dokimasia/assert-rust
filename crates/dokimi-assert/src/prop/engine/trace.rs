@@ -20,6 +20,15 @@
 //!   its function take theirs. Once it decodes, it takes the next entry by
 //!   its label and does not read the value. A case records a composite after
 //!   its draws, so the entry may lack a value.
+//! - A draw through a composite, whose generator has a composite inside a
+//!   one-of, an optional, a list, a dict, a filter or a recursive, takes the
+//!   first draw entry with its label up to the next step entry. When the
+//!   value of that entry runs backwards through a composite, the draws of the
+//!   composite take the entries before it, and the draw takes the entry once
+//!   it decodes. The entry must then be the next entry.
+//! - The choices of a draw serve the requests of its own generator. A draw
+//!   inside it serves its own requests, and the requests of the outer
+//!   generator continue after it.
 //! - A machine turns each step entry into the choices of one step, which the
 //!   provider serves as they are requested.
 //! - Every other request takes its target.
@@ -27,12 +36,13 @@
 //! A trace that the body cannot follow ends the run with a [`TraceError`],
 //! which names the entry: a draw entry with another label, a draw entry
 //! without a value, a value that the generator cannot produce, or a step
-//! entry that the machine cannot take at its position. The error is no
-//! failure of the case.
+//! entry that the machine cannot take at its position. A draw inside a draw
+//! through a composite that takes the entry of the outer draw makes the
+//! outer draw refuse that entry. The error is no failure of the case.
 
 use super::case::{Provider, Record, Request, Step};
 use super::choice::Choice;
-use super::inverse::CannotInvert;
+use super::inverse::{CannotInvert, Inverted};
 use crate::value::Value;
 use std::collections::{BTreeSet, VecDeque};
 use std::fmt;
@@ -127,12 +137,37 @@ pub(crate) enum Traced {
     Step(Step),
 }
 
+/// A draw in progress, with the choices of its requests and the way it takes
+/// its entry.
+#[derive(Debug, Default)]
+struct Open {
+    /// The choices of the draw that no request has taken.
+    queue: VecDeque<Choice>,
+    /// The position of the entry that a draw through a composite takes once
+    /// it decodes, and `None` for every other draw.
+    end: Option<usize>,
+    /// Whether the draw is of a composite, which takes the next entry by its
+    /// label alone once it decodes.
+    composite: bool,
+}
+
 /// A provider that serves the values of a trace's entries.
 #[derive(Debug)]
 pub struct Tracing {
     entries: Vec<Entry>,
     at: usize,
-    queue: VecDeque<Choice>,
+    /// The draws in progress, the innermost last. The first serves the
+    /// requests outside every draw, such as the steps of a machine.
+    open: Vec<Open>,
+}
+
+/// Returns the refusal of the entry at `entry` by the draw labelled `label`.
+fn refused(entry: usize, label: &str, refusal: Refusal) -> TraceError {
+    TraceError {
+        entry,
+        name: label.to_owned(),
+        refusal,
+    }
 }
 
 impl Tracing {
@@ -142,69 +177,122 @@ impl Tracing {
         Self {
             entries,
             at: 0,
-            queue: VecDeque::new(),
+            open: vec![Open::default()],
         }
     }
 
-    /// Prepares the choices of the next entry for a draw labelled `label`,
-    /// whose generator's inverse is `invert`.
+    /// Opens the draw of a composite, which does not take an entry until it
+    /// decodes.
+    pub(crate) fn composite(&mut self) {
+        self.open.push(Open {
+            composite: true,
+            ..Open::default()
+        });
+    }
+
+    /// Opens a draw labelled `label` with the choices that `invert` returns
+    /// for the value of its entry. A draw through a composite, for which
+    /// `through` is `true`, takes the first draw entry with `label` up to the
+    /// next step entry. When `invert` reports a value through a composite,
+    /// the draw takes that entry once it decodes. Otherwise the draw takes
+    /// the next entry now. A draw past the last entry does not take an entry.
     ///
     /// # Errors
     ///
-    /// Returns an error when the next entry is no draw entry with `label`,
-    /// when it states no value, or when the generator cannot produce its
-    /// value.
+    /// Returns an error when the entry is no draw entry with `label`, when it
+    /// states no value, or when the generator cannot produce its value. A
+    /// value without a composite in a later entry is refused at the next
+    /// entry.
     pub(crate) fn drawing(
         &mut self,
         label: &str,
-        invert: &dyn Fn(&Value) -> Result<Vec<Choice>, CannotInvert>,
+        through: bool,
+        invert: &dyn Fn(&Value) -> Result<Inverted, CannotInvert>,
     ) -> Result<(), TraceError> {
-        let at = self.at;
-        if !self.take_draw(label)? {
+        if self.at >= self.entries.len() {
+            self.open.push(Open::default());
             return Ok(());
         }
-        let refused = TraceError {
-            entry: at,
-            name: label.to_owned(),
-            refusal: Refusal::Value,
+        let at = if through { self.find(label) } else { self.at };
+        let stated = match &self.entries[at] {
+            Entry::Draw {
+                label: stated,
+                value,
+            } if stated == label => value.as_ref(),
+            _ => return Err(refused(self.at, label, Refusal::Label)),
         };
-        let Some(Entry::Draw {
-            value: Some(value), ..
-        }) = self.entries.get(at)
-        else {
-            return Err(refused);
+        let Some(value) = stated else {
+            return Err(refused(at, label, Refusal::Value));
         };
-        let choices = invert(value).map_err(|_| refused)?;
-        self.queue.extend(choices);
+        let (choices, composite) = invert(value).map_err(|_| refused(at, label, Refusal::Value))?;
+        if composite {
+            self.open.push(Open {
+                queue: choices.into(),
+                end: Some(at),
+                composite: false,
+            });
+            return Ok(());
+        }
+        if at != self.at {
+            return Err(refused(self.at, label, Refusal::Label));
+        }
+        self.at += 1;
+        self.open.push(Open {
+            queue: choices.into(),
+            ..Open::default()
+        });
         Ok(())
     }
 
-    /// Takes the next entry for a composite labelled `label` once it
-    /// decodes, by its label alone. A composite past the last entry takes no
+    /// Ends the innermost open draw, labelled `label`, and takes its entry
+    /// where the draw takes one once it decodes. A composite takes the next
+    /// entry by its label alone, and it does not take an entry past the last
+    /// entry. A draw through a composite takes its entry once the draws inside
+    /// it have taken the entries before it. That entry must be the next
     /// entry.
     ///
     /// # Errors
     ///
-    /// Returns an error when the next entry is no draw entry with `label`.
+    /// Returns an error when the next entry is no draw entry with `label`,
+    /// and when it is not the entry of the draw through a composite. When a
+    /// draw inside took that entry, the error is at that entry.
     pub(crate) fn drawn(&mut self, label: &str) -> Result<(), TraceError> {
-        self.take_draw(label).map(drop)
+        let ended = self.open.pop().unwrap_or_default();
+        if ended.composite {
+            return self.take_draw(label);
+        }
+        match ended.end {
+            Some(end) if self.at != end => Err(refused(self.at.min(end), label, Refusal::Label)),
+            Some(_) => {
+                self.at += 1;
+                Ok(())
+            }
+            None => Ok(()),
+        }
     }
 
-    /// Takes the next entry, a draw entry with `label`, and returns whether
-    /// it took one. A draw past the last entry takes no entry.
-    fn take_draw(&mut self, label: &str) -> Result<bool, TraceError> {
-        let Some(entry) = self.entries.get(self.at) else {
-            return Ok(false);
-        };
-        if !matches!(entry, Entry::Draw { label: stated, .. } if stated == label) {
-            return Err(TraceError {
-                entry: self.at,
-                name: label.to_owned(),
-                refusal: Refusal::Label,
-            });
+    /// Takes the next entry, which must be a draw entry with `label`. A draw
+    /// past the last entry does not take an entry.
+    fn take_draw(&mut self, label: &str) -> Result<(), TraceError> {
+        match self.entries.get(self.at) {
+            None => Ok(()),
+            Some(Entry::Draw { label: stated, .. }) if stated == label => {
+                self.at += 1;
+                Ok(())
+            }
+            Some(_) => Err(refused(self.at, label, Refusal::Label)),
         }
-        self.at += 1;
-        Ok(true)
+    }
+
+    /// Returns the position of the first draw entry with `label` from the
+    /// next entry up to the next step entry, and the position of the next
+    /// entry when there is none.
+    fn find(&self, label: &str) -> usize {
+        self.entries[self.at..]
+            .iter()
+            .take_while(|entry| matches!(entry, Entry::Draw { .. }))
+            .position(|entry| matches!(entry, Entry::Draw { label: stated, .. } if stated == label))
+            .map_or(self.at, |offset| self.at + offset)
     }
 
     /// Returns the next entry when it is a step entry.
@@ -226,10 +314,21 @@ impl Tracing {
             .collect()
     }
 
-    /// Serves integer values to the next requests, before any target.
+    /// Serves integer values to the next requests of the innermost open draw,
+    /// before any target.
     pub(crate) fn prepare(&mut self, values: &[i128]) {
-        self.queue
+        self.innermost()
             .extend(values.iter().map(|value| Choice::Integer(*value)));
+    }
+
+    /// Returns the queue of the innermost open draw. The bottom of the stack
+    /// serves the requests outside every draw, so the stack is never empty.
+    fn innermost(&mut self) -> &mut VecDeque<Choice> {
+        &mut self
+            .open
+            .last_mut()
+            .expect("the requests outside every draw are open")
+            .queue
     }
 
     /// Takes the next entry, a step entry, and serves the values of its
@@ -261,7 +360,7 @@ impl Tracing {
 
 impl Provider for Tracing {
     fn value(&mut self, request: &Request, _index: usize) -> Choice {
-        match self.queue.pop_front() {
+        match self.innermost().pop_front() {
             Some(prepared) => request.bounds.coerce(&prepared),
             None => request.bounds.target(),
         }

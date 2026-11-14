@@ -4,6 +4,7 @@
 //! The spec of `prop::engine::inverse`, which runs a generator backwards to
 //! the choices that decode to a value.
 
+use crate::helpers::{one_byte, pairs};
 use dokimi_assert::Value;
 use dokimi_assert::prop::engine::choice::Choice;
 use dokimi_assert::prop::engine::harness;
@@ -53,6 +54,25 @@ mod invert {
             inverted(&nested.max_leaves(1), &wide),
             Err("the value is not a value that the generator produces".to_owned())
         );
+    }
+
+    #[test]
+    fn refuses_a_value_through_a_composite_for_want_of_an_inverse() {
+        let pair = Value::List(vec![Value::Int(7), Value::Int(3)]);
+        let refused = harness::invert(&prop::one_of([one_byte(), pairs()]), &pair)
+            .expect_err("the pair runs backwards through the composite");
+        assert!(refused.is_no_inverse());
+        assert_eq!(
+            refused.to_string(),
+            "prop: the generator composite has no inverse"
+        );
+    }
+
+    #[test]
+    fn takes_the_first_alternative_that_produces_the_value_without_a_composite() {
+        let choices = inverted(&prop::one_of([pairs(), one_byte()]), &Value::Bytes(vec![7]))
+            .expect("the byte string of one byte produces the value");
+        assert_eq!(choices[0], Choice::Integer(1));
     }
 }
 

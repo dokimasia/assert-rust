@@ -70,13 +70,20 @@
 //!   `pair`, which draws a digit from [0, 9] under `a` and then one under
 //!   `b`, and returns the list of the two. Put fails with the record of
 //!   `pair` for the list [7, 3]. The actions do not record a call.
+//! - `one-of-pair-fails-at-7-and-3`: the same machine, whose put draws its
+//!   input under `pair` through a one-of of a digit from [0, 9] and the
+//!   composite. Put fails with the record of `pair` for the integer 7 and for
+//!   the list [7, 3].
+//! - `pairs-fail-at-7-and-3`: the same machine, whose put draws its input
+//!   under `pairs` through a list of 0 to 3 of the composite. Put fails with
+//!   the record of `pair` when the list has the pair [7, 3].
 //!
 //! [`subject`] builds each subject anew for a run, so a subject that counts
 //! over the cases of a run starts each run at 0.
 
 use dokimi_assert::Value;
 use dokimi_assert::history::{Operation, Spec};
-use dokimi_assert::prop::{self, Case};
+use dokimi_assert::prop::{self, Case, Generator};
 use dokimi_assert::stateful::{self, Action, Machine, Options, Scheduler, Strategy};
 use std::collections::BTreeMap;
 use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU64, Ordering};
@@ -105,11 +112,17 @@ const DURABLE: &str = "the store keeps every acknowledged put";
 const PERIOD: u64 = 4;
 const TICKS: u64 = 4;
 
-/// The label of the input of the put of `pair-fails-at-7-and-3`, which is
-/// also the assertion of the record of its failure, and the pair that it
-/// fails for.
+/// The label of the input of the put of `pair-fails-at-7-and-3` and of
+/// `one-of-pair-fails-at-7-and-3`, which is also the assertion of the record
+/// of the failures of the three subjects of the pair. The label of the input
+/// of `pairs-fail-at-7-and-3`.
 const PAIR: &str = "pair";
+const PAIRS: &str = "pairs";
+
+/// The pair that the put of the subjects of the pair fails for, and the
+/// integer that the put of `one-of-pair-fails-at-7-and-3` fails for.
 const FAILING: [i64; 2] = [7, 3];
+const FAILING_DIGIT: i64 = 7;
 
 /// The options of a subject's steps, those of a concurrent section, the
 /// strategy of a subject's scheduler, and the actions that every case keeps.
@@ -157,7 +170,12 @@ pub fn subject(name: &str) -> Option<Subject> {
         }
         "ticker" => Box::new(|c: &Case<'_>, setup: &Setup| ticker(c, setup, false)),
         "spins-until-a-flag" => Box::new(spinner),
-        "pair-fails-at-7-and-3" => Box::new(pair_fails),
+        "pair-fails-at-7-and-3" => pair_subject(pair(), PAIR),
+        "one-of-pair-fails-at-7-and-3" => pair_subject(
+            prop::one_of([prop::integer(0..=9_i64).valued(), pair()]),
+            PAIR,
+        ),
+        "pairs-fail-at-7-and-3" => pair_subject(prop::list(pair(), ..=3).valued(), PAIRS),
         _ => return None,
     };
     Some(subject)
@@ -577,25 +595,42 @@ fn spinner(c: &Case<'_>, setup: &Setup) {
     stateful::steps(c, &machine, setup.steps);
 }
 
-/// Runs the machine of noop and of put, whose composite input fails for the
-/// pair 7 and 3.
-fn pair_fails(c: &Case<'_>, setup: &Setup) {
-    let pairs = prop::composite(|c| {
+/// Returns the composite that draws a digit from [0, 9] under `a` and then
+/// one under `b`, and returns the list of the two.
+fn pair() -> Generator<Value> {
+    prop::composite(|c| {
         Value::from(vec![
             Value::from(c.draw(&prop::integer(0..=9_i64), "a")),
             Value::from(c.draw(&prop::integer(0..=9_i64), "b")),
         ])
-    });
+    })
+}
+
+/// Returns the subject of the machine whose put draws its input from
+/// `generator` under `label`.
+fn pair_subject(generator: Generator<Value>, label: &'static str) -> Subject {
+    Box::new(move |c: &Case<'_>, setup: &Setup| pair_fails(c, setup, &generator, label))
+}
+
+/// Runs the machine of noop and of put, whose put draws its input from
+/// `generator` under `label`. Put fails for the integer 7, the pair 7 and 3,
+/// and a list that has the pair.
+fn pair_fails(c: &Case<'_>, setup: &Setup, generator: &Generator<Value>, label: &str) {
     let failing = Value::from(FAILING.map(Value::from).to_vec());
+    let digit = Value::from(FAILING_DIGIT);
     let machine = Machine::<()>::new(marked(
         setup,
         [
             Action::new("noop", async |_: &Case<'_>, _: usize| {}),
             Action::with_input(
                 "put",
-                move |c: &Case<'_>, (): &()| c.draw(&pairs, PAIR),
-                async |c: &Case<'_>, _: usize, pair: Value| {
-                    if pair == failing {
+                move |c: &Case<'_>, (): &()| c.draw(generator, label),
+                async |c: &Case<'_>, _: usize, input: Value| {
+                    let has_pair = matches!(&input, Value::List(items) if items.contains(&failing));
+                    if input == digit {
+                        let contract = format!("put of the integer {FAILING_DIGIT}");
+                        c.fail_with(PAIR, &contract, Vec::new());
+                    } else if input == failing || has_pair {
                         c.fail_with(PAIR, &format!("put of the pair {FAILING:?}"), Vec::new());
                     }
                 },

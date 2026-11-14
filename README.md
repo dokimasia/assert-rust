@@ -987,7 +987,7 @@ under test.
   assertion. The driver compares the verdict, the failure's sentence and
   detail, and the call record of each run with the case.
 - The vectors run too: 57 for files, 112 for histories, 450 for properties
-  and 29 for machines. Two more property vectors skip Rust, because its
+  and 36 for machines. Two more property vectors skip Rust, because its
   standard library has no complex or rational type. A platform that does
   not record permission bits skips the files vectors that state a mode.
 - The crates implement all 111 assertions of the definition.

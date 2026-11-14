@@ -12,16 +12,39 @@
 //! bounds, a collection of another size, or a set or a map with a repeated
 //! element.
 //!
-//! `map`, `bind` and `composite` apply a function that the engine cannot run
-//! backwards, so a generator built with one of them has no inverse. Its
-//! refusal tells it from a value outside a domain.
+//! `map` and `bind` apply a function that the engine cannot run backwards, so
+//! a generator built with one of them has no inverse. Its refusal tells it
+//! from a value outside a domain.
+//!
+//! The inverse emits a placeholder for a composite. A placeholder does not
+//! make a choice. In a trace the draws of the composite take their own
+//! entries, so `invert_through` returns the choices of the generator around
+//! its composites without a replay. `invert` refuses a value through a
+//! composite as a value without an inverse, because no trace serves the draws
+//! of the composite there. The other generators run backwards around a
+//! placeholder, with these exceptions:
+//!
+//! - filter: the predicate does not test the value of a composite, because
+//!   the record of a composite may not state the parts that the predicate
+//!   reads.
+//! - unique list: the elements through a composite are not compared, for the
+//!   same reason.
+//! - map: an entry through a composite has no inverse. The draws of the
+//!   composites follow the order in which the case drew the entries, and the
+//!   value of a map does not state that order.
 //!
 //! Where more than one sequence of choices decodes to a value, the inverse
-//! takes the first in a fixed order: the first alternative of a one-of that
-//! produces it, the first index of an equal value, the smallest index at each
-//! swap of a permutation, the match that a backtracking engine finds first,
-//! absent before present, the base before the extension, and the elements of
-//! a set and the entries of a map in the shortlex order of their own choices.
+//! takes the first in a fixed order:
+//!
+//! - one-of: the first alternative that produces the value without a
+//!   composite, and else the first alternative through a composite.
+//! - sampled-from: the first index of an equal value.
+//! - permutation: the smallest index at each swap.
+//! - string-matching: the match that a backtracking engine finds first.
+//! - optional: absent before present.
+//! - recursive: the base before the extension, by the rule of a one-of.
+//! - a set's elements and a map's entries: in the shortlex order of their own
+//!   choices.
 
 use super::canonical::{canonical, same};
 use super::case::{MAX_CHOICES, Record, Replaying};
@@ -30,6 +53,7 @@ use super::collection::Sizes;
 use super::draw::flag_bounds;
 use crate::alphabet;
 use crate::pattern;
+use crate::prop::generator::COMPOSITE;
 use crate::prop::{Case, Generator};
 use crate::value::Value;
 use std::fmt;
@@ -59,6 +83,16 @@ impl CannotInvert {
         }
     }
 
+    /// Returns the refusal of an entry of a map through a composite. The draws
+    /// of the composites follow the order in which the case drew the entries,
+    /// and the value of a map does not state that order.
+    pub(crate) fn unordered() -> Self {
+        Self {
+            no_inverse: true,
+            reason: "a map does not state the order in which its composites drew".to_owned(),
+        }
+    }
+
     /// Returns `true` when a generator on the way applies a function that the
     /// engine cannot run backwards, so whether the generator produces the
     /// value is unknown.
@@ -82,17 +116,32 @@ impl fmt::Display for CannotInvert {
 
 impl std::error::Error for CannotInvert {}
 
-/// One emitted choice: the bounds that its request states, and its value.
+/// Each step that a generator emits is a choice with the bounds that its
+/// request states, or the place of a composite. The place of a composite
+/// does not make a choice.
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct Planned {
-    pub(crate) bounds: Bounds,
-    pub(crate) value: Choice,
+pub(crate) enum Planned {
+    /// A choice and the bounds that its request states.
+    Choice { bounds: Bounds, value: Choice },
+    /// The place of a composite. In a trace the draws of the composite take
+    /// their own entries, and the steps after the place serve the generator
+    /// around the composite.
+    Placeholder,
 }
 
 impl Planned {
     /// Returns a step whose value its bounds admit by construction.
     pub(crate) fn new(bounds: Bounds, value: Choice) -> Self {
-        Self { bounds, value }
+        Self::Choice { bounds, value }
+    }
+
+    /// Returns the bounds and the value of a choice, and `None` for the place
+    /// of a composite.
+    fn choice(&self) -> Option<(&Bounds, &Choice)> {
+        match self {
+            Self::Choice { bounds, value } => Some((bounds, value)),
+            Self::Placeholder => None,
+        }
     }
 }
 
@@ -101,21 +150,40 @@ impl Planned {
 /// set's elements and a map's entries.
 pub(crate) type Emitted = (Vec<Planned>, Value);
 
+/// The choices of a generator around its composites for a value, and
+/// whether the value runs backwards through a composite.
+pub(crate) type Inverted = (Vec<Choice>, bool);
+
 /// Returns a step whose value its bounds admit.
 pub(crate) fn planned(bounds: Bounds, value: Choice) -> Result<Planned, CannotInvert> {
     if !bounds.admits(&value) {
         return Err(CannotInvert::refused("the value is outside the bounds"));
     }
-    Ok(Planned { bounds, value })
+    Ok(Planned::Choice { bounds, value })
 }
 
-/// Returns the shortlex key of steps, as the shrinker orders choice
-/// sequences.
+/// Returns `true` when steps run backwards through a composite.
+pub(crate) fn has_placeholder(steps: &[Planned]) -> bool {
+    steps.contains(&Planned::Placeholder)
+}
+
+/// Returns the choices of steps, without the places of their composites.
+fn choices(steps: &[Planned]) -> Vec<Choice> {
+    steps
+        .iter()
+        .filter_map(Planned::choice)
+        .map(|(_, value)| value.clone())
+        .collect()
+}
+
+/// Returns the shortlex key of the choices of steps, as the shrinker orders
+/// choice sequences.
 pub(crate) fn shortlex(steps: &[Planned]) -> Shortlex {
     Shortlex(
         steps
             .iter()
-            .map(|step| step.bounds.key(&step.value))
+            .filter_map(Planned::choice)
+            .map(|(bounds, value)| bounds.key(value))
             .collect(),
     )
 }
@@ -154,7 +222,8 @@ pub(crate) fn distinct(values: &[Value]) -> Result<(), CannotInvert> {
 }
 
 /// Returns the index of the first branch that produces the value, then its
-/// steps.
+/// steps. A branch through a composite produces every value, so it counts
+/// only when no branch produces the value without one.
 ///
 /// When no branch produces it and one of them has no inverse, the refusal is
 /// that there is no inverse.
@@ -164,15 +233,25 @@ pub(crate) fn first_branch(
     refusal: &str,
 ) -> Result<Emitted, CannotInvert> {
     let mut unknown = false;
+    let mut through = None;
     for (at, emitted) in branches {
         match emitted {
             Ok((steps, normal)) => {
+                let composite = has_placeholder(&steps);
                 let mut all = vec![Planned::new(Bounds::Integer(bounds), Choice::Integer(at))];
                 all.extend(steps);
-                return Ok((all, normal));
+                if !composite {
+                    return Ok((all, normal));
+                }
+                if through.is_none() {
+                    through = Some((all, normal));
+                }
             }
             Err(refused) => unknown |= refused.no_inverse,
         }
+    }
+    if let Some(emitted) = through {
+        return Ok(emitted);
     }
     if unknown {
         return Err(CannotInvert {
@@ -187,15 +266,50 @@ pub(crate) fn first_branch(
 ///
 /// # Errors
 ///
-/// Returns the refusal when the generator cannot produce `value`, and a
-/// refusal that states no inverse when a generator on the way applies a
-/// function that the engine cannot run backwards.
+/// Returns the refusal when the generator cannot produce `value`. The
+/// refusal states no inverse when a generator on the way applies a function
+/// that the engine cannot run backwards, and when `value` runs backwards
+/// through a composite, whose draws only the entries of a trace serve.
 pub(crate) fn invert<T: 'static>(
     generator: &Generator<T>,
     value: &Value,
 ) -> Result<Vec<Choice>, CannotInvert> {
     let (steps, normal) = generator.emit(value)?;
-    let choices: Vec<Choice> = steps.into_iter().map(|step| step.value).collect();
+    if has_placeholder(&steps) {
+        return Err(CannotInvert::no_inverse(COMPOSITE));
+    }
+    verified(generator, choices(&steps), &normal)
+}
+
+/// Returns the choices of the generator around its composites for `value`,
+/// and whether `value` runs backwards through a composite. The draws of a
+/// composite take their own entries of a trace, so the choices of a value
+/// through a composite do not replay here. A value without a composite has
+/// the choices that `invert` returns.
+///
+/// # Errors
+///
+/// Returns the refusals of `invert`, except the refusal of a value through a
+/// composite.
+pub(crate) fn invert_through<T: 'static>(
+    generator: &Generator<T>,
+    value: &Value,
+) -> Result<Inverted, CannotInvert> {
+    let (steps, normal) = generator.emit(value)?;
+    let choices = choices(&steps);
+    if has_placeholder(&steps) {
+        return Ok((choices, true));
+    }
+    Ok((verified(generator, choices, &normal)?, false))
+}
+
+/// Returns `choices` once they decode to `normal` and the case records them
+/// unchanged.
+fn verified<T: 'static>(
+    generator: &Generator<T>,
+    choices: Vec<Choice>,
+    normal: &Value,
+) -> Result<Vec<Choice>, CannotInvert> {
     let case = Case::new(
         Record::new(Box::new(Replaying::new(choices.clone())), MAX_CHOICES),
         None,
@@ -211,7 +325,7 @@ pub(crate) fn invert<T: 'static>(
             .all(|(recorded, stated)| recorded.same(stated));
     let produced = generator
         .literal(&decoded)
-        .is_some_and(|decoded| same(&decoded, &normal));
+        .is_some_and(|decoded| same(&decoded, normal));
     if !unchanged || !produced {
         return Err(CannotInvert::refused(
             "the value is not a value that the generator produces",

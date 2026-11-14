@@ -20,7 +20,8 @@ use super::engine::choice::{
 use super::engine::collection::{ELEMENT, ENTRY, Sizes, collect};
 use super::engine::draw::{Draw, HALF, Ratio};
 use super::engine::inverse::{
-    CannotInvert, Emitted, Planned, collection, distinct, first_branch, planned, shortlex,
+    CannotInvert, Emitted, Planned, collection, distinct, first_branch, has_placeholder, planned,
+    shortlex,
 };
 use super::generator::{Composite, Generator, Node};
 use super::scope;
@@ -673,6 +674,12 @@ impl<T: 'static> Node<T> for OneOf<T> {
             "no alternative produces the value",
         )
     }
+
+    fn has_composite(&self) -> bool {
+        self.of
+            .iter()
+            .any(|generator| generator.node().has_composite())
+    }
 }
 
 /// Returns a generator of a value of `of` or `None`: a presence choice in
@@ -709,6 +716,10 @@ impl<T: 'static> Node<Option<T>> for Optional<T> {
 
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         emit_optional(&self.of, value)
+    }
+
+    fn has_composite(&self) -> bool {
+        self.of.node().has_composite()
     }
 }
 
@@ -790,19 +801,32 @@ impl<T: 'static> Node<Vec<T>> for List<T> {
             .map(Value::List)
     }
 
+    /// Returns the flags and the elements. A unique list does not compare an
+    /// element through a composite, because the record of a composite may
+    /// not state its value. The decode still discards a repeated element.
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         let Value::List(items) = value else {
             return Err(CannotInvert::refused("the value is no list"));
         };
-        if self.same.is_some() {
-            distinct(items)?;
-        }
         let elements = items
             .iter()
             .map(|item| self.of.emit(item))
             .collect::<Result<Vec<_>, _>>()?;
+        if self.same.is_some() {
+            let compared: Vec<Value> = items
+                .iter()
+                .zip(&elements)
+                .filter(|(_, (steps, _))| !has_placeholder(steps))
+                .map(|(item, _)| item.clone())
+                .collect();
+            distinct(&compared)?;
+        }
         let (steps, normal): (Vec<_>, Vec<_>) = elements.into_iter().unzip();
         Ok((collection(self.sizes, steps)?, Value::List(normal)))
+    }
+
+    fn has_composite(&self) -> bool {
+        self.of.node().has_composite()
     }
 }
 
@@ -898,10 +922,18 @@ impl<K: 'static, V: 'static> Node<Vec<(K, V)>> for Pairs<K, V> {
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         emit_entries(&self.keys, &self.values, self.sizes, value)
     }
+
+    fn has_composite(&self) -> bool {
+        self.keys.node().has_composite() || self.values.node().has_composite()
+    }
 }
 
 /// Returns a map's flags and entries, each its key's steps then its value's,
 /// in the shortlex order of their steps.
+///
+/// The draws of the composites inside a map follow the order in which the
+/// case drew its entries. The value of a map does not state that order, so
+/// an entry through a composite has no inverse.
 pub(crate) fn emit_entries<K: 'static, V: 'static>(
     keys: &Generator<K>,
     values: &Generator<V>,
@@ -918,6 +950,9 @@ pub(crate) fn emit_entries<K: 'static, V: 'static>(
         let (mut steps, key) = keys.emit(key)?;
         let (more, held) = values.emit(held)?;
         steps.extend(more);
+        if has_placeholder(&steps) {
+            return Err(CannotInvert::unordered());
+        }
         emitted.push((steps, (key, held)));
     }
     emitted.sort_by_cached_key(|(steps, _)| shortlex(steps));
@@ -952,6 +987,10 @@ impl<K: Eq + Hash + 'static, V: 'static> Node<HashMap<K, V>> for Dict<K, V> {
 
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         self.entries.emit(value)
+    }
+
+    fn has_composite(&self) -> bool {
+        self.entries.node().has_composite()
     }
 }
 
@@ -1459,6 +1498,16 @@ impl<T: 'static> Node<T> for Recursive<T> {
             "neither the base nor the extension produces the value",
         )
     }
+
+    /// Returns `true` when the base or the extension has a composite inside. A
+    /// position returns `false`, and the walk stops at each position of the
+    /// extension.
+    fn has_composite(&self) -> bool {
+        self.base.node().has_composite() || {
+            let _run = scope::extending(self.id, &self.position);
+            self.extension.node().has_composite()
+        }
+    }
 }
 
 /// A position of the recursive value being decoded, inside its extension.
@@ -1510,7 +1559,10 @@ impl<T: 'static> Generator<T> {
 ///
 /// `f` draws from other generators with [`Case::draw`], in one span labelled
 /// `composite` around its draws. Its draws record their values as a body's
-/// draws do. A value of a composite generator has no inverse.
+/// draws do. A value of a composite generator has no inverse. A trace, such
+/// as the counterexample of a stored case, replays the draws of `f` in place
+/// of the composite. It does so also inside a one-of, an optional, a list, a
+/// filter or a recursive.
 #[must_use]
 pub fn composite<T: 'static>(f: impl Fn(&Case<'_>) -> T + Send + Sync + 'static) -> Generator<T> {
     Generator::from_node(Composite { f: Arc::new(f) })

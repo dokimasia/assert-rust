@@ -4,7 +4,7 @@
 //! The spec of `prop/scope`: the generators that `using` gives types in one
 //! run, and the draws of `of` that pick them.
 
-use crate::helpers::records;
+use crate::helpers::{Scratch, pairs, records};
 use dokimi_assert::prop::{Arbitrary, Definitions, Generator, Options, Shape, ShapeError};
 use dokimi_assert::{Recorder, Value, check, prop};
 use std::fmt::Debug;
@@ -279,6 +279,29 @@ mod using {
         });
         assert!(!seat.failed(), "{}", seat.message());
         assert_eq!(seen.lock().expect("the lock is free")[0], 5);
+    }
+
+    #[test]
+    fn replays_a_stated_composite_whose_stored_entry_records_no_value() {
+        let dir = Scratch::new();
+        let entry = r#"{"store": 1, "definition": "16.4.0", "property": "c",
+            "identity": {"assertion": "not-equal", "file": "scope.rs", "line": 1},
+            "choices": "prop1:", "counterexample": [
+                {"label": "a", "value": {"type": "int", "value": 7}},
+                {"label": "b", "value": {"type": "int", "value": 3}}, {"label": "pair"}],
+            "found": "2026-11-14"}"#;
+        std::fs::write(dir.join("entry.json"), entry).expect("the store accepts a file");
+        let seat = Recorder::new();
+        let options = prop::using(&pairs()).hermetic().seed(1).store(dir.join(""));
+        prop::for_all(&seat, "c", options, |c| {
+            let pair = c.draw(&prop::of::<Vec<u8>>(), "pair");
+            check::not_equal(c, pair, vec![7_u8, 3], "the pair is not 7 and 3");
+        });
+        let detail = &records(&seat)[0]["detail"];
+        assert_eq!(
+            (&detail["outcome"], &detail["cases"]),
+            (&serde_json::json!("counterexample"), &serde_json::json!(0))
+        );
     }
 
     #[test]

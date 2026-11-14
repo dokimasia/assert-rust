@@ -350,6 +350,14 @@ impl<T: Arbitrary> Node<T> for Picking<T> {
         self.picked().emit(value)
     }
 
+    fn is_composite(&self) -> bool {
+        self.picked().node().is_composite()
+    }
+
+    fn has_composite(&self) -> bool {
+        self.picked().node().has_composite()
+    }
+
     fn integer(&self) -> Option<IntegerBounds> {
         self.picked().node().integer()
     }
@@ -385,6 +393,16 @@ impl<T: 'static> Node<T> for Within<T> {
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         let _run = self.entered();
         self.of.emit(value)
+    }
+
+    fn is_composite(&self) -> bool {
+        let _run = self.entered();
+        self.of.node().is_composite()
+    }
+
+    fn has_composite(&self) -> bool {
+        let _run = self.entered();
+        self.of.node().has_composite()
     }
 
     fn integer(&self) -> Option<IntegerBounds> {

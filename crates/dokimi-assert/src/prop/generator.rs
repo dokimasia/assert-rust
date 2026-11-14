@@ -8,7 +8,7 @@ use super::case::{Case, rendered};
 use super::engine::canonical::literal_any;
 use super::engine::case::{AsAny, Erased, MAX_CHOICES, Record, Rendered, Replaying, Signal, Stop};
 use super::engine::choice::{Choice, IntegerBounds};
-use super::engine::inverse::{self, CannotInvert, Emitted};
+use super::engine::inverse::{self, CannotInvert, Emitted, Inverted, Planned};
 use crate::value::Value;
 use std::fmt::{self, Debug};
 use std::panic::{AssertUnwindSafe, catch_unwind, resume_unwind};
@@ -38,6 +38,23 @@ pub(crate) trait Node<T>: Send + Sync + AsAny + 'static {
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         let _ = value;
         Err(CannotInvert::no_inverse(self.id()))
+    }
+
+    /// Returns `true` for a composite. A draw of a composite in a trace takes
+    /// its entry by its label once it decodes, after the entries of its
+    /// draws.
+    fn is_composite(&self) -> bool {
+        false
+    }
+
+    /// Returns `true` for a composite, and for a generator that has a
+    /// composite inside a one-of, an optional, a list, a dict, a filter or a
+    /// recursive, at any depth. A draw of such a generator in a trace takes
+    /// the first entry with its label. When the value of the entry runs
+    /// backwards through a composite, the draw takes the entry once it
+    /// decodes.
+    fn has_composite(&self) -> bool {
+        false
     }
 
     /// Returns the bounds of an integer generator, through maps, whose draw
@@ -136,6 +153,12 @@ impl<T: 'static> Generator<T> {
     /// Returns the choices that decode to `value`.
     pub(crate) fn invert(&self, value: &Value) -> Result<Vec<Choice>, CannotInvert> {
         inverse::invert(self, value)
+    }
+
+    /// Returns the choices of the generator around its composites for
+    /// `value`, and whether `value` runs backwards through a composite.
+    pub(crate) fn invert_through(&self, value: &Value) -> Result<Inverted, CannotInvert> {
+        inverse::invert_through(self, value)
     }
 
     /// Returns a generator of `f` applied to each value of this one.
@@ -271,9 +294,15 @@ impl<T: 'static> Node<T> for Filtered<T> {
     }
 
     /// Returns the steps of the source. The inverse replays them through the
-    /// filter, which refuses a value that the predicate rejects.
+    /// filter, which refuses a value that the predicate rejects. A value
+    /// through a composite does not replay, so the predicate does not test
+    /// it, and the decode still filters the value that the composite returns.
     fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
         self.of.emit(value)
+    }
+
+    fn has_composite(&self) -> bool {
+        self.of.node().has_composite()
     }
 }
 
@@ -321,5 +350,19 @@ impl<T: 'static> Node<T> for Composite<T> {
                 Err(payload) => resume_unwind(payload),
             },
         }
+    }
+
+    /// Returns the place of the composite. The place does not make a choice,
+    /// and the draws of the function take their own entries of a trace.
+    fn emit(&self, value: &Value) -> Result<Emitted, CannotInvert> {
+        Ok((vec![Planned::Placeholder], value.clone()))
+    }
+
+    fn is_composite(&self) -> bool {
+        true
+    }
+
+    fn has_composite(&self) -> bool {
+        true
     }
 }

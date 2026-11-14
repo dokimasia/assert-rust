@@ -174,6 +174,14 @@ impl<T: Debug + 'static> crate::prop::generator::Node<Value> for Valued<T> {
         self.of.emit(value)
     }
 
+    fn is_composite(&self) -> bool {
+        self.of.node().is_composite()
+    }
+
+    fn has_composite(&self) -> bool {
+        self.of.node().has_composite()
+    }
+
     fn integer(&self) -> Option<IntegerBounds> {
         self.of.node().integer()
     }
