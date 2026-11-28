@@ -1,0 +1,913 @@
+{
+  "kind": "resume",
+  "cases": [
+    {
+      "id": "resume/sequential-calls-step-each-new-call-once",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 2
+        },
+        {
+          "events": 4
+        },
+        {
+          "events": 6
+        }
+      ],
+      "results": [
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 1,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 1
+        },
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 2,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 1
+        },
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 3,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 1
+        }
+      ]
+    },
+    {
+      "id": "resume/a-call-that-completes-after-a-check-restarts-its-partition",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 3
+        },
+        {
+          "events": 6
+        }
+      ],
+      "results": [
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 1,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 1
+        },
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 3,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 3
+        }
+      ]
+    },
+    {
+      "id": "resume/a-call-that-joins-two-partitions-restarts-their-search",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 4
+        },
+        {
+          "events": 6
+        }
+      ],
+      "results": [
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 2,
+            "steps": 2,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 2
+        },
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 3,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 3
+        }
+      ]
+    },
+    {
+      "id": "resume/a-partition-without-new-calls-takes-no-step",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "y"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 4
+        },
+        {
+          "events": 6
+        }
+      ],
+      "results": [
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 2,
+            "steps": 2,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 2
+        },
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 2,
+            "steps": 3,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 1
+        }
+      ]
+    },
+    {
+      "id": "resume/a-violated-check-leaves-no-search",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 1,
+          "operation": "read",
+          "args": [],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "int",
+            "value": 2
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 4
+        },
+        {
+          "events": 6
+        }
+      ],
+      "results": [
+        {
+          "expect": "fail",
+          "detail": {
+            "outcome": "violated",
+            "partitions": 1,
+            "steps": 2,
+            "partition": [
+              {
+                "type": "string",
+                "value": "x"
+              }
+            ],
+            "calls": 2,
+            "concurrency": 1,
+            "linearized": [
+              {
+                "call": 0,
+                "completion": 1,
+                "process": 0,
+                "operation": "write",
+                "args": [
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ],
+                "output": {
+                  "type": "null"
+                }
+              }
+            ],
+            "states": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "candidates": [
+              {
+                "call": 2,
+                "completion": 3,
+                "process": 1,
+                "operation": "read",
+                "args": [],
+                "output": {
+                  "type": "int",
+                  "value": 2
+                }
+              }
+            ],
+            "limit": null
+          },
+          "next-calls": 2
+        },
+        {
+          "expect": "fail",
+          "detail": {
+            "outcome": "violated",
+            "partitions": 1,
+            "steps": 2,
+            "partition": [
+              {
+                "type": "string",
+                "value": "x"
+              }
+            ],
+            "calls": 3,
+            "concurrency": 1,
+            "linearized": [
+              {
+                "call": 0,
+                "completion": 1,
+                "process": 0,
+                "operation": "write",
+                "args": [
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ],
+                "output": {
+                  "type": "null"
+                }
+              }
+            ],
+            "states": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "candidates": [
+              {
+                "call": 2,
+                "completion": 3,
+                "process": 1,
+                "operation": "read",
+                "args": [],
+                "output": {
+                  "type": "int",
+                  "value": 2
+                }
+              }
+            ],
+            "limit": null
+          },
+          "next-calls": 2
+        }
+      ]
+    },
+    {
+      "id": "resume/another-budget-restarts-every-search",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 2
+        },
+        {
+          "events": 4,
+          "budget": 100
+        }
+      ],
+      "results": [
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 1,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 1
+        },
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 2,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 2
+        }
+      ]
+    },
+    {
+      "id": "resume/a-memo-past-the-grown-capacity-restarts-the-search",
+      "spec": "register",
+      "history": [
+        {
+          "invoke": 0,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 1
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 0,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 1,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 2
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 1,
+          "output": {
+            "type": "null"
+          }
+        },
+        {
+          "invoke": 2,
+          "client": 0,
+          "operation": "write",
+          "args": [
+            {
+              "type": "int",
+              "value": 3
+            }
+          ],
+          "keys": [
+            {
+              "type": "string",
+              "value": "x"
+            }
+          ]
+        },
+        {
+          "ok": 2,
+          "output": {
+            "type": "null"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "events": 4,
+          "memo-limit": 5
+        },
+        {
+          "events": 6,
+          "memo-limit": 5
+        }
+      ],
+      "results": [
+        {
+          "expect": "pass",
+          "detail": {
+            "outcome": "passed",
+            "partitions": 1,
+            "steps": 2,
+            "partition": null,
+            "calls": null,
+            "concurrency": null,
+            "linearized": null,
+            "states": null,
+            "candidates": null,
+            "limit": null
+          },
+          "next-calls": 2
+        },
+        {
+          "expect": "fail",
+          "detail": {
+            "outcome": "undecided",
+            "partitions": 1,
+            "steps": 2,
+            "partition": [
+              {
+                "type": "string",
+                "value": "x"
+              }
+            ],
+            "calls": 3,
+            "concurrency": 1,
+            "linearized": [
+              {
+                "call": 0,
+                "completion": 1,
+                "process": 0,
+                "operation": "write",
+                "args": [
+                  {
+                    "type": "int",
+                    "value": 1
+                  }
+                ],
+                "output": {
+                  "type": "null"
+                }
+              }
+            ],
+            "states": [
+              {
+                "type": "int",
+                "value": 1
+              }
+            ],
+            "candidates": [],
+            "limit": "memo"
+          },
+          "next-calls": 2
+        }
+      ]
+    }
+  ]
+}

@@ -962,6 +962,11 @@
                 "python": "cleanup",
                 "typescript": "cleanup"
             },
+            "failed": {
+                "go": "Failed",
+                "python": "failed",
+                "typescript": "failed"
+            },
             "fault": {
                 "go": "Fault",
                 "java": "Check.fault",
@@ -1105,6 +1110,14 @@
                 "python": "history.memo_limit",
                 "rust": "history::memo_limit",
                 "typescript": "history.memoLimit"
+            },
+            "history.resume": {
+                "go": "history.Resume",
+                "java": "History.resume",
+                "kotlin": "History.resume",
+                "python": "history.resume",
+                "rust": "history::resume",
+                "typescript": "history.resume"
             },
             "history.spec-from": {
                 "go": "history.SpecFrom",
@@ -1790,6 +1803,13 @@
                 "rust": "target",
                 "typescript": "target"
             },
+            "checkpoint.new": {
+                "java": "new Checkpoint<>()",
+                "kotlin": "Checkpoint()",
+                "python": "Checkpoint()",
+                "rust": "Checkpoint::new",
+                "typescript": "new Checkpoint()"
+            },
             "clock.now": {
                 "go": "Now",
                 "java": "now",
@@ -2286,6 +2306,14 @@
                 "rust": "fail",
                 "typescript": "fail"
             },
+            "seat.failed": {
+                "go": "Failed",
+                "java": "failed",
+                "kotlin": "failed",
+                "python": "failed",
+                "rust": "failed",
+                "typescript": "failed"
+            },
             "seat.helper": {
                 "go": "Helper",
                 "java": "helper",
@@ -2397,6 +2425,14 @@
                 "python": "prop.Case",
                 "rust": "prop::Case",
                 "typescript": "prop.Case"
+            },
+            "checkpoint": {
+                "go": "history.Checkpoint",
+                "java": "Checkpoint",
+                "kotlin": "Checkpoint",
+                "python": "history.Checkpoint",
+                "rust": "history::Checkpoint",
+                "typescript": "history.Checkpoint"
             },
             "clock": {
                 "go": "Clock",
@@ -2599,5 +2635,5 @@
             }
         }
     },
-    "version": "16.5.0"
+    "version": "16.6.0"
 }
