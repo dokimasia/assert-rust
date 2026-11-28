@@ -1,5 +1,5 @@
 {
-  "extends": "spec://assertions@16.5.0",
+  "extends": "spec://assertions@16.6.0",
   "language": "rust",
   "diverge": [],
   "relaxations": [
@@ -85,6 +85,11 @@
       "id": "seat.skip",
       "what": "The default writes the reason to the standard error and returns, and the caller returns after it. A call of rejects whose check skips states the verdict skip in its call record, and the test passes.",
       "why": "libtest marks a test as ignored before it runs, with the attribute ignore, and offers no call that skips a test while it runs."
+    },
+    {
+      "id": "steps.scheduler",
+      "what": "A client of a concurrent section that waits or sleeps when the run of the section returns ends there. Its call remains open, and the check after the section reads it as a call without a completion. A drain action does not complete the call.",
+      "why": "The future of each client borrows the machine and the case for the call of steps, and an action such as advance of a ticker borrows the scheduler. The scheduler therefore cannot keep the future of a client after the section."
     }
   ],
   "surface": [
@@ -131,6 +136,10 @@
     {
       "id": "skip",
       "why": "The trait Seat gives skip() a default that writes the reason and returns, as the seat.skip entry of limits states, so a helper calls the member on any seat and needs no function to skip."
+    },
+    {
+      "id": "failed",
+      "why": "The trait Seat gives failed() a default that ends the call with a fault, as it gives cleanup() one, so a helper calls the member on any seat and needs no function to read it."
     }
   ],
   "sections": ["tasks", "threads"],
